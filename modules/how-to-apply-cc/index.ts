@@ -15921,9 +15921,44 @@ export const howToApplyCCModule = `
 //     }
 //   };
 // 
+//   // src/client/shared/utils/image.ts
+//   var resolveProxiedUrl = (url) => {
+//     try {
+//       const abs = new URL(url, window.location.href);
+//       if (abs.origin !== window.location.origin && abs.protocol === "https:") {
+//         return `/img-proxy?src=${encodeURIComponent(abs.toString())}`;
+//       }
+//       return abs.toString();
+//     } catch {
+//       return url;
+//     }
+//   };
+//   var preloadImage = (url) => {
+//     return new Promise((resolve) => {
+//       try {
+//         const src = resolveProxiedUrl(url);
+//         const img = new Image();
+//         img.crossOrigin = "anonymous";
+//         img.onload = () => resolve();
+//         img.onerror = () => resolve();
+//         const start = () => {
+//           img.src = src;
+//         };
+//         if ("requestIdleCallback" in window) {
+//           window.requestIdleCallback(start, { timeout: 500 });
+//         } else {
+//           setTimeout(start, 0);
+//         }
+//       } catch {
+//         resolve();
+//       }
+//     });
+//   };
+// 
 //   // src/client/shared/handlers/BaseArticleEventHandler.ts
 //   var EXIT_ANIMATION_DURATION = 230;
 //   var BaseArticleEventHandler = class {
+//     // 内存缓存，避免重复预加载
 //     constructor(containerId, contentService, articleRenderer, onBackToOverview) {
 //       __publicField(this, "containerId");
 //       __publicField(this, "boundClickHandler");
@@ -15932,11 +15967,139 @@ export const howToApplyCCModule = `
 //       __publicField(this, "onBackToOverview");
 //       __publicField(this, "_shareService");
 //       __publicField(this, "_suppressHistory", false);
+//       __publicField(this, "_preloadCache", /* @__PURE__ */ new Set());
 //       this.containerId = containerId;
 //       this.boundClickHandler = this.handleCardClick.bind(this);
 //       this.contentService = contentService;
 //       this.articleRenderer = articleRenderer;
 //       this.onBackToOverview = onBackToOverview;
+//     }
+//     // —— 视口预热：卡片进入视口即预热分享所需资源 ——
+//     wireViewportPrewarm(container) {
+//       try {
+//         if (!("IntersectionObserver" in window))
+//           return;
+//         const cards = container.querySelectorAll(".overview-card");
+//         const seen = /* @__PURE__ */ new Set();
+//         const observer = new IntersectionObserver(
+//           (entries) => {
+//             for (const entry of entries) {
+//               if (!entry.isIntersecting)
+//                 continue;
+//               const el = entry.target;
+//               const id = el.getAttribute("data-card-id");
+//               if (!id || seen.has(id)) {
+//                 observer.unobserve(el);
+//                 continue;
+//               }
+//               seen.add(id);
+//               observer.unobserve(el);
+//               const run = () => void this.preloadForShare(id);
+//               if ("requestIdleCallback" in window) {
+//                 window.requestIdleCallback(run, { timeout: 800 });
+//               } else {
+//                 setTimeout(run, 0);
+//               }
+//             }
+//           },
+//           {
+//             root: null,
+//             rootMargin: "200px 0px",
+//             threshold: 0.15
+//           }
+//         );
+//         cards.forEach((el) => observer.observe(el));
+//       } catch {
+//       }
+//     }
+//     // —— 预加载分享相关资源（封面与二维码）——
+//     wireSharePreload(container) {
+//       try {
+//         const buttons = container.querySelectorAll(".overview-card__share-btn");
+//         buttons.forEach((btn) => {
+//           const el = btn;
+//           let fired = false;
+//           const run = () => {
+//             if (fired)
+//               return;
+//             fired = true;
+//             const id = el.getAttribute("data-card-id");
+//             if (id)
+//               void this.preloadForShare(id);
+//           };
+//           el.addEventListener("mouseenter", run, { once: true });
+//           el.addEventListener("focus", run, { once: true });
+//           el.addEventListener("touchstart", run, { once: true, passive: true });
+//         });
+//       } catch {
+//       }
+//     }
+//     async preloadForShare(cardId) {
+//       try {
+//         if (this._preloadCache.has(cardId))
+//           return;
+//         this._preloadCache.add(cardId);
+//         const card = this.resolveCardById(cardId);
+//         if (!card)
+//           return;
+//         const startTime = performance.now();
+//         if (card.imageUrl) {
+//           try {
+//             await preloadImage(card.imageUrl);
+//           } catch (error) {
+//             if (false) {
+//               console.warn("Cover image preload failed for card:", cardId, error);
+//             }
+//           }
+//         }
+//         const link = (() => {
+//           try {
+//             const url = new URL(window.location.href);
+//             url.searchParams.set("module", this.getModuleName());
+//             url.searchParams.set("view", "article");
+//             url.searchParams.set("cardId", cardId);
+//             return url.toString();
+//           } catch {
+//             return window.location.href;
+//           }
+//         })();
+//         const size = 220;
+//         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(
+//           link
+//         )}`;
+//         await new Promise((resolve) => {
+//           try {
+//             const img = new Image();
+//             img.crossOrigin = "anonymous";
+//             img.onload = () => resolve();
+//             img.onerror = () => {
+//               if (false) {
+//                 console.warn("QR code preload failed for card:", cardId);
+//               }
+//               resolve();
+//             };
+//             const start = () => img.src = qrUrl;
+//             if ("requestIdleCallback" in window) {
+//               window.requestIdleCallback(start, { timeout: 500 });
+//             } else {
+//               setTimeout(start, 0);
+//             }
+//           } catch (error) {
+//             if (false) {
+//               console.warn("QR code preload setup failed for card:", cardId, error);
+//             }
+//             resolve();
+//           }
+//         });
+//         if (false) {
+//           const duration = performance.now() - startTime;
+//           console.debug(`Share preload completed for card ${cardId} in ${duration.toFixed(2)}ms`);
+//         }
+//       } catch (error) {
+//         if (false) {
+//           console.warn("Share preload failed for card:", cardId, error);
+//         }
+//       }
 //     }
 //     bindEventListeners() {
 //       const container = document.getElementById(this.containerId);
@@ -15953,10 +16116,11 @@ export const howToApplyCCModule = `
 //     addEventListeners(container) {
 //       container.addEventListener("click", this.boundClickHandler);
 //       this.addDebugListeners(container);
+//       this.wireViewportPrewarm(container);
 //     }
 //     // Hook: subclasses may add extra debug listeners; default no-op
 //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//     addDebugListeners(container) {
+//     addDebugListeners(_container) {
 //     }
 //     handleCardClick(e) {
 //       const event = e;
@@ -15973,6 +16137,7 @@ export const howToApplyCCModule = `
 //         const cardId2 = shareBtn.getAttribute("data-card-id");
 //         if (!cardId2)
 //           return;
+//         void this.preloadForShare(cardId2);
 //         const card = this.resolveCardById(cardId2);
 //         if (!card)
 //           return;

@@ -2,6 +2,7 @@ import { injectMarkdownStyles } from '../../bestPractices/styles/markdownStyles'
 import { SafeMarkdownRenderer } from '../../../../shared/utils/markdownRenderer';
 import type { BaseContentCard } from '../types/ContentCard';
 import { ShareService as GenericShareService } from '../services/ShareService';
+import { preloadImage } from '../utils/image';
 
 // Animation duration constant
 const EXIT_ANIMATION_DURATION = 230; // 匹配 CSS 中的动画时长
@@ -39,6 +40,7 @@ export abstract class BaseArticleEventHandler {
   protected onBackToOverview?: () => void;
   private _shareService?: GenericShareService<BaseContentCard>;
   private _suppressHistory = false;
+  private _preloadCache = new Set<string>(); // 内存缓存，避免重复预加载
 
   constructor(
     containerId: string,
@@ -51,6 +53,142 @@ export abstract class BaseArticleEventHandler {
     this.contentService = contentService;
     this.articleRenderer = articleRenderer;
     this.onBackToOverview = onBackToOverview;
+  }
+
+  // —— 视口预热：卡片进入视口即预热分享所需资源 ——
+  protected wireViewportPrewarm(container: HTMLElement): void {
+    try {
+      if (!('IntersectionObserver' in window)) return;
+      const cards = container.querySelectorAll('.overview-card');
+      const seen = new Set<string>();
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            const el = entry.target as HTMLElement;
+            const id = el.getAttribute('data-card-id');
+            if (!id || seen.has(id)) {
+              observer.unobserve(el);
+              continue;
+            }
+            seen.add(id);
+            observer.unobserve(el);
+            // 低优先级触发，避免与主渲染竞争
+            const run = () => void this.preloadForShare(id);
+            if ('requestIdleCallback' in window) {
+              (window as any).requestIdleCallback(run, { timeout: 800 });
+            } else {
+              setTimeout(run, 0);
+            }
+          }
+        },
+        {
+          root: null,
+          rootMargin: '200px 0px',
+          threshold: 0.15,
+        }
+      );
+      cards.forEach((el) => observer.observe(el));
+    } catch {
+      // 忽略预热异常
+    }
+  }
+
+  // —— 预加载分享相关资源（封面与二维码）——
+  protected wireSharePreload(container: HTMLElement): void {
+    try {
+      const buttons = container.querySelectorAll('.overview-card__share-btn');
+      buttons.forEach((btn) => {
+        const el = btn as HTMLElement;
+        let fired = false;
+        const run = () => {
+          if (fired) return;
+          fired = true;
+          const id = el.getAttribute('data-card-id');
+          if (id) void this.preloadForShare(id);
+        };
+        el.addEventListener('mouseenter', run, { once: true });
+        el.addEventListener('focus', run, { once: true });
+        el.addEventListener('touchstart', run, { once: true, passive: true });
+      });
+    } catch {}
+  }
+
+  protected async preloadForShare(cardId: string): Promise<void> {
+    try {
+      // 检查缓存，避免重复预加载
+      if (this._preloadCache.has(cardId)) return;
+      this._preloadCache.add(cardId);
+
+      const card = this.resolveCardById(cardId);
+      if (!card) return;
+      
+      // 性能监控
+      const startTime = performance.now();
+      
+      // 1) 预热封面图（走 /img-proxy 以命中边缘缓存）
+      if ((card as any).imageUrl) {
+        try {
+          await preloadImage((card as any).imageUrl);
+        } catch (error) {
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('Cover image preload failed for card:', cardId, error);
+          }
+        }
+      }
+      
+      // 2) 预热二维码图（直接命中二维码服务的缓存）
+      const link = (() => {
+        try {
+          const url = new URL(window.location.href);
+          url.searchParams.set('module', this.getModuleName());
+          url.searchParams.set('view', 'article');
+          url.searchParams.set('cardId', cardId);
+          return url.toString();
+        } catch {
+          return window.location.href;
+        }
+      })();
+      const size = 220;
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(
+        link
+      )}`;
+      await new Promise<void>((resolve) => {
+        try {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => resolve();
+          img.onerror = () => {
+            if (process.env.NODE_ENV === 'development') {
+              console.warn('QR code preload failed for card:', cardId);
+            }
+            resolve();
+          };
+          // 避免与关键渲染竞争
+          const start = () => (img.src = qrUrl);
+          if ('requestIdleCallback' in window) {
+            (window as any).requestIdleCallback(start, { timeout: 500 });
+          } else {
+            setTimeout(start, 0);
+          }
+        } catch (error) {
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('QR code preload setup failed for card:', cardId, error);
+          }
+          resolve();
+        }
+      });
+
+      // 性能日志
+      if (process.env.NODE_ENV === 'development') {
+        const duration = performance.now() - startTime;
+        console.debug(`Share preload completed for card ${cardId} in ${duration.toFixed(2)}ms`);
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Share preload failed for card:', cardId, error);
+      }
+    }
   }
 
   // Subclasses must provide a single source of truth for card lookup and icon mapping
@@ -77,11 +215,12 @@ export abstract class BaseArticleEventHandler {
   protected addEventListeners(container: HTMLElement): void {
     container.addEventListener('click', this.boundClickHandler);
     this.addDebugListeners(container);
+    this.wireViewportPrewarm(container);
   }
 
   // Hook: subclasses may add extra debug listeners; default no-op
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected addDebugListeners(container: HTMLElement): void {}
+  protected addDebugListeners(_container: HTMLElement): void {}
 
   protected handleCardClick(e: Event): void {
     const event = e as MouseEvent;
@@ -101,6 +240,8 @@ export abstract class BaseArticleEventHandler {
       event.preventDefault();
       const cardId = shareBtn.getAttribute('data-card-id');
       if (!cardId) return;
+      // Opportunistically ensure assets are warm before opening preview
+      void this.preloadForShare(cardId);
       const card = this.resolveCardById(cardId);
       if (!card) return;
       // lazy init
