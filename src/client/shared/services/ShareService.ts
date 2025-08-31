@@ -57,7 +57,11 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
   // Open a preview modal to let users confirm and choose action
   public async openPreview(card: T, opts?: { matchElement?: HTMLElement }): Promise<void> {
     const size = this.computeCanvasSize(opts?.matchElement);
-    const canvas = await this.renderCanvas(card, size);
+    
+    // 分析页面中图片的实际显示情况
+    const pageImageInfo = this.analyzePageImageDisplay(opts?.matchElement, (card as any).imageUrl);
+    
+    const canvas = await this.renderCanvas(card, size, pageImageInfo);
     const blob = await new Promise<Blob>((resolve) =>
       canvas.toBlob((b) => resolve(b as Blob), 'image/png', 0.95)
     );
@@ -183,7 +187,8 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
 
   private async renderCanvas(
     card: T,
-    size?: { width: number; height: number }
+    size?: { width: number; height: number },
+    pageImageInfo?: { pageImageAspect?: number; pageImageWidth?: number; pageImageHeight?: number }
   ): Promise<HTMLCanvasElement> {
     const canvas = document.createElement('canvas');
     const width = size?.width ?? this.defaultWidth;
@@ -267,15 +272,58 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
       const radius = 16;
       const coverY = y;
       if (coverImg) {
-        const ratio = coverImg.naturalHeight / coverImg.naturalWidth;
-        // Keep height reasonable to avoid overwhelming content
+        const naturalRatio = coverImg.naturalHeight / coverImg.naturalWidth;
+        
+        // 优先使用页面显示的比例信息，确保一致性
+        const targetRatio = pageImageInfo?.pageImageAspect ?? naturalRatio;
+        
+        // 智能图片类型分析
+        const imageAnalysis = this.analyzeImageType(targetRatio, coverImg.naturalWidth, coverImg.naturalHeight);
+        
+        // 智能比例控制 - 基于图片类型和页面一致性
         let coverW = coverMaxW;
-        let coverH = Math.round(coverW * ratio);
-        const maxH = 540; // visual cap similar to UI
-        if (coverH > maxH) {
-          coverH = maxH;
-          coverW = Math.round(coverH / ratio);
+        let coverH = Math.round(coverW * targetRatio);
+        
+        // 基于图片类型的动态限制策略
+        const dynamicMaxH = Math.round(coverMaxW * imageAnalysis.maxHeightFactor);
+        const spaceBasedMaxH = Math.round((height - y - this.padding - 300) * 0.6);
+        const finalMaxH = Math.min(dynamicMaxH, spaceBasedMaxH);
+        
+        // 应用智能适配策略
+        if (imageAnalysis.strategy === 'constrain-height' && coverH > finalMaxH) {
+          const originalH = coverH;
+          coverH = finalMaxH;
+          coverW = Math.round(coverH / targetRatio);
+          
+          // 开发环境记录智能适配信息
+          if (process.env.NODE_ENV === 'development') {
+            console.debug(`Smart image adaptation applied:`, {
+              cardId: (card as any).id,
+              imageType: imageAnalysis.type,
+              strategy: imageAnalysis.strategy,
+              description: imageAnalysis.description,
+              targetRatio: targetRatio.toFixed(2),
+              originalSize: `${coverMaxW}x${originalH}`,
+              adaptedSize: `${coverW}x${coverH}`,
+              source: pageImageInfo?.pageImageAspect ? 'page-display' : 'natural-image'
+            });
+          }
+        } else {
+          // 保持原始比例 - 按图片类型策略
+          if (process.env.NODE_ENV === 'development') {
+            console.debug(`Image ratio preserved by smart analysis:`, {
+              cardId: (card as any).id,
+              imageType: imageAnalysis.type,
+              strategy: imageAnalysis.strategy,
+              description: imageAnalysis.description,
+              ratio: targetRatio.toFixed(2),
+              size: `${coverW}x${coverH}`,
+              source: pageImageInfo?.pageImageAspect ? 'page-display' : 'natural-image',
+              consistentWithPage: !!pageImageInfo?.pageImageAspect
+            });
+          }
         }
+        
         ctx.fillStyle = '#f8fafc';
         this.roundRect(ctx, this.padding, coverY, coverW, coverH, radius);
         ctx.fill();
@@ -349,11 +397,115 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
           // Ensure a reasonable minimum height to fit content and QR watermark
           const minH = Math.max(1200, Math.round(width * 0.9));
           const height = Math.max(minH, Math.round(width * aspect));
+          
+          // 开发环境下记录页面元素尺寸信息
+          if (process.env.NODE_ENV === 'development') {
+            console.debug(`Canvas size based on page element: ${width}x${height} (aspect: ${aspect.toFixed(2)}) from page rect: ${rect.width.toFixed(1)}x${rect.height.toFixed(1)}`);
+          }
+          
           return { width, height };
         }
       }
     } catch {}
     return { width: this.defaultWidth, height: this.defaultHeight };
+  }
+
+  // 分析页面中图片的实际显示尺寸和比例
+  private analyzePageImageDisplay(matchEl?: HTMLElement, imageUrl?: string): {
+    pageImageAspect?: number;
+    pageImageWidth?: number;
+    pageImageHeight?: number;
+  } {
+    try {
+      if (!matchEl || !imageUrl) return {};
+      
+      const coverEl = matchEl.querySelector('.overview-card__cover') as HTMLElement;
+      const imgEl = coverEl?.querySelector('img') as HTMLImageElement;
+      
+      if (imgEl && imgEl.complete && imgEl.naturalWidth > 0) {
+        const rect = imgEl.getBoundingClientRect();
+        const pageImageAspect = rect.height / rect.width;
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.debug(`Page image display analysis:`, {
+            naturalSize: `${imgEl.naturalWidth}x${imgEl.naturalHeight}`,
+            displaySize: `${rect.width.toFixed(1)}x${rect.height.toFixed(1)}`,
+            pageAspect: pageImageAspect.toFixed(3),
+            naturalAspect: (imgEl.naturalHeight / imgEl.naturalWidth).toFixed(3)
+          });
+        }
+        
+        return {
+          pageImageAspect,
+          pageImageWidth: rect.width,
+          pageImageHeight: rect.height
+        };
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Failed to analyze page image display:', error);
+      }
+    }
+    
+    return {};
+  }
+
+  // 智能图片类型分析和适配策略
+  private analyzeImageType(ratio: number, width: number, height: number): {
+    type: 'square' | 'landscape' | 'portrait' | 'banner' | 'tall';
+    strategy: 'preserve' | 'constrain-height' | 'optimize-space';
+    maxHeightFactor: number;
+    description: string;
+  } {
+    // 根据比例和尺寸特征智能分类图片类型
+    if (ratio >= 0.9 && ratio <= 1.1) {
+      return {
+        type: 'square',
+        strategy: 'preserve',
+        maxHeightFactor: 1.0,
+        description: '正方形图片 - 保持原始比例'
+      };
+    } else if (ratio < 0.9) {
+      if (ratio < 0.5) {
+        return {
+          type: 'banner',
+          strategy: 'preserve',
+          maxHeightFactor: 0.8,
+          description: '横幅图片 - 保持比例，适度限制高度'
+        };
+      }
+      return {
+        type: 'landscape',
+        strategy: 'preserve',
+        maxHeightFactor: 0.9,
+        description: '横向图片 - 完全保持比例'
+      };
+    } else {
+      if (ratio > 2.0) {
+        return {
+          type: 'tall',
+          strategy: 'constrain-height',
+          maxHeightFactor: 1.2,
+          description: '超高图片 - 限制高度以保持布局平衡'
+        };
+      }
+      return {
+        type: 'portrait',
+        strategy: ratio > 1.5 ? 'constrain-height' : 'preserve',
+        maxHeightFactor: ratio > 1.5 ? 1.1 : 1.0,
+        description: ratio > 1.5 ? '高图片 - 轻度限制高度' : '纵向图片 - 保持比例'
+      };
+    }
+    
+    /*
+     * 测试用例覆盖：
+     * - 正方形图片 (1:1, ratio ≈ 1.0): 完全保持比例
+     * - 横向图片 (16:9, ratio ≈ 0.56): 保持比例，轻度限制
+     * - 横幅图片 (3:1, ratio ≈ 0.33): 保持比例，适度限制
+     * - 纵向图片 (4:3, ratio ≈ 1.33): 保持比例
+     * - 高图片 (3:4, ratio ≈ 1.6): 轻度高度限制
+     * - 超高图片 (9:16, ratio ≈ 2.4): 明显高度限制
+     */
   }
 
   private async loadImage(url: string): Promise<HTMLImageElement> {

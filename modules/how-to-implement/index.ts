@@ -15526,7 +15526,8 @@ export const implementationModule = `
 //     // Open a preview modal to let users confirm and choose action
 //     async openPreview(card, opts) {
 //       const size = this.computeCanvasSize(opts?.matchElement);
-//       const canvas = await this.renderCanvas(card, size);
+//       const pageImageInfo = this.analyzePageImageDisplay(opts?.matchElement, card.imageUrl);
+//       const canvas = await this.renderCanvas(card, size, pageImageInfo);
 //       const blob = await new Promise(
 //         (resolve) => canvas.toBlob((b) => resolve(b), "image/png", 0.95)
 //       );
@@ -15631,7 +15632,7 @@ export const implementationModule = `
 //       a.remove();
 //       URL.revokeObjectURL(url);
 //     }
-//     async renderCanvas(card, size) {
+//     async renderCanvas(card, size, pageImageInfo) {
 //       const canvas = document.createElement("canvas");
 //       const width = size?.width ?? this.defaultWidth;
 //       const height = size?.height ?? this.defaultHeight;
@@ -15701,13 +15702,39 @@ export const implementationModule = `
 //         const radius = 16;
 //         const coverY = y;
 //         if (coverImg) {
-//           const ratio = coverImg.naturalHeight / coverImg.naturalWidth;
+//           const naturalRatio = coverImg.naturalHeight / coverImg.naturalWidth;
+//           const targetRatio = pageImageInfo?.pageImageAspect ?? naturalRatio;
 //           let coverW = coverMaxW;
-//           let coverH = Math.round(coverW * ratio);
-//           const maxH = 540;
-//           if (coverH > maxH) {
-//             coverH = maxH;
-//             coverW = Math.round(coverH / ratio);
+//           let coverH = Math.round(coverW * targetRatio);
+//           const dynamicMaxH = Math.min(
+//             Math.round(coverMaxW * 1.2),
+//             // 基于宽度的动态限制
+//             Math.round((height - y - this.padding - 300) * 0.6)
+//             // 基于剩余空间的限制
+//           );
+//           if (targetRatio > 1.8) {
+//             const originalH = coverH;
+//             coverH = Math.min(coverH, dynamicMaxH);
+//             coverW = Math.round(coverH / targetRatio);
+//             if (false) {
+//               console.debug(`Image aspect ratio adjusted for extreme ratio:`, {
+//                 cardId: card.id,
+//                 targetRatio: targetRatio.toFixed(2),
+//                 originalSize: `${coverMaxW}x${originalH}`,
+//                 adjustedSize: `${coverW}x${coverH}`,
+//                 source: pageImageInfo?.pageImageAspect ? "page-display" : "natural-image"
+//               });
+//             }
+//           } else {
+//             if (false) {
+//               console.debug(`Image aspect ratio preserved:`, {
+//                 cardId: card.id,
+//                 ratio: targetRatio.toFixed(2),
+//                 size: `${coverW}x${coverH}`,
+//                 source: pageImageInfo?.pageImageAspect ? "page-display" : "natural-image",
+//                 consistentWithPage: !!pageImageInfo?.pageImageAspect
+//               });
+//             }
 //           }
 //           ctx.fillStyle = "#f8fafc";
 //           this.roundRect(ctx, this.padding, coverY, coverW, coverH, radius);
@@ -15768,12 +15795,46 @@ export const implementationModule = `
 //             const width = this.defaultWidth;
 //             const minH = Math.max(1200, Math.round(width * 0.9));
 //             const height = Math.max(minH, Math.round(width * aspect));
+//             if (false) {
+//               console.debug(`Canvas size based on page element: ${width}x${height} (aspect: ${aspect.toFixed(2)}) from page rect: ${rect.width.toFixed(1)}x${rect.height.toFixed(1)}`);
+//             }
 //             return { width, height };
 //           }
 //         }
 //       } catch {
 //       }
 //       return { width: this.defaultWidth, height: this.defaultHeight };
+//     }
+//     // 分析页面中图片的实际显示尺寸和比例
+//     analyzePageImageDisplay(matchEl, imageUrl) {
+//       try {
+//         if (!matchEl || !imageUrl)
+//           return {};
+//         const coverEl = matchEl.querySelector(".overview-card__cover");
+//         const imgEl = coverEl?.querySelector("img");
+//         if (imgEl && imgEl.complete && imgEl.naturalWidth > 0) {
+//           const rect = imgEl.getBoundingClientRect();
+//           const pageImageAspect = rect.height / rect.width;
+//           if (false) {
+//             console.debug(`Page image display analysis:`, {
+//               naturalSize: `${imgEl.naturalWidth}x${imgEl.naturalHeight}`,
+//               displaySize: `${rect.width.toFixed(1)}x${rect.height.toFixed(1)}`,
+//               pageAspect: pageImageAspect.toFixed(3),
+//               naturalAspect: (imgEl.naturalHeight / imgEl.naturalWidth).toFixed(3)
+//             });
+//           }
+//           return {
+//             pageImageAspect,
+//             pageImageWidth: rect.width,
+//             pageImageHeight: rect.height
+//           };
+//         }
+//       } catch (error) {
+//         if (false) {
+//           console.warn("Failed to analyze page image display:", error);
+//         }
+//       }
+//       return {};
 //     }
 //     async loadImage(url) {
 //       await new Promise((resolve) => setTimeout(resolve, 0));
