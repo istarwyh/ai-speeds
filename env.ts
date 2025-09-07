@@ -7,7 +7,7 @@ export interface Env {
   OPENAI_COMPATIBLE_BASE_URL?: string;
   
   // Assets binding for static files
-  ASSETS: any;
+  ASSETS: Fetcher;
 
   // Image proxy configuration
   // Comma-separated hostnames, e.g. "images.unsplash.com,cdn.jsdelivr.net"

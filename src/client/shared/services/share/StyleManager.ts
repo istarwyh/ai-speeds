@@ -110,7 +110,7 @@ export class StyleManager {
   // Spacing scale
   public getSpacing() {
     return {
-      xs: 40,
+      xs: 8,
       sm: 12,
       md: 16,
       lg: 24,

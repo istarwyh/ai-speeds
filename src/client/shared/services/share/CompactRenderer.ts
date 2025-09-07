@@ -27,6 +27,7 @@ export class CompactRenderer {
     card: T,
     canvas: HTMLCanvasElement,
     getIcon: (category: string) => string,
+    deepLink: string,
     pageImageInfo?: { pageImageAspect?: number; pageImageWidth?: number; pageImageHeight?: number }
   ): Promise<void> {
     let ctx = canvas.getContext('2d')!;
@@ -71,7 +72,7 @@ export class CompactRenderer {
 
     // 按布局方案渲染各个部分
     for (const section of layout.sections) {
-      await this.renderSection(renderCtx, section, card as T, getIcon);
+      await this.renderSection(renderCtx, section, card as T, getIcon, deepLink);
     }
 
     // 渲染完成后再次确保严格裁剪到内容高度
@@ -105,7 +106,8 @@ export class CompactRenderer {
     renderCtx: CompactRenderContext,
     section: LayoutSection,
     card: T,
-    getIcon: (category: string) => string
+    getIcon: (category: string) => string,
+    deepLink: string
   ): Promise<void> {
     const { ctx, layout } = renderCtx;
     const x = layout.padding;
@@ -127,7 +129,7 @@ export class CompactRenderer {
         this.renderTagsSection(ctx, section, x, layout.contentWidth);
         break;
       case 'footer':
-        await this.renderFooterSection(ctx, section, x, layout.contentWidth, card);
+        await this.renderFooterSection(ctx, section, x, layout.contentWidth, card, deepLink);
         break;
     }
   }
@@ -377,7 +379,8 @@ export class CompactRenderer {
     section: LayoutSection,
     x: number,
     width: number,
-    card: T
+    card: T,
+    deepLink: string
   ): Promise<void> {
     const { qrSize, brandHeight, leftColumnWidth, tags = [], tagHeight = 32, fontSize = 20, tagGap = 8, brandTagsGap = 15, footerXPad = 12, footerTopPad = 12, footerBottomPad = 6 } = section.content;
     const spacing = this.layoutService.getSpacingConfig();
@@ -406,7 +409,6 @@ export class CompactRenderer {
     const qrY = footerY;
 
     try {
-      const deepLink = this.buildDeepLink(card);
       const qrImg = await this.imageManager.loadQRImage(deepLink, qrSize);
       
       // QR码背景（严格在 footer 高度内）
@@ -519,10 +521,6 @@ export class CompactRenderer {
   }
 
   // 工具方法
-  private buildDeepLink<T extends BaseContentCard>(card: T): string {
-    const baseUrl = window.location.origin;
-    return `${baseUrl}#${(card as any).id || 'card'}`;
-  }
 
   private splitLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number, maxLines?: number): string[] {
     const words = text.split(/\s+/);
