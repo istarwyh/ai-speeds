@@ -165,10 +165,16 @@ export class LayoutService {
   ): LayoutSection {
     let imageHeight = 240; // 默认高度
 
-    // 如果分析到了页面中的实际显示宽高比，则严格按照该比例计算高度，避免任何裁剪/拉伸失真
+    // 如果有页面图片比例信息，使用它；否则使用合理的默认比例
     if (pageImageInfo?.pageImageAspect && pageImageInfo.pageImageAspect > 0) {
       imageHeight = Math.round(contentWidth * pageImageInfo.pageImageAspect);
+    } else {
+      // 使用16:9的比例作为默认值，这是一个常见且美观的比例
+      imageHeight = Math.round(contentWidth * (9 / 16));
     }
+    
+    // 限制最大和最小高度，避免极端比例
+    imageHeight = Math.max(180, Math.min(400, imageHeight));
 
     return {
       type: 'image',
@@ -176,7 +182,8 @@ export class LayoutService {
       height: imageHeight,
       content: {
         imageUrl: (card as any).imageUrl,
-        aspectRatio: pageImageInfo?.pageImageAspect
+        aspectRatio: pageImageInfo?.pageImageAspect,
+        preserveOriginalRatio: true // 标记需要保持原始比例
       }
     };
   }

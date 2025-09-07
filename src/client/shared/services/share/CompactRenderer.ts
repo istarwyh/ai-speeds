@@ -216,41 +216,63 @@ export class CompactRenderer {
     x: number,
     width: number
   ): Promise<void> {
-    const { imageUrl } = section.content;
+    const { imageUrl, preserveOriginalRatio } = section.content;
     const radius = this.styleManager.getBorderRadius().md;
 
     try {
       const img = await this.imageManager.loadImage(imageUrl, { crossOrigin: 'anonymous' });
 
-      // 以 object-fit: cover 的方式绘制，保持比例并填满容器
-      const destX = x;
-      const destY = section.y;
-      const destW = width;
-      const destH = section.height;
-
+      // 获取图片的原始尺寸
       const sw = (img as any).naturalWidth || (img as HTMLImageElement).width;
       const sh = (img as any).naturalHeight || (img as HTMLImageElement).height;
 
-      // 计算裁剪区域（源）以覆盖目标区域
-      const scale = Math.max(destW / sw, destH / sh);
-      const srcW = Math.round(destW / scale);
-      const srcH = Math.round(destH / scale);
-      const srcX = Math.floor((sw - srcW) / 2);
-      const srcY = Math.floor((sh - srcH) / 2);
+      let destX = x;
+      let destY = section.y;
+      let destW = width;
+      let destH = section.height;
 
-      // 背景
+      // 如果需要保持原始比例，重新计算显示区域
+      if (preserveOriginalRatio && sw > 0 && sh > 0) {
+        const imageAspectRatio = sh / sw; // height / width
+        const containerAspectRatio = destH / destW;
+
+        if (imageAspectRatio < containerAspectRatio) {
+          // 图片比较宽，按宽度适应
+          destH = Math.round(destW * imageAspectRatio);
+          destY = section.y + Math.round((section.height - destH) / 2); // 垂直居中
+        } else {
+          // 图片比较高，按高度适应
+          destW = Math.round(destH / imageAspectRatio);
+          destX = x + Math.round((width - destW) / 2); // 水平居中
+        }
+      }
+
+      // 背景（使用原始section区域）
       ctx.fillStyle = '#f8fafc';
-      this.roundRect(ctx, destX, destY, destW, destH, radius);
+      this.roundRect(ctx, x, section.y, width, section.height, radius);
       ctx.fill();
 
-      // 图片
+      // 图片（使用计算后的区域）
       ctx.save();
       this.roundRect(ctx, destX, destY, destW, destH, radius);
       ctx.clip();
-      ctx.drawImage(img, srcX, srcY, srcW, srcH, destX, destY, destW, destH);
+
+      if (preserveOriginalRatio) {
+        // 保持原始比例，使用 contain 模式（显示完整图片）
+        ctx.drawImage(img, 0, 0, sw, sh, destX, destY, destW, destH);
+      } else {
+        // 使用 cover 模式（填满容器，可能裁剪）
+        const scale = Math.max(destW / sw, destH / sh);
+        const srcW = Math.round(destW / scale);
+        const srcH = Math.round(destH / scale);
+        const srcX = Math.floor((sw - srcW) / 2);
+        const srcY = Math.floor((sh - srcH) / 2);
+        ctx.drawImage(img, srcX, srcY, srcW, srcH, destX, destY, destW, destH);
+      }
+      
       ctx.restore();
 
-      // 微妙的内阴影
+      // 微妙的内阴影（仅在实际图片区域）
       ctx.save();
       ctx.globalCompositeOperation = 'multiply';
       ctx.fillStyle = 'rgba(0, 0, 0, 0.02)';
