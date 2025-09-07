@@ -1,3 +1,4 @@
+/// <reference path="../../shared/types/env.d.ts" />
 /**
  * 应用初始化工具
  */

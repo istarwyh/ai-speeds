@@ -1,4 +1,11 @@
+/// <reference path="../types/env.d.ts" />
 import type { BaseContentCard } from '../types/ContentCard';
+import { StyleManager } from './share/StyleManager';
+import { CanvasRenderer, type RenderContext } from './share/CanvasRenderer';
+import { LayoutCalculator, type CanvasSize, type ImageDisplayInfo } from './share/LayoutCalculator';
+import { ImageManager } from './share/ImageManager';
+import { LayoutService } from './share/LayoutService';
+import { CompactRenderer } from './share/CompactRenderer';
 
 export type ShareResult = { method: 'clipboard' | 'download'; ok: boolean };
 
@@ -10,16 +17,24 @@ export type ShareServiceOptions<T extends BaseContentCard = BaseContentCard> = {
 };
 
 export class ShareService<T extends BaseContentCard = BaseContentCard> {
-  // Default poster size; actual canvas may be computed per-card
-  private readonly defaultWidth = 1080;
-  private readonly defaultHeight = 1440;
-  private readonly padding = 72; // 72px ~ 1in logical at 96dpi
+  private styleManager: StyleManager;
+  private canvasRenderer: CanvasRenderer;
+  private layoutCalculator: LayoutCalculator;
+  private imageManager: ImageManager;
+  private layoutService: LayoutService;
+  private compactRenderer: CompactRenderer;
   private readonly getIcon: (category: string) => string;
   private readonly options: ShareServiceOptions<T>;
 
   constructor(getIcon: (category: string) => string, options: ShareServiceOptions<T> = {}) {
     this.getIcon = getIcon;
     this.options = options;
+    this.styleManager = new StyleManager();
+    this.canvasRenderer = new CanvasRenderer();
+    this.layoutCalculator = new LayoutCalculator();
+    this.imageManager = new ImageManager();
+    this.layoutService = new LayoutService();
+    this.compactRenderer = new CompactRenderer();
   }
 
   public async shareCard(card: T): Promise<ShareResult> {
@@ -56,12 +71,17 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
 
   // Open a preview modal to let users confirm and choose action
   public async openPreview(card: T, opts?: { matchElement?: HTMLElement }): Promise<void> {
-    const size = this.computeCanvasSize(opts?.matchElement);
-    
-    // 分析页面中图片的实际显示情况
-    const pageImageInfo = this.analyzePageImageDisplay(opts?.matchElement, (card as any).imageUrl);
-    
-    const canvas = await this.renderCanvas(card, size, pageImageInfo);
+    // Analyze page image display for consistent rendering
+    const pageImageInfo = this.layoutCalculator.analyzePageImageDisplay(opts?.matchElement, (card as any).imageUrl);
+
+    // Calculate optimal canvas size based on page element
+    const baseSize = this.layoutCalculator.computeCanvasSize(opts?.matchElement);
+
+    // Measure content height to ensure no clipping
+    const measuredHeight = await this.layoutCalculator.measureContentHeight(card, baseSize.width, pageImageInfo, this.getIcon);
+    const finalSize = { width: baseSize.width, height: Math.max(baseSize.height, measuredHeight) };
+
+    const canvas = await this.renderCanvas(card, finalSize, pageImageInfo);
     const blob = await new Promise<Blob>((resolve) =>
       canvas.toBlob((b) => resolve(b as Blob), 'image/png', 0.95)
     );
@@ -85,9 +105,18 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
 
     const body = document.createElement('div');
     body.className = 'share-preview-body';
-    // Use the canvas directly for crisp preview (1080x1440); scale via CSS
+    // Use the canvas directly for crisp preview; scale to match on-page card CSS width
     const previewWrapper = document.createElement('div');
     previewWrapper.className = 'share-preview-canvas-wrap';
+    // Set canvas CSS width to the on-page card width (or sensible fallback), keep height auto
+    try {
+      const rect = opts?.matchElement?.getBoundingClientRect();
+      const dpr = Math.max(2, Math.ceil((window as any).devicePixelRatio || 2));
+      const desiredCssWidth = rect ? Math.round(rect.width) : Math.round(finalSize.width / dpr);
+      const cssWidth = Math.min(720, desiredCssWidth); // do not exceed modal's intended preview width
+      canvas.style.width = `${cssWidth}px`;
+      canvas.style.height = 'auto';
+    } catch {}
     previewWrapper.appendChild(canvas);
     body.appendChild(previewWrapper);
 
@@ -187,228 +216,23 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
 
   private async renderCanvas(
     card: T,
-    size?: { width: number; height: number },
-    pageImageInfo?: { pageImageAspect?: number; pageImageWidth?: number; pageImageHeight?: number }
+    size?: CanvasSize,
+    pageImageInfo?: ImageDisplayInfo
   ): Promise<HTMLCanvasElement> {
     const canvas = document.createElement('canvas');
-    const width = size?.width ?? this.defaultWidth;
-    const height = size?.height ?? this.defaultHeight;
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d')!;
+    const finalSize = size ?? this.layoutCalculator.defaultCanvasSize;
+    canvas.width = finalSize.width;
+    canvas.height = finalSize.height;
 
     // Ensure fonts loaded for consistent rendering
     try { await (document as any).fonts?.ready; } catch {}
 
-    // Background
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, width, height);
-
-    // Header bar subtle gradient
-    const headerH = 160;
-    const grad = ctx.createLinearGradient(0, 0, width, 0);
-    grad.addColorStop(0, '#eff6ff');
-    grad.addColorStop(1, '#f8fafc');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, width, headerH);
-
-    let y = this.padding;
-
-    // Category icon (emoji) circle
-    const icon = this.getIcon(card.category) || '📋';
-    const iconR = 44;
-    const iconCx = this.padding + iconR;
-    const iconCy = y + iconR;
-    ctx.fillStyle = '#e5f2ff';
-    this.roundRect(ctx, iconCx - iconR, iconCy - iconR, iconR * 2, iconR * 2, 24);
-    ctx.fill();
-    ctx.font = '48px system-ui, -apple-system, Segoe UI, Roboto';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillStyle = '#111827';
-    ctx.fillText(icon, iconCx, iconCy + 2);
-
-    // Title
-    const titleX = iconCx + iconR + 24;
-    const titleMaxWidth = width - titleX - this.padding;
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = '#0f172a';
-    ctx.font = 'bold 48px ui-sans-serif, -apple-system, system-ui, Segoe UI, Roboto';
-    y += 8; // slight alignment tweak
-    y = this.wrapText(ctx, card.title || '', titleX, y + 24, titleMaxWidth, 56, 2);
-
-    // Meta: difficulty and read time
-    ctx.font = '28px ui-sans-serif, -apple-system, system-ui';
-    ctx.fillStyle = '#475569';
-    const metaParts: string[] = [];
-    if ((card as any).difficulty) metaParts.push(this.mapDifficulty((card as any).difficulty));
-    if (card.readTime) metaParts.push(`📖 ${card.readTime}`);
-    if (metaParts.length) {
-      y += 8;
-      ctx.fillText(metaParts.join('  ·  '), titleX, y + 24);
-      y += 48;
-    } else {
-      y += 40;
-    }
-
-    // Overview/Description
-    const bodyX = this.padding;
-    const bodyMaxWidth = width - this.padding * 2;
-    ctx.font = '32px ui-sans-serif, -apple-system, system-ui';
-    ctx.fillStyle = '#111827';
-    if ((card as any).description) {
-      y = this.wrapText(ctx, (card as any).description, bodyX, y + 24, bodyMaxWidth, 44, 3);
-    } else if ((card as any).overview) {
-      y = this.wrapText(ctx, (card as any).overview, bodyX, y + 24, bodyMaxWidth, 44, 3);
-    }
-
-    // Cover Image (if provided)
-    if ((card as any).imageUrl) {
-      y += 12;
-      const coverMaxW = width - this.padding * 2;
-      // Load image with CORS handled; fallback to placeholder on failure
-      const coverImg = await this.loadImage((card as any).imageUrl).catch(() => null);
-      const radius = 16;
-      const coverY = y;
-      if (coverImg) {
-        const naturalRatio = coverImg.naturalHeight / coverImg.naturalWidth;
-        
-        // 优先使用页面显示的比例信息，确保一致性
-        const targetRatio = pageImageInfo?.pageImageAspect ?? naturalRatio;
-        
-        // 智能图片类型分析
-        const imageAnalysis = this.analyzeImageType(targetRatio, coverImg.naturalWidth, coverImg.naturalHeight);
-        
-        // 智能比例控制 - 基于图片类型和页面一致性
-        let coverW = coverMaxW;
-        let coverH = Math.round(coverW * targetRatio);
-        
-        // 基于图片类型的动态限制策略
-        const dynamicMaxH = Math.round(coverMaxW * imageAnalysis.maxHeightFactor);
-        const spaceBasedMaxH = Math.round((height - y - this.padding - 300) * 0.6);
-        const finalMaxH = Math.min(dynamicMaxH, spaceBasedMaxH);
-        
-        // 应用智能适配策略
-        if (imageAnalysis.strategy === 'constrain-height' && coverH > finalMaxH) {
-          const originalH = coverH;
-          coverH = finalMaxH;
-          coverW = Math.round(coverH / targetRatio);
-          
-          // 开发环境记录智能适配信息
-          if (process.env.NODE_ENV === 'development') {
-            console.debug(`Smart image adaptation applied:`, {
-              cardId: (card as any).id,
-              imageType: imageAnalysis.type,
-              strategy: imageAnalysis.strategy,
-              description: imageAnalysis.description,
-              targetRatio: targetRatio.toFixed(2),
-              originalSize: `${coverMaxW}x${originalH}`,
-              adaptedSize: `${coverW}x${coverH}`,
-              source: pageImageInfo?.pageImageAspect ? 'page-display' : 'natural-image'
-            });
-          }
-        } else {
-          // 保持原始比例 - 按图片类型策略
-          if (process.env.NODE_ENV === 'development') {
-            console.debug(`Image ratio preserved by smart analysis:`, {
-              cardId: (card as any).id,
-              imageType: imageAnalysis.type,
-              strategy: imageAnalysis.strategy,
-              description: imageAnalysis.description,
-              ratio: targetRatio.toFixed(2),
-              size: `${coverW}x${coverH}`,
-              source: pageImageInfo?.pageImageAspect ? 'page-display' : 'natural-image',
-              consistentWithPage: !!pageImageInfo?.pageImageAspect
-            });
-          }
-        }
-        
-        ctx.fillStyle = '#f8fafc';
-        this.roundRect(ctx, this.padding, coverY, coverW, coverH, radius);
-        ctx.fill();
-        ctx.save();
-        // clip to rounded rect
-        this.roundRect(ctx, this.padding, coverY, coverW, coverH, radius);
-        ctx.clip();
-        ctx.drawImage(coverImg, this.padding, coverY, coverW, coverH);
-        ctx.restore();
-        y += coverH + 12;
-      } else {
-        const placeholderH = 220;
-        ctx.fillStyle = '#f1f5f9';
-        this.roundRect(ctx, this.padding, coverY, coverMaxW, placeholderH, radius);
-        ctx.fill();
-        ctx.font = '28px ui-sans-serif, -apple-system, system-ui';
-        ctx.fillStyle = '#94a3b8';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('封面图', this.padding + coverMaxW / 2, coverY + placeholderH / 2);
-        y += placeholderH + 12;
-      }
-    }
-
-    // Tips (up to 2)
-    const tips = (card.tips || []).slice(0, 2);
-    if (tips.length) {
-      y += 24;
-      tips.forEach((tip) => {
-        y = this.renderTip(ctx, tip.title + '：' + tip.content, bodyX, y, bodyMaxWidth);
-        y += 16;
-      });
-    }
-
-    // Tags (up to 3)
-    const tags = (card.tags || []).slice(0, 3);
-    if (tags.length) {
-      y += 16;
-      this.renderTags(ctx, tags, bodyX, y);
-      y += 56;
-    }
-
-    // QR code area (render live QR if possible; fallback to placeholder)
-    const qrSize = 220;
-    const qrX = width - this.padding - qrSize;
-    const qrY = height - this.padding - qrSize;
-    await this.drawQrOrPlaceholder(ctx, card, qrX, qrY, qrSize);
-
-    // Branding watermark
-    ctx.save();
-    ctx.globalAlpha = 0.85;
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'alphabetic';
-    ctx.font = 'bold 28px ui-sans-serif, -apple-system, system-ui';
-    ctx.fillStyle = '#0f172a';
-    ctx.fillText('aispeeds.me', this.padding, height - this.padding / 2);
-    ctx.restore();
+    // Use the new CompactRenderer for improved layout
+    await this.compactRenderer.renderCard(card, canvas, this.getIcon, pageImageInfo);
 
     return canvas;
   }
 
-  private computeCanvasSize(matchEl?: HTMLElement): { width: number; height: number } {
-    // If we can read the card element, approximate its aspect ratio to make the
-    // shared image visually consistent with the on-page card.
-    try {
-      if (matchEl) {
-        const rect = matchEl.getBoundingClientRect();
-        if (rect.width > 0 && rect.height > 0) {
-          const aspect = rect.height / rect.width;
-          const width = this.defaultWidth; // keep high-res width for crispness
-          // Ensure a reasonable minimum height to fit content and QR watermark
-          const minH = Math.max(1200, Math.round(width * 0.9));
-          const height = Math.max(minH, Math.round(width * aspect));
-          
-          // 开发环境下记录页面元素尺寸信息
-          if (process.env.NODE_ENV === 'development') {
-            console.debug(`Canvas size based on page element: ${width}x${height} (aspect: ${aspect.toFixed(2)}) from page rect: ${rect.width.toFixed(1)}x${rect.height.toFixed(1)}`);
-          }
-          
-          return { width, height };
-        }
-      }
-    } catch {}
-    return { width: this.defaultWidth, height: this.defaultHeight };
-  }
 
   // 分析页面中图片的实际显示尺寸和比例
   private analyzePageImageDisplay(matchEl?: HTMLElement, imageUrl?: string): {
@@ -426,86 +250,40 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
         const rect = imgEl.getBoundingClientRect();
         const pageImageAspect = rect.height / rect.width;
         
-        if (process.env.NODE_ENV === 'development') {
-          console.debug(`Page image display analysis:`, {
-            naturalSize: `${imgEl.naturalWidth}x${imgEl.naturalHeight}`,
-            displaySize: `${rect.width.toFixed(1)}x${rect.height.toFixed(1)}`,
-            pageAspect: pageImageAspect.toFixed(3),
-            naturalAspect: (imgEl.naturalHeight / imgEl.naturalWidth).toFixed(3)
-          });
+        // 确保获取的是有效的显示尺寸
+        if (rect.width > 0 && rect.height > 0) {
+          if (process.env.NODE_ENV === 'development') {
+            console.debug(`Page image display analysis:`, {
+              naturalSize: `${imgEl.naturalWidth}x${imgEl.naturalHeight}`,
+              displaySize: `${rect.width.toFixed(1)}x${rect.height.toFixed(1)}`,
+              pageAspect: pageImageAspect.toFixed(3),
+              naturalAspect: (imgEl.naturalHeight / imgEl.naturalWidth).toFixed(3),
+              cssStyle: `height: ${getComputedStyle(imgEl).height}, object-fit: ${getComputedStyle(imgEl).objectFit}`
+            });
+          }
+          
+          return {
+            pageImageAspect,
+            pageImageWidth: rect.width,
+            pageImageHeight: rect.height
+          };
         }
-        
-        return {
-          pageImageAspect,
-          pageImageWidth: rect.width,
-          pageImageHeight: rect.height
-        };
       }
+      
+      // 如果图片还没有加载完成，等待一下再尝试
+      if (imgEl && !imgEl.complete) {
+        if (process.env.NODE_ENV === 'development') {
+          console.debug('Image not fully loaded, analysis may be incomplete');
+        }
+      }
+      
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
-        console.warn('Failed to analyze page image display:', error);
+        console.error('Failed to analyze page image display:', error);
       }
     }
     
     return {};
-  }
-
-  // 智能图片类型分析和适配策略
-  private analyzeImageType(ratio: number, width: number, height: number): {
-    type: 'square' | 'landscape' | 'portrait' | 'banner' | 'tall';
-    strategy: 'preserve' | 'constrain-height' | 'optimize-space';
-    maxHeightFactor: number;
-    description: string;
-  } {
-    // 根据比例和尺寸特征智能分类图片类型
-    if (ratio >= 0.9 && ratio <= 1.1) {
-      return {
-        type: 'square',
-        strategy: 'preserve',
-        maxHeightFactor: 1.0,
-        description: '正方形图片 - 保持原始比例'
-      };
-    } else if (ratio < 0.9) {
-      if (ratio < 0.5) {
-        return {
-          type: 'banner',
-          strategy: 'preserve',
-          maxHeightFactor: 0.8,
-          description: '横幅图片 - 保持比例，适度限制高度'
-        };
-      }
-      return {
-        type: 'landscape',
-        strategy: 'preserve',
-        maxHeightFactor: 0.9,
-        description: '横向图片 - 完全保持比例'
-      };
-    } else {
-      if (ratio > 2.0) {
-        return {
-          type: 'tall',
-          strategy: 'constrain-height',
-          maxHeightFactor: 1.2,
-          description: '超高图片 - 限制高度以保持布局平衡'
-        };
-      }
-      return {
-        type: 'portrait',
-        strategy: ratio > 1.5 ? 'constrain-height' : 'preserve',
-        maxHeightFactor: ratio > 1.5 ? 1.1 : 1.0,
-        description: ratio > 1.5 ? '高图片 - 轻度限制高度' : '纵向图片 - 保持比例'
-      };
-    }
-    
-    /*
-     * 测试用例覆盖：
-     * - 正方形图片 (1:1, ratio ≈ 1.0): 完全保持比例
-     * - 横向图片 (16:9, ratio ≈ 0.56): 保持比例，轻度限制
-     * - 横幅图片 (3:1, ratio ≈ 0.33): 保持比例，适度限制
-     * - 纵向图片 (4:3, ratio ≈ 1.33): 保持比例
-     * - 高图片 (3:4, ratio ≈ 1.6): 轻度高度限制
-     * - 超高图片 (9:16, ratio ≈ 2.4): 明显高度限制
-     */
   }
 
   private async loadImage(url: string): Promise<HTMLImageElement> {
@@ -544,182 +322,6 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
     } catch {
       return window.location.href;
     }
-  }
-
-  private async drawQrOrPlaceholder(
-    ctx: CanvasRenderingContext2D,
-    card: T,
-    x: number,
-    y: number,
-    size: number
-  ): Promise<void> {
-    // Container border
-    ctx.strokeStyle = '#cbd5e1';
-    ctx.lineWidth = 3;
-    this.roundRect(ctx, x, y, size, size, 16);
-    ctx.stroke();
-
-    const deepLink = this.buildDeepLink(card);
-    const img = await this.loadQrImage(deepLink, size).catch(() => null);
-    if (!img) {
-      // Fallback placeholder
-      ctx.font = '24px ui-sans-serif, -apple-system, system-ui';
-      ctx.fillStyle = '#64748b';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('QR 预留', x + size / 2, y + size / 2);
-      return;
-    }
-
-    // Draw a white bg then QR image with padding
-    const pad = 10;
-    ctx.fillStyle = '#ffffff';
-    this.roundRect(ctx, x + 2, y + 2, size - 4, size - 4, 12);
-    ctx.fill();
-    ctx.drawImage(img, x + pad, y + pad, size - pad * 2, size - pad * 2);
-  }
-
-  private async loadQrImage(data: string, size: number): Promise<HTMLImageElement> {
-    // Use a CORS-enabled QR API to avoid canvas tainting
-    const url = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(
-      data
-    )}`;
-    await new Promise<void>((resolve) => setTimeout(resolve, 0)); // yield
-    return new Promise<HTMLImageElement>((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => resolve(img);
-      img.onerror = () => reject(new Error('QR load failed'));
-      img.src = url;
-    });
-  }
-
-  private renderTip(
-    ctx: CanvasRenderingContext2D,
-    text: string,
-    x: number,
-    y: number,
-    maxWidth: number
-  ): number {
-    // background
-    const lineH = 40;
-    const padding = 16;
-    const lines = this.splitLines(ctx, text, maxWidth - padding * 2);
-    const boxH = lines.length * lineH + padding * 2;
-    ctx.fillStyle = 'rgba(6, 182, 212, 0.08)';
-    this.roundRect(ctx, x, y, maxWidth, boxH, 12);
-    ctx.fill();
-
-    // left bar
-    ctx.fillStyle = '#06b6d4';
-    ctx.fillRect(x, y, 6, boxH);
-
-    // text
-    ctx.fillStyle = '#0f172a';
-    ctx.font = '28px ui-sans-serif, -apple-system, system-ui';
-    let ty = y + padding + 28;
-    lines.forEach((line) => {
-      ctx.fillText(line, x + padding + 10, ty);
-      ty += lineH;
-    });
-    return y + boxH;
-  }
-
-  private renderTags(
-    ctx: CanvasRenderingContext2D,
-    tags: string[],
-    x: number,
-    y: number
-  ) {
-    ctx.font = '26px ui-sans-serif, -apple-system, system-ui';
-    let cx = x;
-    const py = y;
-    tags.forEach((tag) => {
-      const paddingX = 18;
-      const paddingY = 10;
-      const w = ctx.measureText(tag).width + paddingX * 2;
-      const h = 40;
-      ctx.fillStyle = '#f1f5f9';
-      this.roundRect(ctx, cx, py - h + paddingY, w, h, 20);
-      ctx.fill();
-      ctx.fillStyle = '#475569';
-      ctx.fillText(tag, cx + paddingX, py - 12);
-      cx += w + 12;
-    });
-  }
-
-  private mapDifficulty(d: string): string {
-    switch (d) {
-      case 'beginner': return '入门';
-      case 'intermediate': return '进阶';
-      case 'expert': return '专家';
-      default: return d;
-    }
-  }
-
-  private wrapText(
-    ctx: CanvasRenderingContext2D,
-    text: string,
-    x: number,
-    y: number,
-    maxWidth: number,
-    lineHeight: number,
-    maxLines: number
-  ): number {
-    const lines = this.splitLines(ctx, text, maxWidth, maxLines);
-    lines.forEach((line, i) => {
-      ctx.fillText(line, x, y + i * lineHeight);
-    });
-    return y + Math.min(lines.length, maxLines) * lineHeight;
-  }
-
-  private splitLines(
-    ctx: CanvasRenderingContext2D,
-    text: string,
-    maxWidth: number,
-    maxLines?: number
-  ): string[] {
-    const words = text.split(/\s+/);
-    const lines: string[] = [];
-    let current = '';
-
-    for (let i = 0; i < words.length; i++) {
-      const test = current ? `${current} ${words[i]}` : words[i];
-      if (ctx.measureText(test).width <= maxWidth) {
-        current = test;
-      } else {
-        if (current) lines.push(current);
-        current = words[i];
-        if (maxLines && lines.length >= maxLines - 1) {
-          // truncate
-          while (ctx.measureText(current + '…').width > maxWidth && current.length > 0) {
-            current = current.slice(0, -1);
-          }
-          current = current + '…';
-          break;
-        }
-      }
-    }
-    if (current) lines.push(current);
-    return lines;
-  }
-
-  private roundRect(
-    ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    r: number
-  ) {
-    const radius = Math.min(r, w / 2, h / 2);
-    ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.arcTo(x + w, y, x + w, y + h, radius);
-    ctx.arcTo(x + w, y + h, x, y + h, radius);
-    ctx.arcTo(x, y + h, x, y, radius);
-    ctx.arcTo(x, y, x + w, y, radius);
-    ctx.closePath();
   }
 
   private toast(message: string) {

@@ -64,6 +64,9 @@ async function buildModule(config) {
 
   console.log(`📦 打包${description}模块...`);
   
+  // 根据 Node 进程环境决定构建模式（默认 production）
+  const nodeEnv = process.env.NODE_ENV === 'development' ? 'development' : 'production';
+
   // 构建 esbuild 配置
   const buildConfig = {
     entryPoints: [entryPoint],
@@ -71,11 +74,11 @@ async function buildModule(config) {
     format: 'iife',
     globalName,
     target: 'es2020',
-    minify: process.env.NODE_ENV === 'production',
+    minify: nodeEnv === 'production',
     write: false,
     platform: 'browser',
     define: {
-      'process.env.NODE_ENV': '"production"'
+      'process.env.NODE_ENV': JSON.stringify(nodeEnv)
     }
   };
 

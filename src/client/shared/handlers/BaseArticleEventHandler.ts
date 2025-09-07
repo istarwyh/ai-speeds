@@ -1,3 +1,4 @@
+/// <reference path="../types/env.d.ts" />
 import { injectMarkdownStyles } from '../../bestPractices/styles/markdownStyles';
 import { SafeMarkdownRenderer } from '../../../../shared/utils/markdownRenderer';
 import type { BaseContentCard } from '../types/ContentCard';

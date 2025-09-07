@@ -1,3 +1,4 @@
+/// <reference path="../types/env.d.ts" />
 import type { BaseContentCard } from '../types/ContentCard';
 
 export interface Article {

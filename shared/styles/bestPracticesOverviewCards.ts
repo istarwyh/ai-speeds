@@ -418,7 +418,7 @@ export const bestPracticesOverviewCardStyles = `
     width: min(720px, 100%);
     height: auto;
     max-height: 70vh;
-    border-radius: 12px;
+    border-radius: 16px; /* match card container radius */
     border: 1px solid var(--bp-border-color);
     box-shadow: 0 10px 24px rgba(0,0,0,0.12);
     background: #fff;
