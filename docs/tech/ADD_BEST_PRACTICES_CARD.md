@@ -56,13 +56,13 @@ src/client/bestPractices/content/software-engineering-with-claude.md
   difficulty: 'intermediate',
   readTime: '10 分钟',
   imageUrl: 'https://example.com/cover.jpeg',
-  tags: ['KISS', 'YAGNI', 'DRY', 'SOLID', 'Brief'],
+  tags: ['KISS', 'YAGNI', 'DRY', 'SOLID', 'BRIEF'],
   tips: [
     { type: 'info', title: '流程先行', content: '先定义数据与边界，再写代码' },
     { type: 'success', title: '减复杂', content: '消除特殊分支，代码自然变短' }
   ],
   sections: [
-    { title: 'Brief', content: '函数短小、参数精简、纯函数优先', type: 'text' },
+    { title: 'BRIEF', content: '函数短小、参数精简、纯函数优先', type: 'text' },
     { title: 'KISS', content: '能直不绕，优先简单方案', type: 'text' },
     { title: 'YAGNI', content: '不为未来的假想需求提前设计', type: 'text' },
     { title: 'DRY', content: '消除重复，抽象在恰当层次', type: 'text' },

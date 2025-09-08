@@ -439,6 +439,32 @@ export const markdownStyles = `
   border-bottom-color: #3b82f6;
 }
 
+/* 图片样式 */
+.markdown-content img,
+.markdown-content img.markdown-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  background: var(--bg-secondary, #f9fafb);
+}
+
+.markdown-content img[loading="lazy"] {
+  filter: blur(0);
+}
+
+.markdown-content .md-image-blocked {
+  display: inline-block;
+  padding: 6px 8px;
+  font-size: 0.9em;
+  color: var(--error, #dc2626);
+  background: var(--bg-error-light, #fef2f2);
+  border: 1px solid var(--border-error, #fecaca);
+  border-radius: 6px;
+}
+
 /* 引用块样式 */
 .markdown-content blockquote {
   border-left: 4px solid #e5e7eb;

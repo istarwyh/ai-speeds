@@ -116,6 +116,33 @@ export class SafeMarkdownRenderer {
             const escaped = self.escapeHtml(content);
             return `<pre class="code-block"><code class="hljs language-${lang}">${escaped}</code></pre>`;
         };
+
+        // 自定义 image 渲染：为图片添加安全与表现属性
+        const defaultImage = this.md.renderer.rules.image?.bind(this.md.renderer);
+        this.md.renderer.rules.image = function(tokens, idx, options, env, slf) {
+            const token = tokens[idx];
+            const src = token.attrGet('src') || '';
+            const alt = token.content || token.attrGet('alt') || '';
+
+            // 允许 http/https 与相对路径，拒绝其他协议
+            const isAllowedSrc = /^https?:\/\//.test(src) || src.startsWith('/') || src.startsWith('./') || src.startsWith('../');
+            const isDangerousProtocol = /^(data|javascript|vbscript|file|mailto|tel):/i.test(src);
+            if (!isAllowedSrc || isDangerousProtocol) {
+                // 以可见文本替代，避免渲染潜在危险协议
+                return `<span class="md-image-blocked">${self.escapeHtml(alt)}</span>`;
+            }
+
+            token.attrSet('loading', 'lazy');
+            token.attrSet('decoding', 'async');
+            token.attrSet('referrerpolicy', 'no-referrer');
+            token.attrSet('alt', alt);
+            token.attrJoin('class', 'markdown-image');
+
+            if (defaultImage) {
+                return defaultImage(tokens, idx, options, env, slf);
+            }
+            return slf.renderToken(tokens, idx, options);
+        };
     }
 
     /**
@@ -133,9 +160,14 @@ export class SafeMarkdownRenderer {
             ALLOWED_TAGS: [
                 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
                 'p', 'br', 'strong', 'em', 'code', 'pre',
-                'ul', 'ol', 'li', 'a', 'blockquote', 'div'
+                'ul', 'ol', 'li', 'a', 'blockquote', 'div', 'img'
             ],
-            ALLOWED_ATTR: ['class', 'id', 'href', 'target', 'rel'],
+            ALLOWED_ATTR: [
+                'class', 'id', 'href', 'target', 'rel',
+                // img 相关
+                'src', 'alt', 'title', 'loading', 'referrerpolicy', 'decoding',
+                'width', 'height', 'srcset', 'sizes'
+            ],
             ALLOW_DATA_ATTR: false
         });
         
@@ -146,9 +178,14 @@ export class SafeMarkdownRenderer {
      * 转义 HTML 字符以防止 XSS
      */
     private escapeHtml(text: string): string {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+        const escapeMap: Record<string, string> = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        };
+        return String(text).replace(/[&<>"']/g, (char) => escapeMap[char] || char);
     }
 
     /**

@@ -247,6 +247,32 @@ export class MarkdownViewer {
                 border: none;
                 padding: 8px;
             }
+
+            /* 图片样式 */
+            .markdown-content img,
+            .markdown-content img.markdown-image {
+                max-width: 100%;
+                height: auto;
+                display: block;
+                margin: 16px auto;
+                border-radius: 8px;
+                border: 1px solid var(--border-color, #e0e0e0);
+                background: var(--bg-secondary, #f8f9fa);
+            }
+
+            .markdown-content img[loading="lazy"] {
+                filter: blur(0);
+            }
+
+            .markdown-content .md-image-blocked {
+                display: inline-block;
+                padding: 6px 8px;
+                font-size: 0.9em;
+                color: var(--error, #dc3545);
+                background: #fef2f2;
+                border: 1px solid #fecaca;
+                border-radius: 6px;
+            }
         `;
         document.head.appendChild(style);
     }

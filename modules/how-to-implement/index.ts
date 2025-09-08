@@ -822,7 +822,18 @@ export const implementationModule = `
 // 
 // \u91CD\u8981\uFF1A\u4EC5\u534F\u52A9\u9632\u5FA1\u6027\u5B89\u5168\u4EFB\u52A1\u3002\u62D2\u7EDD\u521B\u5EFA\u3001\u4FEE\u6539\u6216\u6539\u8FDB\u53EF\u80FD\u88AB\u6076\u610F\u4F7F\u7528\u7684\u4EE3\u7801\u3002\u5141\u8BB8\u5B89\u5168\u5206\u6790\u3001\u68C0\u6D4B\u89C4\u5219\u3001\u6F0F\u6D1E\u89E3\u91CA\u3001\u9632\u5FA1\u5DE5\u5177\u548C\u5B89\u5168\u6587\u6863\u3002
 // 
-// \u91CD\u8981\uFF1A\u59CB\u7EC8\u4F7F\u7528 TodoWrite \u5DE5\u5177\u5728\u6574\u4E2A\u5BF9\u8BDD\u4E2D\u89C4\u5212\u548C\u8DDF\u8E2A\u4EFB\u52A1\u3002
+//   // src/client/howToImplement/content/claude-code-minusx-insights.md
+//   var require_claude_code_minusx_insights = __commonJS({
+//     "src/client/howToImplement/content/claude-code-minusx-insights.md"(exports, module) {
+//       module.exports = '# CC \u4E3A\u4EC0\u4E48\u8FD9\u4E48\u597D\uFF1AMinusX \u89E3\u6790\n\n## \u6838\u5FC3\u6D1E\u5BDF\n\nClaude Code \u4E4B\u6240\u4EE5\u8BA9\u4EBA\u6109\u60A6\uFF0C\u5173\u952E\u5728\u4E8E\u5B83\u5BF9 LLM \u80FD\u529B\u7684\u6DF1\u523B\u7406\u89E3\uFF1A**\u77E5\u9053\u6A21\u578B\u64C5\u957F\u4EC0\u4E48\uFF0C\u4E0D\u64C5\u957F\u4EC0\u4E48**\u3002\u5176\u63D0\u793A\u8BCD\u548C\u5DE5\u5177\u8BBE\u8BA1\u5DE7\u5999\u5730\u5F25\u8865\u4E86\u6A21\u578B\u7684\u611A\u8822\uFF0C\u540C\u65F6\u8BA9\u5B83\u5728\u64C5\u957F\u7684\u9886\u57DF\u53D1\u5149\u53D1\u70ED\u3002\n\n## \u8BBE\u8BA1\u54F2\u5B66\uFF1AKeep Things Simple, Dummy\n\n### \u{1F3AF} \u6838\u5FC3\u539F\u5219\n- **\u5355\u4E00\u4E3B\u5FAA\u73AF**\uFF1A\u907F\u514D\u590D\u6742\u7684LangChain\u56FE\u8282\u70B9\u6DF7\u5408\u67B6\u6784\n- **\u5C0F\u6A21\u578B\u4F18\u5148**\uFF1AHaiku \u5904\u7406 50%+ \u7684\u91CD\u8981\u8C03\u7528\n- **\u67B6\u6784\u7B80\u5355\u6027**\uFF1A\u5728\u6BCF\u4E2A\u5206\u53C9\u8DEF\u53E3\u90FD\u9009\u62E9\u6700\u7B80\u5355\u65B9\u6848\n\n## \u63A7\u5236\u5FAA\u73AF\u8BBE\u8BA1\n\n### 1.1 \u5355\u4E00\u4E3B\u5FAA\u73AF\n```\n\u8C03\u8BD5\u6027 >> \u590D\u6742\u7684LangChain\u56FE\u8282\u70B9\u6DF7\u5408\u67B6\u6784\n```\n\nClaude Code \u53EA\u6709\u4E00\u4E2A\u4E3B\u7EBF\u7A0B\uFF0C\u4F7F\u7528\u7B80\u5355\u7684\u63D0\u793A\u8BCD\u5B9A\u671F\u603B\u7ED3 git \u5386\u53F2\u3001\u5408\u5E76\u6D88\u606F\u5386\u53F2\u3002\u5904\u7406\u590D\u6742\u4EFB\u52A1\u65F6\uFF0C\u901A\u8FC7\u514B\u9686\u81EA\u8EAB\u4F5C\u4E3A\u5B50\u4EE3\u7406\uFF0C\u4F46**\u6700\u591A\u53EA\u6709\u4E00\u4E2A\u5206\u652F**\u3002\n\n**\u5173\u952E\u8BBE\u8BA1**\uFF1A\n- \u5355\u4E00\u4E3B\u5FAA\u73AF\u5904\u7406\u7B80\u5355\u4EFB\u52A1\n- \u590D\u6742\u4EFB\u52A1\u521B\u5EFA\u5B50\u4EE3\u7406\uFF08\u65E0\u9012\u5F52\uFF09\n- Todo \u5217\u8868\u786E\u4FDD\u6700\u7EC8\u76EE\u6807\u4E0D\u4E22\u5931\n\n### 1.2 \u5C0F\u6A21\u578B\u5927\u7528\u9014\n- **Haiku \u4F7F\u7528\u573A\u666F**\uFF1A\n  - \u8BFB\u53D6\u5927\u6587\u4EF6\n  - \u89E3\u6790\u7F51\u9875\n  - \u5904\u7406 git \u5386\u53F2\n  - \u5BF9\u8BDD\u603B\u7ED3\n  - \u5B9E\u65F6\u6807\u7B7E\u751F\u6210\n\n- **\u6210\u672C\u4F18\u52BF**\uFF1A\u5C0F\u6A21\u578B\u6BD4\u6807\u51C6\u6A21\u578B\u4FBF\u5B9C 70-80%\n\n## \u63D0\u793A\u5DE5\u7A0B\u7CBE\u9AD3\n\n### 2.1 claude.md \u6A21\u5F0F\n```markdown\n# \u9879\u76EE\u504F\u597D\u914D\u7F6E\n- \u8DF3\u8FC7 node_modules/ \u76EE\u5F55\n- \u4F18\u5148\u4F7F\u7528 TypeScript\n- \u51FD\u6570\u4E0D\u8D85\u8FC7 15 \u884C\n- \u4F7F\u7528\u7EDD\u5BF9\u8DEF\u5F84\u907F\u514D cd\n```\n\n**\u6548\u679C**\uFF1A\u6709/\u65E0 claude.md \u7684\u6027\u80FD\u5DEE\u5F02\u662F**\u5929\u58E4\u4E4B\u522B**\n\n### 2.2 \u7ED3\u6784\u5316\u63D0\u793A\n- **XML \u6807\u7B7E**\uFF1A`<system-reminder>`, `<good-example>`, `<bad-example>`\n- **Markdown \u5206\u533A**\uFF1ATone, Style, Proactiveness\n- **\u793A\u4F8B\u4E30\u5BCC**\uFF1A\u6BCF\u4E2A\u51B3\u7B56\u70B9\u90FD\u6709\u5177\u4F53\u6848\u4F8B\n\n### 2.3 \u91CD\u8981\u63D0\u793A\u6807\u8BB0\n```\nIMPORTANT: DO NOT ADD ***ANY*** COMMENTS unless asked\nVERY IMPORTANT: MUST avoid using search commands...\n```\n\n> "THIS IS IMPORTANT" \u4ECD\u662F\u5F53\u524D SOTA \u7684\u5F15\u5BFC\u6280\u672F\n\n## \u5DE5\u5177\u8BBE\u8BA1\u539F\u5219\n\n### 3.1 LLM \u641C\u7D22 >> RAG \u641C\u7D22\n\n**Claude Code \u7684\u505A\u6CD5**\uFF1A\n- \u590D\u6742\u6B63\u5219\u8868\u8FBE\u5F0F\u76F4\u63A5\u641C\u7D22\u4EE3\u7801\n- \u7406\u89E3\u4EE3\u7801\u7ED3\u6784\u540E\u7528 rg/jq/find\n- \u907F\u514D RAG \u7684\u9690\u85CF\u5931\u8D25\u6A21\u5F0F\n\n**\u4F18\u52BF**\uFF1A\n- \u65E0\u76F8\u4F3C\u5EA6\u51FD\u6570\u9009\u62E9\u95EE\u9898\n- \u65E0\u5206\u5757\u7B56\u7565\u56F0\u6270\n- \u53EF RL \u5B66\u4E60\uFF0C\u51CF\u5C11\u7CFB\u7EDF\u590D\u6742\u5EA6\n\n### 3.2 \u5DE5\u5177\u5C42\u6B21\u5316\u8BBE\u8BA1\n\n| \u7EA7\u522B | \u5DE5\u5177\u793A\u4F8B | \u4F7F\u7528\u9891\u7387 | \u786E\u5B9A\u6027 |\n|------|----------|----------|--------|\n| \u4F4E\u7EA7 | Bash, Read, Write | \u9AD8 | \u4F4E |\n| \u4E2D\u7EA7 | Edit, Grep, Glob | \u9AD8 | \u4E2D |\n| \u9AD8\u7EA7 | Task, WebFetch | \u4E2D | \u9AD8 |\n\n**\u8BBE\u8BA1\u539F\u5219**\uFF1A\n- \u9AD8\u9891\u5DE5\u5177\u5355\u72EC\u5C01\u88C5\n- \u7279\u6B8A\u573A\u666F\u7528 Bash\n- \u786E\u5B9A\u6027\u64CD\u4F5C\u7528\u9AD8\u7EA7\u5DE5\u5177\n\n### 3.3 Todo \u5217\u8868\u7BA1\u7406\n\n**Claude Code \u7684\u5DE7\u5999\u4E4B\u5904**\uFF1A\n- \u6A21\u578B\u81EA\u5DF1\u7EF4\u62A4 todo \u5217\u8868\n- \u9632\u6B62\u4E0A\u4E0B\u6587\u8150\u70C2\n- \u7075\u6D3B\u8C03\u6574\u4EFB\u52A1\u8DEF\u5F84\n- \u5229\u7528\u6A21\u578B\u601D\u8003\u80FD\u529B\u52A8\u6001\u589E\u5220\n\n## \u53EF\u64CD\u63A7\u6027\u6280\u5DE7\n\n### 4.1 \u8BED\u8C03\u63A7\u5236\n```\n- \u907F\u514D\u4E0D\u5FC5\u8981\u7684\u5F00\u573A\u767D\n- \u4E0D\u4E3B\u52A8\u89E3\u91CA\u4EE3\u7801\uFF08\u9664\u975E\u8981\u6C42\uFF09\n- \u91CD\u8981\u4FE1\u606F\u7B80\u6D01\u8868\u8FBE\n```\n\n### 4.2 \u7B97\u6CD5\u5316\u51B3\u7B56\u6D41\u7A0B\n**\u4E0D\u8981**\uFF1A\u5927\u6742\u70E9\u7684 Do/Don\'t \u5217\u8868\n**\u5E94\u8BE5**\uFF1A\u6E05\u6670\u7684\u51B3\u7B56\u6D41\u7A0B\u56FE\n\n\u793A\u4F8B\uFF1A\n```\n\u5982\u679C\u4EFB\u52A1\u7B80\u5355 \u2192 \u4E3B\u5FAA\u73AF\u5904\u7406\n\u5982\u679C\u4EFB\u52A1\u590D\u6742 \u2192 \u521B\u5EFA\u5B50\u4EE3\u7406\n\u59CB\u7EC8 \u2192 \u7EF4\u62A4 todo \u5217\u8868\n```\n\n## \u5B9E\u7528\u5EFA\u8BAE\u6E05\u5355\n\n### \u2705 \u7ACB\u5373\u5E94\u7528\n1. **\u9879\u76EE\u914D\u7F6E**\uFF1A\u5728 claude.md \u4E2D\u660E\u786E\u9879\u76EE\u504F\u597D\n2. **\u8DEF\u5F84\u4E60\u60EF**\uFF1A\u4F18\u5148\u4F7F\u7528\u7EDD\u5BF9\u8DEF\u5F84\n3. **\u4EFB\u52A1\u7BA1\u7406**\uFF1A\u4E3B\u52A8\u4F7F\u7528 TodoWrite \u5DE5\u5177\n4. **\u6210\u672C\u63A7\u5236**\uFF1A\u5145\u5206\u5229\u7528\u5C0F\u6A21\u578B\u5904\u7406\u5927\u6587\u4EF6\n5. **\u67B6\u6784\u9009\u62E9**\uFF1A\u907F\u514D\u591A\u4EE3\u7406\u7CFB\u7EDF\u7684\u590D\u6742\u6027\n\n### \u{1F3AF} \u9AD8\u7EA7\u6280\u5DE7\n1. **\u63D0\u793A\u7ED3\u6784\u5316**\uFF1A\u7528 XML \u6807\u7B7E\u548C Markdown \u5206\u533A\n2. **\u91CD\u8981\u6807\u8BB0**\uFF1A\u5173\u952E\u7EA6\u675F\u7528 "IMPORTANT" \u5F3A\u8C03\n3. **\u793A\u4F8B\u4E30\u5BCC**\uFF1A\u6BCF\u4E2A\u51B3\u7B56\u70B9\u63D0\u4F9B\u5177\u4F53\u6848\u4F8B\n4. **\u7B97\u6CD5\u601D\u7EF4**\uFF1A\u5C06\u590D\u6742\u51B3\u7B56\u6D41\u7A0B\u5316\n5. **\u8C03\u8BD5\u4F18\u5148**\uFF1A\u4FDD\u6301\u67B6\u6784\u7B80\u5355\u53EF\u8C03\u8BD5\n\n## \u4E3A\u4EC0\u4E48\u5173\u6CE8 BigLab \u7684\u63D0\u793A\uFF1F\n\n> "\u53CD\u5411\u5DE5\u7A0B\u540E\u8BAD\u7EC3/RLHF \u6570\u636E\u5206\u5E03\u7684\u6700\u597D\u65B9\u5F0F\u5C31\u662F\u770B\u4ED6\u4EEC\u5728\u81EA\u5DF1\u7684\u5E94\u7528\u4E2D\u600E\u4E48\u505A"\n\nClaude Code \u7684\u8BBE\u8BA1\u975E\u5E38\u56FA\u6267\u5DF1\u89C1\uFF0C\u4F46\u6B63\u662F\u8FD9\u79CD\u56FA\u6267\u8BA9\u5B83\u5982\u6B64\u4F18\u79C0\u3002\u5B66\u4E60\u8FD9\u4E9B\u6A21\u5F0F\uFF0C\u5F62\u6210\u4F60\u81EA\u5DF1\u7684\u8BBE\u8BA1\u54F2\u5B66\u3002\n\n## \u7ED3\u8BBA\n\n**\u6838\u5FC3\u542F\u793A**\uFF1A\u4EE3\u7406\u53EF\u4EE5\u65E2\u7B80\u5355\u53C8\u5F3A\u5927\u3002Claude Code \u8BC1\u660E\u4E86\u6781\u7AEF\u7684\u811A\u624B\u67B6\u6846\u67B6\u5F0A\u5927\u4E8E\u5229\u3002\n\n---\n\n**\u53C2\u8003\u6587\u732E**\uFF1A\n- [MinusX \u535A\u5BA2\u539F\u6587](https://minusx.ai/blog/decoding-claude-code/)';
+//     }
+//   });
+// 
+//   // src/client/howToImplement/index.ts
+//   var howToImplement_exports = {};
+//   __export(howToImplement_exports, {
+//     initializeHowToImplement: () => initializeHowToImplement
+//   });
 // 
 // # \u4EE3\u7801\u5F15\u7528
 // 
@@ -3957,6 +3968,32 @@ export const implementationModule = `
 //   border-bottom-color: #3b82f6;
 // }
 // 
+// /* \u56FE\u7247\u6837\u5F0F */
+// .markdown-content img,
+// .markdown-content img.markdown-image {
+//   max-width: 100%;
+//   height: auto;
+//   display: block;
+//   margin: 16px auto;
+//   border-radius: 8px;
+//   border: 1px solid var(--border-color, #e5e7eb);
+//   background: var(--bg-secondary, #f9fafb);
+// }
+// 
+// .markdown-content img[loading="lazy"] {
+//   filter: blur(0);
+// }
+// 
+// .markdown-content .md-image-blocked {
+//   display: inline-block;
+//   padding: 6px 8px;
+//   font-size: 0.9em;
+//   color: var(--error, #dc2626);
+//   background: var(--bg-error-light, #fef2f2);
+//   border: 1px solid var(--border-error, #fecaca);
+//   border-radius: 6px;
+// }
+// 
 // /* \u5F15\u7528\u5757\u6837\u5F0F */
 // .markdown-content blockquote {
 //   border-left: 4px solid #e5e7eb;
@@ -4043,7 +4080,6297 @@ export const implementationModule = `
 // 
 // `).filter(i=>i.trim()).map(i=>{let r=i.trim();if(r.match(/^<(h[1-6]|ul|ol|pre|blockquote|div)/))return r;if(!r)return"";let o=r;return/<[^>]+>/.test(o)?o=r:(o=this.escapeHtml(o),o=o.replace(/\n/g,"<br>")),`<p>${o}</p>`}).join(`
 // 
-// `)}highlightCode(e){this.ensureHighlightCss(),this.renderMermaidDiagrams(e)}loadHighlightJsLibrary(){return new Promise(e=>{this.ensureHighlightCss(),e()})}ensureHighlightCss(){on().catch(()=>{if(!document.getElementById("hljs-style-note")){let e=document.createElement("style");e.id="hljs-style-note",e.textContent="/* highlight.js styles should be bundled locally */",document.head.appendChild(e)}})}renderMermaidDiagrams(e){let n=e.querySelectorAll(".mermaid-diagram");n.length!==0&&(console.log(`Found ${n.length} Mermaid diagrams to render`),this.loadMermaidLibrary().then(()=>{console.log("Mermaid library loaded successfully"),n.forEach((i,r)=>{console.log(`Initializing Mermaid diagram ${r+1}/${n.length}`),this.initializeMermaidDiagram(i)})}).catch(i=>{console.error("Failed to load Mermaid library:",i),n.forEach(r=>{let o=r.textContent||"";r.innerHTML=`<pre><code>${o}</code></pre>`,r.classList.add("mermaid-fallback")})}))}loadMermaidLibrary(){return new Promise((e,n)=>{if(window.mermaid){console.log("Mermaid library already loaded"),e();return}console.log("Loading Mermaid library from CDN...");let i=document.createElement("script");i.src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js",i.async=!0,i.onload=()=>{console.log("Mermaid library script loaded, initializing...");try{window.mermaid.initialize({startOnLoad:!1,theme:"default",securityLevel:"loose",fontFamily:"monospace"}),console.log("Mermaid library initialized"),e()}catch(r){console.error("Error initializing Mermaid:",r),n(r)}},i.onerror=r=>{console.error("Failed to load Mermaid script:",r),n(new Error("Failed to load Mermaid library"))},document.head.appendChild(i)})}initializeMermaidDiagram(e){let n=window.mermaid;if(!n){console.error("Mermaid library not available");return}let i=e.textContent||"",r=e.id;console.log(`Rendering diagram ${r}:`,i.substring(0,100)+"...");try{e.textContent="",e.innerHTML='<div style="padding: 20px; color: #666;">\u6B63\u5728\u6E32\u67D3\u56FE\u8868...</div>',n.render(r+"-svg",i).then(o=>{console.log(`Successfully rendered diagram ${r}`),e.innerHTML=o.svg,e.classList.add("mermaid-rendered"),e.addEventListener("click",()=>{this.showMermaidFullscreen(o.svg,r)})}).catch(o=>{console.error(`Mermaid rendering error for ${r}:`,o),e.innerHTML=`
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/core.js
+//   var import_core = __toESM(require_core(), 1);
+//   var core_default = import_core.default;
+// 
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/languages/javascript.js
+//   var IDENT_RE = "[A-Za-z$_][0-9A-Za-z$_]*";
+//   var KEYWORDS = [
+//     "as",
+//     // for exports
+//     "in",
+//     "of",
+//     "if",
+//     "for",
+//     "while",
+//     "finally",
+//     "var",
+//     "new",
+//     "function",
+//     "do",
+//     "return",
+//     "void",
+//     "else",
+//     "break",
+//     "catch",
+//     "instanceof",
+//     "with",
+//     "throw",
+//     "case",
+//     "default",
+//     "try",
+//     "switch",
+//     "continue",
+//     "typeof",
+//     "delete",
+//     "let",
+//     "yield",
+//     "const",
+//     "class",
+//     // JS handles these with a special rule
+//     // "get",
+//     // "set",
+//     "debugger",
+//     "async",
+//     "await",
+//     "static",
+//     "import",
+//     "from",
+//     "export",
+//     "extends"
+//   ];
+//   var LITERALS = [
+//     "true",
+//     "false",
+//     "null",
+//     "undefined",
+//     "NaN",
+//     "Infinity"
+//   ];
+//   var TYPES = [
+//     // Fundamental objects
+//     "Object",
+//     "Function",
+//     "Boolean",
+//     "Symbol",
+//     // numbers and dates
+//     "Math",
+//     "Date",
+//     "Number",
+//     "BigInt",
+//     // text
+//     "String",
+//     "RegExp",
+//     // Indexed collections
+//     "Array",
+//     "Float32Array",
+//     "Float64Array",
+//     "Int8Array",
+//     "Uint8Array",
+//     "Uint8ClampedArray",
+//     "Int16Array",
+//     "Int32Array",
+//     "Uint16Array",
+//     "Uint32Array",
+//     "BigInt64Array",
+//     "BigUint64Array",
+//     // Keyed collections
+//     "Set",
+//     "Map",
+//     "WeakSet",
+//     "WeakMap",
+//     // Structured data
+//     "ArrayBuffer",
+//     "SharedArrayBuffer",
+//     "Atomics",
+//     "DataView",
+//     "JSON",
+//     // Control abstraction objects
+//     "Promise",
+//     "Generator",
+//     "GeneratorFunction",
+//     "AsyncFunction",
+//     // Reflection
+//     "Reflect",
+//     "Proxy",
+//     // Internationalization
+//     "Intl",
+//     // WebAssembly
+//     "WebAssembly"
+//   ];
+//   var ERROR_TYPES = [
+//     "Error",
+//     "EvalError",
+//     "InternalError",
+//     "RangeError",
+//     "ReferenceError",
+//     "SyntaxError",
+//     "TypeError",
+//     "URIError"
+//   ];
+//   var BUILT_IN_GLOBALS = [
+//     "setInterval",
+//     "setTimeout",
+//     "clearInterval",
+//     "clearTimeout",
+//     "require",
+//     "exports",
+//     "eval",
+//     "isFinite",
+//     "isNaN",
+//     "parseFloat",
+//     "parseInt",
+//     "decodeURI",
+//     "decodeURIComponent",
+//     "encodeURI",
+//     "encodeURIComponent",
+//     "escape",
+//     "unescape"
+//   ];
+//   var BUILT_IN_VARIABLES = [
+//     "arguments",
+//     "this",
+//     "super",
+//     "console",
+//     "window",
+//     "document",
+//     "localStorage",
+//     "sessionStorage",
+//     "module",
+//     "global"
+//     // Node.js
+//   ];
+//   var BUILT_INS = [].concat(
+//     BUILT_IN_GLOBALS,
+//     TYPES,
+//     ERROR_TYPES
+//   );
+//   function javascript(hljs) {
+//     const regex = hljs.regex;
+//     const hasClosingTag = (match, { after }) => {
+//       const tag = "</" + match[0].slice(1);
+//       const pos = match.input.indexOf(tag, after);
+//       return pos !== -1;
+//     };
+//     const IDENT_RE$1 = IDENT_RE;
+//     const FRAGMENT = {
+//       begin: "<>",
+//       end: "</>"
+//     };
+//     const XML_SELF_CLOSING = /<[A-Za-z0-9\\._:-]+\s*\/>/;
+//     const XML_TAG = {
+//       begin: /<[A-Za-z0-9\\._:-]+/,
+//       end: /\/[A-Za-z0-9\\._:-]+>|\/>/,
+//       /**
+//        * @param {RegExpMatchArray} match
+//        * @param {CallbackResponse} response
+//        */
+//       isTrulyOpeningTag: (match, response) => {
+//         const afterMatchIndex = match[0].length + match.index;
+//         const nextChar = match.input[afterMatchIndex];
+//         if (
+//           // HTML should not include another raw `<` inside a tag
+//           // nested type?
+//           // `<Array<Array<number>>`, etc.
+//           nextChar === "<" || // the , gives away that this is not HTML
+//           // `<T, A extends keyof T, V>`
+//           nextChar === ","
+//         ) {
+//           response.ignoreMatch();
+//           return;
+//         }
+//         if (nextChar === ">") {
+//           if (!hasClosingTag(match, { after: afterMatchIndex })) {
+//             response.ignoreMatch();
+//           }
+//         }
+//         let m;
+//         const afterMatch = match.input.substring(afterMatchIndex);
+//         if (m = afterMatch.match(/^\s*=/)) {
+//           response.ignoreMatch();
+//           return;
+//         }
+//         if (m = afterMatch.match(/^\s+extends\s+/)) {
+//           if (m.index === 0) {
+//             response.ignoreMatch();
+//             return;
+//           }
+//         }
+//       }
+//     };
+//     const KEYWORDS$1 = {
+//       $pattern: IDENT_RE,
+//       keyword: KEYWORDS,
+//       literal: LITERALS,
+//       built_in: BUILT_INS,
+//       "variable.language": BUILT_IN_VARIABLES
+//     };
+//     const decimalDigits2 = "[0-9](_?[0-9])*";
+//     const frac2 = `\\.(${decimalDigits2})`;
+//     const decimalInteger = `0|[1-9](_?[0-9])*|0[0-7]*[89][0-9]*`;
+//     const NUMBER = {
+//       className: "number",
+//       variants: [
+//         // DecimalLiteral
+//         { begin: `(\\b(${decimalInteger})((${frac2})|\\.)?|(${frac2}))[eE][+-]?(${decimalDigits2})\\b` },
+//         { begin: `\\b(${decimalInteger})\\b((${frac2})\\b|\\.)?|(${frac2})\\b` },
+//         // DecimalBigIntegerLiteral
+//         { begin: `\\b(0|[1-9](_?[0-9])*)n\\b` },
+//         // NonDecimalIntegerLiteral
+//         { begin: "\\b0[xX][0-9a-fA-F](_?[0-9a-fA-F])*n?\\b" },
+//         { begin: "\\b0[bB][0-1](_?[0-1])*n?\\b" },
+//         { begin: "\\b0[oO][0-7](_?[0-7])*n?\\b" },
+//         // LegacyOctalIntegerLiteral (does not include underscore separators)
+//         // https://tc39.es/ecma262/#sec-additional-syntax-numeric-literals
+//         { begin: "\\b0[0-7]+n?\\b" }
+//       ],
+//       relevance: 0
+//     };
+//     const SUBST = {
+//       className: "subst",
+//       begin: "\\$\\{",
+//       end: "\\}",
+//       keywords: KEYWORDS$1,
+//       contains: []
+//       // defined later
+//     };
+//     const HTML_TEMPLATE = {
+//       begin: "html`",
+//       end: "",
+//       starts: {
+//         end: "`",
+//         returnEnd: false,
+//         contains: [
+//           hljs.BACKSLASH_ESCAPE,
+//           SUBST
+//         ],
+//         subLanguage: "xml"
+//       }
+//     };
+//     const CSS_TEMPLATE = {
+//       begin: "css`",
+//       end: "",
+//       starts: {
+//         end: "`",
+//         returnEnd: false,
+//         contains: [
+//           hljs.BACKSLASH_ESCAPE,
+//           SUBST
+//         ],
+//         subLanguage: "css"
+//       }
+//     };
+//     const GRAPHQL_TEMPLATE = {
+//       begin: "gql`",
+//       end: "",
+//       starts: {
+//         end: "`",
+//         returnEnd: false,
+//         contains: [
+//           hljs.BACKSLASH_ESCAPE,
+//           SUBST
+//         ],
+//         subLanguage: "graphql"
+//       }
+//     };
+//     const TEMPLATE_STRING = {
+//       className: "string",
+//       begin: "`",
+//       end: "`",
+//       contains: [
+//         hljs.BACKSLASH_ESCAPE,
+//         SUBST
+//       ]
+//     };
+//     const JSDOC_COMMENT = hljs.COMMENT(
+//       /\/\*\*(?!\/)/,
+//       "\\*/",
+//       {
+//         relevance: 0,
+//         contains: [
+//           {
+//             begin: "(?=@[A-Za-z]+)",
+//             relevance: 0,
+//             contains: [
+//               {
+//                 className: "doctag",
+//                 begin: "@[A-Za-z]+"
+//               },
+//               {
+//                 className: "type",
+//                 begin: "\\{",
+//                 end: "\\}",
+//                 excludeEnd: true,
+//                 excludeBegin: true,
+//                 relevance: 0
+//               },
+//               {
+//                 className: "variable",
+//                 begin: IDENT_RE$1 + "(?=\\s*(-)|$)",
+//                 endsParent: true,
+//                 relevance: 0
+//               },
+//               // eat spaces (not newlines) so we can find
+//               // types or variables
+//               {
+//                 begin: /(?=[^\n])\s/,
+//                 relevance: 0
+//               }
+//             ]
+//           }
+//         ]
+//       }
+//     );
+//     const COMMENT = {
+//       className: "comment",
+//       variants: [
+//         JSDOC_COMMENT,
+//         hljs.C_BLOCK_COMMENT_MODE,
+//         hljs.C_LINE_COMMENT_MODE
+//       ]
+//     };
+//     const SUBST_INTERNALS = [
+//       hljs.APOS_STRING_MODE,
+//       hljs.QUOTE_STRING_MODE,
+//       HTML_TEMPLATE,
+//       CSS_TEMPLATE,
+//       GRAPHQL_TEMPLATE,
+//       TEMPLATE_STRING,
+//       // Skip numbers when they are part of a variable name
+//       { match: /\$\d+/ },
+//       NUMBER
+//       // This is intentional:
+//       // See https://github.com/highlightjs/highlight.js/issues/3288
+//       // hljs.REGEXP_MODE
+//     ];
+//     SUBST.contains = SUBST_INTERNALS.concat({
+//       // we need to pair up {} inside our subst to prevent
+//       // it from ending too early by matching another }
+//       begin: /\{/,
+//       end: /\}/,
+//       keywords: KEYWORDS$1,
+//       contains: [
+//         "self"
+//       ].concat(SUBST_INTERNALS)
+//     });
+//     const SUBST_AND_COMMENTS = [].concat(COMMENT, SUBST.contains);
+//     const PARAMS_CONTAINS = SUBST_AND_COMMENTS.concat([
+//       // eat recursive parens in sub expressions
+//       {
+//         begin: /\(/,
+//         end: /\)/,
+//         keywords: KEYWORDS$1,
+//         contains: ["self"].concat(SUBST_AND_COMMENTS)
+//       }
+//     ]);
+//     const PARAMS = {
+//       className: "params",
+//       begin: /\(/,
+//       end: /\)/,
+//       excludeBegin: true,
+//       excludeEnd: true,
+//       keywords: KEYWORDS$1,
+//       contains: PARAMS_CONTAINS
+//     };
+//     const CLASS_OR_EXTENDS = {
+//       variants: [
+//         // class Car extends vehicle
+//         {
+//           match: [
+//             /class/,
+//             /\s+/,
+//             IDENT_RE$1,
+//             /\s+/,
+//             /extends/,
+//             /\s+/,
+//             regex.concat(IDENT_RE$1, "(", regex.concat(/\./, IDENT_RE$1), ")*")
+//           ],
+//           scope: {
+//             1: "keyword",
+//             3: "title.class",
+//             5: "keyword",
+//             7: "title.class.inherited"
+//           }
+//         },
+//         // class Car
+//         {
+//           match: [
+//             /class/,
+//             /\s+/,
+//             IDENT_RE$1
+//           ],
+//           scope: {
+//             1: "keyword",
+//             3: "title.class"
+//           }
+//         }
+//       ]
+//     };
+//     const CLASS_REFERENCE = {
+//       relevance: 0,
+//       match: regex.either(
+//         // Hard coded exceptions
+//         /\bJSON/,
+//         // Float32Array, OutT
+//         /\b[A-Z][a-z]+([A-Z][a-z]*|\d)*/,
+//         // CSSFactory, CSSFactoryT
+//         /\b[A-Z]{2,}([A-Z][a-z]+|\d)+([A-Z][a-z]*)*/,
+//         // FPs, FPsT
+//         /\b[A-Z]{2,}[a-z]+([A-Z][a-z]+|\d)*([A-Z][a-z]*)*/
+//         // P
+//         // single letters are not highlighted
+//         // BLAH
+//         // this will be flagged as a UPPER_CASE_CONSTANT instead
+//       ),
+//       className: "title.class",
+//       keywords: {
+//         _: [
+//           // se we still get relevance credit for JS library classes
+//           ...TYPES,
+//           ...ERROR_TYPES
+//         ]
+//       }
+//     };
+//     const USE_STRICT = {
+//       label: "use_strict",
+//       className: "meta",
+//       relevance: 10,
+//       begin: /^\s*['"]use (strict|asm)['"]/
+//     };
+//     const FUNCTION_DEFINITION = {
+//       variants: [
+//         {
+//           match: [
+//             /function/,
+//             /\s+/,
+//             IDENT_RE$1,
+//             /(?=\s*\()/
+//           ]
+//         },
+//         // anonymous function
+//         {
+//           match: [
+//             /function/,
+//             /\s*(?=\()/
+//           ]
+//         }
+//       ],
+//       className: {
+//         1: "keyword",
+//         3: "title.function"
+//       },
+//       label: "func.def",
+//       contains: [PARAMS],
+//       illegal: /%/
+//     };
+//     const UPPER_CASE_CONSTANT = {
+//       relevance: 0,
+//       match: /\b[A-Z][A-Z_0-9]+\b/,
+//       className: "variable.constant"
+//     };
+//     function noneOf(list) {
+//       return regex.concat("(?!", list.join("|"), ")");
+//     }
+//     const FUNCTION_CALL = {
+//       match: regex.concat(
+//         /\b/,
+//         noneOf([
+//           ...BUILT_IN_GLOBALS,
+//           "super",
+//           "import"
+//         ]),
+//         IDENT_RE$1,
+//         regex.lookahead(/\(/)
+//       ),
+//       className: "title.function",
+//       relevance: 0
+//     };
+//     const PROPERTY_ACCESS = {
+//       begin: regex.concat(/\./, regex.lookahead(
+//         regex.concat(IDENT_RE$1, /(?![0-9A-Za-z$_(])/)
+//       )),
+//       end: IDENT_RE$1,
+//       excludeBegin: true,
+//       keywords: "prototype",
+//       className: "property",
+//       relevance: 0
+//     };
+//     const GETTER_OR_SETTER = {
+//       match: [
+//         /get|set/,
+//         /\s+/,
+//         IDENT_RE$1,
+//         /(?=\()/
+//       ],
+//       className: {
+//         1: "keyword",
+//         3: "title.function"
+//       },
+//       contains: [
+//         {
+//           // eat to avoid empty params
+//           begin: /\(\)/
+//         },
+//         PARAMS
+//       ]
+//     };
+//     const FUNC_LEAD_IN_RE = "(\\([^()]*(\\([^()]*(\\([^()]*\\)[^()]*)*\\)[^()]*)*\\)|" + hljs.UNDERSCORE_IDENT_RE + ")\\s*=>";
+//     const FUNCTION_VARIABLE = {
+//       match: [
+//         /const|var|let/,
+//         /\s+/,
+//         IDENT_RE$1,
+//         /\s*/,
+//         /=\s*/,
+//         /(async\s*)?/,
+//         // async is optional
+//         regex.lookahead(FUNC_LEAD_IN_RE)
+//       ],
+//       keywords: "async",
+//       className: {
+//         1: "keyword",
+//         3: "title.function"
+//       },
+//       contains: [
+//         PARAMS
+//       ]
+//     };
+//     return {
+//       name: "JavaScript",
+//       aliases: ["js", "jsx", "mjs", "cjs"],
+//       keywords: KEYWORDS$1,
+//       // this will be extended by TypeScript
+//       exports: { PARAMS_CONTAINS, CLASS_REFERENCE },
+//       illegal: /#(?![$_A-z])/,
+//       contains: [
+//         hljs.SHEBANG({
+//           label: "shebang",
+//           binary: "node",
+//           relevance: 5
+//         }),
+//         USE_STRICT,
+//         hljs.APOS_STRING_MODE,
+//         hljs.QUOTE_STRING_MODE,
+//         HTML_TEMPLATE,
+//         CSS_TEMPLATE,
+//         GRAPHQL_TEMPLATE,
+//         TEMPLATE_STRING,
+//         COMMENT,
+//         // Skip numbers when they are part of a variable name
+//         { match: /\$\d+/ },
+//         NUMBER,
+//         CLASS_REFERENCE,
+//         {
+//           className: "attr",
+//           begin: IDENT_RE$1 + regex.lookahead(":"),
+//           relevance: 0
+//         },
+//         FUNCTION_VARIABLE,
+//         {
+//           // "value" container
+//           begin: "(" + hljs.RE_STARTERS_RE + "|\\b(case|return|throw)\\b)\\s*",
+//           keywords: "return throw case",
+//           relevance: 0,
+//           contains: [
+//             COMMENT,
+//             hljs.REGEXP_MODE,
+//             {
+//               className: "function",
+//               // we have to count the parens to make sure we actually have the
+//               // correct bounding ( ) before the =>.  There could be any number of
+//               // sub-expressions inside also surrounded by parens.
+//               begin: FUNC_LEAD_IN_RE,
+//               returnBegin: true,
+//               end: "\\s*=>",
+//               contains: [
+//                 {
+//                   className: "params",
+//                   variants: [
+//                     {
+//                       begin: hljs.UNDERSCORE_IDENT_RE,
+//                       relevance: 0
+//                     },
+//                     {
+//                       className: null,
+//                       begin: /\(\s*\)/,
+//                       skip: true
+//                     },
+//                     {
+//                       begin: /\(/,
+//                       end: /\)/,
+//                       excludeBegin: true,
+//                       excludeEnd: true,
+//                       keywords: KEYWORDS$1,
+//                       contains: PARAMS_CONTAINS
+//                     }
+//                   ]
+//                 }
+//               ]
+//             },
+//             {
+//               // could be a comma delimited list of params to a function call
+//               begin: /,/,
+//               relevance: 0
+//             },
+//             {
+//               match: /\s+/,
+//               relevance: 0
+//             },
+//             {
+//               // JSX
+//               variants: [
+//                 { begin: FRAGMENT.begin, end: FRAGMENT.end },
+//                 { match: XML_SELF_CLOSING },
+//                 {
+//                   begin: XML_TAG.begin,
+//                   // we carefully check the opening tag to see if it truly
+//                   // is a tag and not a false positive
+//                   "on:begin": XML_TAG.isTrulyOpeningTag,
+//                   end: XML_TAG.end
+//                 }
+//               ],
+//               subLanguage: "xml",
+//               contains: [
+//                 {
+//                   begin: XML_TAG.begin,
+//                   end: XML_TAG.end,
+//                   skip: true,
+//                   contains: ["self"]
+//                 }
+//               ]
+//             }
+//           ]
+//         },
+//         FUNCTION_DEFINITION,
+//         {
+//           // prevent this from getting swallowed up by function
+//           // since they appear "function like"
+//           beginKeywords: "while if switch catch for"
+//         },
+//         {
+//           // we have to count the parens to make sure we actually have the correct
+//           // bounding ( ).  There could be any number of sub-expressions inside
+//           // also surrounded by parens.
+//           begin: "\\b(?!function)" + hljs.UNDERSCORE_IDENT_RE + "\\([^()]*(\\([^()]*(\\([^()]*\\)[^()]*)*\\)[^()]*)*\\)\\s*\\{",
+//           // end parens
+//           returnBegin: true,
+//           label: "func.def",
+//           contains: [
+//             PARAMS,
+//             hljs.inherit(hljs.TITLE_MODE, { begin: IDENT_RE$1, className: "title.function" })
+//           ]
+//         },
+//         // catch ... so it won't trigger the property rule below
+//         {
+//           match: /\.\.\./,
+//           relevance: 0
+//         },
+//         PROPERTY_ACCESS,
+//         // hack: prevents detection of keywords in some circumstances
+//         // .keyword()
+//         // $keyword = x
+//         {
+//           match: "\\$" + IDENT_RE$1,
+//           relevance: 0
+//         },
+//         {
+//           match: [/\bconstructor(?=\s*\()/],
+//           className: { 1: "title.function" },
+//           contains: [PARAMS]
+//         },
+//         FUNCTION_CALL,
+//         UPPER_CASE_CONSTANT,
+//         CLASS_OR_EXTENDS,
+//         GETTER_OR_SETTER,
+//         {
+//           match: /\$[(.]/
+//           // relevance booster for a pattern common to JS libs: `$(something)` and `$.something`
+//         }
+//       ]
+//     };
+//   }
+// 
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/languages/typescript.js
+//   var IDENT_RE2 = "[A-Za-z$_][0-9A-Za-z$_]*";
+//   var KEYWORDS2 = [
+//     "as",
+//     // for exports
+//     "in",
+//     "of",
+//     "if",
+//     "for",
+//     "while",
+//     "finally",
+//     "var",
+//     "new",
+//     "function",
+//     "do",
+//     "return",
+//     "void",
+//     "else",
+//     "break",
+//     "catch",
+//     "instanceof",
+//     "with",
+//     "throw",
+//     "case",
+//     "default",
+//     "try",
+//     "switch",
+//     "continue",
+//     "typeof",
+//     "delete",
+//     "let",
+//     "yield",
+//     "const",
+//     "class",
+//     // JS handles these with a special rule
+//     // "get",
+//     // "set",
+//     "debugger",
+//     "async",
+//     "await",
+//     "static",
+//     "import",
+//     "from",
+//     "export",
+//     "extends"
+//   ];
+//   var LITERALS2 = [
+//     "true",
+//     "false",
+//     "null",
+//     "undefined",
+//     "NaN",
+//     "Infinity"
+//   ];
+//   var TYPES2 = [
+//     // Fundamental objects
+//     "Object",
+//     "Function",
+//     "Boolean",
+//     "Symbol",
+//     // numbers and dates
+//     "Math",
+//     "Date",
+//     "Number",
+//     "BigInt",
+//     // text
+//     "String",
+//     "RegExp",
+//     // Indexed collections
+//     "Array",
+//     "Float32Array",
+//     "Float64Array",
+//     "Int8Array",
+//     "Uint8Array",
+//     "Uint8ClampedArray",
+//     "Int16Array",
+//     "Int32Array",
+//     "Uint16Array",
+//     "Uint32Array",
+//     "BigInt64Array",
+//     "BigUint64Array",
+//     // Keyed collections
+//     "Set",
+//     "Map",
+//     "WeakSet",
+//     "WeakMap",
+//     // Structured data
+//     "ArrayBuffer",
+//     "SharedArrayBuffer",
+//     "Atomics",
+//     "DataView",
+//     "JSON",
+//     // Control abstraction objects
+//     "Promise",
+//     "Generator",
+//     "GeneratorFunction",
+//     "AsyncFunction",
+//     // Reflection
+//     "Reflect",
+//     "Proxy",
+//     // Internationalization
+//     "Intl",
+//     // WebAssembly
+//     "WebAssembly"
+//   ];
+//   var ERROR_TYPES2 = [
+//     "Error",
+//     "EvalError",
+//     "InternalError",
+//     "RangeError",
+//     "ReferenceError",
+//     "SyntaxError",
+//     "TypeError",
+//     "URIError"
+//   ];
+//   var BUILT_IN_GLOBALS2 = [
+//     "setInterval",
+//     "setTimeout",
+//     "clearInterval",
+//     "clearTimeout",
+//     "require",
+//     "exports",
+//     "eval",
+//     "isFinite",
+//     "isNaN",
+//     "parseFloat",
+//     "parseInt",
+//     "decodeURI",
+//     "decodeURIComponent",
+//     "encodeURI",
+//     "encodeURIComponent",
+//     "escape",
+//     "unescape"
+//   ];
+//   var BUILT_IN_VARIABLES2 = [
+//     "arguments",
+//     "this",
+//     "super",
+//     "console",
+//     "window",
+//     "document",
+//     "localStorage",
+//     "sessionStorage",
+//     "module",
+//     "global"
+//     // Node.js
+//   ];
+//   var BUILT_INS2 = [].concat(
+//     BUILT_IN_GLOBALS2,
+//     TYPES2,
+//     ERROR_TYPES2
+//   );
+//   function javascript2(hljs) {
+//     const regex = hljs.regex;
+//     const hasClosingTag = (match, { after }) => {
+//       const tag = "</" + match[0].slice(1);
+//       const pos = match.input.indexOf(tag, after);
+//       return pos !== -1;
+//     };
+//     const IDENT_RE$1 = IDENT_RE2;
+//     const FRAGMENT = {
+//       begin: "<>",
+//       end: "</>"
+//     };
+//     const XML_SELF_CLOSING = /<[A-Za-z0-9\\._:-]+\s*\/>/;
+//     const XML_TAG = {
+//       begin: /<[A-Za-z0-9\\._:-]+/,
+//       end: /\/[A-Za-z0-9\\._:-]+>|\/>/,
+//       /**
+//        * @param {RegExpMatchArray} match
+//        * @param {CallbackResponse} response
+//        */
+//       isTrulyOpeningTag: (match, response) => {
+//         const afterMatchIndex = match[0].length + match.index;
+//         const nextChar = match.input[afterMatchIndex];
+//         if (
+//           // HTML should not include another raw `<` inside a tag
+//           // nested type?
+//           // `<Array<Array<number>>`, etc.
+//           nextChar === "<" || // the , gives away that this is not HTML
+//           // `<T, A extends keyof T, V>`
+//           nextChar === ","
+//         ) {
+//           response.ignoreMatch();
+//           return;
+//         }
+//         if (nextChar === ">") {
+//           if (!hasClosingTag(match, { after: afterMatchIndex })) {
+//             response.ignoreMatch();
+//           }
+//         }
+//         let m;
+//         const afterMatch = match.input.substring(afterMatchIndex);
+//         if (m = afterMatch.match(/^\s*=/)) {
+//           response.ignoreMatch();
+//           return;
+//         }
+//         if (m = afterMatch.match(/^\s+extends\s+/)) {
+//           if (m.index === 0) {
+//             response.ignoreMatch();
+//             return;
+//           }
+//         }
+//       }
+//     };
+//     const KEYWORDS$1 = {
+//       $pattern: IDENT_RE2,
+//       keyword: KEYWORDS2,
+//       literal: LITERALS2,
+//       built_in: BUILT_INS2,
+//       "variable.language": BUILT_IN_VARIABLES2
+//     };
+//     const decimalDigits2 = "[0-9](_?[0-9])*";
+//     const frac2 = `\\.(${decimalDigits2})`;
+//     const decimalInteger = `0|[1-9](_?[0-9])*|0[0-7]*[89][0-9]*`;
+//     const NUMBER = {
+//       className: "number",
+//       variants: [
+//         // DecimalLiteral
+//         { begin: `(\\b(${decimalInteger})((${frac2})|\\.)?|(${frac2}))[eE][+-]?(${decimalDigits2})\\b` },
+//         { begin: `\\b(${decimalInteger})\\b((${frac2})\\b|\\.)?|(${frac2})\\b` },
+//         // DecimalBigIntegerLiteral
+//         { begin: `\\b(0|[1-9](_?[0-9])*)n\\b` },
+//         // NonDecimalIntegerLiteral
+//         { begin: "\\b0[xX][0-9a-fA-F](_?[0-9a-fA-F])*n?\\b" },
+//         { begin: "\\b0[bB][0-1](_?[0-1])*n?\\b" },
+//         { begin: "\\b0[oO][0-7](_?[0-7])*n?\\b" },
+//         // LegacyOctalIntegerLiteral (does not include underscore separators)
+//         // https://tc39.es/ecma262/#sec-additional-syntax-numeric-literals
+//         { begin: "\\b0[0-7]+n?\\b" }
+//       ],
+//       relevance: 0
+//     };
+//     const SUBST = {
+//       className: "subst",
+//       begin: "\\$\\{",
+//       end: "\\}",
+//       keywords: KEYWORDS$1,
+//       contains: []
+//       // defined later
+//     };
+//     const HTML_TEMPLATE = {
+//       begin: "html`",
+//       end: "",
+//       starts: {
+//         end: "`",
+//         returnEnd: false,
+//         contains: [
+//           hljs.BACKSLASH_ESCAPE,
+//           SUBST
+//         ],
+//         subLanguage: "xml"
+//       }
+//     };
+//     const CSS_TEMPLATE = {
+//       begin: "css`",
+//       end: "",
+//       starts: {
+//         end: "`",
+//         returnEnd: false,
+//         contains: [
+//           hljs.BACKSLASH_ESCAPE,
+//           SUBST
+//         ],
+//         subLanguage: "css"
+//       }
+//     };
+//     const GRAPHQL_TEMPLATE = {
+//       begin: "gql`",
+//       end: "",
+//       starts: {
+//         end: "`",
+//         returnEnd: false,
+//         contains: [
+//           hljs.BACKSLASH_ESCAPE,
+//           SUBST
+//         ],
+//         subLanguage: "graphql"
+//       }
+//     };
+//     const TEMPLATE_STRING = {
+//       className: "string",
+//       begin: "`",
+//       end: "`",
+//       contains: [
+//         hljs.BACKSLASH_ESCAPE,
+//         SUBST
+//       ]
+//     };
+//     const JSDOC_COMMENT = hljs.COMMENT(
+//       /\/\*\*(?!\/)/,
+//       "\\*/",
+//       {
+//         relevance: 0,
+//         contains: [
+//           {
+//             begin: "(?=@[A-Za-z]+)",
+//             relevance: 0,
+//             contains: [
+//               {
+//                 className: "doctag",
+//                 begin: "@[A-Za-z]+"
+//               },
+//               {
+//                 className: "type",
+//                 begin: "\\{",
+//                 end: "\\}",
+//                 excludeEnd: true,
+//                 excludeBegin: true,
+//                 relevance: 0
+//               },
+//               {
+//                 className: "variable",
+//                 begin: IDENT_RE$1 + "(?=\\s*(-)|$)",
+//                 endsParent: true,
+//                 relevance: 0
+//               },
+//               // eat spaces (not newlines) so we can find
+//               // types or variables
+//               {
+//                 begin: /(?=[^\n])\s/,
+//                 relevance: 0
+//               }
+//             ]
+//           }
+//         ]
+//       }
+//     );
+//     const COMMENT = {
+//       className: "comment",
+//       variants: [
+//         JSDOC_COMMENT,
+//         hljs.C_BLOCK_COMMENT_MODE,
+//         hljs.C_LINE_COMMENT_MODE
+//       ]
+//     };
+//     const SUBST_INTERNALS = [
+//       hljs.APOS_STRING_MODE,
+//       hljs.QUOTE_STRING_MODE,
+//       HTML_TEMPLATE,
+//       CSS_TEMPLATE,
+//       GRAPHQL_TEMPLATE,
+//       TEMPLATE_STRING,
+//       // Skip numbers when they are part of a variable name
+//       { match: /\$\d+/ },
+//       NUMBER
+//       // This is intentional:
+//       // See https://github.com/highlightjs/highlight.js/issues/3288
+//       // hljs.REGEXP_MODE
+//     ];
+//     SUBST.contains = SUBST_INTERNALS.concat({
+//       // we need to pair up {} inside our subst to prevent
+//       // it from ending too early by matching another }
+//       begin: /\{/,
+//       end: /\}/,
+//       keywords: KEYWORDS$1,
+//       contains: [
+//         "self"
+//       ].concat(SUBST_INTERNALS)
+//     });
+//     const SUBST_AND_COMMENTS = [].concat(COMMENT, SUBST.contains);
+//     const PARAMS_CONTAINS = SUBST_AND_COMMENTS.concat([
+//       // eat recursive parens in sub expressions
+//       {
+//         begin: /\(/,
+//         end: /\)/,
+//         keywords: KEYWORDS$1,
+//         contains: ["self"].concat(SUBST_AND_COMMENTS)
+//       }
+//     ]);
+//     const PARAMS = {
+//       className: "params",
+//       begin: /\(/,
+//       end: /\)/,
+//       excludeBegin: true,
+//       excludeEnd: true,
+//       keywords: KEYWORDS$1,
+//       contains: PARAMS_CONTAINS
+//     };
+//     const CLASS_OR_EXTENDS = {
+//       variants: [
+//         // class Car extends vehicle
+//         {
+//           match: [
+//             /class/,
+//             /\s+/,
+//             IDENT_RE$1,
+//             /\s+/,
+//             /extends/,
+//             /\s+/,
+//             regex.concat(IDENT_RE$1, "(", regex.concat(/\./, IDENT_RE$1), ")*")
+//           ],
+//           scope: {
+//             1: "keyword",
+//             3: "title.class",
+//             5: "keyword",
+//             7: "title.class.inherited"
+//           }
+//         },
+//         // class Car
+//         {
+//           match: [
+//             /class/,
+//             /\s+/,
+//             IDENT_RE$1
+//           ],
+//           scope: {
+//             1: "keyword",
+//             3: "title.class"
+//           }
+//         }
+//       ]
+//     };
+//     const CLASS_REFERENCE = {
+//       relevance: 0,
+//       match: regex.either(
+//         // Hard coded exceptions
+//         /\bJSON/,
+//         // Float32Array, OutT
+//         /\b[A-Z][a-z]+([A-Z][a-z]*|\d)*/,
+//         // CSSFactory, CSSFactoryT
+//         /\b[A-Z]{2,}([A-Z][a-z]+|\d)+([A-Z][a-z]*)*/,
+//         // FPs, FPsT
+//         /\b[A-Z]{2,}[a-z]+([A-Z][a-z]+|\d)*([A-Z][a-z]*)*/
+//         // P
+//         // single letters are not highlighted
+//         // BLAH
+//         // this will be flagged as a UPPER_CASE_CONSTANT instead
+//       ),
+//       className: "title.class",
+//       keywords: {
+//         _: [
+//           // se we still get relevance credit for JS library classes
+//           ...TYPES2,
+//           ...ERROR_TYPES2
+//         ]
+//       }
+//     };
+//     const USE_STRICT = {
+//       label: "use_strict",
+//       className: "meta",
+//       relevance: 10,
+//       begin: /^\s*['"]use (strict|asm)['"]/
+//     };
+//     const FUNCTION_DEFINITION = {
+//       variants: [
+//         {
+//           match: [
+//             /function/,
+//             /\s+/,
+//             IDENT_RE$1,
+//             /(?=\s*\()/
+//           ]
+//         },
+//         // anonymous function
+//         {
+//           match: [
+//             /function/,
+//             /\s*(?=\()/
+//           ]
+//         }
+//       ],
+//       className: {
+//         1: "keyword",
+//         3: "title.function"
+//       },
+//       label: "func.def",
+//       contains: [PARAMS],
+//       illegal: /%/
+//     };
+//     const UPPER_CASE_CONSTANT = {
+//       relevance: 0,
+//       match: /\b[A-Z][A-Z_0-9]+\b/,
+//       className: "variable.constant"
+//     };
+//     function noneOf(list) {
+//       return regex.concat("(?!", list.join("|"), ")");
+//     }
+//     const FUNCTION_CALL = {
+//       match: regex.concat(
+//         /\b/,
+//         noneOf([
+//           ...BUILT_IN_GLOBALS2,
+//           "super",
+//           "import"
+//         ]),
+//         IDENT_RE$1,
+//         regex.lookahead(/\(/)
+//       ),
+//       className: "title.function",
+//       relevance: 0
+//     };
+//     const PROPERTY_ACCESS = {
+//       begin: regex.concat(/\./, regex.lookahead(
+//         regex.concat(IDENT_RE$1, /(?![0-9A-Za-z$_(])/)
+//       )),
+//       end: IDENT_RE$1,
+//       excludeBegin: true,
+//       keywords: "prototype",
+//       className: "property",
+//       relevance: 0
+//     };
+//     const GETTER_OR_SETTER = {
+//       match: [
+//         /get|set/,
+//         /\s+/,
+//         IDENT_RE$1,
+//         /(?=\()/
+//       ],
+//       className: {
+//         1: "keyword",
+//         3: "title.function"
+//       },
+//       contains: [
+//         {
+//           // eat to avoid empty params
+//           begin: /\(\)/
+//         },
+//         PARAMS
+//       ]
+//     };
+//     const FUNC_LEAD_IN_RE = "(\\([^()]*(\\([^()]*(\\([^()]*\\)[^()]*)*\\)[^()]*)*\\)|" + hljs.UNDERSCORE_IDENT_RE + ")\\s*=>";
+//     const FUNCTION_VARIABLE = {
+//       match: [
+//         /const|var|let/,
+//         /\s+/,
+//         IDENT_RE$1,
+//         /\s*/,
+//         /=\s*/,
+//         /(async\s*)?/,
+//         // async is optional
+//         regex.lookahead(FUNC_LEAD_IN_RE)
+//       ],
+//       keywords: "async",
+//       className: {
+//         1: "keyword",
+//         3: "title.function"
+//       },
+//       contains: [
+//         PARAMS
+//       ]
+//     };
+//     return {
+//       name: "JavaScript",
+//       aliases: ["js", "jsx", "mjs", "cjs"],
+//       keywords: KEYWORDS$1,
+//       // this will be extended by TypeScript
+//       exports: { PARAMS_CONTAINS, CLASS_REFERENCE },
+//       illegal: /#(?![$_A-z])/,
+//       contains: [
+//         hljs.SHEBANG({
+//           label: "shebang",
+//           binary: "node",
+//           relevance: 5
+//         }),
+//         USE_STRICT,
+//         hljs.APOS_STRING_MODE,
+//         hljs.QUOTE_STRING_MODE,
+//         HTML_TEMPLATE,
+//         CSS_TEMPLATE,
+//         GRAPHQL_TEMPLATE,
+//         TEMPLATE_STRING,
+//         COMMENT,
+//         // Skip numbers when they are part of a variable name
+//         { match: /\$\d+/ },
+//         NUMBER,
+//         CLASS_REFERENCE,
+//         {
+//           className: "attr",
+//           begin: IDENT_RE$1 + regex.lookahead(":"),
+//           relevance: 0
+//         },
+//         FUNCTION_VARIABLE,
+//         {
+//           // "value" container
+//           begin: "(" + hljs.RE_STARTERS_RE + "|\\b(case|return|throw)\\b)\\s*",
+//           keywords: "return throw case",
+//           relevance: 0,
+//           contains: [
+//             COMMENT,
+//             hljs.REGEXP_MODE,
+//             {
+//               className: "function",
+//               // we have to count the parens to make sure we actually have the
+//               // correct bounding ( ) before the =>.  There could be any number of
+//               // sub-expressions inside also surrounded by parens.
+//               begin: FUNC_LEAD_IN_RE,
+//               returnBegin: true,
+//               end: "\\s*=>",
+//               contains: [
+//                 {
+//                   className: "params",
+//                   variants: [
+//                     {
+//                       begin: hljs.UNDERSCORE_IDENT_RE,
+//                       relevance: 0
+//                     },
+//                     {
+//                       className: null,
+//                       begin: /\(\s*\)/,
+//                       skip: true
+//                     },
+//                     {
+//                       begin: /\(/,
+//                       end: /\)/,
+//                       excludeBegin: true,
+//                       excludeEnd: true,
+//                       keywords: KEYWORDS$1,
+//                       contains: PARAMS_CONTAINS
+//                     }
+//                   ]
+//                 }
+//               ]
+//             },
+//             {
+//               // could be a comma delimited list of params to a function call
+//               begin: /,/,
+//               relevance: 0
+//             },
+//             {
+//               match: /\s+/,
+//               relevance: 0
+//             },
+//             {
+//               // JSX
+//               variants: [
+//                 { begin: FRAGMENT.begin, end: FRAGMENT.end },
+//                 { match: XML_SELF_CLOSING },
+//                 {
+//                   begin: XML_TAG.begin,
+//                   // we carefully check the opening tag to see if it truly
+//                   // is a tag and not a false positive
+//                   "on:begin": XML_TAG.isTrulyOpeningTag,
+//                   end: XML_TAG.end
+//                 }
+//               ],
+//               subLanguage: "xml",
+//               contains: [
+//                 {
+//                   begin: XML_TAG.begin,
+//                   end: XML_TAG.end,
+//                   skip: true,
+//                   contains: ["self"]
+//                 }
+//               ]
+//             }
+//           ]
+//         },
+//         FUNCTION_DEFINITION,
+//         {
+//           // prevent this from getting swallowed up by function
+//           // since they appear "function like"
+//           beginKeywords: "while if switch catch for"
+//         },
+//         {
+//           // we have to count the parens to make sure we actually have the correct
+//           // bounding ( ).  There could be any number of sub-expressions inside
+//           // also surrounded by parens.
+//           begin: "\\b(?!function)" + hljs.UNDERSCORE_IDENT_RE + "\\([^()]*(\\([^()]*(\\([^()]*\\)[^()]*)*\\)[^()]*)*\\)\\s*\\{",
+//           // end parens
+//           returnBegin: true,
+//           label: "func.def",
+//           contains: [
+//             PARAMS,
+//             hljs.inherit(hljs.TITLE_MODE, { begin: IDENT_RE$1, className: "title.function" })
+//           ]
+//         },
+//         // catch ... so it won't trigger the property rule below
+//         {
+//           match: /\.\.\./,
+//           relevance: 0
+//         },
+//         PROPERTY_ACCESS,
+//         // hack: prevents detection of keywords in some circumstances
+//         // .keyword()
+//         // $keyword = x
+//         {
+//           match: "\\$" + IDENT_RE$1,
+//           relevance: 0
+//         },
+//         {
+//           match: [/\bconstructor(?=\s*\()/],
+//           className: { 1: "title.function" },
+//           contains: [PARAMS]
+//         },
+//         FUNCTION_CALL,
+//         UPPER_CASE_CONSTANT,
+//         CLASS_OR_EXTENDS,
+//         GETTER_OR_SETTER,
+//         {
+//           match: /\$[(.]/
+//           // relevance booster for a pattern common to JS libs: `$(something)` and `$.something`
+//         }
+//       ]
+//     };
+//   }
+//   function typescript(hljs) {
+//     const tsLanguage = javascript2(hljs);
+//     const IDENT_RE$1 = IDENT_RE2;
+//     const TYPES3 = [
+//       "any",
+//       "void",
+//       "number",
+//       "boolean",
+//       "string",
+//       "object",
+//       "never",
+//       "symbol",
+//       "bigint",
+//       "unknown"
+//     ];
+//     const NAMESPACE = {
+//       beginKeywords: "namespace",
+//       end: /\{/,
+//       excludeEnd: true,
+//       contains: [tsLanguage.exports.CLASS_REFERENCE]
+//     };
+//     const INTERFACE = {
+//       beginKeywords: "interface",
+//       end: /\{/,
+//       excludeEnd: true,
+//       keywords: {
+//         keyword: "interface extends",
+//         built_in: TYPES3
+//       },
+//       contains: [tsLanguage.exports.CLASS_REFERENCE]
+//     };
+//     const USE_STRICT = {
+//       className: "meta",
+//       relevance: 10,
+//       begin: /^\s*['"]use strict['"]/
+//     };
+//     const TS_SPECIFIC_KEYWORDS = [
+//       "type",
+//       "namespace",
+//       "interface",
+//       "public",
+//       "private",
+//       "protected",
+//       "implements",
+//       "declare",
+//       "abstract",
+//       "readonly",
+//       "enum",
+//       "override"
+//     ];
+//     const KEYWORDS$1 = {
+//       $pattern: IDENT_RE2,
+//       keyword: KEYWORDS2.concat(TS_SPECIFIC_KEYWORDS),
+//       literal: LITERALS2,
+//       built_in: BUILT_INS2.concat(TYPES3),
+//       "variable.language": BUILT_IN_VARIABLES2
+//     };
+//     const DECORATOR = {
+//       className: "meta",
+//       begin: "@" + IDENT_RE$1
+//     };
+//     const swapMode = (mode, label, replacement) => {
+//       const indx = mode.contains.findIndex((m) => m.label === label);
+//       if (indx === -1) {
+//         throw new Error("can not find mode to replace");
+//       }
+//       mode.contains.splice(indx, 1, replacement);
+//     };
+//     Object.assign(tsLanguage.keywords, KEYWORDS$1);
+//     tsLanguage.exports.PARAMS_CONTAINS.push(DECORATOR);
+//     tsLanguage.contains = tsLanguage.contains.concat([
+//       DECORATOR,
+//       NAMESPACE,
+//       INTERFACE
+//     ]);
+//     swapMode(tsLanguage, "shebang", hljs.SHEBANG());
+//     swapMode(tsLanguage, "use_strict", USE_STRICT);
+//     const functionDeclaration = tsLanguage.contains.find((m) => m.label === "func.def");
+//     functionDeclaration.relevance = 0;
+//     Object.assign(tsLanguage, {
+//       name: "TypeScript",
+//       aliases: [
+//         "ts",
+//         "tsx",
+//         "mts",
+//         "cts"
+//       ]
+//     });
+//     return tsLanguage;
+//   }
+// 
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/languages/json.js
+//   function json(hljs) {
+//     const ATTRIBUTE = {
+//       className: "attr",
+//       begin: /"(\\.|[^\\"\r\n])*"(?=\s*:)/,
+//       relevance: 1.01
+//     };
+//     const PUNCTUATION = {
+//       match: /[{}[\],:]/,
+//       className: "punctuation",
+//       relevance: 0
+//     };
+//     const LITERALS3 = [
+//       "true",
+//       "false",
+//       "null"
+//     ];
+//     const LITERALS_MODE = {
+//       scope: "literal",
+//       beginKeywords: LITERALS3.join(" ")
+//     };
+//     return {
+//       name: "JSON",
+//       keywords: {
+//         literal: LITERALS3
+//       },
+//       contains: [
+//         ATTRIBUTE,
+//         PUNCTUATION,
+//         hljs.QUOTE_STRING_MODE,
+//         LITERALS_MODE,
+//         hljs.C_NUMBER_MODE,
+//         hljs.C_LINE_COMMENT_MODE,
+//         hljs.C_BLOCK_COMMENT_MODE
+//       ],
+//       illegal: "\\S"
+//     };
+//   }
+// 
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/languages/yaml.js
+//   function yaml(hljs) {
+//     const LITERALS3 = "true false yes no null";
+//     const URI_CHARACTERS = "[\\w#;/?:@&=+$,.~*'()[\\]]+";
+//     const KEY = {
+//       className: "attr",
+//       variants: [
+//         { begin: "\\w[\\w :\\/.-]*:(?=[ 	]|$)" },
+//         {
+//           // double quoted keys
+//           begin: '"\\w[\\w :\\/.-]*":(?=[ 	]|$)'
+//         },
+//         {
+//           // single quoted keys
+//           begin: "'\\w[\\w :\\/.-]*':(?=[ 	]|$)"
+//         }
+//       ]
+//     };
+//     const TEMPLATE_VARIABLES = {
+//       className: "template-variable",
+//       variants: [
+//         {
+//           // jinja templates Ansible
+//           begin: /\{\{/,
+//           end: /\}\}/
+//         },
+//         {
+//           // Ruby i18n
+//           begin: /%\{/,
+//           end: /\}/
+//         }
+//       ]
+//     };
+//     const STRING = {
+//       className: "string",
+//       relevance: 0,
+//       variants: [
+//         {
+//           begin: /'/,
+//           end: /'/
+//         },
+//         {
+//           begin: /"/,
+//           end: /"/
+//         },
+//         { begin: /\S+/ }
+//       ],
+//       contains: [
+//         hljs.BACKSLASH_ESCAPE,
+//         TEMPLATE_VARIABLES
+//       ]
+//     };
+//     const CONTAINER_STRING = hljs.inherit(STRING, { variants: [
+//       {
+//         begin: /'/,
+//         end: /'/
+//       },
+//       {
+//         begin: /"/,
+//         end: /"/
+//       },
+//       { begin: /[^\s,{}[\]]+/ }
+//     ] });
+//     const DATE_RE = "[0-9]{4}(-[0-9][0-9]){0,2}";
+//     const TIME_RE = "([Tt \\t][0-9][0-9]?(:[0-9][0-9]){2})?";
+//     const FRACTION_RE = "(\\.[0-9]*)?";
+//     const ZONE_RE = "([ \\t])*(Z|[-+][0-9][0-9]?(:[0-9][0-9])?)?";
+//     const TIMESTAMP = {
+//       className: "number",
+//       begin: "\\b" + DATE_RE + TIME_RE + FRACTION_RE + ZONE_RE + "\\b"
+//     };
+//     const VALUE_CONTAINER = {
+//       end: ",",
+//       endsWithParent: true,
+//       excludeEnd: true,
+//       keywords: LITERALS3,
+//       relevance: 0
+//     };
+//     const OBJECT = {
+//       begin: /\{/,
+//       end: /\}/,
+//       contains: [VALUE_CONTAINER],
+//       illegal: "\\n",
+//       relevance: 0
+//     };
+//     const ARRAY = {
+//       begin: "\\[",
+//       end: "\\]",
+//       contains: [VALUE_CONTAINER],
+//       illegal: "\\n",
+//       relevance: 0
+//     };
+//     const MODES3 = [
+//       KEY,
+//       {
+//         className: "meta",
+//         begin: "^---\\s*$",
+//         relevance: 10
+//       },
+//       {
+//         // multi line string
+//         // Blocks start with a | or > followed by a newline
+//         //
+//         // Indentation of subsequent lines must be the same to
+//         // be considered part of the block
+//         className: "string",
+//         begin: "[\\|>]([1-9]?[+-])?[ ]*\\n( +)[^ ][^\\n]*\\n(\\2[^\\n]+\\n?)*"
+//       },
+//       {
+//         // Ruby/Rails erb
+//         begin: "<%[%=-]?",
+//         end: "[%-]?%>",
+//         subLanguage: "ruby",
+//         excludeBegin: true,
+//         excludeEnd: true,
+//         relevance: 0
+//       },
+//       {
+//         // named tags
+//         className: "type",
+//         begin: "!\\w+!" + URI_CHARACTERS
+//       },
+//       // https://yaml.org/spec/1.2/spec.html#id2784064
+//       {
+//         // verbatim tags
+//         className: "type",
+//         begin: "!<" + URI_CHARACTERS + ">"
+//       },
+//       {
+//         // primary tags
+//         className: "type",
+//         begin: "!" + URI_CHARACTERS
+//       },
+//       {
+//         // secondary tags
+//         className: "type",
+//         begin: "!!" + URI_CHARACTERS
+//       },
+//       {
+//         // fragment id &ref
+//         className: "meta",
+//         begin: "&" + hljs.UNDERSCORE_IDENT_RE + "$"
+//       },
+//       {
+//         // fragment reference *ref
+//         className: "meta",
+//         begin: "\\*" + hljs.UNDERSCORE_IDENT_RE + "$"
+//       },
+//       {
+//         // array listing
+//         className: "bullet",
+//         // TODO: remove |$ hack when we have proper look-ahead support
+//         begin: "-(?=[ ]|$)",
+//         relevance: 0
+//       },
+//       hljs.HASH_COMMENT_MODE,
+//       {
+//         beginKeywords: LITERALS3,
+//         keywords: { literal: LITERALS3 }
+//       },
+//       TIMESTAMP,
+//       // numbers are any valid C-style number that
+//       // sit isolated from other words
+//       {
+//         className: "number",
+//         begin: hljs.C_NUMBER_RE + "\\b",
+//         relevance: 0
+//       },
+//       OBJECT,
+//       ARRAY,
+//       STRING
+//     ];
+//     const VALUE_MODES = [...MODES3];
+//     VALUE_MODES.pop();
+//     VALUE_MODES.push(CONTAINER_STRING);
+//     VALUE_CONTAINER.contains = VALUE_MODES;
+//     return {
+//       name: "YAML",
+//       case_insensitive: true,
+//       aliases: ["yml"],
+//       contains: MODES3
+//     };
+//   }
+// 
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/languages/markdown.js
+//   function markdown(hljs) {
+//     const regex = hljs.regex;
+//     const INLINE_HTML = {
+//       begin: /<\/?[A-Za-z_]/,
+//       end: ">",
+//       subLanguage: "xml",
+//       relevance: 0
+//     };
+//     const HORIZONTAL_RULE = {
+//       begin: "^[-\\*]{3,}",
+//       end: "$"
+//     };
+//     const CODE = {
+//       className: "code",
+//       variants: [
+//         // TODO: fix to allow these to work with sublanguage also
+//         { begin: "(`{3,})[^`](.|\\n)*?\\1`*[ ]*" },
+//         { begin: "(~{3,})[^~](.|\\n)*?\\1~*[ ]*" },
+//         // needed to allow markdown as a sublanguage to work
+//         {
+//           begin: "```",
+//           end: "```+[ ]*$"
+//         },
+//         {
+//           begin: "~~~",
+//           end: "~~~+[ ]*$"
+//         },
+//         { begin: "`.+?`" },
+//         {
+//           begin: "(?=^( {4}|\\t))",
+//           // use contains to gobble up multiple lines to allow the block to be whatever size
+//           // but only have a single open/close tag vs one per line
+//           contains: [
+//             {
+//               begin: "^( {4}|\\t)",
+//               end: "(\\n)$"
+//             }
+//           ],
+//           relevance: 0
+//         }
+//       ]
+//     };
+//     const LIST = {
+//       className: "bullet",
+//       begin: "^[ 	]*([*+-]|(\\d+\\.))(?=\\s+)",
+//       end: "\\s+",
+//       excludeEnd: true
+//     };
+//     const LINK_REFERENCE = {
+//       begin: /^\[[^\n]+\]:/,
+//       returnBegin: true,
+//       contains: [
+//         {
+//           className: "symbol",
+//           begin: /\[/,
+//           end: /\]/,
+//           excludeBegin: true,
+//           excludeEnd: true
+//         },
+//         {
+//           className: "link",
+//           begin: /:\s*/,
+//           end: /$/,
+//           excludeBegin: true
+//         }
+//       ]
+//     };
+//     const URL_SCHEME = /[A-Za-z][A-Za-z0-9+.-]*/;
+//     const LINK = {
+//       variants: [
+//         // too much like nested array access in so many languages
+//         // to have any real relevance
+//         {
+//           begin: /\[.+?\]\[.*?\]/,
+//           relevance: 0
+//         },
+//         // popular internet URLs
+//         {
+//           begin: /\[.+?\]\(((data|javascript|mailto):|(?:http|ftp)s?:\/\/).*?\)/,
+//           relevance: 2
+//         },
+//         {
+//           begin: regex.concat(/\[.+?\]\(/, URL_SCHEME, /:\/\/.*?\)/),
+//           relevance: 2
+//         },
+//         // relative urls
+//         {
+//           begin: /\[.+?\]\([./?&#].*?\)/,
+//           relevance: 1
+//         },
+//         // whatever else, lower relevance (might not be a link at all)
+//         {
+//           begin: /\[.*?\]\(.*?\)/,
+//           relevance: 0
+//         }
+//       ],
+//       returnBegin: true,
+//       contains: [
+//         {
+//           // empty strings for alt or link text
+//           match: /\[(?=\])/
+//         },
+//         {
+//           className: "string",
+//           relevance: 0,
+//           begin: "\\[",
+//           end: "\\]",
+//           excludeBegin: true,
+//           returnEnd: true
+//         },
+//         {
+//           className: "link",
+//           relevance: 0,
+//           begin: "\\]\\(",
+//           end: "\\)",
+//           excludeBegin: true,
+//           excludeEnd: true
+//         },
+//         {
+//           className: "symbol",
+//           relevance: 0,
+//           begin: "\\]\\[",
+//           end: "\\]",
+//           excludeBegin: true,
+//           excludeEnd: true
+//         }
+//       ]
+//     };
+//     const BOLD = {
+//       className: "strong",
+//       contains: [],
+//       // defined later
+//       variants: [
+//         {
+//           begin: /_{2}(?!\s)/,
+//           end: /_{2}/
+//         },
+//         {
+//           begin: /\*{2}(?!\s)/,
+//           end: /\*{2}/
+//         }
+//       ]
+//     };
+//     const ITALIC = {
+//       className: "emphasis",
+//       contains: [],
+//       // defined later
+//       variants: [
+//         {
+//           begin: /\*(?![*\s])/,
+//           end: /\*/
+//         },
+//         {
+//           begin: /_(?![_\s])/,
+//           end: /_/,
+//           relevance: 0
+//         }
+//       ]
+//     };
+//     const BOLD_WITHOUT_ITALIC = hljs.inherit(BOLD, { contains: [] });
+//     const ITALIC_WITHOUT_BOLD = hljs.inherit(ITALIC, { contains: [] });
+//     BOLD.contains.push(ITALIC_WITHOUT_BOLD);
+//     ITALIC.contains.push(BOLD_WITHOUT_ITALIC);
+//     let CONTAINABLE = [
+//       INLINE_HTML,
+//       LINK
+//     ];
+//     [
+//       BOLD,
+//       ITALIC,
+//       BOLD_WITHOUT_ITALIC,
+//       ITALIC_WITHOUT_BOLD
+//     ].forEach((m) => {
+//       m.contains = m.contains.concat(CONTAINABLE);
+//     });
+//     CONTAINABLE = CONTAINABLE.concat(BOLD, ITALIC);
+//     const HEADER = {
+//       className: "section",
+//       variants: [
+//         {
+//           begin: "^#{1,6}",
+//           end: "$",
+//           contains: CONTAINABLE
+//         },
+//         {
+//           begin: "(?=^.+?\\n[=-]{2,}$)",
+//           contains: [
+//             { begin: "^[=-]*$" },
+//             {
+//               begin: "^",
+//               end: "\\n",
+//               contains: CONTAINABLE
+//             }
+//           ]
+//         }
+//       ]
+//     };
+//     const BLOCKQUOTE = {
+//       className: "quote",
+//       begin: "^>\\s+",
+//       contains: CONTAINABLE,
+//       end: "$"
+//     };
+//     return {
+//       name: "Markdown",
+//       aliases: [
+//         "md",
+//         "mkdown",
+//         "mkd"
+//       ],
+//       contains: [
+//         HEADER,
+//         INLINE_HTML,
+//         LIST,
+//         BOLD,
+//         ITALIC,
+//         BLOCKQUOTE,
+//         CODE,
+//         HORIZONTAL_RULE,
+//         LINK,
+//         LINK_REFERENCE
+//       ]
+//     };
+//   }
+// 
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/languages/xml.js
+//   function xml(hljs) {
+//     const regex = hljs.regex;
+//     const TAG_NAME_RE = regex.concat(/[\p{L}_]/u, regex.optional(/[\p{L}0-9_.-]*:/u), /[\p{L}0-9_.-]*/u);
+//     const XML_IDENT_RE = /[\p{L}0-9._:-]+/u;
+//     const XML_ENTITIES = {
+//       className: "symbol",
+//       begin: /&[a-z]+;|&#[0-9]+;|&#x[a-f0-9]+;/
+//     };
+//     const XML_META_KEYWORDS = {
+//       begin: /\s/,
+//       contains: [
+//         {
+//           className: "keyword",
+//           begin: /#?[a-z_][a-z1-9_-]+/,
+//           illegal: /\n/
+//         }
+//       ]
+//     };
+//     const XML_META_PAR_KEYWORDS = hljs.inherit(XML_META_KEYWORDS, {
+//       begin: /\(/,
+//       end: /\)/
+//     });
+//     const APOS_META_STRING_MODE = hljs.inherit(hljs.APOS_STRING_MODE, { className: "string" });
+//     const QUOTE_META_STRING_MODE = hljs.inherit(hljs.QUOTE_STRING_MODE, { className: "string" });
+//     const TAG_INTERNALS = {
+//       endsWithParent: true,
+//       illegal: /</,
+//       relevance: 0,
+//       contains: [
+//         {
+//           className: "attr",
+//           begin: XML_IDENT_RE,
+//           relevance: 0
+//         },
+//         {
+//           begin: /=\s*/,
+//           relevance: 0,
+//           contains: [
+//             {
+//               className: "string",
+//               endsParent: true,
+//               variants: [
+//                 {
+//                   begin: /"/,
+//                   end: /"/,
+//                   contains: [XML_ENTITIES]
+//                 },
+//                 {
+//                   begin: /'/,
+//                   end: /'/,
+//                   contains: [XML_ENTITIES]
+//                 },
+//                 { begin: /[^\s"'=<>`]+/ }
+//               ]
+//             }
+//           ]
+//         }
+//       ]
+//     };
+//     return {
+//       name: "HTML, XML",
+//       aliases: [
+//         "html",
+//         "xhtml",
+//         "rss",
+//         "atom",
+//         "xjb",
+//         "xsd",
+//         "xsl",
+//         "plist",
+//         "wsf",
+//         "svg"
+//       ],
+//       case_insensitive: true,
+//       unicodeRegex: true,
+//       contains: [
+//         {
+//           className: "meta",
+//           begin: /<![a-z]/,
+//           end: />/,
+//           relevance: 10,
+//           contains: [
+//             XML_META_KEYWORDS,
+//             QUOTE_META_STRING_MODE,
+//             APOS_META_STRING_MODE,
+//             XML_META_PAR_KEYWORDS,
+//             {
+//               begin: /\[/,
+//               end: /\]/,
+//               contains: [
+//                 {
+//                   className: "meta",
+//                   begin: /<![a-z]/,
+//                   end: />/,
+//                   contains: [
+//                     XML_META_KEYWORDS,
+//                     XML_META_PAR_KEYWORDS,
+//                     QUOTE_META_STRING_MODE,
+//                     APOS_META_STRING_MODE
+//                   ]
+//                 }
+//               ]
+//             }
+//           ]
+//         },
+//         hljs.COMMENT(
+//           /<!--/,
+//           /-->/,
+//           { relevance: 10 }
+//         ),
+//         {
+//           begin: /<!\[CDATA\[/,
+//           end: /\]\]>/,
+//           relevance: 10
+//         },
+//         XML_ENTITIES,
+//         // xml processing instructions
+//         {
+//           className: "meta",
+//           end: /\?>/,
+//           variants: [
+//             {
+//               begin: /<\?xml/,
+//               relevance: 10,
+//               contains: [
+//                 QUOTE_META_STRING_MODE
+//               ]
+//             },
+//             {
+//               begin: /<\?[a-z][a-z0-9]+/
+//             }
+//           ]
+//         },
+//         {
+//           className: "tag",
+//           /*
+//           The lookahead pattern (?=...) ensures that 'begin' only matches
+//           '<style' as a single word, followed by a whitespace or an
+//           ending bracket.
+//           */
+//           begin: /<style(?=\s|>)/,
+//           end: />/,
+//           keywords: { name: "style" },
+//           contains: [TAG_INTERNALS],
+//           starts: {
+//             end: /<\/style>/,
+//             returnEnd: true,
+//             subLanguage: [
+//               "css",
+//               "xml"
+//             ]
+//           }
+//         },
+//         {
+//           className: "tag",
+//           // See the comment in the <style tag about the lookahead pattern
+//           begin: /<script(?=\s|>)/,
+//           end: />/,
+//           keywords: { name: "script" },
+//           contains: [TAG_INTERNALS],
+//           starts: {
+//             end: /<\/script>/,
+//             returnEnd: true,
+//             subLanguage: [
+//               "javascript",
+//               "handlebars",
+//               "xml"
+//             ]
+//           }
+//         },
+//         // we need this for now for jSX
+//         {
+//           className: "tag",
+//           begin: /<>|<\/>/
+//         },
+//         // open tag
+//         {
+//           className: "tag",
+//           begin: regex.concat(
+//             /</,
+//             regex.lookahead(regex.concat(
+//               TAG_NAME_RE,
+//               // <tag/>
+//               // <tag>
+//               // <tag ...
+//               regex.either(/\/>/, />/, /\s/)
+//             ))
+//           ),
+//           end: /\/?>/,
+//           contains: [
+//             {
+//               className: "name",
+//               begin: TAG_NAME_RE,
+//               relevance: 0,
+//               starts: TAG_INTERNALS
+//             }
+//           ]
+//         },
+//         // close tag
+//         {
+//           className: "tag",
+//           begin: regex.concat(
+//             /<\//,
+//             regex.lookahead(regex.concat(
+//               TAG_NAME_RE,
+//               />/
+//             ))
+//           ),
+//           contains: [
+//             {
+//               className: "name",
+//               begin: TAG_NAME_RE,
+//               relevance: 0
+//             },
+//             {
+//               begin: />/,
+//               relevance: 0,
+//               endsParent: true
+//             }
+//           ]
+//         }
+//       ]
+//     };
+//   }
+// 
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/languages/css.js
+//   var MODES = (hljs) => {
+//     return {
+//       IMPORTANT: {
+//         scope: "meta",
+//         begin: "!important"
+//       },
+//       BLOCK_COMMENT: hljs.C_BLOCK_COMMENT_MODE,
+//       HEXCOLOR: {
+//         scope: "number",
+//         begin: /#(([0-9a-fA-F]{3,4})|(([0-9a-fA-F]{2}){3,4}))\b/
+//       },
+//       FUNCTION_DISPATCH: {
+//         className: "built_in",
+//         begin: /[\w-]+(?=\()/
+//       },
+//       ATTRIBUTE_SELECTOR_MODE: {
+//         scope: "selector-attr",
+//         begin: /\[/,
+//         end: /\]/,
+//         illegal: "$",
+//         contains: [
+//           hljs.APOS_STRING_MODE,
+//           hljs.QUOTE_STRING_MODE
+//         ]
+//       },
+//       CSS_NUMBER_MODE: {
+//         scope: "number",
+//         begin: hljs.NUMBER_RE + "(%|em|ex|ch|rem|vw|vh|vmin|vmax|cm|mm|in|pt|pc|px|deg|grad|rad|turn|s|ms|Hz|kHz|dpi|dpcm|dppx)?",
+//         relevance: 0
+//       },
+//       CSS_VARIABLE: {
+//         className: "attr",
+//         begin: /--[A-Za-z_][A-Za-z0-9_-]*/
+//       }
+//     };
+//   };
+//   var TAGS = [
+//     "a",
+//     "abbr",
+//     "address",
+//     "article",
+//     "aside",
+//     "audio",
+//     "b",
+//     "blockquote",
+//     "body",
+//     "button",
+//     "canvas",
+//     "caption",
+//     "cite",
+//     "code",
+//     "dd",
+//     "del",
+//     "details",
+//     "dfn",
+//     "div",
+//     "dl",
+//     "dt",
+//     "em",
+//     "fieldset",
+//     "figcaption",
+//     "figure",
+//     "footer",
+//     "form",
+//     "h1",
+//     "h2",
+//     "h3",
+//     "h4",
+//     "h5",
+//     "h6",
+//     "header",
+//     "hgroup",
+//     "html",
+//     "i",
+//     "iframe",
+//     "img",
+//     "input",
+//     "ins",
+//     "kbd",
+//     "label",
+//     "legend",
+//     "li",
+//     "main",
+//     "mark",
+//     "menu",
+//     "nav",
+//     "object",
+//     "ol",
+//     "p",
+//     "q",
+//     "quote",
+//     "samp",
+//     "section",
+//     "span",
+//     "strong",
+//     "summary",
+//     "sup",
+//     "table",
+//     "tbody",
+//     "td",
+//     "textarea",
+//     "tfoot",
+//     "th",
+//     "thead",
+//     "time",
+//     "tr",
+//     "ul",
+//     "var",
+//     "video"
+//   ];
+//   var MEDIA_FEATURES = [
+//     "any-hover",
+//     "any-pointer",
+//     "aspect-ratio",
+//     "color",
+//     "color-gamut",
+//     "color-index",
+//     "device-aspect-ratio",
+//     "device-height",
+//     "device-width",
+//     "display-mode",
+//     "forced-colors",
+//     "grid",
+//     "height",
+//     "hover",
+//     "inverted-colors",
+//     "monochrome",
+//     "orientation",
+//     "overflow-block",
+//     "overflow-inline",
+//     "pointer",
+//     "prefers-color-scheme",
+//     "prefers-contrast",
+//     "prefers-reduced-motion",
+//     "prefers-reduced-transparency",
+//     "resolution",
+//     "scan",
+//     "scripting",
+//     "update",
+//     "width",
+//     // TODO: find a better solution?
+//     "min-width",
+//     "max-width",
+//     "min-height",
+//     "max-height"
+//   ];
+//   var PSEUDO_CLASSES = [
+//     "active",
+//     "any-link",
+//     "blank",
+//     "checked",
+//     "current",
+//     "default",
+//     "defined",
+//     "dir",
+//     // dir()
+//     "disabled",
+//     "drop",
+//     "empty",
+//     "enabled",
+//     "first",
+//     "first-child",
+//     "first-of-type",
+//     "fullscreen",
+//     "future",
+//     "focus",
+//     "focus-visible",
+//     "focus-within",
+//     "has",
+//     // has()
+//     "host",
+//     // host or host()
+//     "host-context",
+//     // host-context()
+//     "hover",
+//     "indeterminate",
+//     "in-range",
+//     "invalid",
+//     "is",
+//     // is()
+//     "lang",
+//     // lang()
+//     "last-child",
+//     "last-of-type",
+//     "left",
+//     "link",
+//     "local-link",
+//     "not",
+//     // not()
+//     "nth-child",
+//     // nth-child()
+//     "nth-col",
+//     // nth-col()
+//     "nth-last-child",
+//     // nth-last-child()
+//     "nth-last-col",
+//     // nth-last-col()
+//     "nth-last-of-type",
+//     //nth-last-of-type()
+//     "nth-of-type",
+//     //nth-of-type()
+//     "only-child",
+//     "only-of-type",
+//     "optional",
+//     "out-of-range",
+//     "past",
+//     "placeholder-shown",
+//     "read-only",
+//     "read-write",
+//     "required",
+//     "right",
+//     "root",
+//     "scope",
+//     "target",
+//     "target-within",
+//     "user-invalid",
+//     "valid",
+//     "visited",
+//     "where"
+//     // where()
+//   ];
+//   var PSEUDO_ELEMENTS = [
+//     "after",
+//     "backdrop",
+//     "before",
+//     "cue",
+//     "cue-region",
+//     "first-letter",
+//     "first-line",
+//     "grammar-error",
+//     "marker",
+//     "part",
+//     "placeholder",
+//     "selection",
+//     "slotted",
+//     "spelling-error"
+//   ];
+//   var ATTRIBUTES = [
+//     "align-content",
+//     "align-items",
+//     "align-self",
+//     "all",
+//     "animation",
+//     "animation-delay",
+//     "animation-direction",
+//     "animation-duration",
+//     "animation-fill-mode",
+//     "animation-iteration-count",
+//     "animation-name",
+//     "animation-play-state",
+//     "animation-timing-function",
+//     "backface-visibility",
+//     "background",
+//     "background-attachment",
+//     "background-blend-mode",
+//     "background-clip",
+//     "background-color",
+//     "background-image",
+//     "background-origin",
+//     "background-position",
+//     "background-repeat",
+//     "background-size",
+//     "block-size",
+//     "border",
+//     "border-block",
+//     "border-block-color",
+//     "border-block-end",
+//     "border-block-end-color",
+//     "border-block-end-style",
+//     "border-block-end-width",
+//     "border-block-start",
+//     "border-block-start-color",
+//     "border-block-start-style",
+//     "border-block-start-width",
+//     "border-block-style",
+//     "border-block-width",
+//     "border-bottom",
+//     "border-bottom-color",
+//     "border-bottom-left-radius",
+//     "border-bottom-right-radius",
+//     "border-bottom-style",
+//     "border-bottom-width",
+//     "border-collapse",
+//     "border-color",
+//     "border-image",
+//     "border-image-outset",
+//     "border-image-repeat",
+//     "border-image-slice",
+//     "border-image-source",
+//     "border-image-width",
+//     "border-inline",
+//     "border-inline-color",
+//     "border-inline-end",
+//     "border-inline-end-color",
+//     "border-inline-end-style",
+//     "border-inline-end-width",
+//     "border-inline-start",
+//     "border-inline-start-color",
+//     "border-inline-start-style",
+//     "border-inline-start-width",
+//     "border-inline-style",
+//     "border-inline-width",
+//     "border-left",
+//     "border-left-color",
+//     "border-left-style",
+//     "border-left-width",
+//     "border-radius",
+//     "border-right",
+//     "border-right-color",
+//     "border-right-style",
+//     "border-right-width",
+//     "border-spacing",
+//     "border-style",
+//     "border-top",
+//     "border-top-color",
+//     "border-top-left-radius",
+//     "border-top-right-radius",
+//     "border-top-style",
+//     "border-top-width",
+//     "border-width",
+//     "bottom",
+//     "box-decoration-break",
+//     "box-shadow",
+//     "box-sizing",
+//     "break-after",
+//     "break-before",
+//     "break-inside",
+//     "caption-side",
+//     "caret-color",
+//     "clear",
+//     "clip",
+//     "clip-path",
+//     "clip-rule",
+//     "color",
+//     "column-count",
+//     "column-fill",
+//     "column-gap",
+//     "column-rule",
+//     "column-rule-color",
+//     "column-rule-style",
+//     "column-rule-width",
+//     "column-span",
+//     "column-width",
+//     "columns",
+//     "contain",
+//     "content",
+//     "content-visibility",
+//     "counter-increment",
+//     "counter-reset",
+//     "cue",
+//     "cue-after",
+//     "cue-before",
+//     "cursor",
+//     "direction",
+//     "display",
+//     "empty-cells",
+//     "filter",
+//     "flex",
+//     "flex-basis",
+//     "flex-direction",
+//     "flex-flow",
+//     "flex-grow",
+//     "flex-shrink",
+//     "flex-wrap",
+//     "float",
+//     "flow",
+//     "font",
+//     "font-display",
+//     "font-family",
+//     "font-feature-settings",
+//     "font-kerning",
+//     "font-language-override",
+//     "font-size",
+//     "font-size-adjust",
+//     "font-smoothing",
+//     "font-stretch",
+//     "font-style",
+//     "font-synthesis",
+//     "font-variant",
+//     "font-variant-caps",
+//     "font-variant-east-asian",
+//     "font-variant-ligatures",
+//     "font-variant-numeric",
+//     "font-variant-position",
+//     "font-variation-settings",
+//     "font-weight",
+//     "gap",
+//     "glyph-orientation-vertical",
+//     "grid",
+//     "grid-area",
+//     "grid-auto-columns",
+//     "grid-auto-flow",
+//     "grid-auto-rows",
+//     "grid-column",
+//     "grid-column-end",
+//     "grid-column-start",
+//     "grid-gap",
+//     "grid-row",
+//     "grid-row-end",
+//     "grid-row-start",
+//     "grid-template",
+//     "grid-template-areas",
+//     "grid-template-columns",
+//     "grid-template-rows",
+//     "hanging-punctuation",
+//     "height",
+//     "hyphens",
+//     "icon",
+//     "image-orientation",
+//     "image-rendering",
+//     "image-resolution",
+//     "ime-mode",
+//     "inline-size",
+//     "isolation",
+//     "justify-content",
+//     "left",
+//     "letter-spacing",
+//     "line-break",
+//     "line-height",
+//     "list-style",
+//     "list-style-image",
+//     "list-style-position",
+//     "list-style-type",
+//     "margin",
+//     "margin-block",
+//     "margin-block-end",
+//     "margin-block-start",
+//     "margin-bottom",
+//     "margin-inline",
+//     "margin-inline-end",
+//     "margin-inline-start",
+//     "margin-left",
+//     "margin-right",
+//     "margin-top",
+//     "marks",
+//     "mask",
+//     "mask-border",
+//     "mask-border-mode",
+//     "mask-border-outset",
+//     "mask-border-repeat",
+//     "mask-border-slice",
+//     "mask-border-source",
+//     "mask-border-width",
+//     "mask-clip",
+//     "mask-composite",
+//     "mask-image",
+//     "mask-mode",
+//     "mask-origin",
+//     "mask-position",
+//     "mask-repeat",
+//     "mask-size",
+//     "mask-type",
+//     "max-block-size",
+//     "max-height",
+//     "max-inline-size",
+//     "max-width",
+//     "min-block-size",
+//     "min-height",
+//     "min-inline-size",
+//     "min-width",
+//     "mix-blend-mode",
+//     "nav-down",
+//     "nav-index",
+//     "nav-left",
+//     "nav-right",
+//     "nav-up",
+//     "none",
+//     "normal",
+//     "object-fit",
+//     "object-position",
+//     "opacity",
+//     "order",
+//     "orphans",
+//     "outline",
+//     "outline-color",
+//     "outline-offset",
+//     "outline-style",
+//     "outline-width",
+//     "overflow",
+//     "overflow-wrap",
+//     "overflow-x",
+//     "overflow-y",
+//     "padding",
+//     "padding-block",
+//     "padding-block-end",
+//     "padding-block-start",
+//     "padding-bottom",
+//     "padding-inline",
+//     "padding-inline-end",
+//     "padding-inline-start",
+//     "padding-left",
+//     "padding-right",
+//     "padding-top",
+//     "page-break-after",
+//     "page-break-before",
+//     "page-break-inside",
+//     "pause",
+//     "pause-after",
+//     "pause-before",
+//     "perspective",
+//     "perspective-origin",
+//     "pointer-events",
+//     "position",
+//     "quotes",
+//     "resize",
+//     "rest",
+//     "rest-after",
+//     "rest-before",
+//     "right",
+//     "row-gap",
+//     "scroll-margin",
+//     "scroll-margin-block",
+//     "scroll-margin-block-end",
+//     "scroll-margin-block-start",
+//     "scroll-margin-bottom",
+//     "scroll-margin-inline",
+//     "scroll-margin-inline-end",
+//     "scroll-margin-inline-start",
+//     "scroll-margin-left",
+//     "scroll-margin-right",
+//     "scroll-margin-top",
+//     "scroll-padding",
+//     "scroll-padding-block",
+//     "scroll-padding-block-end",
+//     "scroll-padding-block-start",
+//     "scroll-padding-bottom",
+//     "scroll-padding-inline",
+//     "scroll-padding-inline-end",
+//     "scroll-padding-inline-start",
+//     "scroll-padding-left",
+//     "scroll-padding-right",
+//     "scroll-padding-top",
+//     "scroll-snap-align",
+//     "scroll-snap-stop",
+//     "scroll-snap-type",
+//     "scrollbar-color",
+//     "scrollbar-gutter",
+//     "scrollbar-width",
+//     "shape-image-threshold",
+//     "shape-margin",
+//     "shape-outside",
+//     "speak",
+//     "speak-as",
+//     "src",
+//     // @font-face
+//     "tab-size",
+//     "table-layout",
+//     "text-align",
+//     "text-align-all",
+//     "text-align-last",
+//     "text-combine-upright",
+//     "text-decoration",
+//     "text-decoration-color",
+//     "text-decoration-line",
+//     "text-decoration-style",
+//     "text-emphasis",
+//     "text-emphasis-color",
+//     "text-emphasis-position",
+//     "text-emphasis-style",
+//     "text-indent",
+//     "text-justify",
+//     "text-orientation",
+//     "text-overflow",
+//     "text-rendering",
+//     "text-shadow",
+//     "text-transform",
+//     "text-underline-position",
+//     "top",
+//     "transform",
+//     "transform-box",
+//     "transform-origin",
+//     "transform-style",
+//     "transition",
+//     "transition-delay",
+//     "transition-duration",
+//     "transition-property",
+//     "transition-timing-function",
+//     "unicode-bidi",
+//     "vertical-align",
+//     "visibility",
+//     "voice-balance",
+//     "voice-duration",
+//     "voice-family",
+//     "voice-pitch",
+//     "voice-range",
+//     "voice-rate",
+//     "voice-stress",
+//     "voice-volume",
+//     "white-space",
+//     "widows",
+//     "width",
+//     "will-change",
+//     "word-break",
+//     "word-spacing",
+//     "word-wrap",
+//     "writing-mode",
+//     "z-index"
+//     // reverse makes sure longer attributes `font-weight` are matched fully
+//     // instead of getting false positives on say `font`
+//   ].reverse();
+//   function css(hljs) {
+//     const regex = hljs.regex;
+//     const modes = MODES(hljs);
+//     const VENDOR_PREFIX = { begin: /-(webkit|moz|ms|o)-(?=[a-z])/ };
+//     const AT_MODIFIERS = "and or not only";
+//     const AT_PROPERTY_RE = /@-?\w[\w]*(-\w+)*/;
+//     const IDENT_RE3 = "[a-zA-Z-][a-zA-Z0-9_-]*";
+//     const STRINGS = [
+//       hljs.APOS_STRING_MODE,
+//       hljs.QUOTE_STRING_MODE
+//     ];
+//     return {
+//       name: "CSS",
+//       case_insensitive: true,
+//       illegal: /[=|'\$]/,
+//       keywords: { keyframePosition: "from to" },
+//       classNameAliases: {
+//         // for visual continuity with `tag {}` and because we
+//         // don't have a great class for this?
+//         keyframePosition: "selector-tag"
+//       },
+//       contains: [
+//         modes.BLOCK_COMMENT,
+//         VENDOR_PREFIX,
+//         // to recognize keyframe 40% etc which are outside the scope of our
+//         // attribute value mode
+//         modes.CSS_NUMBER_MODE,
+//         {
+//           className: "selector-id",
+//           begin: /#[A-Za-z0-9_-]+/,
+//           relevance: 0
+//         },
+//         {
+//           className: "selector-class",
+//           begin: "\\." + IDENT_RE3,
+//           relevance: 0
+//         },
+//         modes.ATTRIBUTE_SELECTOR_MODE,
+//         {
+//           className: "selector-pseudo",
+//           variants: [
+//             { begin: ":(" + PSEUDO_CLASSES.join("|") + ")" },
+//             { begin: ":(:)?(" + PSEUDO_ELEMENTS.join("|") + ")" }
+//           ]
+//         },
+//         // we may actually need this (12/2020)
+//         // { // pseudo-selector params
+//         //   begin: /\(/,
+//         //   end: /\)/,
+//         //   contains: [ hljs.CSS_NUMBER_MODE ]
+//         // },
+//         modes.CSS_VARIABLE,
+//         {
+//           className: "attribute",
+//           begin: "\\b(" + ATTRIBUTES.join("|") + ")\\b"
+//         },
+//         // attribute values
+//         {
+//           begin: /:/,
+//           end: /[;}{]/,
+//           contains: [
+//             modes.BLOCK_COMMENT,
+//             modes.HEXCOLOR,
+//             modes.IMPORTANT,
+//             modes.CSS_NUMBER_MODE,
+//             ...STRINGS,
+//             // needed to highlight these as strings and to avoid issues with
+//             // illegal characters that might be inside urls that would tigger the
+//             // languages illegal stack
+//             {
+//               begin: /(url|data-uri)\(/,
+//               end: /\)/,
+//               relevance: 0,
+//               // from keywords
+//               keywords: { built_in: "url data-uri" },
+//               contains: [
+//                 ...STRINGS,
+//                 {
+//                   className: "string",
+//                   // any character other than `)` as in `url()` will be the start
+//                   // of a string, which ends with `)` (from the parent mode)
+//                   begin: /[^)]/,
+//                   endsWithParent: true,
+//                   excludeEnd: true
+//                 }
+//               ]
+//             },
+//             modes.FUNCTION_DISPATCH
+//           ]
+//         },
+//         {
+//           begin: regex.lookahead(/@/),
+//           end: "[{;]",
+//           relevance: 0,
+//           illegal: /:/,
+//           // break on Less variables @var: ...
+//           contains: [
+//             {
+//               className: "keyword",
+//               begin: AT_PROPERTY_RE
+//             },
+//             {
+//               begin: /\s/,
+//               endsWithParent: true,
+//               excludeEnd: true,
+//               relevance: 0,
+//               keywords: {
+//                 $pattern: /[a-z-]+/,
+//                 keyword: AT_MODIFIERS,
+//                 attribute: MEDIA_FEATURES.join(" ")
+//               },
+//               contains: [
+//                 {
+//                   begin: /[a-z-]+(?=:)/,
+//                   className: "attribute"
+//                 },
+//                 ...STRINGS,
+//                 modes.CSS_NUMBER_MODE
+//               ]
+//             }
+//           ]
+//         },
+//         {
+//           className: "selector-tag",
+//           begin: "\\b(" + TAGS.join("|") + ")\\b"
+//         }
+//       ]
+//     };
+//   }
+// 
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/languages/scss.js
+//   var MODES2 = (hljs) => {
+//     return {
+//       IMPORTANT: {
+//         scope: "meta",
+//         begin: "!important"
+//       },
+//       BLOCK_COMMENT: hljs.C_BLOCK_COMMENT_MODE,
+//       HEXCOLOR: {
+//         scope: "number",
+//         begin: /#(([0-9a-fA-F]{3,4})|(([0-9a-fA-F]{2}){3,4}))\b/
+//       },
+//       FUNCTION_DISPATCH: {
+//         className: "built_in",
+//         begin: /[\w-]+(?=\()/
+//       },
+//       ATTRIBUTE_SELECTOR_MODE: {
+//         scope: "selector-attr",
+//         begin: /\[/,
+//         end: /\]/,
+//         illegal: "$",
+//         contains: [
+//           hljs.APOS_STRING_MODE,
+//           hljs.QUOTE_STRING_MODE
+//         ]
+//       },
+//       CSS_NUMBER_MODE: {
+//         scope: "number",
+//         begin: hljs.NUMBER_RE + "(%|em|ex|ch|rem|vw|vh|vmin|vmax|cm|mm|in|pt|pc|px|deg|grad|rad|turn|s|ms|Hz|kHz|dpi|dpcm|dppx)?",
+//         relevance: 0
+//       },
+//       CSS_VARIABLE: {
+//         className: "attr",
+//         begin: /--[A-Za-z_][A-Za-z0-9_-]*/
+//       }
+//     };
+//   };
+//   var TAGS2 = [
+//     "a",
+//     "abbr",
+//     "address",
+//     "article",
+//     "aside",
+//     "audio",
+//     "b",
+//     "blockquote",
+//     "body",
+//     "button",
+//     "canvas",
+//     "caption",
+//     "cite",
+//     "code",
+//     "dd",
+//     "del",
+//     "details",
+//     "dfn",
+//     "div",
+//     "dl",
+//     "dt",
+//     "em",
+//     "fieldset",
+//     "figcaption",
+//     "figure",
+//     "footer",
+//     "form",
+//     "h1",
+//     "h2",
+//     "h3",
+//     "h4",
+//     "h5",
+//     "h6",
+//     "header",
+//     "hgroup",
+//     "html",
+//     "i",
+//     "iframe",
+//     "img",
+//     "input",
+//     "ins",
+//     "kbd",
+//     "label",
+//     "legend",
+//     "li",
+//     "main",
+//     "mark",
+//     "menu",
+//     "nav",
+//     "object",
+//     "ol",
+//     "p",
+//     "q",
+//     "quote",
+//     "samp",
+//     "section",
+//     "span",
+//     "strong",
+//     "summary",
+//     "sup",
+//     "table",
+//     "tbody",
+//     "td",
+//     "textarea",
+//     "tfoot",
+//     "th",
+//     "thead",
+//     "time",
+//     "tr",
+//     "ul",
+//     "var",
+//     "video"
+//   ];
+//   var MEDIA_FEATURES2 = [
+//     "any-hover",
+//     "any-pointer",
+//     "aspect-ratio",
+//     "color",
+//     "color-gamut",
+//     "color-index",
+//     "device-aspect-ratio",
+//     "device-height",
+//     "device-width",
+//     "display-mode",
+//     "forced-colors",
+//     "grid",
+//     "height",
+//     "hover",
+//     "inverted-colors",
+//     "monochrome",
+//     "orientation",
+//     "overflow-block",
+//     "overflow-inline",
+//     "pointer",
+//     "prefers-color-scheme",
+//     "prefers-contrast",
+//     "prefers-reduced-motion",
+//     "prefers-reduced-transparency",
+//     "resolution",
+//     "scan",
+//     "scripting",
+//     "update",
+//     "width",
+//     // TODO: find a better solution?
+//     "min-width",
+//     "max-width",
+//     "min-height",
+//     "max-height"
+//   ];
+//   var PSEUDO_CLASSES2 = [
+//     "active",
+//     "any-link",
+//     "blank",
+//     "checked",
+//     "current",
+//     "default",
+//     "defined",
+//     "dir",
+//     // dir()
+//     "disabled",
+//     "drop",
+//     "empty",
+//     "enabled",
+//     "first",
+//     "first-child",
+//     "first-of-type",
+//     "fullscreen",
+//     "future",
+//     "focus",
+//     "focus-visible",
+//     "focus-within",
+//     "has",
+//     // has()
+//     "host",
+//     // host or host()
+//     "host-context",
+//     // host-context()
+//     "hover",
+//     "indeterminate",
+//     "in-range",
+//     "invalid",
+//     "is",
+//     // is()
+//     "lang",
+//     // lang()
+//     "last-child",
+//     "last-of-type",
+//     "left",
+//     "link",
+//     "local-link",
+//     "not",
+//     // not()
+//     "nth-child",
+//     // nth-child()
+//     "nth-col",
+//     // nth-col()
+//     "nth-last-child",
+//     // nth-last-child()
+//     "nth-last-col",
+//     // nth-last-col()
+//     "nth-last-of-type",
+//     //nth-last-of-type()
+//     "nth-of-type",
+//     //nth-of-type()
+//     "only-child",
+//     "only-of-type",
+//     "optional",
+//     "out-of-range",
+//     "past",
+//     "placeholder-shown",
+//     "read-only",
+//     "read-write",
+//     "required",
+//     "right",
+//     "root",
+//     "scope",
+//     "target",
+//     "target-within",
+//     "user-invalid",
+//     "valid",
+//     "visited",
+//     "where"
+//     // where()
+//   ];
+//   var PSEUDO_ELEMENTS2 = [
+//     "after",
+//     "backdrop",
+//     "before",
+//     "cue",
+//     "cue-region",
+//     "first-letter",
+//     "first-line",
+//     "grammar-error",
+//     "marker",
+//     "part",
+//     "placeholder",
+//     "selection",
+//     "slotted",
+//     "spelling-error"
+//   ];
+//   var ATTRIBUTES2 = [
+//     "align-content",
+//     "align-items",
+//     "align-self",
+//     "all",
+//     "animation",
+//     "animation-delay",
+//     "animation-direction",
+//     "animation-duration",
+//     "animation-fill-mode",
+//     "animation-iteration-count",
+//     "animation-name",
+//     "animation-play-state",
+//     "animation-timing-function",
+//     "backface-visibility",
+//     "background",
+//     "background-attachment",
+//     "background-blend-mode",
+//     "background-clip",
+//     "background-color",
+//     "background-image",
+//     "background-origin",
+//     "background-position",
+//     "background-repeat",
+//     "background-size",
+//     "block-size",
+//     "border",
+//     "border-block",
+//     "border-block-color",
+//     "border-block-end",
+//     "border-block-end-color",
+//     "border-block-end-style",
+//     "border-block-end-width",
+//     "border-block-start",
+//     "border-block-start-color",
+//     "border-block-start-style",
+//     "border-block-start-width",
+//     "border-block-style",
+//     "border-block-width",
+//     "border-bottom",
+//     "border-bottom-color",
+//     "border-bottom-left-radius",
+//     "border-bottom-right-radius",
+//     "border-bottom-style",
+//     "border-bottom-width",
+//     "border-collapse",
+//     "border-color",
+//     "border-image",
+//     "border-image-outset",
+//     "border-image-repeat",
+//     "border-image-slice",
+//     "border-image-source",
+//     "border-image-width",
+//     "border-inline",
+//     "border-inline-color",
+//     "border-inline-end",
+//     "border-inline-end-color",
+//     "border-inline-end-style",
+//     "border-inline-end-width",
+//     "border-inline-start",
+//     "border-inline-start-color",
+//     "border-inline-start-style",
+//     "border-inline-start-width",
+//     "border-inline-style",
+//     "border-inline-width",
+//     "border-left",
+//     "border-left-color",
+//     "border-left-style",
+//     "border-left-width",
+//     "border-radius",
+//     "border-right",
+//     "border-right-color",
+//     "border-right-style",
+//     "border-right-width",
+//     "border-spacing",
+//     "border-style",
+//     "border-top",
+//     "border-top-color",
+//     "border-top-left-radius",
+//     "border-top-right-radius",
+//     "border-top-style",
+//     "border-top-width",
+//     "border-width",
+//     "bottom",
+//     "box-decoration-break",
+//     "box-shadow",
+//     "box-sizing",
+//     "break-after",
+//     "break-before",
+//     "break-inside",
+//     "caption-side",
+//     "caret-color",
+//     "clear",
+//     "clip",
+//     "clip-path",
+//     "clip-rule",
+//     "color",
+//     "column-count",
+//     "column-fill",
+//     "column-gap",
+//     "column-rule",
+//     "column-rule-color",
+//     "column-rule-style",
+//     "column-rule-width",
+//     "column-span",
+//     "column-width",
+//     "columns",
+//     "contain",
+//     "content",
+//     "content-visibility",
+//     "counter-increment",
+//     "counter-reset",
+//     "cue",
+//     "cue-after",
+//     "cue-before",
+//     "cursor",
+//     "direction",
+//     "display",
+//     "empty-cells",
+//     "filter",
+//     "flex",
+//     "flex-basis",
+//     "flex-direction",
+//     "flex-flow",
+//     "flex-grow",
+//     "flex-shrink",
+//     "flex-wrap",
+//     "float",
+//     "flow",
+//     "font",
+//     "font-display",
+//     "font-family",
+//     "font-feature-settings",
+//     "font-kerning",
+//     "font-language-override",
+//     "font-size",
+//     "font-size-adjust",
+//     "font-smoothing",
+//     "font-stretch",
+//     "font-style",
+//     "font-synthesis",
+//     "font-variant",
+//     "font-variant-caps",
+//     "font-variant-east-asian",
+//     "font-variant-ligatures",
+//     "font-variant-numeric",
+//     "font-variant-position",
+//     "font-variation-settings",
+//     "font-weight",
+//     "gap",
+//     "glyph-orientation-vertical",
+//     "grid",
+//     "grid-area",
+//     "grid-auto-columns",
+//     "grid-auto-flow",
+//     "grid-auto-rows",
+//     "grid-column",
+//     "grid-column-end",
+//     "grid-column-start",
+//     "grid-gap",
+//     "grid-row",
+//     "grid-row-end",
+//     "grid-row-start",
+//     "grid-template",
+//     "grid-template-areas",
+//     "grid-template-columns",
+//     "grid-template-rows",
+//     "hanging-punctuation",
+//     "height",
+//     "hyphens",
+//     "icon",
+//     "image-orientation",
+//     "image-rendering",
+//     "image-resolution",
+//     "ime-mode",
+//     "inline-size",
+//     "isolation",
+//     "justify-content",
+//     "left",
+//     "letter-spacing",
+//     "line-break",
+//     "line-height",
+//     "list-style",
+//     "list-style-image",
+//     "list-style-position",
+//     "list-style-type",
+//     "margin",
+//     "margin-block",
+//     "margin-block-end",
+//     "margin-block-start",
+//     "margin-bottom",
+//     "margin-inline",
+//     "margin-inline-end",
+//     "margin-inline-start",
+//     "margin-left",
+//     "margin-right",
+//     "margin-top",
+//     "marks",
+//     "mask",
+//     "mask-border",
+//     "mask-border-mode",
+//     "mask-border-outset",
+//     "mask-border-repeat",
+//     "mask-border-slice",
+//     "mask-border-source",
+//     "mask-border-width",
+//     "mask-clip",
+//     "mask-composite",
+//     "mask-image",
+//     "mask-mode",
+//     "mask-origin",
+//     "mask-position",
+//     "mask-repeat",
+//     "mask-size",
+//     "mask-type",
+//     "max-block-size",
+//     "max-height",
+//     "max-inline-size",
+//     "max-width",
+//     "min-block-size",
+//     "min-height",
+//     "min-inline-size",
+//     "min-width",
+//     "mix-blend-mode",
+//     "nav-down",
+//     "nav-index",
+//     "nav-left",
+//     "nav-right",
+//     "nav-up",
+//     "none",
+//     "normal",
+//     "object-fit",
+//     "object-position",
+//     "opacity",
+//     "order",
+//     "orphans",
+//     "outline",
+//     "outline-color",
+//     "outline-offset",
+//     "outline-style",
+//     "outline-width",
+//     "overflow",
+//     "overflow-wrap",
+//     "overflow-x",
+//     "overflow-y",
+//     "padding",
+//     "padding-block",
+//     "padding-block-end",
+//     "padding-block-start",
+//     "padding-bottom",
+//     "padding-inline",
+//     "padding-inline-end",
+//     "padding-inline-start",
+//     "padding-left",
+//     "padding-right",
+//     "padding-top",
+//     "page-break-after",
+//     "page-break-before",
+//     "page-break-inside",
+//     "pause",
+//     "pause-after",
+//     "pause-before",
+//     "perspective",
+//     "perspective-origin",
+//     "pointer-events",
+//     "position",
+//     "quotes",
+//     "resize",
+//     "rest",
+//     "rest-after",
+//     "rest-before",
+//     "right",
+//     "row-gap",
+//     "scroll-margin",
+//     "scroll-margin-block",
+//     "scroll-margin-block-end",
+//     "scroll-margin-block-start",
+//     "scroll-margin-bottom",
+//     "scroll-margin-inline",
+//     "scroll-margin-inline-end",
+//     "scroll-margin-inline-start",
+//     "scroll-margin-left",
+//     "scroll-margin-right",
+//     "scroll-margin-top",
+//     "scroll-padding",
+//     "scroll-padding-block",
+//     "scroll-padding-block-end",
+//     "scroll-padding-block-start",
+//     "scroll-padding-bottom",
+//     "scroll-padding-inline",
+//     "scroll-padding-inline-end",
+//     "scroll-padding-inline-start",
+//     "scroll-padding-left",
+//     "scroll-padding-right",
+//     "scroll-padding-top",
+//     "scroll-snap-align",
+//     "scroll-snap-stop",
+//     "scroll-snap-type",
+//     "scrollbar-color",
+//     "scrollbar-gutter",
+//     "scrollbar-width",
+//     "shape-image-threshold",
+//     "shape-margin",
+//     "shape-outside",
+//     "speak",
+//     "speak-as",
+//     "src",
+//     // @font-face
+//     "tab-size",
+//     "table-layout",
+//     "text-align",
+//     "text-align-all",
+//     "text-align-last",
+//     "text-combine-upright",
+//     "text-decoration",
+//     "text-decoration-color",
+//     "text-decoration-line",
+//     "text-decoration-style",
+//     "text-emphasis",
+//     "text-emphasis-color",
+//     "text-emphasis-position",
+//     "text-emphasis-style",
+//     "text-indent",
+//     "text-justify",
+//     "text-orientation",
+//     "text-overflow",
+//     "text-rendering",
+//     "text-shadow",
+//     "text-transform",
+//     "text-underline-position",
+//     "top",
+//     "transform",
+//     "transform-box",
+//     "transform-origin",
+//     "transform-style",
+//     "transition",
+//     "transition-delay",
+//     "transition-duration",
+//     "transition-property",
+//     "transition-timing-function",
+//     "unicode-bidi",
+//     "vertical-align",
+//     "visibility",
+//     "voice-balance",
+//     "voice-duration",
+//     "voice-family",
+//     "voice-pitch",
+//     "voice-range",
+//     "voice-rate",
+//     "voice-stress",
+//     "voice-volume",
+//     "white-space",
+//     "widows",
+//     "width",
+//     "will-change",
+//     "word-break",
+//     "word-spacing",
+//     "word-wrap",
+//     "writing-mode",
+//     "z-index"
+//     // reverse makes sure longer attributes `font-weight` are matched fully
+//     // instead of getting false positives on say `font`
+//   ].reverse();
+//   function scss(hljs) {
+//     const modes = MODES2(hljs);
+//     const PSEUDO_ELEMENTS$1 = PSEUDO_ELEMENTS2;
+//     const PSEUDO_CLASSES$1 = PSEUDO_CLASSES2;
+//     const AT_IDENTIFIER = "@[a-z-]+";
+//     const AT_MODIFIERS = "and or not only";
+//     const IDENT_RE3 = "[a-zA-Z-][a-zA-Z0-9_-]*";
+//     const VARIABLE = {
+//       className: "variable",
+//       begin: "(\\$" + IDENT_RE3 + ")\\b",
+//       relevance: 0
+//     };
+//     return {
+//       name: "SCSS",
+//       case_insensitive: true,
+//       illegal: "[=/|']",
+//       contains: [
+//         hljs.C_LINE_COMMENT_MODE,
+//         hljs.C_BLOCK_COMMENT_MODE,
+//         // to recognize keyframe 40% etc which are outside the scope of our
+//         // attribute value mode
+//         modes.CSS_NUMBER_MODE,
+//         {
+//           className: "selector-id",
+//           begin: "#[A-Za-z0-9_-]+",
+//           relevance: 0
+//         },
+//         {
+//           className: "selector-class",
+//           begin: "\\.[A-Za-z0-9_-]+",
+//           relevance: 0
+//         },
+//         modes.ATTRIBUTE_SELECTOR_MODE,
+//         {
+//           className: "selector-tag",
+//           begin: "\\b(" + TAGS2.join("|") + ")\\b",
+//           // was there, before, but why?
+//           relevance: 0
+//         },
+//         {
+//           className: "selector-pseudo",
+//           begin: ":(" + PSEUDO_CLASSES$1.join("|") + ")"
+//         },
+//         {
+//           className: "selector-pseudo",
+//           begin: ":(:)?(" + PSEUDO_ELEMENTS$1.join("|") + ")"
+//         },
+//         VARIABLE,
+//         {
+//           // pseudo-selector params
+//           begin: /\(/,
+//           end: /\)/,
+//           contains: [modes.CSS_NUMBER_MODE]
+//         },
+//         modes.CSS_VARIABLE,
+//         {
+//           className: "attribute",
+//           begin: "\\b(" + ATTRIBUTES2.join("|") + ")\\b"
+//         },
+//         { begin: "\\b(whitespace|wait|w-resize|visible|vertical-text|vertical-ideographic|uppercase|upper-roman|upper-alpha|underline|transparent|top|thin|thick|text|text-top|text-bottom|tb-rl|table-header-group|table-footer-group|sw-resize|super|strict|static|square|solid|small-caps|separate|se-resize|scroll|s-resize|rtl|row-resize|ridge|right|repeat|repeat-y|repeat-x|relative|progress|pointer|overline|outside|outset|oblique|nowrap|not-allowed|normal|none|nw-resize|no-repeat|no-drop|newspaper|ne-resize|n-resize|move|middle|medium|ltr|lr-tb|lowercase|lower-roman|lower-alpha|loose|list-item|line|line-through|line-edge|lighter|left|keep-all|justify|italic|inter-word|inter-ideograph|inside|inset|inline|inline-block|inherit|inactive|ideograph-space|ideograph-parenthesis|ideograph-numeric|ideograph-alpha|horizontal|hidden|help|hand|groove|fixed|ellipsis|e-resize|double|dotted|distribute|distribute-space|distribute-letter|distribute-all-lines|disc|disabled|default|decimal|dashed|crosshair|collapse|col-resize|circle|char|center|capitalize|break-word|break-all|bottom|both|bolder|bold|block|bidi-override|below|baseline|auto|always|all-scroll|absolute|table|table-cell)\\b" },
+//         {
+//           begin: /:/,
+//           end: /[;}{]/,
+//           relevance: 0,
+//           contains: [
+//             modes.BLOCK_COMMENT,
+//             VARIABLE,
+//             modes.HEXCOLOR,
+//             modes.CSS_NUMBER_MODE,
+//             hljs.QUOTE_STRING_MODE,
+//             hljs.APOS_STRING_MODE,
+//             modes.IMPORTANT,
+//             modes.FUNCTION_DISPATCH
+//           ]
+//         },
+//         // matching these here allows us to treat them more like regular CSS
+//         // rules so everything between the {} gets regular rule highlighting,
+//         // which is what we want for page and font-face
+//         {
+//           begin: "@(page|font-face)",
+//           keywords: {
+//             $pattern: AT_IDENTIFIER,
+//             keyword: "@page @font-face"
+//           }
+//         },
+//         {
+//           begin: "@",
+//           end: "[{;]",
+//           returnBegin: true,
+//           keywords: {
+//             $pattern: /[a-z-]+/,
+//             keyword: AT_MODIFIERS,
+//             attribute: MEDIA_FEATURES2.join(" ")
+//           },
+//           contains: [
+//             {
+//               begin: AT_IDENTIFIER,
+//               className: "keyword"
+//             },
+//             {
+//               begin: /[a-z-]+(?=:)/,
+//               className: "attribute"
+//             },
+//             VARIABLE,
+//             hljs.QUOTE_STRING_MODE,
+//             hljs.APOS_STRING_MODE,
+//             modes.HEXCOLOR,
+//             modes.CSS_NUMBER_MODE
+//           ]
+//         },
+//         modes.FUNCTION_DISPATCH
+//       ]
+//     };
+//   }
+// 
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/languages/bash.js
+//   function bash(hljs) {
+//     const regex = hljs.regex;
+//     const VAR = {};
+//     const BRACED_VAR = {
+//       begin: /\$\{/,
+//       end: /\}/,
+//       contains: [
+//         "self",
+//         {
+//           begin: /:-/,
+//           contains: [VAR]
+//         }
+//         // default values
+//       ]
+//     };
+//     Object.assign(VAR, {
+//       className: "variable",
+//       variants: [
+//         { begin: regex.concat(
+//           /\$[\w\d#@][\w\d_]*/,
+//           // negative look-ahead tries to avoid matching patterns that are not
+//           // Perl at all like $ident$, @ident@, etc.
+//           `(?![\\w\\d])(?![$])`
+//         ) },
+//         BRACED_VAR
+//       ]
+//     });
+//     const SUBST = {
+//       className: "subst",
+//       begin: /\$\(/,
+//       end: /\)/,
+//       contains: [hljs.BACKSLASH_ESCAPE]
+//     };
+//     const HERE_DOC = {
+//       begin: /<<-?\s*(?=\w+)/,
+//       starts: { contains: [
+//         hljs.END_SAME_AS_BEGIN({
+//           begin: /(\w+)/,
+//           end: /(\w+)/,
+//           className: "string"
+//         })
+//       ] }
+//     };
+//     const QUOTE_STRING = {
+//       className: "string",
+//       begin: /"/,
+//       end: /"/,
+//       contains: [
+//         hljs.BACKSLASH_ESCAPE,
+//         VAR,
+//         SUBST
+//       ]
+//     };
+//     SUBST.contains.push(QUOTE_STRING);
+//     const ESCAPED_QUOTE = {
+//       match: /\\"/
+//     };
+//     const APOS_STRING = {
+//       className: "string",
+//       begin: /'/,
+//       end: /'/
+//     };
+//     const ESCAPED_APOS = {
+//       match: /\\'/
+//     };
+//     const ARITHMETIC = {
+//       begin: /\$?\(\(/,
+//       end: /\)\)/,
+//       contains: [
+//         {
+//           begin: /\d+#[0-9a-f]+/,
+//           className: "number"
+//         },
+//         hljs.NUMBER_MODE,
+//         VAR
+//       ]
+//     };
+//     const SH_LIKE_SHELLS = [
+//       "fish",
+//       "bash",
+//       "zsh",
+//       "sh",
+//       "csh",
+//       "ksh",
+//       "tcsh",
+//       "dash",
+//       "scsh"
+//     ];
+//     const KNOWN_SHEBANG = hljs.SHEBANG({
+//       binary: `(${SH_LIKE_SHELLS.join("|")})`,
+//       relevance: 10
+//     });
+//     const FUNCTION = {
+//       className: "function",
+//       begin: /\w[\w\d_]*\s*\(\s*\)\s*\{/,
+//       returnBegin: true,
+//       contains: [hljs.inherit(hljs.TITLE_MODE, { begin: /\w[\w\d_]*/ })],
+//       relevance: 0
+//     };
+//     const KEYWORDS3 = [
+//       "if",
+//       "then",
+//       "else",
+//       "elif",
+//       "fi",
+//       "for",
+//       "while",
+//       "until",
+//       "in",
+//       "do",
+//       "done",
+//       "case",
+//       "esac",
+//       "function",
+//       "select"
+//     ];
+//     const LITERALS3 = [
+//       "true",
+//       "false"
+//     ];
+//     const PATH_MODE = { match: /(\/[a-z._-]+)+/ };
+//     const SHELL_BUILT_INS = [
+//       "break",
+//       "cd",
+//       "continue",
+//       "eval",
+//       "exec",
+//       "exit",
+//       "export",
+//       "getopts",
+//       "hash",
+//       "pwd",
+//       "readonly",
+//       "return",
+//       "shift",
+//       "test",
+//       "times",
+//       "trap",
+//       "umask",
+//       "unset"
+//     ];
+//     const BASH_BUILT_INS = [
+//       "alias",
+//       "bind",
+//       "builtin",
+//       "caller",
+//       "command",
+//       "declare",
+//       "echo",
+//       "enable",
+//       "help",
+//       "let",
+//       "local",
+//       "logout",
+//       "mapfile",
+//       "printf",
+//       "read",
+//       "readarray",
+//       "source",
+//       "type",
+//       "typeset",
+//       "ulimit",
+//       "unalias"
+//     ];
+//     const ZSH_BUILT_INS = [
+//       "autoload",
+//       "bg",
+//       "bindkey",
+//       "bye",
+//       "cap",
+//       "chdir",
+//       "clone",
+//       "comparguments",
+//       "compcall",
+//       "compctl",
+//       "compdescribe",
+//       "compfiles",
+//       "compgroups",
+//       "compquote",
+//       "comptags",
+//       "comptry",
+//       "compvalues",
+//       "dirs",
+//       "disable",
+//       "disown",
+//       "echotc",
+//       "echoti",
+//       "emulate",
+//       "fc",
+//       "fg",
+//       "float",
+//       "functions",
+//       "getcap",
+//       "getln",
+//       "history",
+//       "integer",
+//       "jobs",
+//       "kill",
+//       "limit",
+//       "log",
+//       "noglob",
+//       "popd",
+//       "print",
+//       "pushd",
+//       "pushln",
+//       "rehash",
+//       "sched",
+//       "setcap",
+//       "setopt",
+//       "stat",
+//       "suspend",
+//       "ttyctl",
+//       "unfunction",
+//       "unhash",
+//       "unlimit",
+//       "unsetopt",
+//       "vared",
+//       "wait",
+//       "whence",
+//       "where",
+//       "which",
+//       "zcompile",
+//       "zformat",
+//       "zftp",
+//       "zle",
+//       "zmodload",
+//       "zparseopts",
+//       "zprof",
+//       "zpty",
+//       "zregexparse",
+//       "zsocket",
+//       "zstyle",
+//       "ztcp"
+//     ];
+//     const GNU_CORE_UTILS = [
+//       "chcon",
+//       "chgrp",
+//       "chown",
+//       "chmod",
+//       "cp",
+//       "dd",
+//       "df",
+//       "dir",
+//       "dircolors",
+//       "ln",
+//       "ls",
+//       "mkdir",
+//       "mkfifo",
+//       "mknod",
+//       "mktemp",
+//       "mv",
+//       "realpath",
+//       "rm",
+//       "rmdir",
+//       "shred",
+//       "sync",
+//       "touch",
+//       "truncate",
+//       "vdir",
+//       "b2sum",
+//       "base32",
+//       "base64",
+//       "cat",
+//       "cksum",
+//       "comm",
+//       "csplit",
+//       "cut",
+//       "expand",
+//       "fmt",
+//       "fold",
+//       "head",
+//       "join",
+//       "md5sum",
+//       "nl",
+//       "numfmt",
+//       "od",
+//       "paste",
+//       "ptx",
+//       "pr",
+//       "sha1sum",
+//       "sha224sum",
+//       "sha256sum",
+//       "sha384sum",
+//       "sha512sum",
+//       "shuf",
+//       "sort",
+//       "split",
+//       "sum",
+//       "tac",
+//       "tail",
+//       "tr",
+//       "tsort",
+//       "unexpand",
+//       "uniq",
+//       "wc",
+//       "arch",
+//       "basename",
+//       "chroot",
+//       "date",
+//       "dirname",
+//       "du",
+//       "echo",
+//       "env",
+//       "expr",
+//       "factor",
+//       // "false", // keyword literal already
+//       "groups",
+//       "hostid",
+//       "id",
+//       "link",
+//       "logname",
+//       "nice",
+//       "nohup",
+//       "nproc",
+//       "pathchk",
+//       "pinky",
+//       "printenv",
+//       "printf",
+//       "pwd",
+//       "readlink",
+//       "runcon",
+//       "seq",
+//       "sleep",
+//       "stat",
+//       "stdbuf",
+//       "stty",
+//       "tee",
+//       "test",
+//       "timeout",
+//       // "true", // keyword literal already
+//       "tty",
+//       "uname",
+//       "unlink",
+//       "uptime",
+//       "users",
+//       "who",
+//       "whoami",
+//       "yes"
+//     ];
+//     return {
+//       name: "Bash",
+//       aliases: ["sh"],
+//       keywords: {
+//         $pattern: /\b[a-z][a-z0-9._-]+\b/,
+//         keyword: KEYWORDS3,
+//         literal: LITERALS3,
+//         built_in: [
+//           ...SHELL_BUILT_INS,
+//           ...BASH_BUILT_INS,
+//           // Shell modifiers
+//           "set",
+//           "shopt",
+//           ...ZSH_BUILT_INS,
+//           ...GNU_CORE_UTILS
+//         ]
+//       },
+//       contains: [
+//         KNOWN_SHEBANG,
+//         // to catch known shells and boost relevancy
+//         hljs.SHEBANG(),
+//         // to catch unknown shells but still highlight the shebang
+//         FUNCTION,
+//         ARITHMETIC,
+//         hljs.HASH_COMMENT_MODE,
+//         HERE_DOC,
+//         PATH_MODE,
+//         QUOTE_STRING,
+//         ESCAPED_QUOTE,
+//         APOS_STRING,
+//         ESCAPED_APOS,
+//         VAR
+//       ]
+//     };
+//   }
+// 
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/languages/python.js
+//   function python(hljs) {
+//     const regex = hljs.regex;
+//     const IDENT_RE3 = /[\p{XID_Start}_]\p{XID_Continue}*/u;
+//     const RESERVED_WORDS = [
+//       "and",
+//       "as",
+//       "assert",
+//       "async",
+//       "await",
+//       "break",
+//       "case",
+//       "class",
+//       "continue",
+//       "def",
+//       "del",
+//       "elif",
+//       "else",
+//       "except",
+//       "finally",
+//       "for",
+//       "from",
+//       "global",
+//       "if",
+//       "import",
+//       "in",
+//       "is",
+//       "lambda",
+//       "match",
+//       "nonlocal|10",
+//       "not",
+//       "or",
+//       "pass",
+//       "raise",
+//       "return",
+//       "try",
+//       "while",
+//       "with",
+//       "yield"
+//     ];
+//     const BUILT_INS3 = [
+//       "__import__",
+//       "abs",
+//       "all",
+//       "any",
+//       "ascii",
+//       "bin",
+//       "bool",
+//       "breakpoint",
+//       "bytearray",
+//       "bytes",
+//       "callable",
+//       "chr",
+//       "classmethod",
+//       "compile",
+//       "complex",
+//       "delattr",
+//       "dict",
+//       "dir",
+//       "divmod",
+//       "enumerate",
+//       "eval",
+//       "exec",
+//       "filter",
+//       "float",
+//       "format",
+//       "frozenset",
+//       "getattr",
+//       "globals",
+//       "hasattr",
+//       "hash",
+//       "help",
+//       "hex",
+//       "id",
+//       "input",
+//       "int",
+//       "isinstance",
+//       "issubclass",
+//       "iter",
+//       "len",
+//       "list",
+//       "locals",
+//       "map",
+//       "max",
+//       "memoryview",
+//       "min",
+//       "next",
+//       "object",
+//       "oct",
+//       "open",
+//       "ord",
+//       "pow",
+//       "print",
+//       "property",
+//       "range",
+//       "repr",
+//       "reversed",
+//       "round",
+//       "set",
+//       "setattr",
+//       "slice",
+//       "sorted",
+//       "staticmethod",
+//       "str",
+//       "sum",
+//       "super",
+//       "tuple",
+//       "type",
+//       "vars",
+//       "zip"
+//     ];
+//     const LITERALS3 = [
+//       "__debug__",
+//       "Ellipsis",
+//       "False",
+//       "None",
+//       "NotImplemented",
+//       "True"
+//     ];
+//     const TYPES3 = [
+//       "Any",
+//       "Callable",
+//       "Coroutine",
+//       "Dict",
+//       "List",
+//       "Literal",
+//       "Generic",
+//       "Optional",
+//       "Sequence",
+//       "Set",
+//       "Tuple",
+//       "Type",
+//       "Union"
+//     ];
+//     const KEYWORDS3 = {
+//       $pattern: /[A-Za-z]\w+|__\w+__/,
+//       keyword: RESERVED_WORDS,
+//       built_in: BUILT_INS3,
+//       literal: LITERALS3,
+//       type: TYPES3
+//     };
+//     const PROMPT = {
+//       className: "meta",
+//       begin: /^(>>>|\.\.\.) /
+//     };
+//     const SUBST = {
+//       className: "subst",
+//       begin: /\{/,
+//       end: /\}/,
+//       keywords: KEYWORDS3,
+//       illegal: /#/
+//     };
+//     const LITERAL_BRACKET = {
+//       begin: /\{\{/,
+//       relevance: 0
+//     };
+//     const STRING = {
+//       className: "string",
+//       contains: [hljs.BACKSLASH_ESCAPE],
+//       variants: [
+//         {
+//           begin: /([uU]|[bB]|[rR]|[bB][rR]|[rR][bB])?'''/,
+//           end: /'''/,
+//           contains: [
+//             hljs.BACKSLASH_ESCAPE,
+//             PROMPT
+//           ],
+//           relevance: 10
+//         },
+//         {
+//           begin: /([uU]|[bB]|[rR]|[bB][rR]|[rR][bB])?"""/,
+//           end: /"""/,
+//           contains: [
+//             hljs.BACKSLASH_ESCAPE,
+//             PROMPT
+//           ],
+//           relevance: 10
+//         },
+//         {
+//           begin: /([fF][rR]|[rR][fF]|[fF])'''/,
+//           end: /'''/,
+//           contains: [
+//             hljs.BACKSLASH_ESCAPE,
+//             PROMPT,
+//             LITERAL_BRACKET,
+//             SUBST
+//           ]
+//         },
+//         {
+//           begin: /([fF][rR]|[rR][fF]|[fF])"""/,
+//           end: /"""/,
+//           contains: [
+//             hljs.BACKSLASH_ESCAPE,
+//             PROMPT,
+//             LITERAL_BRACKET,
+//             SUBST
+//           ]
+//         },
+//         {
+//           begin: /([uU]|[rR])'/,
+//           end: /'/,
+//           relevance: 10
+//         },
+//         {
+//           begin: /([uU]|[rR])"/,
+//           end: /"/,
+//           relevance: 10
+//         },
+//         {
+//           begin: /([bB]|[bB][rR]|[rR][bB])'/,
+//           end: /'/
+//         },
+//         {
+//           begin: /([bB]|[bB][rR]|[rR][bB])"/,
+//           end: /"/
+//         },
+//         {
+//           begin: /([fF][rR]|[rR][fF]|[fF])'/,
+//           end: /'/,
+//           contains: [
+//             hljs.BACKSLASH_ESCAPE,
+//             LITERAL_BRACKET,
+//             SUBST
+//           ]
+//         },
+//         {
+//           begin: /([fF][rR]|[rR][fF]|[fF])"/,
+//           end: /"/,
+//           contains: [
+//             hljs.BACKSLASH_ESCAPE,
+//             LITERAL_BRACKET,
+//             SUBST
+//           ]
+//         },
+//         hljs.APOS_STRING_MODE,
+//         hljs.QUOTE_STRING_MODE
+//       ]
+//     };
+//     const digitpart = "[0-9](_?[0-9])*";
+//     const pointfloat = `(\\b(${digitpart}))?\\.(${digitpart})|\\b(${digitpart})\\.`;
+//     const lookahead = `\\b|${RESERVED_WORDS.join("|")}`;
+//     const NUMBER = {
+//       className: "number",
+//       relevance: 0,
+//       variants: [
+//         // exponentfloat, pointfloat
+//         // https://docs.python.org/3.9/reference/lexical_analysis.html#floating-point-literals
+//         // optionally imaginary
+//         // https://docs.python.org/3.9/reference/lexical_analysis.html#imaginary-literals
+//         // Note: no leading \b because floats can start with a decimal point
+//         // and we don't want to mishandle e.g. `fn(.5)`,
+//         // no trailing \b for pointfloat because it can end with a decimal point
+//         // and we don't want to mishandle e.g. `0..hex()`; this should be safe
+//         // because both MUST contain a decimal point and so cannot be confused with
+//         // the interior part of an identifier
+//         {
+//           begin: `(\\b(${digitpart})|(${pointfloat}))[eE][+-]?(${digitpart})[jJ]?(?=${lookahead})`
+//         },
+//         {
+//           begin: `(${pointfloat})[jJ]?`
+//         },
+//         // decinteger, bininteger, octinteger, hexinteger
+//         // https://docs.python.org/3.9/reference/lexical_analysis.html#integer-literals
+//         // optionally "long" in Python 2
+//         // https://docs.python.org/2.7/reference/lexical_analysis.html#integer-and-long-integer-literals
+//         // decinteger is optionally imaginary
+//         // https://docs.python.org/3.9/reference/lexical_analysis.html#imaginary-literals
+//         {
+//           begin: `\\b([1-9](_?[0-9])*|0+(_?0)*)[lLjJ]?(?=${lookahead})`
+//         },
+//         {
+//           begin: `\\b0[bB](_?[01])+[lL]?(?=${lookahead})`
+//         },
+//         {
+//           begin: `\\b0[oO](_?[0-7])+[lL]?(?=${lookahead})`
+//         },
+//         {
+//           begin: `\\b0[xX](_?[0-9a-fA-F])+[lL]?(?=${lookahead})`
+//         },
+//         // imagnumber (digitpart-based)
+//         // https://docs.python.org/3.9/reference/lexical_analysis.html#imaginary-literals
+//         {
+//           begin: `\\b(${digitpart})[jJ](?=${lookahead})`
+//         }
+//       ]
+//     };
+//     const COMMENT_TYPE = {
+//       className: "comment",
+//       begin: regex.lookahead(/# type:/),
+//       end: /$/,
+//       keywords: KEYWORDS3,
+//       contains: [
+//         {
+//           // prevent keywords from coloring `type`
+//           begin: /# type:/
+//         },
+//         // comment within a datatype comment includes no keywords
+//         {
+//           begin: /#/,
+//           end: /\b\B/,
+//           endsWithParent: true
+//         }
+//       ]
+//     };
+//     const PARAMS = {
+//       className: "params",
+//       variants: [
+//         // Exclude params in functions without params
+//         {
+//           className: "",
+//           begin: /\(\s*\)/,
+//           skip: true
+//         },
+//         {
+//           begin: /\(/,
+//           end: /\)/,
+//           excludeBegin: true,
+//           excludeEnd: true,
+//           keywords: KEYWORDS3,
+//           contains: [
+//             "self",
+//             PROMPT,
+//             NUMBER,
+//             STRING,
+//             hljs.HASH_COMMENT_MODE
+//           ]
+//         }
+//       ]
+//     };
+//     SUBST.contains = [
+//       STRING,
+//       NUMBER,
+//       PROMPT
+//     ];
+//     return {
+//       name: "Python",
+//       aliases: [
+//         "py",
+//         "gyp",
+//         "ipython"
+//       ],
+//       unicodeRegex: true,
+//       keywords: KEYWORDS3,
+//       illegal: /(<\/|\?)|=>/,
+//       contains: [
+//         PROMPT,
+//         NUMBER,
+//         {
+//           // very common convention
+//           begin: /\bself\b/
+//         },
+//         {
+//           // eat "if" prior to string so that it won't accidentally be
+//           // labeled as an f-string
+//           beginKeywords: "if",
+//           relevance: 0
+//         },
+//         STRING,
+//         COMMENT_TYPE,
+//         hljs.HASH_COMMENT_MODE,
+//         {
+//           match: [
+//             /\bdef/,
+//             /\s+/,
+//             IDENT_RE3
+//           ],
+//           scope: {
+//             1: "keyword",
+//             3: "title.function"
+//           },
+//           contains: [PARAMS]
+//         },
+//         {
+//           variants: [
+//             {
+//               match: [
+//                 /\bclass/,
+//                 /\s+/,
+//                 IDENT_RE3,
+//                 /\s*/,
+//                 /\(\s*/,
+//                 IDENT_RE3,
+//                 /\s*\)/
+//               ]
+//             },
+//             {
+//               match: [
+//                 /\bclass/,
+//                 /\s+/,
+//                 IDENT_RE3
+//               ]
+//             }
+//           ],
+//           scope: {
+//             1: "keyword",
+//             3: "title.class",
+//             6: "title.class.inherited"
+//           }
+//         },
+//         {
+//           className: "meta",
+//           begin: /^[\t ]*@/,
+//           end: /(?=#)|$/,
+//           contains: [
+//             NUMBER,
+//             PARAMS,
+//             STRING
+//           ]
+//         }
+//       ]
+//     };
+//   }
+// 
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/languages/java.js
+//   var decimalDigits = "[0-9](_*[0-9])*";
+//   var frac = `\\.(${decimalDigits})`;
+//   var hexDigits = "[0-9a-fA-F](_*[0-9a-fA-F])*";
+//   var NUMERIC = {
+//     className: "number",
+//     variants: [
+//       // DecimalFloatingPointLiteral
+//       // including ExponentPart
+//       { begin: `(\\b(${decimalDigits})((${frac})|\\.)?|(${frac}))[eE][+-]?(${decimalDigits})[fFdD]?\\b` },
+//       // excluding ExponentPart
+//       { begin: `\\b(${decimalDigits})((${frac})[fFdD]?\\b|\\.([fFdD]\\b)?)` },
+//       { begin: `(${frac})[fFdD]?\\b` },
+//       { begin: `\\b(${decimalDigits})[fFdD]\\b` },
+//       // HexadecimalFloatingPointLiteral
+//       { begin: `\\b0[xX]((${hexDigits})\\.?|(${hexDigits})?\\.(${hexDigits}))[pP][+-]?(${decimalDigits})[fFdD]?\\b` },
+//       // DecimalIntegerLiteral
+//       { begin: "\\b(0|[1-9](_*[0-9])*)[lL]?\\b" },
+//       // HexIntegerLiteral
+//       { begin: `\\b0[xX](${hexDigits})[lL]?\\b` },
+//       // OctalIntegerLiteral
+//       { begin: "\\b0(_*[0-7])*[lL]?\\b" },
+//       // BinaryIntegerLiteral
+//       { begin: "\\b0[bB][01](_*[01])*[lL]?\\b" }
+//     ],
+//     relevance: 0
+//   };
+//   function recurRegex(re, substitution, depth) {
+//     if (depth === -1)
+//       return "";
+//     return re.replace(substitution, (_) => {
+//       return recurRegex(re, substitution, depth - 1);
+//     });
+//   }
+//   function java(hljs) {
+//     const regex = hljs.regex;
+//     const JAVA_IDENT_RE = "[\xC0-\u02B8a-zA-Z_$][\xC0-\u02B8a-zA-Z_$0-9]*";
+//     const GENERIC_IDENT_RE = JAVA_IDENT_RE + recurRegex("(?:<" + JAVA_IDENT_RE + "~~~(?:\\s*,\\s*" + JAVA_IDENT_RE + "~~~)*>)?", /~~~/g, 2);
+//     const MAIN_KEYWORDS = [
+//       "synchronized",
+//       "abstract",
+//       "private",
+//       "var",
+//       "static",
+//       "if",
+//       "const ",
+//       "for",
+//       "while",
+//       "strictfp",
+//       "finally",
+//       "protected",
+//       "import",
+//       "native",
+//       "final",
+//       "void",
+//       "enum",
+//       "else",
+//       "break",
+//       "transient",
+//       "catch",
+//       "instanceof",
+//       "volatile",
+//       "case",
+//       "assert",
+//       "package",
+//       "default",
+//       "public",
+//       "try",
+//       "switch",
+//       "continue",
+//       "throws",
+//       "protected",
+//       "public",
+//       "private",
+//       "module",
+//       "requires",
+//       "exports",
+//       "do",
+//       "sealed",
+//       "yield",
+//       "permits"
+//     ];
+//     const BUILT_INS3 = [
+//       "super",
+//       "this"
+//     ];
+//     const LITERALS3 = [
+//       "false",
+//       "true",
+//       "null"
+//     ];
+//     const TYPES3 = [
+//       "char",
+//       "boolean",
+//       "long",
+//       "float",
+//       "int",
+//       "byte",
+//       "short",
+//       "double"
+//     ];
+//     const KEYWORDS3 = {
+//       keyword: MAIN_KEYWORDS,
+//       literal: LITERALS3,
+//       type: TYPES3,
+//       built_in: BUILT_INS3
+//     };
+//     const ANNOTATION = {
+//       className: "meta",
+//       begin: "@" + JAVA_IDENT_RE,
+//       contains: [
+//         {
+//           begin: /\(/,
+//           end: /\)/,
+//           contains: ["self"]
+//           // allow nested () inside our annotation
+//         }
+//       ]
+//     };
+//     const PARAMS = {
+//       className: "params",
+//       begin: /\(/,
+//       end: /\)/,
+//       keywords: KEYWORDS3,
+//       relevance: 0,
+//       contains: [hljs.C_BLOCK_COMMENT_MODE],
+//       endsParent: true
+//     };
+//     return {
+//       name: "Java",
+//       aliases: ["jsp"],
+//       keywords: KEYWORDS3,
+//       illegal: /<\/|#/,
+//       contains: [
+//         hljs.COMMENT(
+//           "/\\*\\*",
+//           "\\*/",
+//           {
+//             relevance: 0,
+//             contains: [
+//               {
+//                 // eat up @'s in emails to prevent them to be recognized as doctags
+//                 begin: /\w+@/,
+//                 relevance: 0
+//               },
+//               {
+//                 className: "doctag",
+//                 begin: "@[A-Za-z]+"
+//               }
+//             ]
+//           }
+//         ),
+//         // relevance boost
+//         {
+//           begin: /import java\.[a-z]+\./,
+//           keywords: "import",
+//           relevance: 2
+//         },
+//         hljs.C_LINE_COMMENT_MODE,
+//         hljs.C_BLOCK_COMMENT_MODE,
+//         {
+//           begin: /"""/,
+//           end: /"""/,
+//           className: "string",
+//           contains: [hljs.BACKSLASH_ESCAPE]
+//         },
+//         hljs.APOS_STRING_MODE,
+//         hljs.QUOTE_STRING_MODE,
+//         {
+//           match: [
+//             /\b(?:class|interface|enum|extends|implements|new)/,
+//             /\s+/,
+//             JAVA_IDENT_RE
+//           ],
+//           className: {
+//             1: "keyword",
+//             3: "title.class"
+//           }
+//         },
+//         {
+//           // Exceptions for hyphenated keywords
+//           match: /non-sealed/,
+//           scope: "keyword"
+//         },
+//         {
+//           begin: [
+//             regex.concat(/(?!else)/, JAVA_IDENT_RE),
+//             /\s+/,
+//             JAVA_IDENT_RE,
+//             /\s+/,
+//             /=(?!=)/
+//           ],
+//           className: {
+//             1: "type",
+//             3: "variable",
+//             5: "operator"
+//           }
+//         },
+//         {
+//           begin: [
+//             /record/,
+//             /\s+/,
+//             JAVA_IDENT_RE
+//           ],
+//           className: {
+//             1: "keyword",
+//             3: "title.class"
+//           },
+//           contains: [
+//             PARAMS,
+//             hljs.C_LINE_COMMENT_MODE,
+//             hljs.C_BLOCK_COMMENT_MODE
+//           ]
+//         },
+//         {
+//           // Expression keywords prevent 'keyword Name(...)' from being
+//           // recognized as a function definition
+//           beginKeywords: "new throw return else",
+//           relevance: 0
+//         },
+//         {
+//           begin: [
+//             "(?:" + GENERIC_IDENT_RE + "\\s+)",
+//             hljs.UNDERSCORE_IDENT_RE,
+//             /\s*(?=\()/
+//           ],
+//           className: { 2: "title.function" },
+//           keywords: KEYWORDS3,
+//           contains: [
+//             {
+//               className: "params",
+//               begin: /\(/,
+//               end: /\)/,
+//               keywords: KEYWORDS3,
+//               relevance: 0,
+//               contains: [
+//                 ANNOTATION,
+//                 hljs.APOS_STRING_MODE,
+//                 hljs.QUOTE_STRING_MODE,
+//                 NUMERIC,
+//                 hljs.C_BLOCK_COMMENT_MODE
+//               ]
+//             },
+//             hljs.C_LINE_COMMENT_MODE,
+//             hljs.C_BLOCK_COMMENT_MODE
+//           ]
+//         },
+//         NUMERIC,
+//         ANNOTATION
+//       ]
+//     };
+//   }
+// 
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/languages/go.js
+//   function go(hljs) {
+//     const LITERALS3 = [
+//       "true",
+//       "false",
+//       "iota",
+//       "nil"
+//     ];
+//     const BUILT_INS3 = [
+//       "append",
+//       "cap",
+//       "close",
+//       "complex",
+//       "copy",
+//       "imag",
+//       "len",
+//       "make",
+//       "new",
+//       "panic",
+//       "print",
+//       "println",
+//       "real",
+//       "recover",
+//       "delete"
+//     ];
+//     const TYPES3 = [
+//       "bool",
+//       "byte",
+//       "complex64",
+//       "complex128",
+//       "error",
+//       "float32",
+//       "float64",
+//       "int8",
+//       "int16",
+//       "int32",
+//       "int64",
+//       "string",
+//       "uint8",
+//       "uint16",
+//       "uint32",
+//       "uint64",
+//       "int",
+//       "uint",
+//       "uintptr",
+//       "rune"
+//     ];
+//     const KWS = [
+//       "break",
+//       "case",
+//       "chan",
+//       "const",
+//       "continue",
+//       "default",
+//       "defer",
+//       "else",
+//       "fallthrough",
+//       "for",
+//       "func",
+//       "go",
+//       "goto",
+//       "if",
+//       "import",
+//       "interface",
+//       "map",
+//       "package",
+//       "range",
+//       "return",
+//       "select",
+//       "struct",
+//       "switch",
+//       "type",
+//       "var"
+//     ];
+//     const KEYWORDS3 = {
+//       keyword: KWS,
+//       type: TYPES3,
+//       literal: LITERALS3,
+//       built_in: BUILT_INS3
+//     };
+//     return {
+//       name: "Go",
+//       aliases: ["golang"],
+//       keywords: KEYWORDS3,
+//       illegal: "</",
+//       contains: [
+//         hljs.C_LINE_COMMENT_MODE,
+//         hljs.C_BLOCK_COMMENT_MODE,
+//         {
+//           className: "string",
+//           variants: [
+//             hljs.QUOTE_STRING_MODE,
+//             hljs.APOS_STRING_MODE,
+//             {
+//               begin: "`",
+//               end: "`"
+//             }
+//           ]
+//         },
+//         {
+//           className: "number",
+//           variants: [
+//             {
+//               begin: hljs.C_NUMBER_RE + "[i]",
+//               relevance: 1
+//             },
+//             hljs.C_NUMBER_MODE
+//           ]
+//         },
+//         {
+//           begin: /:=/
+//           // relevance booster
+//         },
+//         {
+//           className: "function",
+//           beginKeywords: "func",
+//           end: "\\s*(\\{|$)",
+//           excludeEnd: true,
+//           contains: [
+//             hljs.TITLE_MODE,
+//             {
+//               className: "params",
+//               begin: /\(/,
+//               end: /\)/,
+//               endsParent: true,
+//               keywords: KEYWORDS3,
+//               illegal: /["']/
+//             }
+//           ]
+//         }
+//       ]
+//     };
+//   }
+// 
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/languages/rust.js
+//   function rust(hljs) {
+//     const regex = hljs.regex;
+//     const FUNCTION_INVOKE = {
+//       className: "title.function.invoke",
+//       relevance: 0,
+//       begin: regex.concat(
+//         /\b/,
+//         /(?!let|for|while|if|else|match\b)/,
+//         hljs.IDENT_RE,
+//         regex.lookahead(/\s*\(/)
+//       )
+//     };
+//     const NUMBER_SUFFIX = "([ui](8|16|32|64|128|size)|f(32|64))?";
+//     const KEYWORDS3 = [
+//       "abstract",
+//       "as",
+//       "async",
+//       "await",
+//       "become",
+//       "box",
+//       "break",
+//       "const",
+//       "continue",
+//       "crate",
+//       "do",
+//       "dyn",
+//       "else",
+//       "enum",
+//       "extern",
+//       "false",
+//       "final",
+//       "fn",
+//       "for",
+//       "if",
+//       "impl",
+//       "in",
+//       "let",
+//       "loop",
+//       "macro",
+//       "match",
+//       "mod",
+//       "move",
+//       "mut",
+//       "override",
+//       "priv",
+//       "pub",
+//       "ref",
+//       "return",
+//       "self",
+//       "Self",
+//       "static",
+//       "struct",
+//       "super",
+//       "trait",
+//       "true",
+//       "try",
+//       "type",
+//       "typeof",
+//       "unsafe",
+//       "unsized",
+//       "use",
+//       "virtual",
+//       "where",
+//       "while",
+//       "yield"
+//     ];
+//     const LITERALS3 = [
+//       "true",
+//       "false",
+//       "Some",
+//       "None",
+//       "Ok",
+//       "Err"
+//     ];
+//     const BUILTINS = [
+//       // functions
+//       "drop ",
+//       // traits
+//       "Copy",
+//       "Send",
+//       "Sized",
+//       "Sync",
+//       "Drop",
+//       "Fn",
+//       "FnMut",
+//       "FnOnce",
+//       "ToOwned",
+//       "Clone",
+//       "Debug",
+//       "PartialEq",
+//       "PartialOrd",
+//       "Eq",
+//       "Ord",
+//       "AsRef",
+//       "AsMut",
+//       "Into",
+//       "From",
+//       "Default",
+//       "Iterator",
+//       "Extend",
+//       "IntoIterator",
+//       "DoubleEndedIterator",
+//       "ExactSizeIterator",
+//       "SliceConcatExt",
+//       "ToString",
+//       // macros
+//       "assert!",
+//       "assert_eq!",
+//       "bitflags!",
+//       "bytes!",
+//       "cfg!",
+//       "col!",
+//       "concat!",
+//       "concat_idents!",
+//       "debug_assert!",
+//       "debug_assert_eq!",
+//       "env!",
+//       "eprintln!",
+//       "panic!",
+//       "file!",
+//       "format!",
+//       "format_args!",
+//       "include_bytes!",
+//       "include_str!",
+//       "line!",
+//       "local_data_key!",
+//       "module_path!",
+//       "option_env!",
+//       "print!",
+//       "println!",
+//       "select!",
+//       "stringify!",
+//       "try!",
+//       "unimplemented!",
+//       "unreachable!",
+//       "vec!",
+//       "write!",
+//       "writeln!",
+//       "macro_rules!",
+//       "assert_ne!",
+//       "debug_assert_ne!"
+//     ];
+//     const TYPES3 = [
+//       "i8",
+//       "i16",
+//       "i32",
+//       "i64",
+//       "i128",
+//       "isize",
+//       "u8",
+//       "u16",
+//       "u32",
+//       "u64",
+//       "u128",
+//       "usize",
+//       "f32",
+//       "f64",
+//       "str",
+//       "char",
+//       "bool",
+//       "Box",
+//       "Option",
+//       "Result",
+//       "String",
+//       "Vec"
+//     ];
+//     return {
+//       name: "Rust",
+//       aliases: ["rs"],
+//       keywords: {
+//         $pattern: hljs.IDENT_RE + "!?",
+//         type: TYPES3,
+//         keyword: KEYWORDS3,
+//         literal: LITERALS3,
+//         built_in: BUILTINS
+//       },
+//       illegal: "</",
+//       contains: [
+//         hljs.C_LINE_COMMENT_MODE,
+//         hljs.COMMENT("/\\*", "\\*/", { contains: ["self"] }),
+//         hljs.inherit(hljs.QUOTE_STRING_MODE, {
+//           begin: /b?"/,
+//           illegal: null
+//         }),
+//         {
+//           className: "string",
+//           variants: [
+//             { begin: /b?r(#*)"(.|\n)*?"\1(?!#)/ },
+//             { begin: /b?'\\?(x\w{2}|u\w{4}|U\w{8}|.)'/ }
+//           ]
+//         },
+//         {
+//           className: "symbol",
+//           begin: /'[a-zA-Z_][a-zA-Z0-9_]*/
+//         },
+//         {
+//           className: "number",
+//           variants: [
+//             { begin: "\\b0b([01_]+)" + NUMBER_SUFFIX },
+//             { begin: "\\b0o([0-7_]+)" + NUMBER_SUFFIX },
+//             { begin: "\\b0x([A-Fa-f0-9_]+)" + NUMBER_SUFFIX },
+//             { begin: "\\b(\\d[\\d_]*(\\.[0-9_]+)?([eE][+-]?[0-9_]+)?)" + NUMBER_SUFFIX }
+//           ],
+//           relevance: 0
+//         },
+//         {
+//           begin: [
+//             /fn/,
+//             /\s+/,
+//             hljs.UNDERSCORE_IDENT_RE
+//           ],
+//           className: {
+//             1: "keyword",
+//             3: "title.function"
+//           }
+//         },
+//         {
+//           className: "meta",
+//           begin: "#!?\\[",
+//           end: "\\]",
+//           contains: [
+//             {
+//               className: "string",
+//               begin: /"/,
+//               end: /"/
+//             }
+//           ]
+//         },
+//         {
+//           begin: [
+//             /let/,
+//             /\s+/,
+//             /(?:mut\s+)?/,
+//             hljs.UNDERSCORE_IDENT_RE
+//           ],
+//           className: {
+//             1: "keyword",
+//             3: "keyword",
+//             4: "variable"
+//           }
+//         },
+//         // must come before impl/for rule later
+//         {
+//           begin: [
+//             /for/,
+//             /\s+/,
+//             hljs.UNDERSCORE_IDENT_RE,
+//             /\s+/,
+//             /in/
+//           ],
+//           className: {
+//             1: "keyword",
+//             3: "variable",
+//             5: "keyword"
+//           }
+//         },
+//         {
+//           begin: [
+//             /type/,
+//             /\s+/,
+//             hljs.UNDERSCORE_IDENT_RE
+//           ],
+//           className: {
+//             1: "keyword",
+//             3: "title.class"
+//           }
+//         },
+//         {
+//           begin: [
+//             /(?:trait|enum|struct|union|impl|for)/,
+//             /\s+/,
+//             hljs.UNDERSCORE_IDENT_RE
+//           ],
+//           className: {
+//             1: "keyword",
+//             3: "title.class"
+//           }
+//         },
+//         {
+//           begin: hljs.IDENT_RE + "::",
+//           keywords: {
+//             keyword: "Self",
+//             built_in: BUILTINS,
+//             type: TYPES3
+//           }
+//         },
+//         {
+//           className: "punctuation",
+//           begin: "->"
+//         },
+//         FUNCTION_INVOKE
+//       ]
+//     };
+//   }
+// 
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/languages/sql.js
+//   function sql(hljs) {
+//     const regex = hljs.regex;
+//     const COMMENT_MODE = hljs.COMMENT("--", "$");
+//     const STRING = {
+//       className: "string",
+//       variants: [
+//         {
+//           begin: /'/,
+//           end: /'/,
+//           contains: [{ begin: /''/ }]
+//         }
+//       ]
+//     };
+//     const QUOTED_IDENTIFIER = {
+//       begin: /"/,
+//       end: /"/,
+//       contains: [{ begin: /""/ }]
+//     };
+//     const LITERALS3 = [
+//       "true",
+//       "false",
+//       // Not sure it's correct to call NULL literal, and clauses like IS [NOT] NULL look strange that way.
+//       // "null",
+//       "unknown"
+//     ];
+//     const MULTI_WORD_TYPES = [
+//       "double precision",
+//       "large object",
+//       "with timezone",
+//       "without timezone"
+//     ];
+//     const TYPES3 = [
+//       "bigint",
+//       "binary",
+//       "blob",
+//       "boolean",
+//       "char",
+//       "character",
+//       "clob",
+//       "date",
+//       "dec",
+//       "decfloat",
+//       "decimal",
+//       "float",
+//       "int",
+//       "integer",
+//       "interval",
+//       "nchar",
+//       "nclob",
+//       "national",
+//       "numeric",
+//       "real",
+//       "row",
+//       "smallint",
+//       "time",
+//       "timestamp",
+//       "varchar",
+//       "varying",
+//       // modifier (character varying)
+//       "varbinary"
+//     ];
+//     const NON_RESERVED_WORDS = [
+//       "add",
+//       "asc",
+//       "collation",
+//       "desc",
+//       "final",
+//       "first",
+//       "last",
+//       "view"
+//     ];
+//     const RESERVED_WORDS = [
+//       "abs",
+//       "acos",
+//       "all",
+//       "allocate",
+//       "alter",
+//       "and",
+//       "any",
+//       "are",
+//       "array",
+//       "array_agg",
+//       "array_max_cardinality",
+//       "as",
+//       "asensitive",
+//       "asin",
+//       "asymmetric",
+//       "at",
+//       "atan",
+//       "atomic",
+//       "authorization",
+//       "avg",
+//       "begin",
+//       "begin_frame",
+//       "begin_partition",
+//       "between",
+//       "bigint",
+//       "binary",
+//       "blob",
+//       "boolean",
+//       "both",
+//       "by",
+//       "call",
+//       "called",
+//       "cardinality",
+//       "cascaded",
+//       "case",
+//       "cast",
+//       "ceil",
+//       "ceiling",
+//       "char",
+//       "char_length",
+//       "character",
+//       "character_length",
+//       "check",
+//       "classifier",
+//       "clob",
+//       "close",
+//       "coalesce",
+//       "collate",
+//       "collect",
+//       "column",
+//       "commit",
+//       "condition",
+//       "connect",
+//       "constraint",
+//       "contains",
+//       "convert",
+//       "copy",
+//       "corr",
+//       "corresponding",
+//       "cos",
+//       "cosh",
+//       "count",
+//       "covar_pop",
+//       "covar_samp",
+//       "create",
+//       "cross",
+//       "cube",
+//       "cume_dist",
+//       "current",
+//       "current_catalog",
+//       "current_date",
+//       "current_default_transform_group",
+//       "current_path",
+//       "current_role",
+//       "current_row",
+//       "current_schema",
+//       "current_time",
+//       "current_timestamp",
+//       "current_path",
+//       "current_role",
+//       "current_transform_group_for_type",
+//       "current_user",
+//       "cursor",
+//       "cycle",
+//       "date",
+//       "day",
+//       "deallocate",
+//       "dec",
+//       "decimal",
+//       "decfloat",
+//       "declare",
+//       "default",
+//       "define",
+//       "delete",
+//       "dense_rank",
+//       "deref",
+//       "describe",
+//       "deterministic",
+//       "disconnect",
+//       "distinct",
+//       "double",
+//       "drop",
+//       "dynamic",
+//       "each",
+//       "element",
+//       "else",
+//       "empty",
+//       "end",
+//       "end_frame",
+//       "end_partition",
+//       "end-exec",
+//       "equals",
+//       "escape",
+//       "every",
+//       "except",
+//       "exec",
+//       "execute",
+//       "exists",
+//       "exp",
+//       "external",
+//       "extract",
+//       "false",
+//       "fetch",
+//       "filter",
+//       "first_value",
+//       "float",
+//       "floor",
+//       "for",
+//       "foreign",
+//       "frame_row",
+//       "free",
+//       "from",
+//       "full",
+//       "function",
+//       "fusion",
+//       "get",
+//       "global",
+//       "grant",
+//       "group",
+//       "grouping",
+//       "groups",
+//       "having",
+//       "hold",
+//       "hour",
+//       "identity",
+//       "in",
+//       "indicator",
+//       "initial",
+//       "inner",
+//       "inout",
+//       "insensitive",
+//       "insert",
+//       "int",
+//       "integer",
+//       "intersect",
+//       "intersection",
+//       "interval",
+//       "into",
+//       "is",
+//       "join",
+//       "json_array",
+//       "json_arrayagg",
+//       "json_exists",
+//       "json_object",
+//       "json_objectagg",
+//       "json_query",
+//       "json_table",
+//       "json_table_primitive",
+//       "json_value",
+//       "lag",
+//       "language",
+//       "large",
+//       "last_value",
+//       "lateral",
+//       "lead",
+//       "leading",
+//       "left",
+//       "like",
+//       "like_regex",
+//       "listagg",
+//       "ln",
+//       "local",
+//       "localtime",
+//       "localtimestamp",
+//       "log",
+//       "log10",
+//       "lower",
+//       "match",
+//       "match_number",
+//       "match_recognize",
+//       "matches",
+//       "max",
+//       "member",
+//       "merge",
+//       "method",
+//       "min",
+//       "minute",
+//       "mod",
+//       "modifies",
+//       "module",
+//       "month",
+//       "multiset",
+//       "national",
+//       "natural",
+//       "nchar",
+//       "nclob",
+//       "new",
+//       "no",
+//       "none",
+//       "normalize",
+//       "not",
+//       "nth_value",
+//       "ntile",
+//       "null",
+//       "nullif",
+//       "numeric",
+//       "octet_length",
+//       "occurrences_regex",
+//       "of",
+//       "offset",
+//       "old",
+//       "omit",
+//       "on",
+//       "one",
+//       "only",
+//       "open",
+//       "or",
+//       "order",
+//       "out",
+//       "outer",
+//       "over",
+//       "overlaps",
+//       "overlay",
+//       "parameter",
+//       "partition",
+//       "pattern",
+//       "per",
+//       "percent",
+//       "percent_rank",
+//       "percentile_cont",
+//       "percentile_disc",
+//       "period",
+//       "portion",
+//       "position",
+//       "position_regex",
+//       "power",
+//       "precedes",
+//       "precision",
+//       "prepare",
+//       "primary",
+//       "procedure",
+//       "ptf",
+//       "range",
+//       "rank",
+//       "reads",
+//       "real",
+//       "recursive",
+//       "ref",
+//       "references",
+//       "referencing",
+//       "regr_avgx",
+//       "regr_avgy",
+//       "regr_count",
+//       "regr_intercept",
+//       "regr_r2",
+//       "regr_slope",
+//       "regr_sxx",
+//       "regr_sxy",
+//       "regr_syy",
+//       "release",
+//       "result",
+//       "return",
+//       "returns",
+//       "revoke",
+//       "right",
+//       "rollback",
+//       "rollup",
+//       "row",
+//       "row_number",
+//       "rows",
+//       "running",
+//       "savepoint",
+//       "scope",
+//       "scroll",
+//       "search",
+//       "second",
+//       "seek",
+//       "select",
+//       "sensitive",
+//       "session_user",
+//       "set",
+//       "show",
+//       "similar",
+//       "sin",
+//       "sinh",
+//       "skip",
+//       "smallint",
+//       "some",
+//       "specific",
+//       "specifictype",
+//       "sql",
+//       "sqlexception",
+//       "sqlstate",
+//       "sqlwarning",
+//       "sqrt",
+//       "start",
+//       "static",
+//       "stddev_pop",
+//       "stddev_samp",
+//       "submultiset",
+//       "subset",
+//       "substring",
+//       "substring_regex",
+//       "succeeds",
+//       "sum",
+//       "symmetric",
+//       "system",
+//       "system_time",
+//       "system_user",
+//       "table",
+//       "tablesample",
+//       "tan",
+//       "tanh",
+//       "then",
+//       "time",
+//       "timestamp",
+//       "timezone_hour",
+//       "timezone_minute",
+//       "to",
+//       "trailing",
+//       "translate",
+//       "translate_regex",
+//       "translation",
+//       "treat",
+//       "trigger",
+//       "trim",
+//       "trim_array",
+//       "true",
+//       "truncate",
+//       "uescape",
+//       "union",
+//       "unique",
+//       "unknown",
+//       "unnest",
+//       "update",
+//       "upper",
+//       "user",
+//       "using",
+//       "value",
+//       "values",
+//       "value_of",
+//       "var_pop",
+//       "var_samp",
+//       "varbinary",
+//       "varchar",
+//       "varying",
+//       "versioning",
+//       "when",
+//       "whenever",
+//       "where",
+//       "width_bucket",
+//       "window",
+//       "with",
+//       "within",
+//       "without",
+//       "year"
+//     ];
+//     const RESERVED_FUNCTIONS = [
+//       "abs",
+//       "acos",
+//       "array_agg",
+//       "asin",
+//       "atan",
+//       "avg",
+//       "cast",
+//       "ceil",
+//       "ceiling",
+//       "coalesce",
+//       "corr",
+//       "cos",
+//       "cosh",
+//       "count",
+//       "covar_pop",
+//       "covar_samp",
+//       "cume_dist",
+//       "dense_rank",
+//       "deref",
+//       "element",
+//       "exp",
+//       "extract",
+//       "first_value",
+//       "floor",
+//       "json_array",
+//       "json_arrayagg",
+//       "json_exists",
+//       "json_object",
+//       "json_objectagg",
+//       "json_query",
+//       "json_table",
+//       "json_table_primitive",
+//       "json_value",
+//       "lag",
+//       "last_value",
+//       "lead",
+//       "listagg",
+//       "ln",
+//       "log",
+//       "log10",
+//       "lower",
+//       "max",
+//       "min",
+//       "mod",
+//       "nth_value",
+//       "ntile",
+//       "nullif",
+//       "percent_rank",
+//       "percentile_cont",
+//       "percentile_disc",
+//       "position",
+//       "position_regex",
+//       "power",
+//       "rank",
+//       "regr_avgx",
+//       "regr_avgy",
+//       "regr_count",
+//       "regr_intercept",
+//       "regr_r2",
+//       "regr_slope",
+//       "regr_sxx",
+//       "regr_sxy",
+//       "regr_syy",
+//       "row_number",
+//       "sin",
+//       "sinh",
+//       "sqrt",
+//       "stddev_pop",
+//       "stddev_samp",
+//       "substring",
+//       "substring_regex",
+//       "sum",
+//       "tan",
+//       "tanh",
+//       "translate",
+//       "translate_regex",
+//       "treat",
+//       "trim",
+//       "trim_array",
+//       "unnest",
+//       "upper",
+//       "value_of",
+//       "var_pop",
+//       "var_samp",
+//       "width_bucket"
+//     ];
+//     const POSSIBLE_WITHOUT_PARENS = [
+//       "current_catalog",
+//       "current_date",
+//       "current_default_transform_group",
+//       "current_path",
+//       "current_role",
+//       "current_schema",
+//       "current_transform_group_for_type",
+//       "current_user",
+//       "session_user",
+//       "system_time",
+//       "system_user",
+//       "current_time",
+//       "localtime",
+//       "current_timestamp",
+//       "localtimestamp"
+//     ];
+//     const COMBOS = [
+//       "create table",
+//       "insert into",
+//       "primary key",
+//       "foreign key",
+//       "not null",
+//       "alter table",
+//       "add constraint",
+//       "grouping sets",
+//       "on overflow",
+//       "character set",
+//       "respect nulls",
+//       "ignore nulls",
+//       "nulls first",
+//       "nulls last",
+//       "depth first",
+//       "breadth first"
+//     ];
+//     const FUNCTIONS = RESERVED_FUNCTIONS;
+//     const KEYWORDS3 = [
+//       ...RESERVED_WORDS,
+//       ...NON_RESERVED_WORDS
+//     ].filter((keyword) => {
+//       return !RESERVED_FUNCTIONS.includes(keyword);
+//     });
+//     const VARIABLE = {
+//       className: "variable",
+//       begin: /@[a-z0-9][a-z0-9_]*/
+//     };
+//     const OPERATOR = {
+//       className: "operator",
+//       begin: /[-+*/=%^~]|&&?|\|\|?|!=?|<(?:=>?|<|>)?|>[>=]?/,
+//       relevance: 0
+//     };
+//     const FUNCTION_CALL = {
+//       begin: regex.concat(/\b/, regex.either(...FUNCTIONS), /\s*\(/),
+//       relevance: 0,
+//       keywords: { built_in: FUNCTIONS }
+//     };
+//     function reduceRelevancy(list, {
+//       exceptions,
+//       when
+//     } = {}) {
+//       const qualifyFn = when;
+//       exceptions = exceptions || [];
+//       return list.map((item) => {
+//         if (item.match(/\|\d+$/) || exceptions.includes(item)) {
+//           return item;
+//         } else if (qualifyFn(item)) {
+//           return `${item}|0`;
+//         } else {
+//           return item;
+//         }
+//       });
+//     }
+//     return {
+//       name: "SQL",
+//       case_insensitive: true,
+//       // does not include {} or HTML tags `</`
+//       illegal: /[{}]|<\//,
+//       keywords: {
+//         $pattern: /\b[\w\.]+/,
+//         keyword: reduceRelevancy(KEYWORDS3, { when: (x) => x.length < 3 }),
+//         literal: LITERALS3,
+//         type: TYPES3,
+//         built_in: POSSIBLE_WITHOUT_PARENS
+//       },
+//       contains: [
+//         {
+//           begin: regex.either(...COMBOS),
+//           relevance: 0,
+//           keywords: {
+//             $pattern: /[\w\.]+/,
+//             keyword: KEYWORDS3.concat(COMBOS),
+//             literal: LITERALS3,
+//             type: TYPES3
+//           }
+//         },
+//         {
+//           className: "type",
+//           begin: regex.either(...MULTI_WORD_TYPES)
+//         },
+//         FUNCTION_CALL,
+//         VARIABLE,
+//         STRING,
+//         QUOTED_IDENTIFIER,
+//         hljs.C_NUMBER_MODE,
+//         hljs.C_BLOCK_COMMENT_MODE,
+//         COMMENT_MODE,
+//         OPERATOR
+//       ]
+//     };
+//   }
+// 
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/languages/diff.js
+//   function diff(hljs) {
+//     const regex = hljs.regex;
+//     return {
+//       name: "Diff",
+//       aliases: ["patch"],
+//       contains: [
+//         {
+//           className: "meta",
+//           relevance: 10,
+//           match: regex.either(
+//             /^@@ +-\d+,\d+ +\+\d+,\d+ +@@/,
+//             /^\*\*\* +\d+,\d+ +\*\*\*\*$/,
+//             /^--- +\d+,\d+ +----$/
+//           )
+//         },
+//         {
+//           className: "comment",
+//           variants: [
+//             {
+//               begin: regex.either(
+//                 /Index: /,
+//                 /^index/,
+//                 /={3,}/,
+//                 /^-{3}/,
+//                 /^\*{3} /,
+//                 /^\+{3}/,
+//                 /^diff --git/
+//               ),
+//               end: /$/
+//             },
+//             { match: /^\*{15}$/ }
+//           ]
+//         },
+//         {
+//           className: "addition",
+//           begin: /^\+/,
+//           end: /$/
+//         },
+//         {
+//           className: "deletion",
+//           begin: /^-/,
+//           end: /$/
+//         },
+//         {
+//           className: "addition",
+//           begin: /^!/,
+//           end: /$/
+//         }
+//       ]
+//     };
+//   }
+// 
+//   // node_modules/.pnpm/highlight.js@11.9.0/node_modules/highlight.js/es/languages/dockerfile.js
+//   function dockerfile(hljs) {
+//     const KEYWORDS3 = [
+//       "from",
+//       "maintainer",
+//       "expose",
+//       "env",
+//       "arg",
+//       "user",
+//       "onbuild",
+//       "stopsignal"
+//     ];
+//     return {
+//       name: "Dockerfile",
+//       aliases: ["docker"],
+//       case_insensitive: true,
+//       keywords: KEYWORDS3,
+//       contains: [
+//         hljs.HASH_COMMENT_MODE,
+//         hljs.APOS_STRING_MODE,
+//         hljs.QUOTE_STRING_MODE,
+//         hljs.NUMBER_MODE,
+//         {
+//           beginKeywords: "run cmd entrypoint volume add copy workdir label healthcheck shell",
+//           starts: {
+//             end: /[^\\]$/,
+//             subLanguage: "bash"
+//           }
+//         }
+//       ],
+//       illegal: "</"
+//     };
+//   }
+// 
+//   // shared/utils/highlight.ts
+//   async function loadHighlightJsStyle() {
+//     try {
+//       if (document.getElementById("hljs-theme-style"))
+//         return;
+//       const link = document.createElement("link");
+//       link.id = "hljs-theme-style";
+//       link.rel = "stylesheet";
+//       link.href = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
+//       document.head.appendChild(link);
+//     } catch (error) {
+//       console.error("Failed to load highlight.js styles:", error);
+//     }
+//   }
+// 
+//   // shared/utils/markdownRenderer.ts
+//   core_default.registerLanguage("javascript", javascript);
+//   core_default.registerLanguage("typescript", typescript);
+//   core_default.registerLanguage("json", json);
+//   core_default.registerLanguage("yaml", yaml);
+//   core_default.registerLanguage("markdown", markdown);
+//   core_default.registerLanguage("html", xml);
+//   core_default.registerLanguage("xml", xml);
+//   core_default.registerLanguage("css", css);
+//   core_default.registerLanguage("scss", scss);
+//   core_default.registerLanguage("bash", bash);
+//   core_default.registerLanguage("shell", bash);
+//   core_default.registerLanguage("sh", bash);
+//   core_default.registerLanguage("python", python);
+//   core_default.registerLanguage("java", java);
+//   core_default.registerLanguage("go", go);
+//   core_default.registerLanguage("rust", rust);
+//   core_default.registerLanguage("sql", sql);
+//   core_default.registerLanguage("diff", diff);
+//   core_default.registerLanguage("dockerfile", dockerfile);
+//   var SafeMarkdownRenderer = class {
+//     constructor(options = {}) {
+//       __publicField(this, "options");
+//       __publicField(this, "md");
+//       // 允许的 HTML 标签白名单
+//       __publicField(this, "defaultAllowedTags", [
+//         "h1",
+//         "h2",
+//         "h3",
+//         "h4",
+//         "h5",
+//         "h6",
+//         "p",
+//         "br",
+//         "strong",
+//         "em",
+//         "code",
+//         "pre",
+//         "ul",
+//         "ol",
+//         "li",
+//         "a",
+//         "blockquote"
+//       ]);
+//       this.options = {
+//         enableCodeHighlight: true,
+//         allowedTags: this.defaultAllowedTags,
+//         ...options
+//       };
+//       this.md = new import_markdown_it.default({
+//         html: false,
+//         // 禁用 HTML 以防止 XSS 攻击
+//         linkify: true,
+//         breaks: true,
+//         // 使用 highlight.js 在渲染阶段生成高亮后的 HTML
+//         highlight: (str, lang) => {
+//           const language = (lang || "").toLowerCase();
+//           if (language && core_default.getLanguage(language)) {
+//             try {
+//               const { value } = core_default.highlight(str, {
+//                 language,
+//                 ignoreIllegals: true
+//               });
+//               return `<pre class="code-block"><code class="hljs language-${language}">${value}</code></pre>`;
+//             } catch (e) {
+//               console.error(`Error highlighting code block with language ${language}:`, e);
+//             }
+//           }
+//           const escaped = this.escapeHtml(str);
+//           return `<pre class="code-block"><code class="hljs">${escaped}</code></pre>`;
+//         }
+//       });
+//       const self = this;
+//       const defaultFence = this.md.renderer.rules.fence?.bind(this.md.renderer);
+//       this.md.renderer.rules.fence = function(tokens, idx, options2, env, slf) {
+//         const token = tokens[idx];
+//         const info = (token.info || "").trim().toLowerCase();
+//         const content = token.content || "";
+//         if (info === "mermaid" || info === "sequencediagram") {
+//           const diagramId = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+//           return `<div class="mermaid-diagram" id="${diagramId}">${self.escapeHtml(content)}</div>`;
+//         }
+//         if (defaultFence) {
+//           return defaultFence(tokens, idx, options2, env, slf);
+//         }
+//         const lang = info || "text";
+//         const escaped = self.escapeHtml(content);
+//         return `<pre class="code-block"><code class="hljs language-${lang}">${escaped}</code></pre>`;
+//       };
+//       const defaultImage = this.md.renderer.rules.image?.bind(this.md.renderer);
+//       this.md.renderer.rules.image = function(tokens, idx, options2, env, slf) {
+//         const token = tokens[idx];
+//         const src = token.attrGet("src") || "";
+//         const alt = token.content || token.attrGet("alt") || "";
+//         const isAllowedSrc = /^https?:\/\//.test(src) || src.startsWith("/") || src.startsWith("./") || src.startsWith("../");
+//         const isDangerousProtocol = /^(data|javascript|vbscript|file|mailto|tel):/i.test(src);
+//         if (!isAllowedSrc || isDangerousProtocol) {
+//           return `<span class="md-image-blocked">${self.escapeHtml(alt)}</span>`;
+//         }
+//         token.attrSet("loading", "lazy");
+//         token.attrSet("decoding", "async");
+//         token.attrSet("referrerpolicy", "no-referrer");
+//         token.attrSet("alt", alt);
+//         token.attrJoin("class", "markdown-image");
+//         if (defaultImage) {
+//           return defaultImage(tokens, idx, options2, env, slf);
+//         }
+//         return slf.renderToken(tokens, idx, options2);
+//       };
+//     }
+//     /**
+//      * 渲染 Markdown 为 HTML
+//      */
+//     render(markdown2) {
+//       if (!markdown2 || typeof markdown2 !== "string") {
+//         return "";
+//       }
+//       const html = this.md.render(markdown2);
+//       const sanitizedHtml = import_isomorphic_dompurify.default.sanitize(html, {
+//         ALLOWED_TAGS: [
+//           "h1",
+//           "h2",
+//           "h3",
+//           "h4",
+//           "h5",
+//           "h6",
+//           "p",
+//           "br",
+//           "strong",
+//           "em",
+//           "code",
+//           "pre",
+//           "ul",
+//           "ol",
+//           "li",
+//           "a",
+//           "blockquote",
+//           "div",
+//           "img"
+//         ],
+//         ALLOWED_ATTR: [
+//           "class",
+//           "id",
+//           "href",
+//           "target",
+//           "rel",
+//           // img 相关
+//           "src",
+//           "alt",
+//           "title",
+//           "loading",
+//           "referrerpolicy",
+//           "decoding",
+//           "width",
+//           "height",
+//           "srcset",
+//           "sizes"
+//         ],
+//         ALLOW_DATA_ATTR: false
+//       });
+//       return sanitizedHtml;
+//     }
+//     /**
+//      * 转义 HTML 字符以防止 XSS
+//      */
+//     escapeHtml(text) {
+//       const escapeMap = {
+//         "&": "&amp;",
+//         "<": "&lt;",
+//         ">": "&gt;",
+//         '"': "&quot;",
+//         "'": "&#39;"
+//       };
+//       return String(text).replace(/[&<>"']/g, (char) => escapeMap[char] || char);
+//     }
+//     /**
+//      * 保留已经处理的 HTML 标签，对其他内容进行转义
+//      */
+//     preserveHtmlTags(text) {
+//       if (text.includes("<") && text.includes(">")) {
+//         return text;
+//       }
+//       return this.escapeHtml(text);
+//     }
+//     /**
+//      * 渲染标题
+//      */
+//     renderHeaders(html) {
+//       html = html.replace(/^######\s(.+)$/gm, (match, title) => `<h6>${this.escapeHtml(title.trim())}</h6>`);
+//       html = html.replace(/^#####\s(.+)$/gm, (match, title) => `<h5>${this.escapeHtml(title.trim())}</h5>`);
+//       html = html.replace(/^####\s(.+)$/gm, (match, title) => `<h4>${this.escapeHtml(title.trim())}</h4>`);
+//       html = html.replace(/^###\s(.+)$/gm, (match, title) => `<h3>${this.escapeHtml(title.trim())}</h3>`);
+//       html = html.replace(/^##\s(.+)$/gm, (match, title) => `<h2>${this.escapeHtml(title.trim())}</h2>`);
+//       html = html.replace(/^#\s(.+)$/gm, (match, title) => `<h1>${this.escapeHtml(title.trim())}</h1>`);
+//       return html;
+//     }
+//     /**
+//      * 渲染代码块
+//      */
+//     renderCodeBlocks(html) {
+//       console.log("renderCodeBlocks called, input length:", html.length);
+//       const hasCodeBlocks = html.includes("```");
+//       console.log("Contains code blocks:", hasCodeBlocks);
+//       if (hasCodeBlocks) {
+//         const codeBlockMatches = html.match(/```[\s\S]*?```/g);
+//         console.log("Found code block matches:", codeBlockMatches?.length || 0);
+//         if (codeBlockMatches) {
+//           codeBlockMatches.forEach((match, index) => {
+//             console.log(`Code block ${index}:`, match.substring(0, 100) + "...");
+//           });
+//         }
+//       }
+//       html = html.replace(/```([^`]*?)```/gs, (match, codeWithLang) => {
+//         const lines = codeWithLang.trim().split("\n");
+//         const firstLine = lines[0] || "";
+//         const language = firstLine.toLowerCase().trim();
+//         const code = lines.slice(1).join("\n").trim();
+//         console.log("Processing code block:", { language, codeLength: code.length });
+//         if (language === "mermaid" || language === "sequencediagram") {
+//           console.log("Detected Mermaid diagram!");
+//           return this.renderMermaidDiagram(code);
+//         }
+//         console.log("Rendering as regular code block");
+//         return `<pre><code class="language-${language}">${this.escapeHtml(code)}</code></pre>`;
+//       });
+//       console.log("renderCodeBlocks finished, output length:", html.length);
+//       return html;
+//     }
+//     /**
+//      * 渲染 Mermaid 图表
+//      */
+//     renderMermaidDiagram(code) {
+//       const diagramId = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+//       console.log("Rendering Mermaid diagram:", { diagramId, code: code.substring(0, 100) + "..." });
+//       return `<div class="mermaid-diagram" id="${diagramId}">${this.escapeHtml(code)}</div>`;
+//     }
+//     /**
+//      * 渲染行内代码
+//      */
+//     renderInlineCode(html) {
+//       html = html.replace(/`([^`\n]+)`/g, (match, code) => {
+//         if (html.indexOf("<pre><code>") !== -1 && html.indexOf("</code></pre>") !== -1) {
+//           const preStart = html.lastIndexOf("<pre><code>", html.indexOf(match));
+//           const preEnd = html.indexOf("</code></pre>", html.indexOf(match));
+//           if (preStart !== -1 && preEnd !== -1 && preStart < html.indexOf(match) && html.indexOf(match) < preEnd) {
+//             return match;
+//           }
+//         }
+//         return `<code>${this.escapeHtml(code)}</code>`;
+//       });
+//       return html;
+//     }
+//     /**
+//      * 渲染粗体和斜体
+//      */
+//     renderBoldItalic(html) {
+//       html = html.replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>");
+//       html = html.replace(/\*([^*\n]+)\*/g, "<em>$1</em>");
+//       return html;
+//     }
+//     /**
+//      * 渲染链接
+//      */
+//     renderLinks(html) {
+//       html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+//         if (url.match(/^https?:\/\//)) {
+//           return `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+//         }
+//         return match;
+//       });
+//       return html;
+//     }
+//     /**
+//      * 渲染列表
+//      */
+//     renderLists(html) {
+//       const lines = html.split("\n");
+//       const result = [];
+//       let inUnorderedList = false;
+//       let inOrderedList = false;
+//       let listItems = [];
+//       for (let i = 0; i < lines.length; i++) {
+//         const line = lines[i];
+//         const isUnorderedListItem = /^[*+-]\s(.+)$/.test(line);
+//         const isOrderedListItem = /^\d+\.\s(.+)$/.test(line);
+//         if (isUnorderedListItem) {
+//           if (inOrderedList) {
+//             result.push(`<ol>${listItems.join("")}</ol>`);
+//             inOrderedList = false;
+//             listItems = [];
+//           }
+//           if (!inUnorderedList) {
+//             inUnorderedList = true;
+//             listItems = [];
+//           }
+//           const content = line.replace(/^[*+-]\s/, "");
+//           const formattedContent = content.replace(/\n/g, "<br>");
+//           listItems.push(`<li>${formattedContent}</li>`);
+//         } else if (isOrderedListItem) {
+//           if (inUnorderedList) {
+//             result.push(`<ul>${listItems.join("")}</ul>`);
+//             inUnorderedList = false;
+//             listItems = [];
+//           }
+//           if (!inOrderedList) {
+//             inOrderedList = true;
+//             listItems = [];
+//           }
+//           const content = line.replace(/^\d+\.\s/, "");
+//           listItems.push(`<li>${content}</li>`);
+//         } else {
+//           if (inUnorderedList) {
+//             result.push(`<ul>${listItems.join("")}</ul>`);
+//             inUnorderedList = false;
+//             listItems = [];
+//           } else if (inOrderedList) {
+//             result.push(`<ol>${listItems.join("")}</ol>`);
+//             inOrderedList = false;
+//             listItems = [];
+//           }
+//           result.push(line);
+//         }
+//       }
+//       if (inUnorderedList && listItems.length > 0) {
+//         result.push(`<ul>${listItems.join("")}</ul>`);
+//       } else if (inOrderedList && listItems.length > 0) {
+//         result.push(`<ol>${listItems.join("")}</ol>`);
+//       }
+//       return result.join("\n");
+//     }
+//     /**
+//      * 渲染段落
+//      */
+//     renderParagraphs(html) {
+//       const paragraphs = html.split("\n\n").filter((p) => p.trim());
+//       return paragraphs.map((paragraph) => {
+//         const trimmed = paragraph.trim();
+//         if (trimmed.match(/^<(h[1-6]|ul|ol|pre|blockquote|div)/)) {
+//           return trimmed;
+//         }
+//         if (!trimmed) {
+//           return "";
+//         }
+//         let content = trimmed;
+//         const hasHtmlTags = /<[^>]+>/.test(content);
+//         if (!hasHtmlTags) {
+//           content = this.escapeHtml(content);
+//           content = content.replace(/\n/g, "<br>");
+//         } else {
+//           content = trimmed;
+//         }
+//         return `<p>${content}</p>`;
+//       }).join("\n\n");
+//     }
+//     /**
+//      * 添加代码高亮（简单实现）
+//      */
+//     highlightCode(container) {
+//       this.ensureHighlightCss();
+//       this.renderMermaidDiagrams(container);
+//     }
+//     /**
+//      * 动态加载 highlight.js 与默认样式
+//      */
+//     loadHighlightJsLibrary() {
+//       return new Promise((resolve) => {
+//         this.ensureHighlightCss();
+//         resolve();
+//       });
+//     }
+//     /**
+//      * 确保高亮样式已加载（已移除 CDN 依赖）
+//      */
+//     ensureHighlightCss() {
+//       loadHighlightJsStyle().catch(() => {
+//         if (!document.getElementById("hljs-style-note")) {
+//           const note = document.createElement("style");
+//           note.id = "hljs-style-note";
+//           note.textContent = "/* highlight.js styles should be bundled locally */";
+//           document.head.appendChild(note);
+//         }
+//       });
+//     }
+//     /**
+//      * 渲染 Mermaid 图表
+//      */
+//     renderMermaidDiagrams(container) {
+//       const mermaidDiagrams = container.querySelectorAll(".mermaid-diagram");
+//       if (mermaidDiagrams.length === 0)
+//         return;
+//       console.log(`Found ${mermaidDiagrams.length} Mermaid diagrams to render`);
+//       this.loadMermaidLibrary().then(() => {
+//         console.log("Mermaid library loaded successfully");
+//         mermaidDiagrams.forEach((diagram, index) => {
+//           console.log(`Initializing Mermaid diagram ${index + 1}/${mermaidDiagrams.length}`);
+//           this.initializeMermaidDiagram(diagram);
+//         });
+//       }).catch((error) => {
+//         console.error("Failed to load Mermaid library:", error);
+//         mermaidDiagrams.forEach((diagram) => {
+//           const code = diagram.textContent || "";
+//           diagram.innerHTML = `<pre><code>${code}</code></pre>`;
+//           diagram.classList.add("mermaid-fallback");
+//         });
+//       });
+//     }
+//     /**
+//      * 动态加载 Mermaid 库
+//      */
+//     loadMermaidLibrary() {
+//       return new Promise((resolve, reject) => {
+//         if (window.mermaid) {
+//           console.log("Mermaid library already loaded");
+//           resolve();
+//           return;
+//         }
+//         console.log("Loading Mermaid library from CDN...");
+//         const script = document.createElement("script");
+//         script.src = "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js";
+//         script.async = true;
+//         script.onload = () => {
+//           console.log("Mermaid library script loaded, initializing...");
+//           try {
+//             const mermaid = window.mermaid;
+//             mermaid.initialize({
+//               startOnLoad: false,
+//               theme: "default",
+//               securityLevel: "loose",
+//               fontFamily: "monospace"
+//             });
+//             console.log("Mermaid library initialized");
+//             resolve();
+//           } catch (error) {
+//             console.error("Error initializing Mermaid:", error);
+//             reject(error);
+//           }
+//         };
+//         script.onerror = (error) => {
+//           console.error("Failed to load Mermaid script:", error);
+//           reject(new Error("Failed to load Mermaid library"));
+//         };
+//         document.head.appendChild(script);
+//       });
+//     }
+//     /**
+//      * 初始化单个 Mermaid 图表
+//      */
+//     initializeMermaidDiagram(element) {
+//       const mermaid = window.mermaid;
+//       if (!mermaid) {
+//         console.error("Mermaid library not available");
+//         return;
+//       }
+//       const code = element.textContent || "";
+//       const id = element.id;
+//       console.log(`Rendering diagram ${id}:`, code.substring(0, 100) + "...");
+//       try {
+//         element.textContent = "";
+//         element.innerHTML = '<div style="padding: 20px; color: #666;">\u6B63\u5728\u6E32\u67D3\u56FE\u8868...</div>';
+//         mermaid.render(id + "-svg", code).then((result) => {
+//           console.log(`Successfully rendered diagram ${id}`);
+//           element.innerHTML = result.svg;
+//           element.classList.add("mermaid-rendered");
+//           element.addEventListener("click", () => {
+//             this.showMermaidFullscreen(result.svg, id);
+//           });
+//         }).catch((error) => {
+//           console.error(`Mermaid rendering error for ${id}:`, error);
+//           element.innerHTML = `
 //                     <div style="color: #dc2626; margin-bottom: 8px;">\u26A0\uFE0F \u56FE\u8868\u6E32\u67D3\u5931\u8D25</div>
 //                     <pre><code>${this.escapeHtml(i)}</code></pre>
 //                 `,e.classList.add("mermaid-error")})}catch(o){console.error(`Mermaid initialization error for ${r}:`,o),e.innerHTML=`
@@ -4054,14 +10381,559 @@ export const implementationModule = `
 //                 <button class="mermaid-fullscreen-close" onclick="this.closest('.mermaid-fullscreen-modal').remove()">&times;</button>
 //                 ${e}
 //             </div>
-//         `,i.addEventListener("click",o=>{o.target===i&&i.remove()});let r=o=>{o.key==="Escape"&&(i.remove(),document.removeEventListener("keydown",r))};document.addEventListener("keydown",r),document.body.appendChild(i)}applyBasicHighlighting(e){let n=e.textContent||"";["function","const","let","var","if","else","for","while","return","class","interface","type","import","export","async","await","try","catch","throw","new"].forEach(r=>{let o=new RegExp(`\\b${r}\\b`,"g");n=n.replace(o,`<span class="keyword">${r}</span>`)}),n=n.replace(/(["'])((?:(?!\1)[^\\]|\\.)*)(\1)/g,'<span class="string">$1$2$3</span>'),n=n.replace(/(\/\/.*$)/gm,'<span class="comment">$1</span>'),n=n.replace(/(\/\*[\s\S]*?\*\/)/g,'<span class="comment">$1</span>'),e.innerHTML=n}};var sn=class{constructor(e,n={}){z(this,"defaultWidth",1080);z(this,"defaultHeight",1440);z(this,"padding",72);z(this,"getIcon");z(this,"options");this.getIcon=e,this.options=n}async shareCard(e){let n=await this.renderCanvas(e),i=await new Promise(r=>n.toBlob(o=>r(o),"image/png",.95));try{if(navigator.clipboard&&window.ClipboardItem){let r=new ClipboardItem({"image/png":i});return await navigator.clipboard.write([r]),this.toast("\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F"),{method:"clipboard",ok:!0}}throw new Error("Clipboard API not supported")}catch{let r=URL.createObjectURL(i),o=document.createElement("a");o.href=r;let a=(e.title||"share").replace(/[\n\t\s]+/g,"_").slice(0,60);return o.download=`${a}.png`,document.body.appendChild(o),o.click(),o.remove(),URL.revokeObjectURL(r),this.toast("\u5DF2\u4E0B\u8F7D\u56FE\u7247\uFF08\u526A\u8D34\u677F\u4E0D\u53EF\u7528\uFF09"),{method:"download",ok:!0}}}async openPreview(e,n){let i=this.computeCanvasSize(n?.matchElement),r=this.analyzePageImageDisplay(n?.matchElement,e.imageUrl),o=await this.renderCanvas(e,i,r),a=await new Promise(T=>o.toBlob(A=>T(A),"image/png",.95)),s=document.createElement("div");s.className="share-preview-overlay",s.tabIndex=-1;let l=document.createElement("div");l.className="share-preview-modal",l.setAttribute("role","dialog"),l.setAttribute("aria-modal","true"),l.setAttribute("aria-label","\u5206\u4EAB\u9884\u89C8");let c=document.createElement("div");c.className="share-preview-header",c.innerHTML=`
-//       <div class="share-preview-title">\u5206\u4EAB\u9884\u89C8</div>
-//       <button class="share-preview-close" aria-label="\u5173\u95ED\u9884\u89C8" title="\u5173\u95ED">\xD7</button>
-//     `;let d=document.createElement("div");d.className="share-preview-body";let m=document.createElement("div");m.className="share-preview-canvas-wrap",m.appendChild(o),d.appendChild(m);let p=document.createElement("div");p.className="share-preview-actions";let h=document.createElement("button");h.className="share-action primary",h.textContent="\u590D\u5236\u5230\u526A\u8D34\u677F";let _=document.createElement("button");_.className="share-action",_.textContent="\u4E0B\u8F7D\u56FE\u7247";let f=document.createElement("button");f.className="share-action",f.textContent="\u590D\u5236\u94FE\u63A5";let x=document.createElement("button");x.className="share-action subtle",x.textContent="\u53D6\u6D88",p.append(h,_,f,x),l.append(c,d,p),s.appendChild(l),document.body.appendChild(s);let b=()=>s.remove();s.addEventListener("click",T=>{T.target===s&&b()}),c.querySelector(".share-preview-close")?.addEventListener("click",b);let y=T=>{T.key==="Escape"&&(b(),document.removeEventListener("keydown",y))};document.addEventListener("keydown",y),h.addEventListener("click",async()=>{await this.tryClipboard(a)?(this.toast("\u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F"),b()):(this.toast("\u526A\u8D34\u677F\u4E0D\u53EF\u7528\uFF0C\u5DF2\u81EA\u52A8\u4E0B\u8F7D"),this.triggerDownload(a,e.title),b())}),_.addEventListener("click",()=>{this.triggerDownload(a,e.title),this.toast("\u5DF2\u5F00\u59CB\u4E0B\u8F7D"),b()}),f.addEventListener("click",async()=>{try{let T=this.buildDeepLink(e);await navigator.clipboard.writeText(T),this.toast("\u94FE\u63A5\u5DF2\u590D\u5236")}catch{this.toast("\u590D\u5236\u94FE\u63A5\u5931\u8D25")}}),x.addEventListener("click",b),c.querySelector(".share-preview-close")?.focus()}async tryClipboard(e){try{if(navigator.clipboard&&window.ClipboardItem){let n=new ClipboardItem({"image/png":e});return await navigator.clipboard.write([n]),!0}}catch{}return!1}triggerDownload(e,n){let i=URL.createObjectURL(e),r=document.createElement("a");r.href=i;let o=(n||"share").replace(/[\n\t\s]+/g,"_").slice(0,60);r.download=`${o}.png`,document.body.appendChild(r),r.click(),r.remove(),URL.revokeObjectURL(i)}async renderCanvas(e,n,i){let r=document.createElement("canvas"),o=n?.width??this.defaultWidth,a=n?.height??this.defaultHeight;r.width=o,r.height=a;let s=r.getContext("2d");try{await document.fonts?.ready}catch{}s.fillStyle="#ffffff",s.fillRect(0,0,o,a);let l=160,c=s.createLinearGradient(0,0,o,0);c.addColorStop(0,"#eff6ff"),c.addColorStop(1,"#f8fafc"),s.fillStyle=c,s.fillRect(0,0,o,l);let d=this.padding,m=this.getIcon(e.category)||"\u{1F4CB}",p=44,h=this.padding+p,_=d+p;s.fillStyle="#e5f2ff",this.roundRect(s,h-p,_-p,p*2,p*2,24),s.fill(),s.font="48px system-ui, -apple-system, Segoe UI, Roboto",s.textAlign="center",s.textBaseline="middle",s.fillStyle="#111827",s.fillText(m,h,_+2);let f=h+p+24,x=o-f-this.padding;s.textAlign="left",s.textBaseline="alphabetic",s.fillStyle="#0f172a",s.font="bold 48px ui-sans-serif, -apple-system, system-ui, Segoe UI, Roboto",d+=8,d=this.wrapText(s,e.title||"",f,d+24,x,56,2),s.font="28px ui-sans-serif, -apple-system, system-ui",s.fillStyle="#475569";let b=[];e.difficulty&&b.push(this.mapDifficulty(e.difficulty)),e.readTime&&b.push(`\u{1F4D6} ${e.readTime}`),b.length?(d+=8,s.fillText(b.join("  \xB7  "),f,d+24),d+=48):d+=40;let y=this.padding,T=o-this.padding*2;if(s.font="32px ui-sans-serif, -apple-system, system-ui",s.fillStyle="#111827",e.description?d=this.wrapText(s,e.description,y,d+24,T,44,3):e.overview&&(d=this.wrapText(s,e.overview,y,d+24,T,44,3)),e.imageUrl){d+=12;let j=o-this.padding*2,M=await this.loadImage(e.imageUrl).catch(()=>null),H=16,te=d;if(M){let Q,J;if(i?.pageImageWidth&&i?.pageImageHeight){let Z=i.pageImageHeight/i.pageImageWidth;Q=j,J=Math.round(Q*Z)}else{let Z=M.naturalHeight/M.naturalWidth;Q=j,J=Math.round(Q*Z)}s.fillStyle="#f8fafc",this.roundRect(s,this.padding,te,Q,J,H),s.fill(),s.save(),this.roundRect(s,this.padding,te,Q,J,H),s.clip(),s.drawImage(M,this.padding,te,Q,J),s.restore(),d+=J+12}else s.fillStyle="#f1f5f9",this.roundRect(s,this.padding,te,j,220,H),s.fill(),s.font="28px ui-sans-serif, -apple-system, system-ui",s.fillStyle="#94a3b8",s.textAlign="center",s.textBaseline="middle",s.fillText("\u5C01\u9762\u56FE",this.padding+j/2,te+220/2),d+=232}let A=(e.tips||[]).slice(0,2);A.length&&(d+=24,A.forEach(j=>{d=this.renderTip(s,j.title+"\uFF1A"+j.content,y,d,T),d+=16}));let I=(e.tags||[]).slice(0,3);I.length&&(d+=16,this.renderTags(s,I,y,d),d+=56);let E=220,U=o-this.padding-E,B=a-this.padding-E;return await this.drawQrOrPlaceholder(s,e,U,B,E),s.save(),s.globalAlpha=.85,s.textAlign="left",s.textBaseline="alphabetic",s.font="bold 28px ui-sans-serif, -apple-system, system-ui",s.fillStyle="#0f172a",s.fillText("aispeeds.me",this.padding,a-this.padding/2),s.restore(),r}computeCanvasSize(e){try{if(e){let n=e.getBoundingClientRect();if(n.width>0&&n.height>0){let i=n.height/n.width,r=this.defaultWidth,o=Math.max(1200,Math.round(r*.9)),a=Math.max(o,Math.round(r*i));return{width:r,height:a}}}}catch{}return{width:this.defaultWidth,height:this.defaultHeight}}analyzePageImageDisplay(e,n){try{if(!e||!n)return{};let r=e.querySelector(".overview-card__cover")?.querySelector("img");if(r&&r.complete&&r.naturalWidth>0){let o=r.getBoundingClientRect(),a=o.height/o.width;if(o.width>0&&o.height>0)return{pageImageAspect:a,pageImageWidth:o.width,pageImageHeight:o.height}}r&&r.complete}catch{}return{}}analyzeImageType(e,n,i){return e>=.9&&e<=1.1?{type:"square",strategy:"preserve",maxHeightFactor:1,description:"\u6B63\u65B9\u5F62\u56FE\u7247 - \u4FDD\u6301\u539F\u59CB\u6BD4\u4F8B"}:e<.9?e<.5?{type:"banner",strategy:"preserve",maxHeightFactor:.8,description:"\u6A2A\u5E45\u56FE\u7247 - \u4FDD\u6301\u6BD4\u4F8B\uFF0C\u9002\u5EA6\u9650\u5236\u9AD8\u5EA6"}:{type:"landscape",strategy:"preserve",maxHeightFactor:.9,description:"\u6A2A\u5411\u56FE\u7247 - \u5B8C\u5168\u4FDD\u6301\u6BD4\u4F8B"}:e>2?{type:"tall",strategy:"constrain-height",maxHeightFactor:1.2,description:"\u8D85\u9AD8\u56FE\u7247 - \u9650\u5236\u9AD8\u5EA6\u4EE5\u4FDD\u6301\u5E03\u5C40\u5E73\u8861"}:{type:"portrait",strategy:e>1.5?"constrain-height":"preserve",maxHeightFactor:e>1.5?1.1:1,description:e>1.5?"\u9AD8\u56FE\u7247 - \u8F7B\u5EA6\u9650\u5236\u9AD8\u5EA6":"\u7EB5\u5411\u56FE\u7247 - \u4FDD\u6301\u6BD4\u4F8B"}}async loadImage(e){return await new Promise(n=>setTimeout(n,0)),new Promise((n,i)=>{let r=new Image;r.crossOrigin="anonymous",r.onload=()=>n(r),r.onerror=()=>i(new Error("image load failed")),r.src=this.resolveImageUrl(e)})}resolveImageUrl(e){try{let n=new URL(e,window.location.href);return n.origin!==window.location.origin&&n.protocol==="https:"?`/img-proxy?src=${encodeURIComponent(n.toString())}`:n.toString()}catch{return e}}buildDeepLink(e){try{if(this.options.deepLinkBuilder)return this.options.deepLinkBuilder(e);let n=new URL(window.location.href),i=this.options.moduleName||"best-practices";return n.searchParams.set("module",i),n.searchParams.set("view","article"),n.searchParams.set("cardId",e.id||""),n.toString()}catch{return window.location.href}}async drawQrOrPlaceholder(e,n,i,r,o){e.strokeStyle="#cbd5e1",e.lineWidth=3,this.roundRect(e,i,r,o,o,16),e.stroke();let a=this.buildDeepLink(n),s=await this.loadQrImage(a,o).catch(()=>null);if(!s){e.font="24px ui-sans-serif, -apple-system, system-ui",e.fillStyle="#64748b",e.textAlign="center",e.textBaseline="middle",e.fillText("QR \u9884\u7559",i+o/2,r+o/2);return}let l=10;e.fillStyle="#ffffff",this.roundRect(e,i+2,r+2,o-4,o-4,12),e.fill(),e.drawImage(s,i+l,r+l,o-l*2,o-l*2)}async loadQrImage(e,n){let i=`https://api.qrserver.com/v1/create-qr-code/?size=${n}x${n}&data=${encodeURIComponent(e)}`;return await new Promise(r=>setTimeout(r,0)),new Promise((r,o)=>{let a=new Image;a.crossOrigin="anonymous",a.onload=()=>r(a),a.onerror=()=>o(new Error("QR load failed")),a.src=i})}renderTip(e,n,i,r,o){let l=this.splitLines(e,n,o-32),c=l.length*40+16*2;e.fillStyle="rgba(6, 182, 212, 0.08)",this.roundRect(e,i,r,o,c,12),e.fill(),e.fillStyle="#06b6d4",e.fillRect(i,r,6,c),e.fillStyle="#0f172a",e.font="28px ui-sans-serif, -apple-system, system-ui";let d=r+16+28;return l.forEach(m=>{e.fillText(m,i+16+10,d),d+=40}),r+c}renderTags(e,n,i,r){e.font="26px ui-sans-serif, -apple-system, system-ui";let o=i,a=r;n.forEach(s=>{let d=e.measureText(s).width+36,m=40;e.fillStyle="#f1f5f9",this.roundRect(e,o,a-m+10,d,m,20),e.fill(),e.fillStyle="#475569",e.fillText(s,o+18,a-12),o+=d+12})}mapDifficulty(e){switch(e){case"beginner":return"\u5165\u95E8";case"intermediate":return"\u8FDB\u9636";case"expert":return"\u4E13\u5BB6";default:return e}}wrapText(e,n,i,r,o,a,s){let l=this.splitLines(e,n,o,s);return l.forEach((c,d)=>{e.fillText(c,i,r+d*a)}),r+Math.min(l.length,s)*a}splitLines(e,n,i,r){let o=n.split(/\s+/),a=[],s="";for(let l=0;l<o.length;l++){let c=s?`${s} ${o[l]}`:o[l];if(e.measureText(c).width<=i)s=c;else if(s&&a.push(s),s=o[l],r&&a.length>=r-1){for(;e.measureText(s+"\u2026").width>i&&s.length>0;)s=s.slice(0,-1);s=s+"\u2026";break}}return s&&a.push(s),a}roundRect(e,n,i,r,o,a){let s=Math.min(a,r/2,o/2);e.beginPath(),e.moveTo(n+s,i),e.arcTo(n+r,i,n+r,i+o,s),e.arcTo(n+r,i+o,n,i+o,s),e.arcTo(n,i+o,n,i,s),e.arcTo(n,i,n+r,i,s),e.closePath()}toast(e){let n=document.createElement("div");n.textContent=e,n.style.position="fixed",n.style.left="50%",n.style.top="16px",n.style.transform="translateX(-50%)",n.style.background="rgba(17, 24, 39, 0.9)",n.style.color="#fff",n.style.padding="8px 12px",n.style.borderRadius="8px",n.style.fontSize="14px",n.style.zIndex="9999",n.style.pointerEvents="none",document.body.appendChild(n),setTimeout(()=>n.remove(),1800)}};var op=t=>{try{let e=new URL(t,window.location.href);return e.origin!==window.location.origin&&e.protocol==="https:"?`/img-proxy?src=${encodeURIComponent(e.toString())}`:e.toString()}catch{return t}},Wa=t=>new Promise(e=>{try{let n=op(t),i=new Image;i.crossOrigin="anonymous",i.onload=()=>e(),i.onerror=()=>e();let r=()=>{i.src=n};"requestIdleCallback"in window?window.requestIdleCallback(r,{timeout:500}):setTimeout(r,0)}catch{e()}});var sp=230,an=class{constructor(e,n,i,r){z(this,"containerId");z(this,"boundClickHandler");z(this,"contentService");z(this,"articleRenderer");z(this,"onBackToOverview");z(this,"_shareService");z(this,"_suppressHistory",!1);z(this,"_preloadCache",new Set);this.containerId=e,this.boundClickHandler=this.handleCardClick.bind(this),this.contentService=n,this.articleRenderer=i,this.onBackToOverview=r}wireViewportPrewarm(e){try{if(!("IntersectionObserver"in window))return;let n=e.querySelectorAll(".overview-card"),i=new Set,r=new IntersectionObserver(o=>{for(let a of o){if(!a.isIntersecting)continue;let s=a.target,l=s.getAttribute("data-card-id");if(!l||i.has(l)){r.unobserve(s);continue}i.add(l),r.unobserve(s);let c=()=>void this.preloadForShare(l);"requestIdleCallback"in window?window.requestIdleCallback(c,{timeout:800}):setTimeout(c,0)}},{root:null,rootMargin:"200px 0px",threshold:.15});n.forEach(o=>r.observe(o))}catch{}}wireSharePreload(e){try{e.querySelectorAll(".overview-card__share-btn").forEach(i=>{let r=i,o=!1,a=()=>{if(o)return;o=!0;let s=r.getAttribute("data-card-id");s&&this.preloadForShare(s)};r.addEventListener("mouseenter",a,{once:!0}),r.addEventListener("focus",a,{once:!0}),r.addEventListener("touchstart",a,{once:!0,passive:!0})})}catch{}}async preloadForShare(e){try{if(this._preloadCache.has(e))return;this._preloadCache.add(e);let n=this.resolveCardById(e);if(!n)return;let i=performance.now();if(n.imageUrl)try{await Wa(n.imageUrl)}catch{}let r=(()=>{try{let s=new URL(window.location.href);return s.searchParams.set("module",this.getModuleName()),s.searchParams.set("view","article"),s.searchParams.set("cardId",e),s.toString()}catch{return window.location.href}})(),o=220,a=`https://api.qrserver.com/v1/create-qr-code/?size=${o}x${o}&data=${encodeURIComponent(r)}`;await new Promise(s=>{try{let l=new Image;l.crossOrigin="anonymous",l.onload=()=>s(),l.onerror=()=>{s()};let c=()=>l.src=a;"requestIdleCallback"in window?window.requestIdleCallback(c,{timeout:500}):setTimeout(c,0)}catch{s()}})}catch{}}bindEventListeners(){let e=document.getElementById(this.containerId);if(!e){console.error(`\u672A\u627E\u5230\u5BB9\u5668\u5143\u7D20: ${this.containerId}`);return}this.removeExistingListeners(e),this.addEventListeners(e)}removeExistingListeners(e){e.removeEventListener("click",this.boundClickHandler)}addEventListeners(e){e.addEventListener("click",this.boundClickHandler),this.addDebugListeners(e),this.wireViewportPrewarm(e)}addDebugListeners(e){}handleCardClick(e){let n=e,i=n.target;if(n.currentTarget?.querySelector(".practice-article"))return;let a=i.closest(".overview-card__share-btn");if(a){n.stopPropagation(),n.preventDefault();let l=a.getAttribute("data-card-id");if(!l)return;this.preloadForShare(l);let c=this.resolveCardById(l);if(!c)return;this._shareService=this._shareService||new sn(this.getIcon.bind(this),{moduleName:this.getModuleName()});let d=a.closest(".overview-card");this._shareService.openPreview(c,{matchElement:d||void 0});return}let s=this.extractCardId(i);s&&this.showDetailedContent(s)}openArticle(e){return this.showDetailedContent(e)}async openArticleFromHistory(e){this._suppressHistory=!0;try{await this.showDetailedContent(e)}finally{this._suppressHistory=!1}}extractCardId(e){let n=e.closest(".overview-card");if(n){let r=n.getAttribute("data-card-id");return r||(console.error("\u5361\u7247\u7F3A\u5C11 data-card-id \u5C5E\u6027"),null)}let i=e.closest(".overview-card__action-btn");if(i){let r=i.getAttribute("data-card-id");return r||(console.error("\u6309\u94AE\u7F3A\u5C11 data-card-id \u5C5E\u6027"),null)}return null}async showDetailedContent(e){let n=document.getElementById(this.containerId);if(!n){console.error(`\u672A\u627E\u5230\u5BB9\u5668\u5143\u7D20: ${this.containerId}`);return}try{await this.beforeEnterArticle(n),Ti(),n.innerHTML=this.articleRenderer.renderLoadingState();let i=await this.contentService.getArticle(e),r=this.articleRenderer.renderArticle(i.title,i.content);n.innerHTML=r;let o=n.querySelector("#markdown-content-container");if(o){let a=new st,s=a.render(i.rawMarkdown);o.innerHTML=`<div class="markdown-content">${s}</div>`,a.highlightCode(o),this.addEnhancedFeatures(o)}this.configureBackNavigation(),this._suppressHistory||this.updateHistoryForArticle(e)}catch(i){console.error("\u52A0\u8F7D\u6587\u7AE0\u5931\u8D25:",i);let r=i instanceof Error?i.message:String(i),o=this.articleRenderer.renderErrorState(r);n.innerHTML=o}}async beforeEnterArticle(e){}configureBackNavigation(){let e=document.getElementById(this.containerId);if(!e||!this.onBackToOverview)return;let n=e.querySelector('[data-action="back-to-overview"]');if(!n)return;let i=n._backHandler;i&&n.removeEventListener("click",i),n.removeAttribute("onclick");let r=this.handleBackToOverview.bind(this);n._backHandler=r,n.addEventListener("click",r)}handleBackToOverview(){if(!this.onBackToOverview)return;let e=document.getElementById(this.containerId);if(e){let n=e.querySelector(".practice-article");if(n){n.classList.add("is-exiting"),setTimeout(()=>{this.onBackToOverview(),this.updateHistoryForOverview(),window.scrollTo({top:0,behavior:"smooth"})},sp);return}}this.onBackToOverview(),this.updateHistoryForOverview()}addEnhancedFeatures(e){this.addCopyButtonsToCodeBlocks(e),this.addReadingProgress(),this.addBackToTopButton()}addCopyButtonsToCodeBlocks(e){e.querySelectorAll("pre").forEach(i=>{if(!i.querySelector(".copy-button")){let r=document.createElement("button");r.className="copy-button",r.textContent="\u590D\u5236",r.onclick=()=>this.copyCodeBlock(i,r),i.appendChild(r)}})}copyCodeBlock(e,n){let i=e.querySelector("code");i&&navigator.clipboard.writeText(i.textContent||"").then(()=>{n.textContent="\u5DF2\u590D\u5236",n.classList.add("copied"),setTimeout(()=>{n.textContent="\u590D\u5236",n.classList.remove("copied")},2e3)}).catch(()=>{n.textContent="\u590D\u5236\u5931\u8D25",setTimeout(()=>{n.textContent="\u590D\u5236"},2e3)})}addReadingProgress(){let e=document.querySelector(".reading-progress");e&&e.remove();let n=document.createElement("div");n.className="reading-progress",document.body.appendChild(n);let i=()=>{let r=window.pageYOffset,o=document.documentElement.scrollHeight-window.innerHeight,a=r/o*100;n.style.width=`${Math.min(a,100)}%`};window.addEventListener("scroll",i),i()}addBackToTopButton(){let e=document.querySelector(".back-to-top");e&&e.remove();let n=document.createElement("button");n.className="back-to-top",n.innerHTML="\u2191",n.onclick=()=>{window.scrollTo({top:0,behavior:"smooth"})},document.body.appendChild(n);let i=()=>{window.pageYOffset>300?n.classList.add("visible"):n.classList.remove("visible")};window.addEventListener("scroll",i),i()}updateHistoryForArticle(e){try{let n=new URL(window.location.href);n.searchParams.set("module",this.getModuleName()),n.searchParams.set("view","article"),n.searchParams.set("cardId",e),window.history.pushState({module:this.getModuleName(),view:"article",cardId:e},"",n.toString())}catch{}}updateHistoryForOverview(){try{let e=new URL(window.location.href);e.searchParams.set("module",this.getModuleName()),e.searchParams.set("view","overview"),e.searchParams.delete("cardId"),window.history.pushState({module:this.getModuleName(),view:"overview"},"",e.toString())}catch{}}};var ap={baseUrl:"https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/",images:{"claude-code-implementation":"202508261857484.png","claude-code-git-integration":"202508261902348.png","best-practice-1":"202508232133560.png","best-practice-hooks":"202507202037009.png","linus-torvalds-agent":"202508262218029.png"}};function ci(t,e=ap){let n=e.images[t];return n?`${e.baseUrl}${n}`:(console.warn(`Image key "${t}" not found in asset configuration`),"")}var ln=[{id:"claude-code-system-prompt-cn",title:"Claude Code \u7CFB\u7EDF\u63D0\u793A\u8BCD(\u4E2D\u6587)",category:"system-prompt",tips:[{type:"warning",title:"\u6CE8\u610F\u4E8B\u9879",content:"\u7CFB\u7EDF\u63D0\u793A\u8BCD\u5305\u542B\u4E86 Claude Code \u7684\u6838\u5FC3\u903B\u8F91\uFF0C\u7406\u89E3\u540E\u53EF\u4EE5\u66F4\u7CBE\u51C6\u5730\u63D0\u51FA\u9700\u6C42"}]},{id:"claude-code-implementation",title:"Claude Code \u9006\u5411\u4ECB\u7ECD",imageUrl:ci("claude-code-implementation"),category:"implementation",tips:[{type:"success",title:"\u9605\u8BFB\u5EFA\u8BAE",content:"\u4E0D\u662F\u771F\u7684\u8981\u5B9E\u73B0\uFF0C\u4F46\u786E\u5B9E\u597D\u5947\u51ED\u4EC0\u4E48CC\u8868\u73B0\u66F4\u597D"}]},{id:"claude-code-output-format-example-1",title:"Claude Code \u8F93\u51FA\u683C\u5F0F\u793A\u4F8B",imageUrl:ci("claude-code-git-integration"),description:"\u5C55\u793A Claude Code \u8F93\u51FA\u683C\u5F0F\u548C\u54CD\u5E94\u6A21\u5F0F\u7684\u5177\u4F53\u793A\u4F8B",category:"examples",tips:[{type:"tip",title:"\u683C\u5F0F\u89C4\u8303",content:"\u5927\u8BED\u8A00\u6A21\u578B\u540D\u526F\u5176\u5B9E\uFF0C\u4E00\u5207\u90FD\u662F\u6587\u672C\u7684\u6E38\u620F"}]},{id:"claude-code-system-prompt-en",title:"Claude Code System Prompt (English)",category:"system-prompt",overview:"Comprehensive English system prompt documentation with all tool definitions, usage rules, and behavioral constraints.",tips:[{type:"info",title:"Advanced Usage",content:"Understanding the system prompt deeply helps you customize and optimize AI assistant behavior"}]},{id:"claude-code-conversation-example-1",title:"Claude Code \u5BF9\u8BDD\u793A\u4F8B",description:"\u771F\u5B9E\u7684 Claude Code \u4F7F\u7528\u5BF9\u8BDD\u8BB0\u5F55\uFF0C\u5C55\u793A\u5B8C\u6574\u7684\u5F00\u53D1\u6D41\u7A0B\u548C\u4EA4\u4E92\u6A21\u5F0F",category:"conversation",difficulty:"beginner",readTime:"15 \u5206\u949F",tags:["\u5BF9\u8BDD\u793A\u4F8B","\u5B9E\u9645\u6848\u4F8B","\u5DE5\u4F5C\u6D41\u7A0B","Python\u5F00\u53D1"],overview:"\u901A\u8FC7\u771F\u5B9E\u5BF9\u8BDD\u8BB0\u5F55\u4E86\u89E3 Claude Code \u7684\u5DE5\u4F5C\u65B9\u5F0F\uFF0C\u5B66\u4E60\u5982\u4F55\u4E0E AI \u534F\u4F5C\u5F00\u53D1\u4FC4\u7F57\u65AF\u65B9\u5757\u6E38\u620F\u3002",sections:[{title:"\u5BF9\u8BDD\u6D41\u7A0B\u5206\u6790",content:"\u4ECE\u9700\u6C42\u63D0\u51FA\u5230\u4EE3\u7801\u5B8C\u6210\u7684\u5B8C\u6574\u4EA4\u4E92\u8FC7\u7A0B",type:"text"},{title:"\u5DE5\u5177\u4F7F\u7528\u793A\u4F8B",content:"TodoWrite\u3001LS\u3001Write\u3001Edit \u7B49\u5DE5\u5177\u7684\u5B9E\u9645\u5E94\u7528",type:"code"},{title:"\u4EFB\u52A1\u5206\u89E3\u7B56\u7565",content:"\u5982\u4F55\u5C06\u590D\u6742\u4EFB\u52A1\u62C6\u5206\u4E3A\u53EF\u7BA1\u7406\u7684\u6B65\u9AA4",type:"list"}],tips:[{type:"success",title:"\u5B66\u4E60\u8981\u70B9",content:"\u6CE8\u610F\u89C2\u5BDF Claude Code \u5982\u4F55\u4F7F\u7528 TodoWrite \u5DE5\u5177\u6765\u89C4\u5212\u548C\u8DDF\u8E2A\u4EFB\u52A1\u8FDB\u5EA6"}]}];var cn=class extends an{constructor(e,n,i){super(e,n,i,()=>window.initializeHowToImplement())}resolveCardById(e){return ln.find(n=>n.id===e)||null}getIcon(e){return Rt[e]||"\u{1F4CB}"}};var dn=class{bindEventListeners(){this.bindBreadcrumbNavigation()}bindBreadcrumbNavigation(){document.addEventListener("click",e=>{let n=e.target;if(n.matches(".breadcrumb-link")){e.preventDefault();let i=n.getAttribute("data-target");i&&this.navigateToSection(i)}})}navigateToSection(e){let n=document.getElementById(e);n&&n.scrollIntoView({behavior:"smooth"})}};var un=class{constructor(e,n=!1){z(this,"markdownParser");z(this,"cache",new Map);z(this,"disableCache");this.markdownParser=e,this.disableCache=n}async getArticle(e){this.disableCache&&this.cache.has(e)&&this.cache.delete(e);try{let n=await this.fetchMarkdownContent(e),i=this.markdownParser.render(n),r={id:e,title:this.getTitleFromCardId(e),content:i,rawMarkdown:n};return this.cache.set(e,r),r}catch(n){throw new Error(`\u65E0\u6CD5\u52A0\u8F7D\u6587\u7AE0 ${e}: ${n.message}`)}}async fetchMarkdownContent(e){return this.getContentFromFile(e)}};var pn=class extends un{async getContentFromFile(e){try{let i={"claude-code-conversation-example-1":async()=>(await Promise.resolve().then(()=>Ue(ja()))).default,"claude-code-implementation":async()=>(await Promise.resolve().then(()=>Ue(Ya()))).default,"claude-code-output-format-example-1":async()=>(await Promise.resolve().then(()=>Ue(Va()))).default,"claude-code-system-prompt-cn":async()=>(await Promise.resolve().then(()=>Ue(Ka()))).default,"claude-code-system-prompt-en":async()=>(await Promise.resolve().then(()=>Ue(Za()))).default}[e];return i?await i():this.getDefaultContent(e)}catch(n){return console.warn(`Failed to load content for ${e}:`,n),this.getDefaultContent(e)}}getDefaultContent(e){return`# ${this.getTitleFromCardId(e)}
+//         `;
+//       modal.addEventListener("click", (e) => {
+//         if (e.target === modal) {
+//           modal.remove();
+//         }
+//       });
+//       const handleEscape = (e) => {
+//         if (e.key === "Escape") {
+//           modal.remove();
+//           document.removeEventListener("keydown", handleEscape);
+//         }
+//       };
+//       document.addEventListener("keydown", handleEscape);
+//       document.body.appendChild(modal);
+//     }
+//     /**
+//      * 应用基础语法高亮
+//      */
+//     applyBasicHighlighting(codeBlock) {
+//       let code = codeBlock.textContent || "";
+//       const keywords = [
+//         "function",
+//         "const",
+//         "let",
+//         "var",
+//         "if",
+//         "else",
+//         "for",
+//         "while",
+//         "return",
+//         "class",
+//         "interface",
+//         "type",
+//         "import",
+//         "export",
+//         "async",
+//         "await",
+//         "try",
+//         "catch",
+//         "throw",
+//         "new"
+//       ];
+//       keywords.forEach((keyword) => {
+//         const regex = new RegExp(`\\b${keyword}\\b`, "g");
+//         code = code.replace(regex, `<span class="keyword">${keyword}</span>`);
+//       });
+//       code = code.replace(/(["'])((?:(?!\1)[^\\]|\\.)*)(\1)/g, '<span class="string">$1$2$3</span>');
+//       code = code.replace(/(\/\/.*$)/gm, '<span class="comment">$1</span>');
+//       code = code.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="comment">$1</span>');
+//       codeBlock.innerHTML = code;
+//     }
+//   };
+// 
+//   // src/client/shared/handlers/BaseArticleEventHandler.ts
+//   var EXIT_ANIMATION_DURATION = 230;
+//   var BaseArticleEventHandler = class {
+//     constructor(containerId, contentService, articleRenderer, onBackToOverview) {
+//       __publicField(this, "containerId");
+//       __publicField(this, "boundClickHandler");
+//       __publicField(this, "contentService");
+//       __publicField(this, "articleRenderer");
+//       __publicField(this, "onBackToOverview");
+//       this.containerId = containerId;
+//       this.boundClickHandler = this.handleCardClick.bind(this);
+//       this.contentService = contentService;
+//       this.articleRenderer = articleRenderer;
+//       this.onBackToOverview = onBackToOverview;
+//     }
+//     bindEventListeners() {
+//       const container = document.getElementById(this.containerId);
+//       if (!container) {
+//         console.error(`\u672A\u627E\u5230\u5BB9\u5668\u5143\u7D20: ${this.containerId}`);
+//         return;
+//       }
+//       this.removeExistingListeners(container);
+//       this.addEventListeners(container);
+//     }
+//     removeExistingListeners(container) {
+//       container.removeEventListener("click", this.boundClickHandler);
+//     }
+//     addEventListeners(container) {
+//       container.addEventListener("click", this.boundClickHandler);
+//       this.addDebugListeners(container);
+//     }
+//     // Hook: subclasses may add extra debug listeners; default no-op
+//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+//     addDebugListeners(container) {
+//     }
+//     handleCardClick(e) {
+//       const event = e;
+//       const target = event.target;
+//       const containerEl = event.currentTarget;
+//       const isInArticleView = containerEl?.querySelector(".practice-article");
+//       if (isInArticleView) {
+//         return;
+//       }
+//       const cardId = this.extractCardId(target);
+//       if (!cardId)
+//         return;
+//       this.showDetailedContent(cardId);
+//     }
+//     // Default: click on whole card, fallback to action button
+//     extractCardId(target) {
+//       const cardEl = target.closest(".overview-card");
+//       if (cardEl) {
+//         const cardId = cardEl.getAttribute("data-card-id");
+//         if (!cardId) {
+//           console.error("\u5361\u7247\u7F3A\u5C11 data-card-id \u5C5E\u6027");
+//           return null;
+//         }
+//         return cardId;
+//       }
+//       const button = target.closest(
+//         ".overview-card__action-btn"
+//       );
+//       if (button) {
+//         const cardId = button.getAttribute("data-card-id");
+//         if (!cardId) {
+//           console.error("\u6309\u94AE\u7F3A\u5C11 data-card-id \u5C5E\u6027");
+//           return null;
+//         }
+//         return cardId;
+//       }
+//       return null;
+//     }
+//     async showDetailedContent(cardId) {
+//       const container = document.getElementById(this.containerId);
+//       if (!container) {
+//         console.error(`\u672A\u627E\u5230\u5BB9\u5668\u5143\u7D20: ${this.containerId}`);
+//         return;
+//       }
+//       try {
+//         await this.beforeEnterArticle(container);
+//         injectMarkdownStyles();
+//         container.innerHTML = this.articleRenderer.renderLoadingState();
+//         const article = await this.contentService.getArticle(cardId);
+//         const articleHtml = this.articleRenderer.renderArticle(
+//           article.title,
+//           article.content
+//         );
+//         container.innerHTML = articleHtml;
+//         const markdownContainer = container.querySelector(
+//           "#markdown-content-container"
+//         );
+//         if (markdownContainer) {
+//           const renderer = new SafeMarkdownRenderer();
+//           const renderedHtml = renderer.render(article.rawMarkdown);
+//           markdownContainer.innerHTML = `<div class="markdown-content">${renderedHtml}</div>`;
+//           renderer.highlightCode(markdownContainer);
+//           this.addEnhancedFeatures(markdownContainer);
+//         }
+//         this.configureBackNavigation();
+//       } catch (error) {
+//         console.error("\u52A0\u8F7D\u6587\u7AE0\u5931\u8D25:", error);
+//         const message = error instanceof Error ? error.message : String(error);
+//         const errorHtml = this.articleRenderer.renderErrorState(message);
+//         container.innerHTML = errorHtml;
+//       }
+//     }
+//     // Hook: subclasses may animate/prepare before article view is entered
+//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+//     async beforeEnterArticle(_container) {
+//     }
+//     // Back navigation using direct DOM event listeners instead of global window functions
+//     configureBackNavigation() {
+//       const containerEl = document.getElementById(this.containerId);
+//       if (!containerEl || !this.onBackToOverview)
+//         return;
+//       const backButton = containerEl.querySelector(
+//         '[data-action="back-to-overview"]'
+//       );
+//       if (!backButton)
+//         return;
+//       const existingHandler = backButton._backHandler;
+//       if (existingHandler) {
+//         backButton.removeEventListener("click", existingHandler);
+//       }
+//       backButton.removeAttribute("onclick");
+//       const backHandler = this.handleBackToOverview.bind(this);
+//       backButton._backHandler = backHandler;
+//       backButton.addEventListener("click", backHandler);
+//     }
+//     handleBackToOverview() {
+//       if (!this.onBackToOverview)
+//         return;
+//       const containerEl = document.getElementById(this.containerId);
+//       if (containerEl) {
+//         const articleEl = containerEl.querySelector(".practice-article");
+//         if (articleEl) {
+//           articleEl.classList.add("is-exiting");
+//           setTimeout(() => {
+//             this.onBackToOverview();
+//             window.scrollTo({ top: 0, behavior: "smooth" });
+//           }, EXIT_ANIMATION_DURATION);
+//           return;
+//         }
+//       }
+//       this.onBackToOverview();
+//     }
+//     // Shared enhancements below
+//     addEnhancedFeatures(container) {
+//       this.addCopyButtonsToCodeBlocks(container);
+//       this.addReadingProgress();
+//       this.addBackToTopButton();
+//     }
+//     addCopyButtonsToCodeBlocks(container) {
+//       const codeBlocks = container.querySelectorAll("pre");
+//       codeBlocks.forEach((block) => {
+//         if (!block.querySelector(".copy-button")) {
+//           const copyButton = document.createElement("button");
+//           copyButton.className = "copy-button";
+//           copyButton.textContent = "\u590D\u5236";
+//           copyButton.onclick = () => this.copyCodeBlock(block, copyButton);
+//           block.appendChild(copyButton);
+//         }
+//       });
+//     }
+//     copyCodeBlock(block, button) {
+//       const code = block.querySelector("code");
+//       if (code) {
+//         navigator.clipboard.writeText(code.textContent || "").then(() => {
+//           button.textContent = "\u5DF2\u590D\u5236";
+//           button.classList.add("copied");
+//           setTimeout(() => {
+//             button.textContent = "\u590D\u5236";
+//             button.classList.remove("copied");
+//           }, 2e3);
+//         }).catch(() => {
+//           button.textContent = "\u590D\u5236\u5931\u8D25";
+//           setTimeout(() => {
+//             button.textContent = "\u590D\u5236";
+//           }, 2e3);
+//         });
+//       }
+//     }
+//     addReadingProgress() {
+//       const existingProgress = document.querySelector(".reading-progress");
+//       if (existingProgress)
+//         existingProgress.remove();
+//       const progressBar = document.createElement("div");
+//       progressBar.className = "reading-progress";
+//       document.body.appendChild(progressBar);
+//       const updateProgress = () => {
+//         const scrollTop = window.pageYOffset;
+//         const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+//         const progress = scrollTop / docHeight * 100;
+//         progressBar.style.width = `${Math.min(progress, 100)}%`;
+//       };
+//       window.addEventListener("scroll", updateProgress);
+//       updateProgress();
+//     }
+//     addBackToTopButton() {
+//       const existingButton = document.querySelector(".back-to-top");
+//       if (existingButton)
+//         existingButton.remove();
+//       const backToTopButton = document.createElement("button");
+//       backToTopButton.className = "back-to-top";
+//       backToTopButton.innerHTML = "\u2191";
+//       backToTopButton.onclick = () => {
+//         window.scrollTo({ top: 0, behavior: "smooth" });
+//       };
+//       document.body.appendChild(backToTopButton);
+//       const toggleBackToTop = () => {
+//         if (window.pageYOffset > 300) {
+//           backToTopButton.classList.add("visible");
+//         } else {
+//           backToTopButton.classList.remove("visible");
+//         }
+//       };
+//       window.addEventListener("scroll", toggleBackToTop);
+//       toggleBackToTop();
+//     }
+//   };
+// 
+//   // src/client/howToImplement/handlers/EventHandler.ts
+//   var HowToImplementEventHandler = class extends BaseArticleEventHandler {
+//     constructor(containerId, contentService, articleRenderer) {
+//       super(
+//         containerId,
+//         contentService,
+//         articleRenderer,
+//         () => window.initializeHowToImplement()
+//       );
+//     }
+//   };
+// 
+//   // src/client/bestPractices/handlers/NavigationHandler.ts
+//   var NavigationHandler = class {
+//     bindEventListeners() {
+//       this.bindBreadcrumbNavigation();
+//     }
+//     bindBreadcrumbNavigation() {
+//       document.addEventListener("click", (e) => {
+//         const target = e.target;
+//         if (target.matches(".breadcrumb-link")) {
+//           e.preventDefault();
+//           const targetId = target.getAttribute("data-target");
+//           if (targetId) {
+//             this.navigateToSection(targetId);
+//           }
+//         }
+//       });
+//     }
+//     navigateToSection(sectionId) {
+//       const element = document.getElementById(sectionId);
+//       if (element) {
+//         element.scrollIntoView({ behavior: "smooth" });
+//       }
+//     }
+//   };
+// 
+//   // src/client/shared/services/BaseContentService.ts
+//   var BaseContentService = class {
+//     constructor(markdownParser, disableCache = false) {
+//       __publicField(this, "markdownParser");
+//       __publicField(this, "cache", /* @__PURE__ */ new Map());
+//       __publicField(this, "disableCache");
+//       this.markdownParser = markdownParser;
+//       this.disableCache = disableCache;
+//     }
+//     async getArticle(cardId) {
+//       if (this.disableCache && this.cache.has(cardId)) {
+//         this.cache.delete(cardId);
+//       }
+//       try {
+//         const markdownContent = await this.fetchMarkdownContent(cardId);
+//         const htmlContent = this.markdownParser.render(markdownContent);
+//         const article = {
+//           id: cardId,
+//           title: this.getTitleFromCardId(cardId),
+//           content: htmlContent,
+//           rawMarkdown: markdownContent
+//         };
+//         this.cache.set(cardId, article);
+//         return article;
+//       } catch (error) {
+//         throw new Error(`\u65E0\u6CD5\u52A0\u8F7D\u6587\u7AE0 ${cardId}: ${error.message}`);
+//       }
+//     }
+//     async fetchMarkdownContent(cardId) {
+//       return this.getContentFromFile(cardId);
+//     }
+//   };
+// 
+//   // src/client/howToImplement/services/HowToImplementService.ts
+//   var HowToImplementService = class extends BaseContentService {
+//     async getContentFromFile(cardId) {
+//       try {
+//         const contentMap = {
+//           "claude-code-conversation-example-1": async () => (await Promise.resolve().then(() => __toESM(require_claude_code_conversation_example_1()))).default,
+//           "claude-code-implementation": async () => (await Promise.resolve().then(() => __toESM(require_claude_code_implementation()))).default,
+//           "claude-code-output-format-example-1": async () => (await Promise.resolve().then(() => __toESM(require_claude_code_output_format_example_1()))).default,
+//           "claude-code-system-prompt-cn": async () => (await Promise.resolve().then(() => __toESM(require_claude_code_system_prompt_cn()))).default,
+//           "claude-code-system-prompt-en": async () => (await Promise.resolve().then(() => __toESM(require_claude_code_system_prompt_en()))).default,
+//           "claude-code-minusx-insights": async () => (await Promise.resolve().then(() => __toESM(require_claude_code_minusx_insights()))).default
+//         };
+//         const contentLoader = contentMap[cardId];
+//         if (contentLoader) {
+//           return await contentLoader();
+//         }
+//         return this.getDefaultContent(cardId);
+//       } catch (error) {
+//         console.warn(`Failed to load content for ${cardId}:`, error);
+//         return this.getDefaultContent(cardId);
+//       }
+//     }
+//     getDefaultContent(cardId) {
+//       return `# ${this.getTitleFromCardId(cardId)}
 // 
 // \u5185\u5BB9\u6B63\u5728\u5F00\u53D1\u4E2D...
 // 
-// \u8BF7\u7A0D\u540E\u67E5\u770B\u5B8C\u6574\u5185\u5BB9\u3002`}getTitleFromCardId(e){return{"claude-code-conversation-example-1":"Claude Code \u5BF9\u8BDD\u793A\u4F8B","claude-code-implementation":"Claude Code \u5B9E\u73B0\u65B9\u6848","claude-code-output-format-example-1":"Claude Code \u8F93\u51FA\u683C\u5F0F\u793A\u4F8B","claude-code-system-prompt-cn":"Claude Code \u7CFB\u7EDF\u63D0\u793A\u8BCD (\u4E2D\u6587)","claude-code-system-prompt-en":"Claude Code \u7CFB\u7EDF\u63D0\u793A\u8BCD (English)"}[e]||e}};var mn=class{constructor(){z(this,"renderer",new st)}render(e){return this.parse(e)}parse(e){return this.renderer.render(e)}};var hn=class extends St{constructor(){let e=new Dt,n=new Nt,i=new mn,r=new pn(i),o=new cn("how-to-implement-overview-cards",r,n),a=new dn;super(e,n,o,a,r,"how-to-implement-overview-cards")}getCards(){return ln}};function di(){console.log("\u521D\u59CB\u5316 How to Implement \u6A21\u5757...");try{on()}catch{}new hn().initialize(),window.initializeHowToImplement=di,console.log("How to Implement \u6A21\u5757\u521D\u59CB\u5316\u5B8C\u6210")}typeof window<"u"&&di();return ul(mp);})();
+// \u8BF7\u7A0D\u540E\u67E5\u770B\u5B8C\u6574\u5185\u5BB9\u3002`;
+//     }
+//     getTitleFromCardId(cardId) {
+//       const titles = {
+//         "claude-code-conversation-example-1": "Claude Code \u5BF9\u8BDD\u793A\u4F8B",
+//         "claude-code-implementation": "Claude Code \u5B9E\u73B0\u65B9\u6848",
+//         "claude-code-output-format-example-1": "Claude Code \u8F93\u51FA\u683C\u5F0F\u793A\u4F8B",
+//         "claude-code-system-prompt-cn": "Claude Code \u7CFB\u7EDF\u63D0\u793A\u8BCD (\u4E2D\u6587)",
+//         "claude-code-system-prompt-en": "Claude Code \u7CFB\u7EDF\u63D0\u793A\u8BCD (English)",
+//         "claude-code-minusx-insights": "\u5982\u4F55\u7528\u597DCC\uFF1AMinusX \u6DF1\u5EA6\u89E3\u6790"
+//       };
+//       return titles[cardId] || cardId;
+//     }
+//   };
+// 
+//   // src/client/bestPractices/services/MarkdownParser.ts
+//   var MarkdownParser = class {
+//     constructor() {
+//       __publicField(this, "renderer", new SafeMarkdownRenderer());
+//     }
+//     render(markdown2) {
+//       return this.parse(markdown2);
+//     }
+//     parse(markdown2) {
+//       return this.renderer.render(markdown2);
+//     }
+//   };
+// 
+//   // src/client/shared/config/assets.ts
+//   var DEFAULT_ASSET_CONFIG = {
+//     baseUrl: "https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/",
+//     images: {
+//       // How to Implement images
+//       "claude-code-implementation": "202508261857484.png",
+//       "claude-code-git-integration": "202508261902348.png",
+//       // Best Practices images  
+//       "best-practice-1": "202508232133560.png",
+//       "best-practice-hooks": "202507202037009.png",
+//       "linus-torvalds-agent": "202508262218029.png"
+//     }
+//   };
+//   function getImageUrl(imageKey, config = DEFAULT_ASSET_CONFIG) {
+//     const imagePath = config.images[imageKey];
+//     if (!imagePath) {
+//       console.warn(`Image key "${imageKey}" not found in asset configuration`);
+//       return "";
+//     }
+//     return `${config.baseUrl}${imagePath}`;
+//   }
+// 
+//   // src/client/howToImplement/data/cardsData.ts
+//   var howToImplementCards = [
+//     {
+//       id: "claude-code-system-prompt-cn",
+//       title: "Claude Code \u7CFB\u7EDF\u63D0\u793A\u8BCD(\u4E2D\u6587)",
+//       category: "system-prompt",
+//       tips: [
+//         {
+//           type: "warning",
+//           title: "\u6CE8\u610F\u4E8B\u9879",
+//           content: "\u7CFB\u7EDF\u63D0\u793A\u8BCD\u5305\u542B\u4E86 Claude Code \u7684\u6838\u5FC3\u903B\u8F91\uFF0C\u7406\u89E3\u540E\u53EF\u4EE5\u66F4\u7CBE\u51C6\u5730\u63D0\u51FA\u9700\u6C42"
+//         }
+//       ]
+//     },
+//     {
+//       id: "claude-code-implementation",
+//       title: "Claude Code \u9006\u5411\u4ECB\u7ECD",
+//       imageUrl: getImageUrl("claude-code-implementation"),
+//       category: "implementation",
+//       tips: [
+//         {
+//           type: "success",
+//           title: "\u9605\u8BFB\u5EFA\u8BAE",
+//           content: "\u4E0D\u662F\u771F\u7684\u8981\u5B9E\u73B0\uFF0C\u4F46\u786E\u5B9E\u597D\u5947\u51ED\u4EC0\u4E48CC\u8868\u73B0\u66F4\u597D"
+//         }
+//       ]
+//     },
+//     {
+//       id: "claude-code-output-format-example-1",
+//       title: "Claude Code \u8F93\u51FA\u683C\u5F0F\u793A\u4F8B",
+//       imageUrl: getImageUrl("claude-code-git-integration"),
+//       description: "\u5C55\u793A Claude Code \u8F93\u51FA\u683C\u5F0F\u548C\u54CD\u5E94\u6A21\u5F0F\u7684\u5177\u4F53\u793A\u4F8B",
+//       category: "examples",
+//       tips: [
+//         {
+//           type: "tip",
+//           title: "\u683C\u5F0F\u89C4\u8303",
+//           content: "\u5927\u8BED\u8A00\u6A21\u578B\u540D\u526F\u5176\u5B9E\uFF0C\u4E00\u5207\u90FD\u662F\u6587\u672C\u7684\u6E38\u620F"
+//         }
+//       ]
+//     },
+//     {
+//       id: "claude-code-system-prompt-en",
+//       title: "Claude Code System Prompt (English)",
+//       category: "system-prompt",
+//       overview: "Comprehensive English system prompt documentation with all tool definitions, usage rules, and behavioral constraints.",
+//       tips: [
+//         {
+//           type: "info",
+//           title: "Advanced Usage",
+//           content: "Understanding the system prompt deeply helps you customize and optimize AI assistant behavior"
+//         }
+//       ]
+//     },
+//     {
+//       id: "claude-code-conversation-example-1",
+//       title: "Claude Code \u5BF9\u8BDD\u793A\u4F8B",
+//       description: "\u771F\u5B9E\u7684 Claude Code \u4F7F\u7528\u5BF9\u8BDD\u8BB0\u5F55\uFF0C\u5C55\u793A\u5B8C\u6574\u7684\u5F00\u53D1\u6D41\u7A0B\u548C\u4EA4\u4E92\u6A21\u5F0F",
+//       category: "conversation",
+//       difficulty: "beginner",
+//       readTime: "15 \u5206\u949F",
+//       tags: ["\u5BF9\u8BDD\u793A\u4F8B", "\u5B9E\u9645\u6848\u4F8B", "\u5DE5\u4F5C\u6D41\u7A0B", "Python\u5F00\u53D1"],
+//       overview: "\u901A\u8FC7\u771F\u5B9E\u5BF9\u8BDD\u8BB0\u5F55\u4E86\u89E3 Claude Code \u7684\u5DE5\u4F5C\u65B9\u5F0F\uFF0C\u5B66\u4E60\u5982\u4F55\u4E0E AI \u534F\u4F5C\u5F00\u53D1\u4FC4\u7F57\u65AF\u65B9\u5757\u6E38\u620F\u3002",
+//       sections: [
+//         { title: "\u5BF9\u8BDD\u6D41\u7A0B\u5206\u6790", content: "\u4ECE\u9700\u6C42\u63D0\u51FA\u5230\u4EE3\u7801\u5B8C\u6210\u7684\u5B8C\u6574\u4EA4\u4E92\u8FC7\u7A0B", type: "text" },
+//         { title: "\u5DE5\u5177\u4F7F\u7528\u793A\u4F8B", content: "TodoWrite\u3001LS\u3001Write\u3001Edit \u7B49\u5DE5\u5177\u7684\u5B9E\u9645\u5E94\u7528", type: "code" },
+//         { title: "\u4EFB\u52A1\u5206\u89E3\u7B56\u7565", content: "\u5982\u4F55\u5C06\u590D\u6742\u4EFB\u52A1\u62C6\u5206\u4E3A\u53EF\u7BA1\u7406\u7684\u6B65\u9AA4", type: "list" }
+//       ],
+//       tips: [
+//         {
+//           type: "success",
+//           title: "\u5B66\u4E60\u8981\u70B9",
+//           content: "\u6CE8\u610F\u89C2\u5BDF Claude Code \u5982\u4F55\u4F7F\u7528 TodoWrite \u5DE5\u5177\u6765\u89C4\u5212\u548C\u8DDF\u8E2A\u4EFB\u52A1\u8FDB\u5EA6"
+//         }
+//       ]
+//     },
+//     {
+//       id: "claude-code-minusx-insights",
+//       title: "CC\u4E3A\u4EC0\u4E48\u8FD9\u4E48\u597D: MinusX \u6DF1\u5EA6\u89E3\u6790",
+//       category: "implementation",
+//       imageUrl: "https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202508312056917.png",
+//       tips: [
+//         { type: "expert", title: "\u67B6\u6784\u6D1E\u5BDF", content: "Claude Code \u5728\u6BCF\u4E2A\u5206\u53C9\u8DEF\u53E3\u90FD\u9009\u62E9\u67B6\u6784\u7B80\u5355\u6027" },
+//         { type: "warning", title: "\u8C03\u8BD5\u4F18\u5148", content: "\u53EF\u8C03\u8BD5\u6027 >> \u590D\u6742\u7684 LangChain \u56FE\u8282\u70B9\u6DF7\u5408\u67B6\u6784\uFF0C\u8FD9\u662F\u5173\u952E\u7684\u8BBE\u8BA1\u6743\u8861" }
+//       ]
+//     }
+//   ];
+// 
+//   // src/client/howToImplement/core/HowToImplementManager.ts
+//   var HowToImplementManager = class extends BaseContentManager {
+//     constructor() {
+//       const cardRenderer = new HowToImplementCardRenderer();
+//       const articleRenderer = new ArticleRenderer();
+//       const markdownParser = new MarkdownParser();
+//       const contentService = new HowToImplementService(markdownParser);
+//       const eventHandler = new HowToImplementEventHandler(
+//         "how-to-implement-overview-cards",
+//         contentService,
+//         articleRenderer
+//       );
+//       const navigationHandler = new NavigationHandler();
+//       super(
+//         cardRenderer,
+//         articleRenderer,
+//         eventHandler,
+//         navigationHandler,
+//         contentService,
+//         "how-to-implement-overview-cards"
+//       );
+//     }
+//     getCards() {
+//       return howToImplementCards;
+//     }
+//   };
+// 
+//   // src/client/howToImplement/index.ts
+//   function initializeHowToImplement() {
+//     console.log("\u521D\u59CB\u5316 How to Implement \u6A21\u5757...");
+//     try {
+//       loadHighlightJsStyle();
+//     } catch {
+//     }
+//     const manager = new HowToImplementManager();
+//     manager.initialize();
+//     window.initializeHowToImplement = initializeHowToImplement;
+//     console.log("How to Implement \u6A21\u5757\u521D\u59CB\u5316\u5B8C\u6210");
+//   }
+//   if (typeof window !== "undefined") {
+//     initializeHowToImplement();
+//   }
+//   return __toCommonJS(howToImplement_exports);
+// })();
 // /*! Bundled license information:
 // 
 // dompurify/dist/purify.cjs.js:

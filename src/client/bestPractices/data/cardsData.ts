@@ -67,13 +67,13 @@ export const bestPracticesCards: PracticeCard[] = [
     difficulty: 'intermediate',
     readTime: '10 分钟',
     imageUrl: 'https://miro.medium.com/v2/resize:fit:4800/format:webp/1*tLFdzFI5tHrMRwYLoYZGBw.jpeg',
-    tags: ['KISS', 'YAGNI', 'DRY', 'SOLID', 'Brief'],
+    tags: ['KISS', 'YAGNI', 'DRY', 'SOLID', 'BRIEF'],
     tips: [
       { type: 'info', title: '流程先行', content: '先定义数据与边界，再写代码' },
       { type: 'success', title: '减复杂', content: '消除特殊分支，代码自然变短' }
     ],
     sections: [
-      { title: 'Brief', content: '函数短小、参数精简、纯函数优先', type: 'text' },
+      { title: 'BRIEF', content: '函数短小、参数精简、纯函数优先', type: 'text' },
       { title: 'KISS', content: '能直不绕，优先简单方案', type: 'text' },
       { title: 'YAGNI', content: '不为未来的假想需求提前设计', type: 'text' },
       { title: 'DRY', content: '消除重复，抽象在恰当层次', type: 'text' },
@@ -93,7 +93,7 @@ export const bestPracticesCards: PracticeCard[] = [
   {
     id: 'agent-linus-torvalds',
     title: 'Linus Torvalds Agent',
-    category: 'workflow',
+    category: 'automation',
     difficulty: 'expert',
     readTime: '15 分钟',
     imageUrl: 'https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202508311459990.png',
@@ -103,5 +103,19 @@ export const bestPracticesCards: PracticeCard[] = [
       { type: 'warning', title: 'Never break userspace', content: '向后兼容性是神圣不可侵犯的' },
       { type: 'info', title: '实用主义', content: '为现实服务，不为论文服务' }
     ]
+  },
+  {
+    id: 'tdd-analyze-requirements',
+    title: 'Vibe coding with TDD（简单版）',
+    description: '测试驱动开发,先产出可测的测试场景，再补齐测试细节，最后生成测试代码与实现',
+    category: 'automation',
+    imageUrl: 'https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202508311910829.png',
+    tips: [
+      { type: 'success', title: '结构清晰', content: '通过三段式 Prompt 模板，将复杂需求分解为可测试的场景' },
+      { type: 'info', title: '质量保证', content: '先测试后实现，确保代码质量和可维护性' },
+      { type: 'warning', title: '人工Review', content: '测试场景产生后务必进行人工Review，避免错误累积' }
+    ],
+    lastUpdated: '2025-08-31',
+    version: '1.0.0'
   }
 ];

@@ -77,5 +77,15 @@ export const howToImplementCards: ImplementCard[] = [
         content: '注意观察 Claude Code 如何使用 TodoWrite 工具来规划和跟踪任务进度' 
       }
     ]
+  },
+  {
+    id: 'claude-code-minusx-insights',
+    title: 'CC为什么这么好: MinusX 深度解析',
+    category: 'implementation',
+    imageUrl: 'https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202508312056917.png',
+    tips: [
+      { type: 'expert', title: '架构洞察', content: 'Claude Code 在每个分叉路口都选择架构简单性' },
+      { type: 'warning', title: '调试优先', content: '可调试性 >> 复杂的 LangChain 图节点混合架构，这是关键的设计权衡' },
+    ]
   }
 ];
