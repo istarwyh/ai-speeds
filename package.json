@@ -4,8 +4,8 @@
   "main": "index.ts",
   "scripts": {
     "build:client": "node scripts/build-client.js",
-    "dev": "npm run build:client && wrangler dev",
-    "deploy": "npm run build:client && wrangler deploy"
+    "dev": "NODE_ENV=development wrangler dev",
+    "deploy": "NODE_ENV=production wrangler deploy"
   },
   "keywords": [],
   "author": "xiaohui",

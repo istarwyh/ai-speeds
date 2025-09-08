@@ -96,7 +96,7 @@ export const bestPracticesCards: PracticeCard[] = [
     category: 'automation',
     difficulty: 'expert',
     readTime: '15 分钟',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/LinuxCon_Europe_Linus_Torvalds_03_%28cropped%29.jpg/256px-LinuxCon_Europe_Linus_Torvalds_03_%28cropped%29.jpg',
+    imageUrl: 'https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202508311459990.png',
     tags: ['Linus', 'Linux', '代码品味', '实用主义', '工程质量'],
     tips: [
       { type: 'expert', title: '好品味', content: '复杂性是万恶之源，3层缩进是极限' },

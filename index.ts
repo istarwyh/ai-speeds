@@ -7,6 +7,7 @@ import { DEFAULT_SECTION_ID } from './shared/config/navigation';
 import { termsHtml } from './termsHtml';
 import { privacyHtml } from './privacyHtml';
 import { Provider, PROVIDER_CONFIGS } from './types';
+import { handleImgProxy } from './src/server/routes/imgProxy';
 
 function selectProvider(env: Env): { provider: Provider; baseUrl: string } {
   // Check specific provider configurations first
@@ -73,6 +74,57 @@ export default {
     if (url.pathname === '/privacy' && request.method === 'GET') {
       return new Response(privacyHtml, {
         headers: { "Content-Type": "text/html" }
+      });
+    }
+
+    // Lightweight health check for test orchestration
+    if (url.pathname === '/__test/health' && request.method === 'GET') {
+      return new Response('ok', { status: 200 });
+    }
+
+    // Versioned ping to verify hot reload of server code
+    if (url.pathname === '/__test/ping/v2' && request.method === 'GET') {
+      return new Response(JSON.stringify({ ok: true, v: 2 }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Image proxy with CORS, whitelist, and caching
+    if (url.pathname === '/img-proxy') {
+      return handleImgProxy(url, request, env);
+    }
+
+    // Test route: happy-case validation for /img-proxy using direct handler invocation
+    if (url.pathname === '/__test/img-proxy/happy' && request.method === 'GET') {
+      const src = url.searchParams.get('src') || 'https://httpbin.org/image/png';
+      const testUrl = new URL(url.toString());
+      testUrl.pathname = '/img-proxy';
+      testUrl.search = `src=${encodeURIComponent(src)}`;
+
+      const testReq = new Request(testUrl.toString(), { method: 'GET' });
+      const resp = await handleImgProxy(testUrl, testReq, env);
+      const contentType = resp.headers.get('content-type');
+      const reason = resp.headers.get('X-ImgProxy-Reason') || null;
+      const pass = resp.ok && contentType !== null && contentType.startsWith('image/');
+      let debugBody: string | undefined = undefined;
+      if (!pass) {
+        try {
+          debugBody = await resp.clone().text();
+        } catch {}
+      }
+      const out = {
+        name: 'img-proxy happy case (HTTPS, allowed by whitelist)',
+        pass,
+        status: (resp as any).status,
+        contentType,
+        error: pass ? undefined : `Unexpected response: status=${(resp as any).status}, content-type=${contentType}`,
+        reason,
+        src,
+        body: debugBody?.slice(0, 256),
+      };
+      return new Response(JSON.stringify(out), {
+        headers: { 'Content-Type': 'application/json' },
+        status: pass ? 200 : 500,
       });
     }
 

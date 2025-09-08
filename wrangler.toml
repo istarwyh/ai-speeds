@@ -11,6 +11,13 @@ routes = [
 command = "npm run build:client"
 watch_dir = "src/client"
 
+[vars]
+# Use '*' to allow any host, or a comma-separated list of exact hostnames
+# e.g. "images.unsplash.com,cdn.jsdelivr.net"
+IMAGE_PROXY_WHITELIST = "*"
+# Cache TTL in seconds for proxied images
+IMAGE_PROXY_CACHE_TTL = "86400"
+
 # Enable logging
 [observability]
 enabled = true

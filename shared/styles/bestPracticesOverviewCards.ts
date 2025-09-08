@@ -84,6 +84,38 @@ export const bestPracticesOverviewCardStyles = `
     margin-bottom: 1.5rem;
   }
 
+  /* Share button - glass style */
+  .overview-card__share-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: 1px solid var(--bp-border-color);
+    background: var(--color-surface-glass-1);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    color: var(--bp-text-primary);
+    cursor: pointer;
+    transition: background var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast);
+    z-index: 3;
+  }
+
+  .overview-card__share-btn:hover {
+    background: var(--color-surface-glass-2);
+    transform: translateY(-1px);
+    border-color: var(--bp-border-hover);
+  }
+
+  .overview-card__share-btn:focus-visible {
+    outline: 2px solid var(--bp-primary);
+    outline-offset: 2px;
+  }
+
   .overview-card__title-section {
     display: flex;
     align-items: center;
@@ -304,6 +336,141 @@ export const bestPracticesOverviewCardStyles = `
   .overview-card__updated {
     color: var(--bp-text-secondary);
     font-size: 0.8rem;
+  }
+
+  /* Share Preview Modal */
+  .share-preview-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 1000;
+  }
+
+  .share-preview-modal {
+    width: min(92vw, 960px);
+    max-height: 92vh;
+    background: var(--bp-bg-primary);
+    border: 1px solid var(--bp-border-color);
+    border-radius: 16px;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .share-preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--bp-border-color);
+    background: var(--color-surface-glass-1);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+
+  .share-preview-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--bp-text-primary);
+  }
+
+  .share-preview-close {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--bp-text-secondary);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .share-preview-close:hover {
+    background: var(--color-surface-glass-2);
+    color: var(--bp-text-primary);
+  }
+
+  .share-preview-close:focus-visible {
+    outline: 2px solid var(--bp-primary);
+    outline-offset: 2px;
+  }
+
+  .share-preview-body {
+    padding: 16px;
+    overflow: auto;
+    background: var(--bp-bg-primary);
+  }
+
+  .share-preview-canvas-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .share-preview-canvas-wrap canvas {
+    width: min(720px, 100%);
+    height: auto;
+    max-height: 70vh;
+    border-radius: 16px; /* match card container radius */
+    border: 1px solid var(--bp-border-color);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+    background: #fff;
+  }
+
+  .share-preview-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 12px 16px;
+    border-top: 1px solid var(--bp-border-color);
+    background: var(--bp-bg-primary);
+  }
+
+  .share-action {
+    appearance: none;
+    border: 1px solid var(--bp-border-color);
+    background: var(--bp-bg-primary);
+    color: var(--bp-text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+  }
+
+  .share-action:hover {
+    background: var(--color-surface-glass-2);
+    border-color: var(--bp-border-hover);
+    transform: translateY(-1px);
+  }
+
+  .share-action.primary {
+    background: var(--bp-primary);
+    color: #fff;
+    border-color: transparent;
+  }
+
+  .share-action.primary:hover {
+    background: var(--bp-primary-dark);
+  }
+
+  .share-action.subtle {
+    background: transparent;
+    color: var(--bp-text-secondary);
+  }
+
+  .share-action:focus-visible {
+    outline: 2px solid var(--bp-primary);
+    outline-offset: 2px;
   }
 
   /* 响应式设计 */

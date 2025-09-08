@@ -1,4 +1,4 @@
-export type Provider = 'openrouter' | 'deepseek' | 'openai' ;
+export type Provider = 'openrouter' | 'deepseek' | 'openai' | 'kimi' | 'siliconflow';
 
 export interface ModelMapping {
   [key: string]: string;
@@ -41,5 +41,13 @@ export const PROVIDER_CONFIGS = {
       'opus': 'gpt-4o',
     } as ModelMapping,
     commonModels: ['gpt-4o', 'gpt-4o-mini', 'gpt-3.5-turbo'],
+  },
+  kimi: {
+    defaultBaseUrl: '',
+    modelMappings: {} as ModelMapping,
+  },
+  siliconflow: {
+    defaultBaseUrl: '',
+    modelMappings: {} as ModelMapping,
   },
 } as const;
