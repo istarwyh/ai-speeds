@@ -173,13 +173,13 @@ export class LayoutService {
       imageHeight = Math.round(contentWidth * (9 / 16));
     }
     
-    // 限制最大和最小高度，避免极端比例
-    imageHeight = Math.max(180, Math.min(400, imageHeight));
+    // 为了保持真实的宽高比，不再限制高度范围
+    // 让渲染器根据实际图片比例动态调整
 
     return {
       type: 'image',
       y: startY,
-      height: imageHeight,
+      height: imageHeight, // 这个高度主要用于布局计算，实际渲染会根据真实比例调整
       content: {
         imageUrl: (card as any).imageUrl,
         aspectRatio: pageImageInfo?.pageImageAspect,

@@ -237,10 +237,8 @@ export class CompactRenderer {
         destW = width; // 占满整个宽度
         destH = Math.round(destW * imageAspectRatio); // 根据原始比例计算高度
         
-        // 限制高度范围，避免过于极端的比例
-        destH = Math.max(180, Math.min(400, destH));
-        
-        // 垂直居中显示（如果新高度与原分配高度不同）
+        // 不限制高度，完全保持原始宽高比
+        // 如果计算出的高度与分配的高度不同，保持居中显示
         if (destH !== section.height) {
           destY = section.y + Math.round((section.height - destH) / 2);
         }
