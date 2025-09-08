@@ -216,7 +216,7 @@ export class CompactRenderer {
     x: number,
     width: number
   ): Promise<void> {
-    const { imageUrl, fillWidth } = section.content;
+    const { imageUrl } = section.content;
     const radius = this.styleManager.getBorderRadius().md;
 
     try {
@@ -226,23 +226,12 @@ export class CompactRenderer {
       const sw = (img as any).naturalWidth || (img as HTMLImageElement).width;
       const sh = (img as any).naturalHeight || (img as HTMLImageElement).height;
 
-      let destX = x;
-      let destY = section.y;
-      let destW = width;
-      let destH = section.height;
-
-      // 如果需要占满宽度，根据原始比例重新计算高度
-      if (fillWidth && sw > 0 && sh > 0) {
-        const imageAspectRatio = sh / sw; // height / width
-        destW = width; // 占满整个宽度
-        destH = Math.round(destW * imageAspectRatio); // 根据原始比例计算高度
-        
-        // 不限制高度，完全保持原始宽高比
-        // 如果计算出的高度与分配的高度不同，保持居中显示
-        if (destH !== section.height) {
-          destY = section.y + Math.round((section.height - destH) / 2);
-        }
-      }
+      // 目标区域：固定为布局计算出的矩形（等于卡片内容区宽度）
+      // 这样可确保“分享卡片中的图片宽度和卡片宽度一样宽”，并与页面卡片保持相同的显示比例
+      const destX = x;
+      const destY = section.y;
+      const destW = width;
+      const destH = section.height;
 
       // 背景（使用原始section区域）
       ctx.fillStyle = '#f8fafc';
@@ -254,18 +243,13 @@ export class CompactRenderer {
       this.roundRect(ctx, destX, destY, destW, destH, radius);
       ctx.clip();
 
-      if (fillWidth) {
-        // 占满宽度模式：显示完整图片，保持原始比例
-        ctx.drawImage(img, 0, 0, sw, sh, destX, destY, destW, destH);
-      } else {
-        // 默认模式：使用 cover 模式（填满容器，可能裁剪）
-        const scale = Math.max(destW / sw, destH / sh);
-        const srcW = Math.round(destW / scale);
-        const srcH = Math.round(destH / scale);
-        const srcX = Math.floor((sw - srcW) / 2);
-        const srcY = Math.floor((sh - srcH) / 2);
-        ctx.drawImage(img, srcX, srcY, srcW, srcH, destX, destY, destW, destH);
-      }
+      // 始终使用 cover 策略绘制：填满目标矩形，同时保持原始宽高比，必要时居中裁剪
+      const scale = Math.max(destW / sw, destH / sh);
+      const srcW = Math.round(destW / scale);
+      const srcH = Math.round(destH / scale);
+      const srcX = Math.floor((sw - srcW) / 2);
+      const srcY = Math.floor((sh - srcH) / 2);
+      ctx.drawImage(img, srcX, srcY, srcW, srcH, destX, destY, destW, destH);
       
       ctx.restore();
 
