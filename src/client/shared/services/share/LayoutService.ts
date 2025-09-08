@@ -183,7 +183,7 @@ export class LayoutService {
       content: {
         imageUrl: (card as any).imageUrl,
         aspectRatio: pageImageInfo?.pageImageAspect,
-        preserveOriginalRatio: true // 标记需要保持原始比例
+        fillWidth: true // 新增：标记图片需要占满整个宽度
       }
     };
   }

@@ -216,7 +216,7 @@ export class CompactRenderer {
     x: number,
     width: number
   ): Promise<void> {
-    const { imageUrl, preserveOriginalRatio } = section.content;
+    const { imageUrl, fillWidth } = section.content;
     const radius = this.styleManager.getBorderRadius().md;
 
     try {
@@ -231,19 +231,18 @@ export class CompactRenderer {
       let destW = width;
       let destH = section.height;
 
-      // 如果需要保持原始比例，重新计算显示区域
-      if (preserveOriginalRatio && sw > 0 && sh > 0) {
+      // 如果需要占满宽度，根据原始比例重新计算高度
+      if (fillWidth && sw > 0 && sh > 0) {
         const imageAspectRatio = sh / sw; // height / width
-        const containerAspectRatio = destH / destW;
-
-        if (imageAspectRatio < containerAspectRatio) {
-          // 图片比较宽，按宽度适应
-          destH = Math.round(destW * imageAspectRatio);
-          destY = section.y + Math.round((section.height - destH) / 2); // 垂直居中
-        } else {
-          // 图片比较高，按高度适应
-          destW = Math.round(destH / imageAspectRatio);
-          destX = x + Math.round((width - destW) / 2); // 水平居中
+        destW = width; // 占满整个宽度
+        destH = Math.round(destW * imageAspectRatio); // 根据原始比例计算高度
+        
+        // 限制高度范围，避免过于极端的比例
+        destH = Math.max(180, Math.min(400, destH));
+        
+        // 垂直居中显示（如果新高度与原分配高度不同）
+        if (destH !== section.height) {
+          destY = section.y + Math.round((section.height - destH) / 2);
         }
       }
 
@@ -257,11 +256,11 @@ export class CompactRenderer {
       this.roundRect(ctx, destX, destY, destW, destH, radius);
       ctx.clip();
 
-      if (preserveOriginalRatio) {
-        // 保持原始比例，使用 contain 模式（显示完整图片）
+      if (fillWidth) {
+        // 占满宽度模式：显示完整图片，保持原始比例
         ctx.drawImage(img, 0, 0, sw, sh, destX, destY, destW, destH);
       } else {
-        // 使用 cover 模式（填满容器，可能裁剪）
+        // 默认模式：使用 cover 模式（填满容器，可能裁剪）
         const scale = Math.max(destW / sw, destH / sh);
         const srcW = Math.round(destW / scale);
         const srcH = Math.round(destH / scale);
