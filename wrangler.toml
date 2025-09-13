@@ -9,7 +9,7 @@ routes = [
 # Build configuration for client scripts
 [build]
 command = "npm run build:client"
-watch_dir = "src/client"
+watch_dir = ["src/client"]
 
 [vars]
 # Use '*' to allow any host, or a comma-separated list of exact hostnames

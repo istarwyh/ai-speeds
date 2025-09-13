@@ -36,8 +36,8 @@
 # 添加一个 MCP
 claude mcp add <name> <command> [args...]
 
-# 示例：添加自定义服务器
-claude mcp add my-server -e API_KEY=123 -- /path/to/server arg1 arg2
+# 示例：添加 context7
+claude mcp add context7 -- npx -y @upstash/context7-mcp --api-key YOUR_API_KEY
 
 # 查看所有 MCP 命令
 claude mcp
