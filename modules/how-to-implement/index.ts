@@ -15,4 +15,3 @@ export const implementationModule = `
   </div>
 </section>
 `;
-// HOW_TO_IMPLEMENT_SCRIPT_PLACEHOLDER

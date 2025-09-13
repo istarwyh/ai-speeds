@@ -15,4 +15,3 @@ export const howToApplyCCModule = `
   </div>
 </section>
 `;
-// HOW_TO_APPLY_CC_SCRIPT_PLACEHOLDER
