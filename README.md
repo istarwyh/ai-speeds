@@ -104,7 +104,8 @@ graph TB
 git clone https://github.com/your-username/claude-code-router
 cd claude-code-router
 npm install && npm install -g wrangler
-npm run dev    # Start development server
+npm run build:client    # Build frontend modules
+npm run dev             # Start development server
 ```
 
 ### Production Deployment
@@ -178,28 +179,45 @@ claude-code-router/
 ├── 📁 src/
 │   ├── 📁 client/              # Frontend & documentation system (TypeScript source)
 │   │   ├── 📁 bestPractices/    # Best practices module (development source)
-│   │   │   ├── 📁 core/          # Manager & business logic
+│   │   │   ├── 📁 core/          # BestPracticesManager & business logic
 │   │   │   ├── 📁 data/          # Card data & configuration
 │   │   │   ├── 📁 renderers/     # UI rendering components
 │   │   │   ├── 📁 services/      # Content & markdown services
+│   │   │   ├── 📁 handlers/      # Event handling logic
 │   │   │   └── 📁 index.ts       # Module entry point
-│   │   └── 📁 howToImplement/   # Implementation guide module (development source)
-│   │       ├── 📁 core/          # HowToImplementManager
-│   │       ├── 📁 data/          # Card data & configuration
-│   │       ├── 📁 handlers/      # Event handling
-│   │       ├── 📁 renderers/     # UI rendering components
-│   │       ├── 📁 services/      # Content services
-│   │       └── 📁 index.ts       # Module entry point
-│   └── 📁 server/              # Worker runtime logic
+│   │   ├── 📁 howToImplement/   # Implementation guide module (development source)
+│   │   │   ├── 📁 core/          # HowToImplementManager
+│   │   │   ├── 📁 data/          # Implementation data & configuration
+│   │   │   ├── 📁 handlers/      # Event handling
+│   │   │   ├── 📁 renderers/     # UI rendering components
+│   │   │   ├── 📁 services/      # Content services
+│   │   │   └── 📁 index.ts       # Module entry point
+│   │   ├── 📁 howToApplyCC/     # Claude Code application guide (development source)
+│   │   │   ├── 📁 core/          # Application logic
+│   │   │   ├── 📁 data/          # Application guide data
+│   │   │   ├── 📁 handlers/      # Event handling
+│   │   │   └── 📁 index.ts       # Module entry point
+│   │   └── 📁 shared/           # Shared components & utilities
+│   │       ├── 📁 renderers/     # Base renderer classes
+│   │       ├── 📁 types/         # Shared TypeScript types
+│   │       ├── 📁 services/      # Shared services (share service, etc.)
+│   │       └── 📁 utils/         # Common utilities
+│   ├── 📁 server/              # Worker runtime logic
+│   └── 📁 tests/               # Test suites
 ├── 📁 modules/                 # Static HTML templates + compiled JavaScript
-│   ├── 📁 best-practices/      # HTML template + bundled client code
-│   ├── 📁 how-to-implement/    # HTML template + bundled client code
-│   └── 📁 get-started/         # Static module components
-├── 📁 shared/                  # Cross-platform utilities
-│   ├── 📁 scripts/             # Generated bundles for runtime
-│   │   └── 📁 generated/        # Auto-generated from src/client/*
-│   └── 📁 utils/               # Helper functions
+│   ├── 📁 best-practices/      # Best practices HTML + bundled client code
+│   ├── 📁 how-to-implement/    # Implementation guide HTML + bundled code
+│   ├── 📁 how-to-apply-cc/     # Claude Code guide HTML + bundled code
+│   ├── 📁 get-started/         # Getting started static components
+│   └── 📁 index.ts             # Main module router
+├── 📁 shared/                  # Cross-platform utilities & runtime scripts
+│   └── 📁 index.ts             # Shared utilities
 ├── 📁 scripts/                 # Build automation & bundling
+│   └── 📁 build-client.js      # Frontend build orchestrator
+├── 📁 docs/                    # Documentation
+│   ├── 📁 cc-best-practices.md # Claude Code best practices
+│   ├── 📁 claude-code-sdk.md   # SDK documentation
+│   └── 📁 DIRECTORY_STRUCTURE.md # Project structure guide
 ├── 🔧 index.ts                 # Worker entry point (fetch handler)
 ├── 🔧 formatRequest.ts         # Anthropic → OpenAI transformer
 ├── 🔧 formatResponse.ts        # OpenAI → Anthropic transformer
@@ -227,15 +245,21 @@ The project uses a **dual-layer frontend architecture**:
 ```mermaid
 graph LR
     A[src/client/*/index.ts] -->|esbuild| B[Bundled JavaScript]
-    B -->|Inject| C[modules/*/index.ts]
+    B -->|build-client.js| C[modules/*/index.ts]
     C -->|Runtime| D[HTML + JS Module]
-    E[scripts/build-client.js] -->|Orchestrates| A
-    
+    E[npm run build:client] -->|Orchestrates| A
+
     style A fill:#e3f2fd
-    style B fill:#fff3e0  
+    style B fill:#fff3e0
     style C fill:#e8f5e8
     style D fill:#fce4ec
 ```
+
+**Active Modules:**
+- **Best Practices** (`src/client/bestPractices` → `modules/best-practices`)
+- **How to Implement** (`src/client/howToImplement` → `modules/how-to-implement`)
+- **How to Apply Claude Code** (`src/client/howToApplyCC` → `modules/how-to-apply-cc`)
+- **Get Started** (Static components in `modules/get-started`)
 
 This approach ensures **clean separation** between development complexity and runtime efficiency.
 

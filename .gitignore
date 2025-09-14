@@ -174,3 +174,7 @@ dist
 
 # Generated files
 shared/scripts/generated/
+
+# Build lock files
+.build-lock
+.last-build-time
