@@ -104,7 +104,8 @@ graph TB
 git clone https://github.com/your-username/claude-code-router
 cd claude-code-router
 npm install && npm install -g wrangler
-npm run dev    # Start development server
+npm run build:client    # Build frontend modules
+npm run dev             # Start development server
 ```
 
 ### Production Deployment
@@ -246,15 +247,21 @@ The project uses a **dual-layer frontend architecture**:
 ```mermaid
 graph LR
     A[src/client/*/index.ts] -->|esbuild| B[Bundled JavaScript]
-    B -->|Inject| C[modules/*/index.ts]
+    B -->|build-client.js| C[modules/*/index.ts]
     C -->|Runtime| D[HTML + JS Module]
-    E[scripts/build-client.js] -->|Orchestrates| A
-    
+    E[npm run build:client] -->|Orchestrates| A
+
     style A fill:#e3f2fd
-    style B fill:#fff3e0  
+    style B fill:#fff3e0
     style C fill:#e8f5e8
     style D fill:#fce4ec
 ```
+
+**Active Modules:**
+- **Best Practices** (`src/client/bestPractices` → `modules/best-practices`)
+- **How to Implement** (`src/client/howToImplement` → `modules/how-to-implement`)
+- **How to Apply Claude Code** (`src/client/howToApplyCC` → `modules/how-to-apply-cc`)
+- **Get Started** (Static components in `modules/get-started`)
 
 This approach ensures **clean separation** between development complexity and runtime efficiency.
 

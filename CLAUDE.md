@@ -5,8 +5,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 ## Development Commands
 
 ```bash
-npm run dev    # Start development server with Wrangler
-npm run deploy # Deploy to Cloudflare Workers
+npm run build:client # Build frontend modules (src/client/* → modules/*)
+npm run dev           # Start development server with Wrangler
+npm run deploy        # Deploy to Cloudflare Workers
 ```
 
 ## Project Architecture
@@ -57,6 +58,11 @@ This project implements a **dual-layer frontend architecture** that separates de
 #### Development Layer (`src/client/`)
 - **Location**: `src/client/[moduleName]/`
 - **Purpose**: Modern TypeScript development environment with full modular architecture
+- **Active Modules**:
+  - `bestPractices/` - Best practices guide with card-based UI
+  - `howToImplement/` - Implementation guidance system
+  - `howToApplyCC/` - Claude Code application guide
+  - `shared/` - Shared components, renderers, and utilities
 - **Structure**: Each module follows a consistent pattern:
   ```
   src/client/[moduleName]/
@@ -72,6 +78,11 @@ This project implements a **dual-layer frontend architecture** that separates de
 #### Runtime Layer (`modules/`)
 - **Location**: `modules/[module-name]/`
 - **Purpose**: Production-ready HTML templates with embedded compiled JavaScript
+- **Active Modules**:
+  - `best-practices/` - Best practices guide (from `src/client/bestPractices`)
+  - `how-to-implement/` - Implementation guidance (from `src/client/howToImplement`)
+  - `how-to-apply-cc/` - Claude Code guide (from `src/client/howToApplyCC`)
+  - `get-started/` - Getting started static components
 - **Structure**: Static HTML containers + bundled client code
 - **Benefits**: Single-file deployment, optimized for Cloudflare Workers edge execution
 
@@ -81,8 +92,12 @@ This project implements a **dual-layer frontend architecture** that separates de
 3. **Runtime Execution**: Final modules contain both HTML structure and embedded logic
 
 #### File Relationship Examples
+- `src/client/bestPractices/index.ts` ← **Development source**
+- `modules/best-practices/index.ts` ← **Runtime module** (HTML + bundled JS)
 - `src/client/howToImplement/index.ts` ← **Development source**
 - `modules/how-to-implement/index.ts` ← **Runtime module** (HTML + bundled JS)
+- `src/client/howToApplyCC/index.ts` ← **Development source**
+- `modules/how-to-apply-cc/index.ts` ← **Runtime module** (HTML + bundled JS)
 
 **Key Principle**: These files are **complementary, not duplicates**. The src/ version is the development source, while the modules/ version is the production artifact.
 

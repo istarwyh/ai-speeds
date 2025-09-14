@@ -14,16 +14,16 @@ async function buildClientScripts() {
   try {
     // 构建最佳实践模块
     await buildBestPracticesModule();
-    
+
     // 构建 How to Implement 模块
     await buildHowToImplementModule();
-    
+
     // 构建 How to Apply CC 模块
     await buildHowToApplyCCModule();
-    
+
     // 构建供应商详情模块
     await buildProviderDetailsModule();
-    
+
     console.log('✅ 客户端脚本构建完成！');
     console.log('📝 客户端脚本已生成到 src/scripts/generated/ 目录');
     console.log('🎯 模块文件保持简洁，无需注入代码');
