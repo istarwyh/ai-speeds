@@ -163,7 +163,7 @@ async function buildHowToApplyCCModule() {
  */
 async function buildProviderDetailsModule() {
   await buildModule({
-    entryPoint: path.resolve(__dirname, '../shared/scripts/providerDetails.ts'),
+    entryPoint: path.resolve(__dirname, '../src/scripts/providerDetails.ts'),
     outputFile: path.resolve(__dirname, '../src/scripts/generated/providerDetailsBundle.ts'),
     globalName: 'ProviderDetailsApp',
     exportName: 'providerDetailsClientScript',

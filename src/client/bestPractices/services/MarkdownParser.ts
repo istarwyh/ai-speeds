@@ -1,4 +1,4 @@
-import { SafeMarkdownRenderer } from '../../../../src/lib/utils/markdownRenderer';
+import { SafeMarkdownRenderer } from '../../../lib/utils/markdownRenderer';
 
 export class MarkdownParser {
   private readonly renderer = new SafeMarkdownRenderer();
