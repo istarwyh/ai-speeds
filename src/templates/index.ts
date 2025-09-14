@@ -1,11 +1,14 @@
-import { faviconDataUrl } from './faviconServer';
-import { createHead, sidebarComponent, navigationComponent, sideCardsComponent, allStyles, allScripts } from './src';
-import { DEFAULT_SECTION_ID } from './src/config/navigation';
-import { getStartedModule } from './modules/get-started';
-import { bestPracticesModule } from './modules/best-practices';
-import { implementationModule } from './modules/how-to-implement';
-import { howToApplyCCModule } from './modules/how-to-apply-cc';
+import { faviconDataUrl } from './components/favicon';
+import { createHead, sidebarComponent, navigationComponent, sideCardsComponent, allStyles, allScripts } from '../index';
+import { DEFAULT_SECTION_ID } from '../config/navigation';
+import { getStartedModule } from '../features/get-started';
+import { bestPracticesModule } from '../features/best-practices';
+import { implementationModule } from '../features/how-to-implement';
+import { howToApplyCCModule } from '../features/how-to-apply-cc';
 
+/**
+ * 主页 HTML 模板
+ */
 export const indexHtml = `<!DOCTYPE html>
 <html lang="en">
 ${createHead(faviconDataUrl)}

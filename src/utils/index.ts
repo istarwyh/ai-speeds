@@ -4,7 +4,7 @@
  * 生成内容路径
  */
 export function generateContentPath(module: string, type: string, id: string): string {
-  return `/modules/${module}/${type}/${id}`;
+  return `/src/features/${module}/${type}/${id}`;
 }
 
 /**

@@ -173,6 +173,7 @@ dist
 .wrangler/
 
 # Generated files
+src/scripts/generated
 shared/scripts/generated/
 
 # Build lock files

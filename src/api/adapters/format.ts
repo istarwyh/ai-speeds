@@ -1,11 +1,11 @@
-import { Provider, PROVIDER_CONFIGS } from './types';
+import { Provider } from '../types';
+import { Env } from '../../server/env';
 
 interface ProviderConfig {
   defaultBaseUrl: string;
   modelMappings: Record<string, string>;
   commonModels?: readonly string[];
 }
-import { Env } from './env';
 
 interface MessageCreateParamsBase {
   model: string;
@@ -15,7 +15,6 @@ interface MessageCreateParamsBase {
   tools?: any[];
   stream?: boolean;
 }
-
 
 /**
  * Validates OpenAI format messages to ensure complete tool_calls/tool message pairing.
@@ -107,8 +106,15 @@ function validateOpenAIToolCalls(messages: any[]): any[] {
   return validatedMessages;
 }
 
-export function mapModel(anthropicModel: string, provider: Provider = 'openrouter'): string {
-  const config = PROVIDER_CONFIGS[provider] as ProviderConfig;
+/**
+ * Maps Anthropic model names to provider-specific model names
+ */
+export function mapModel(anthropicModel: string, provider: Provider = 'openrouter', providerConfigs: any): string {
+  const config = providerConfigs[provider] as ProviderConfig | undefined;
+  if (!config) {
+    console.warn(`Provider configuration for ${provider} not found, using original model name.`);
+    return anthropicModel;
+  }
   
   // Check if it's already a valid model for this provider
   if (config.commonModels && config.commonModels.includes(anthropicModel)) {
@@ -132,7 +138,10 @@ export function mapModel(anthropicModel: string, provider: Provider = 'openroute
   return anthropicModel;
 }
 
-export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider: Provider = 'openrouter', env?: Env): any {
+/**
+ * Formats Anthropic API request to OpenAI API format
+ */
+export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider: Provider = 'openrouter', providerConfigs: any, env?: Env): any {
   const { model, messages, system = [], temperature, tools, stream } = body;
 
   const openAIMessages = Array.isArray(messages)
@@ -236,7 +245,7 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider:
       }];
 
   const data: any = {
-    model: mapModel(model, provider),
+    model: mapModel(model, provider, providerConfigs),
     messages: [...systemMessages, ...openAIMessages],
     temperature,
     stream,
@@ -257,4 +266,46 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider:
   data.messages = [...systemMessages, ...validateOpenAIToolCalls(openAIMessages)];
 
   return data;
+}
+
+/**
+ * Formats OpenAI API response to Anthropic API format
+ */
+export function formatOpenAIToAnthropic(completion: any, model: string): any {
+  const messageId = "msg_" + Date.now();
+
+  let content: any = [];
+  const firstChoice = completion.choices?.[0];
+  const message = firstChoice?.message;
+
+  if (message?.content) {
+    content = [{ text: message.content, type: "text" }];
+  } else if (message?.tool_calls) {
+    content = message.tool_calls.map((item: any) => {
+      return {
+        type: 'tool_use',
+        id: item.id,
+        name: item.function?.name,
+        input: (() => {
+          try {
+            return item.function?.arguments ? JSON.parse(item.function.arguments) : {};
+          } catch (e) {
+            console.error(`解析工具参数时出错: ${e}, 原始参数: ${item.function.arguments}`);
+            return {};
+          }
+        })(),
+      };
+    });
+  }
+
+  const result = {
+    id: messageId,
+    type: "message",
+    role: "assistant",
+    content: content,
+    stop_reason: completion.choices[0].finish_reason === 'tool_calls' ? "tool_use" : "end_turn",
+    stop_sequence: null,
+    model,
+  };
+  return result;
 }

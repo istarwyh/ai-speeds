@@ -1,6 +1,5 @@
-// modules/how-to-implement/: 只负责 HTML 结构和容器
-// src/client/howToImplement/: 负责所有业务逻辑和渲染
-// src/scripts/generated/: 运行时打包代码
+// src/features/how-to-implement/index.ts
+// 整合了原 modules/how-to-implement 和 src/client/howToImplement 的功能
 
 export const implementationModule = `
 <section id="how-to-implement" class="content-section">

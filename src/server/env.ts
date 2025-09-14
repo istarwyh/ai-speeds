@@ -1,4 +1,6 @@
-// 导入 Cloudflare Workers 类型
+/**
+ * Cloudflare Workers 环境变量类型定义
+ */
 interface Fetcher {
   fetch: typeof fetch;
 }
