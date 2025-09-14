@@ -48,7 +48,7 @@ This is a Cloudflare Worker that acts as a **transparent proxy service** between
 - Custom domain configured: `cc.xiaohui.cool`
 - Observability enabled for logging
 
-The worker includes static HTML pages for the homepage (`indexHtml.ts`), terms (`termsHtml.ts`), and privacy policy (`privacyHtml.ts`).
+The worker includes static HTML pages for the homepage (`src/templates/index.ts`), terms (`src/templates/terms.ts`), and privacy policy (`src/templates/privacy.ts`).
 
 ### Frontend Architecture & Build System
 

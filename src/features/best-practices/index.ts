@@ -1,6 +1,5 @@
-// modules/best-practices/: 只负责 HTML 结构和容器
-// src/client/bestPractices/: 负责所有业务逻辑和渲染
-// src/scripts/generated/: 运行时打包代码
+// src/features/best-practices/index.ts
+// 整合了原 modules/best-practices 和 src/client/bestPractices 的功能
 
 export const bestPracticesModule = `
 <section id="best-practices" class="content-section">

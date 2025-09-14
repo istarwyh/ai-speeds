@@ -173,4 +173,4 @@ dist
 .wrangler/
 
 # Generated files
-shared/scripts/generated/
+src/scripts/generated

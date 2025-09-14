@@ -1,4 +1,4 @@
-import { providers } from '../../modules/get-started/types/provider';
+import { providers } from '../features/get-started/types/provider';
 
 // 创建别名命令元素
 function createAliasCommandElement(aliasCommand: string): HTMLElement {

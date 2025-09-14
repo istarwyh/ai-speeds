@@ -170,12 +170,12 @@ export default {
     }
 
     // Handle markdown file requests for best practices articles
-    if (url.pathname.startsWith('/modules/best-practices/articles/') && url.pathname.endsWith('.md') && request.method === 'GET') {
+    if (url.pathname.startsWith('/src/features/best-practices/articles/') && url.pathname.endsWith('.md') && request.method === 'GET') {
       return await handleMarkdownFile(url, env, 'best practices', '');
     }
 
     // Handle markdown file requests for How to Apply CC articles
-    if (url.pathname.startsWith('/src/client/howToApplyCC/content/') && url.pathname.endsWith('.md') && request.method === 'GET') {
+    if (url.pathname.startsWith('/src/features/how-to-apply-cc/content/') && url.pathname.endsWith('.md') && request.method === 'GET') {
       return await handleMarkdownFile(url, env, 'How to Apply CC', 'howToApplyCC-content/');
     }
     

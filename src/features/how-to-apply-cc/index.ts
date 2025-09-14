@@ -1,6 +1,5 @@
-// modules/how-to-apply-cc/: 只负责 HTML 结构和容器
-// src/client/howToApplyCC/: 负责所有业务逻辑和渲染
-// src/scripts/generated/: 运行时打包代码
+// src/features/how-to-apply-cc/index.ts
+// 整合了原 modules/how-to-apply-cc 和 src/client/howToApplyCC 的功能
 
 export const howToApplyCCModule = `
 <section id="how-to-apply-cc" class="content-section">
