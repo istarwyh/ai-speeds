@@ -52,6 +52,43 @@ function selectProvider(env: Env): { provider: Provider; baseUrl: string } {
   };
 }
 
+/**
+ * Helper function to handle markdown file requests
+ */
+async function handleMarkdownFile(
+  url: URL,
+  env: Env,
+  pathPrefix: string,
+  assetPath: string
+): Promise<Response> {
+  try {
+    // Extract filename from path
+    const fileName = url.pathname.split('/').pop();
+
+    if (!fileName) {
+      return new Response('Invalid file path', { status: 400 });
+    }
+
+    // Use Assets binding to serve static files
+    const assetResponse = await env.ASSETS.fetch(new Request(`http://placeholder/${assetPath}${fileName}`));
+
+    if (assetResponse.ok) {
+      const content = await assetResponse.text();
+      return new Response(content, {
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8",
+          "Cache-Control": "public, max-age=3600" // Cache for 1 hour
+        }
+      });
+    } else {
+      return new Response('Article not found', { status: 404 });
+    }
+  } catch (error) {
+    console.error(`Error loading ${pathPrefix} article:`, error);
+    return new Response('Error loading article', { status: 500 });
+  }
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
@@ -134,62 +171,12 @@ export default {
 
     // Handle markdown file requests for best practices articles
     if (url.pathname.startsWith('/modules/best-practices/articles/') && url.pathname.endsWith('.md') && request.method === 'GET') {
-      try {
-        // Extract filename from path
-        const fileName = url.pathname.split('/').pop();
-        
-        if (!fileName) {
-          return new Response('Invalid file path', { status: 400 });
-        }
-
-        // Use Assets binding to serve static files
-        const assetResponse = await env.ASSETS.fetch(new Request(`http://placeholder/${fileName}`));
-        
-        if (assetResponse.ok) {
-          const content = await assetResponse.text();
-          return new Response(content, {
-            headers: { 
-              "Content-Type": "text/plain; charset=utf-8",
-              "Cache-Control": "public, max-age=3600" // Cache for 1 hour
-            }
-          });
-        } else {
-          return new Response('Article not found', { status: 404 });
-        }
-      } catch (error) {
-        console.error('Error loading article:', error);
-        return new Response('Error loading article', { status: 500 });
-      }
+      return await handleMarkdownFile(url, env, 'best practices', '');
     }
 
     // Handle markdown file requests for How to Apply CC articles
     if (url.pathname.startsWith('/src/client/howToApplyCC/content/') && url.pathname.endsWith('.md') && request.method === 'GET') {
-      try {
-        // Extract filename from path
-        const fileName = url.pathname.split('/').pop();
-        
-        if (!fileName) {
-          return new Response('Invalid file path', { status: 400 });
-        }
-
-        // Use Assets binding to serve static files
-        const assetResponse = await env.ASSETS.fetch(new Request(`http://placeholder/howToApplyCC-content/${fileName}`));
-        
-        if (assetResponse.ok) {
-          const content = await assetResponse.text();
-          return new Response(content, {
-            headers: { 
-              "Content-Type": "text/plain; charset=utf-8",
-              "Cache-Control": "public, max-age=3600" // Cache for 1 hour
-            }
-          });
-        } else {
-          return new Response('Article not found', { status: 404 });
-        }
-      } catch (error) {
-        console.error('Error loading How to Apply CC article:', error);
-        return new Response('Error loading article', { status: 500 });
-      }
+      return await handleMarkdownFile(url, env, 'How to Apply CC', 'howToApplyCC-content/');
     }
     
     if (url.pathname === '/v1/messages' && request.method === 'POST') {

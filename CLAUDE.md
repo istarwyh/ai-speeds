@@ -17,12 +17,12 @@ This is a Cloudflare Worker that acts as a **transparent proxy service** between
 
 ### Core Components
 
-- **index.ts**: Main Worker entry point handling routing and orchestration
-- **formatRequest.ts**: Converts Anthropic API format to OpenAI chat completions format
-- **formatResponse.ts**: Converts OpenAI responses back to Anthropic format  
-- **streamResponse.ts**: Handles streaming response translation with proper SSE formatting
-- **env.ts**: TypeScript environment interface for Cloudflare Workers
-- **types.ts**: Centralized type definitions and provider configurations
+- **src/server/index.ts**: Main Worker entry point handling routing and orchestration
+- **src/api/adapters/format.ts**: Converts between Anthropic API format and OpenAI chat completions format
+- **src/api/adapters/stream.ts**: Handles streaming response translation with proper SSE formatting
+- **src/server/env.ts**: TypeScript environment interface for Cloudflare Workers
+- **src/api/types.ts**: API type definitions
+- **src/api/providers.ts**: Provider configurations and model mappings
 
 ### API Translation Flow
 

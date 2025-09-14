@@ -279,7 +279,14 @@ export function formatOpenAIToAnthropic(completion: any, model: string): any {
         type: 'tool_use',
         id: item.id,
         name: item.function?.name,
-        input: item.function?.arguments ? JSON.parse(item.function.arguments) : {},
+        input: (() => {
+          try {
+            return item.function?.arguments ? JSON.parse(item.function.arguments) : {};
+          } catch (e) {
+            console.error('Error parsing tool arguments:', e);
+            return { error: 'Invalid JSON in arguments', raw: item.function.arguments };
+          }
+        })(),
       };
     });
   }

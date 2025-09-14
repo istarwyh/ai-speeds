@@ -176,36 +176,55 @@ curl -X POST https://cc.xiaohui.cool/v1/messages \
 ```
 claude-code-router/
 ├── 📁 src/
-│   ├── 📁 client/              # Frontend & documentation system (TypeScript source)
-│   │   ├── 📁 bestPractices/    # Best practices module (development source)
-│   │   │   ├── 📁 core/          # Manager & business logic
-│   │   │   ├── 📁 data/          # Card data & configuration
-│   │   │   ├── 📁 renderers/     # UI rendering components
-│   │   │   ├── 📁 services/      # Content & markdown services
-│   │   │   └── 📁 index.ts       # Module entry point
-│   │   └── 📁 howToImplement/   # Implementation guide module (development source)
+│   ├── 📁 api/                 # API 适配器和类型定义
+│   │   ├── 📁 adapters/         # 请求和响应格式转换
+│   │   │   ├── 📁 format.ts      # 请求/响应格式化
+│   │   │   └── 📁 stream.ts      # 流处理
+│   │   ├── 📁 types.ts          # API 类型定义
+│   │   └── 📁 providers.ts      # 供应商配置
+│   ├── 📁 client/              # 前端和文档系统 (TypeScript 源码)
+│   │   ├── 📁 bestPractices/    # 最佳实践模块 (开发源码)
+│   │   │   ├── 📁 core/          # 管理器和业务逻辑
+│   │   │   ├── 📁 data/          # 卡片数据和配置
+│   │   │   ├── 📁 renderers/     # UI 渲染组件
+│   │   │   ├── 📁 services/      # 内容和 Markdown 服务
+│   │   │   └── 📁 index.ts       # 模块入口点
+│   │   ├── 📁 howToApplyCC/     # 如何使用 CC 模块
+│   │   │   ├── 📁 components/    # UI 组件
+│   │   │   ├── 📁 services/      # 服务层
+│   │   │   └── 📁 index.ts       # 模块入口点
+│   │   └── 📁 howToImplement/   # 实现指南模块 (开发源码)
 │   │       ├── 📁 core/          # HowToImplementManager
-│   │       ├── 📁 data/          # Card data & configuration
-│   │       ├── 📁 handlers/      # Event handling
-│   │       ├── 📁 renderers/     # UI rendering components
-│   │       ├── 📁 services/      # Content services
-│   │       └── 📁 index.ts       # Module entry point
-│   └── 📁 server/              # Worker runtime logic
-├── 📁 modules/                 # Static HTML templates + compiled JavaScript
-│   ├── 📁 best-practices/      # HTML template + bundled client code
-│   ├── 📁 how-to-implement/    # HTML template + bundled client code
-│   └── 📁 get-started/         # Static module components
-├── 📁 shared/                  # Cross-platform utilities
-│   ├── 📁 scripts/             # Generated bundles for runtime
-│   │   └── 📁 generated/        # Auto-generated from src/client/*
-│   └── 📁 utils/               # Helper functions
-├── 📁 scripts/                 # Build automation & bundling
-├── 🔧 index.ts                 # Worker entry point (fetch handler)
-├── 🔧 formatRequest.ts         # Anthropic → OpenAI transformer
-├── 🔧 formatResponse.ts        # OpenAI → Anthropic transformer
-├── 🔧 streamResponse.ts        # Server-Sent Events handler
-├── 🔧 types.ts                 # TypeScript definitions
-└── ⚙️ wrangler.toml            # Worker configuration & bindings
+│   │       ├── 📁 data/          # 卡片数据和配置
+│   │       ├── 📁 handlers/      # 事件处理
+│   │       ├── 📁 renderers/     # UI 渲染组件
+│   │       ├── 📁 services/      # 内容服务
+│   │       └── 📁 index.ts       # 模块入口点
+│   ├── 📁 components/           # 共享 UI 组件
+│   ├── 📁 config/               # 全局配置
+│   ├── 📁 server/               # 服务器运行时逻辑
+│   │   ├── 📁 env.ts             # 环境变量类型定义
+│   │   ├── 📁 index.ts           # 服务器入口点
+│   │   └── 📁 routes/            # 路由处理器
+│   │       └── 📁 imgProxy.ts     # 图片代理
+│   ├── 📁 scripts/              # 客户端脚本
+│   │   └── 📁 generated/         # 从 src/client/* 自动生成
+│   ├── 📁 styles/               # 全局样式
+│   ├── 📁 templates/            # HTML 模板
+│   │   ├── 📁 components/        # 模板组件
+│   │   │   └── 📁 favicon.ts      # 图标生成
+│   │   ├── 📁 index.ts           # 主页模板
+│   │   ├── 📁 terms.ts           # 服务条款页面
+│   │   └── 📁 privacy.ts         # 隐私政策页面
+│   └── 📁 utils/                # 工具函数
+├── 📁 modules/                 # 静态 HTML 模板 + 编译后的 JavaScript
+│   ├── 📁 best-practices/      # HTML 模板 + 打包的客户端代码
+│   ├── 📁 get-started/         # 静态模块组件
+│   ├── 📁 how-to-apply-cc/     # 如何使用 CC 模块
+│   └── 📁 how-to-implement/    # HTML 模板 + 打包的客户端代码
+├── 📁 scripts/                 # 构建自动化和打包
+├── 🔧 index.ts                 # Worker 入口点 (fetch 处理器)
+└── ⚙️ wrangler.toml            # Worker 配置和绑定
 ```
 
 ### Frontend Build Architecture
