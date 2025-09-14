@@ -1,6 +1,6 @@
 import { faviconDataUrl } from './faviconServer';
-import { createHead, sidebarComponent, navigationComponent, sideCardsComponent, allStyles, allScripts } from './shared';
-import { DEFAULT_SECTION_ID } from './shared/config/navigation';
+import { createHead, sidebarComponent, navigationComponent, sideCardsComponent, allStyles, allScripts } from './src';
+import { DEFAULT_SECTION_ID } from './src/config/navigation';
 import { getStartedModule } from './modules/get-started';
 import { bestPracticesModule } from './modules/best-practices';
 import { implementationModule } from './modules/how-to-implement';
