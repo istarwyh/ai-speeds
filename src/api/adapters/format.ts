@@ -110,7 +110,11 @@ function validateOpenAIToolCalls(messages: any[]): any[] {
  * Maps Anthropic model names to provider-specific model names
  */
 export function mapModel(anthropicModel: string, provider: Provider = 'openrouter', providerConfigs: any): string {
-  const config = providerConfigs[provider] as ProviderConfig;
+  const config = providerConfigs[provider] as ProviderConfig | undefined;
+  if (!config) {
+    console.warn(`Provider configuration for ${provider} not found, using original model name.`);
+    return anthropicModel;
+  }
   
   // Check if it's already a valid model for this provider
   if (config.commonModels && config.commonModels.includes(anthropicModel)) {
@@ -271,10 +275,13 @@ export function formatOpenAIToAnthropic(completion: any, model: string): any {
   const messageId = "msg_" + Date.now();
 
   let content: any = [];
-  if (completion.choices[0].message.content) {
-    content = [{ text: completion.choices[0].message.content, type: "text" }];
-  } else if (completion.choices[0].message.tool_calls) {
-    content = completion.choices[0].message.tool_calls.map((item: any) => {
+  const firstChoice = completion.choices?.[0];
+  const message = firstChoice?.message;
+
+  if (message?.content) {
+    content = [{ text: message.content, type: "text" }];
+  } else if (message?.tool_calls) {
+    content = message.tool_calls.map((item: any) => {
       return {
         type: 'tool_use',
         id: item.id,
@@ -283,8 +290,8 @@ export function formatOpenAIToAnthropic(completion: any, model: string): any {
           try {
             return item.function?.arguments ? JSON.parse(item.function.arguments) : {};
           } catch (e) {
-            console.error('Error parsing tool arguments:', e);
-            return { error: 'Invalid JSON in arguments', raw: item.function.arguments };
+            console.error(`解析工具参数时出错: ${e}, 原始参数: ${item.function.arguments}`);
+            return {};
           }
         })(),
       };

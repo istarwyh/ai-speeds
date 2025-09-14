@@ -31,7 +31,7 @@ function selectProvider(env: Env): { provider: Provider; baseUrl: string } {
   // Auto-detect provider from generic OPENAI_COMPATIBLE_BASE_URL
   if (env.OPENAI_COMPATIBLE_BASE_URL) {
     const baseUrl = env.OPENAI_COMPATIBLE_BASE_URL.toLowerCase();
-    
+
     if (baseUrl.includes('deepseek')) {
       return { provider: 'deepseek', baseUrl };
     } else if (baseUrl.includes('openai')) {
@@ -40,9 +40,9 @@ function selectProvider(env: Env): { provider: Provider; baseUrl: string } {
       return { provider: 'kimi', baseUrl };
     } else if (baseUrl.includes('siliconflow')) {
       return { provider: 'siliconflow', baseUrl };
-    } 
-    // Default to deepseek if can't detect
-    return { provider: 'deepseek', baseUrl };
+    }
+    // 如果无法检测，默认使用 'openai' 提供商配置，因为它是 OpenAI 兼容的 URL
+    return { provider: 'openai', baseUrl };
   }
   
   // Default to OpenRouter
@@ -62,10 +62,12 @@ async function handleMarkdownFile(
   assetPath: string
 ): Promise<Response> {
   try {
-    // Extract filename from path
-    const fileName = url.pathname.split('/').pop();
+    // Extract and sanitize filename from path
+    const pathSegments = url.pathname.split('/');
+    const fileName = pathSegments.pop();
 
-    if (!fileName) {
+    // Prevent path traversal
+    if (!fileName || pathSegments.some(segment => segment.includes('..'))) {
       return new Response('Invalid file path', { status: 400 });
     }
 
