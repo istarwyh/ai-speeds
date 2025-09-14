@@ -3,7 +3,7 @@
 
 import { BestPracticesManager } from './core/BestPracticesManager';
 import { initializeApp } from './utils/initialization';
-import { loadHighlightJsStyle } from '../../../shared/utils/highlight';
+import { loadHighlightJsStyle } from '../../lib/utils/highlight';
 
 // 全局初始化函数
 function initializeBestPractices() {

@@ -25,7 +25,7 @@ async function buildClientScripts() {
     await buildProviderDetailsModule();
     
     console.log('✅ 客户端脚本构建完成！');
-    console.log('📝 客户端脚本已生成到 shared/scripts/generated/ 目录');
+    console.log('📝 客户端脚本已生成到 src/scripts/generated/ 目录');
     console.log('🎯 模块文件保持简洁，无需注入代码');
   } catch (error) {
     console.error('❌ 构建失败:', error);
@@ -124,7 +124,7 @@ export const ${exportName} = ${JSON.stringify(bundledCode)};
 async function buildBestPracticesModule() {
   await buildModule({
     entryPoint: path.resolve(__dirname, '../src/client/bestPractices/index.ts'),
-    outputFile: path.resolve(__dirname, '../shared/scripts/generated/bestPracticesBundle.ts'),
+    outputFile: path.resolve(__dirname, '../src/scripts/generated/bestPracticesBundle.ts'),
     globalName: 'BestPracticesApp',
     exportName: 'bestPracticesClientScript',
     description: '最佳实践'
@@ -137,7 +137,7 @@ async function buildBestPracticesModule() {
 async function buildHowToImplementModule() {
   await buildModule({
     entryPoint: path.resolve(__dirname, '../src/client/howToImplement/index.ts'),
-    outputFile: path.resolve(__dirname, '../shared/scripts/generated/howToImplementBundle.ts'),
+    outputFile: path.resolve(__dirname, '../src/scripts/generated/howToImplementBundle.ts'),
     globalName: 'HowToImplementApp',
     exportName: 'howToImplementClientScript',
     description: 'How to Implement '
@@ -150,7 +150,7 @@ async function buildHowToImplementModule() {
 async function buildHowToApplyCCModule() {
   await buildModule({
     entryPoint: path.resolve(__dirname, '../src/client/howToApplyCC/index.ts'),
-    outputFile: path.resolve(__dirname, '../shared/scripts/generated/howToApplyCCBundle.ts'),
+    outputFile: path.resolve(__dirname, '../src/scripts/generated/howToApplyCCBundle.ts'),
     globalName: 'HowToApplyCCApp',
     exportName: 'howToApplyCCClientScript',
     description: 'How to Apply CC ',
@@ -163,8 +163,8 @@ async function buildHowToApplyCCModule() {
  */
 async function buildProviderDetailsModule() {
   await buildModule({
-    entryPoint: path.resolve(__dirname, '../shared/scripts/providerDetails.ts'),
-    outputFile: path.resolve(__dirname, '../shared/scripts/generated/providerDetailsBundle.ts'),
+    entryPoint: path.resolve(__dirname, '../src/scripts/providerDetails.ts'),
+    outputFile: path.resolve(__dirname, '../src/scripts/generated/providerDetailsBundle.ts'),
     globalName: 'ProviderDetailsApp',
     exportName: 'providerDetailsClientScript',
     description: '供应商详情',

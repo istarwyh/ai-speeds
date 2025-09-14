@@ -1,4 +1,4 @@
-import { SafeMarkdownRenderer } from '../utils/markdownRenderer.js';
+import { SafeMarkdownRenderer } from '../../lib/utils/markdownRenderer';
 
 /**
  * Markdown 查看器组件

@@ -1,4 +1,4 @@
-import { DEFAULT_SECTION_ID, type SectionId } from '../config/navigation';
+import { DEFAULT_SECTION_ID, type SectionId } from '../../lib/config/navigation';
 
 const cls = (id: SectionId): string =>
   id === DEFAULT_SECTION_ID ? 'nav-tab active' : 'nav-tab';

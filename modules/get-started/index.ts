@@ -1,6 +1,6 @@
 // modules/get-started/: 只负责 HTML 结构和容器
 // src/client/getStarted/: 负责所有业务逻辑和渲染
-// shared/scripts/generated/: 运行时打包代码
+// src/scripts/generated/: 运行时打包代码
 
 import { setupComponent } from './components/setup';
 import { deploymentComponent } from './components/deployment';

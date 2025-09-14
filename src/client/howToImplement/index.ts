@@ -1,5 +1,5 @@
 import { HowToImplementManager } from './core/HowToImplementManager';
-import { loadHighlightJsStyle } from '../../../shared/utils/highlight';
+import { loadHighlightJsStyle } from '../../lib/utils/highlight';
 
 export function initializeHowToImplement(): void {
   console.log('初始化 How to Implement 模块...');

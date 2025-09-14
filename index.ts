@@ -3,7 +3,7 @@ import { formatAnthropicToOpenAI } from './formatRequest';
 import { streamOpenAIToAnthropic } from './streamResponse';
 import { formatOpenAIToAnthropic } from './formatResponse';
 import { indexHtml } from './indexHtml';
-import { DEFAULT_SECTION_ID } from './shared/config/navigation';
+import { DEFAULT_SECTION_ID } from './src/config/navigation';
 import { termsHtml } from './termsHtml';
 import { privacyHtml } from './privacyHtml';
 import { Provider, PROVIDER_CONFIGS } from './types';
