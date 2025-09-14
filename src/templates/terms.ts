@@ -1,5 +1,8 @@
-import { faviconDataUrl } from './faviconServer';
+import { faviconDataUrl } from './components/favicon';
 
+/**
+ * 服务条款页面 HTML 模板
+ */
 export const termsHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>

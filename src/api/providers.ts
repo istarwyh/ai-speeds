@@ -1,9 +1,8 @@
-export type Provider = 'openrouter' | 'deepseek' | 'openai' | 'kimi' | 'siliconflow';
+import { ModelMapping } from './types';
 
-export interface ModelMapping {
-  [key: string]: string;
-}
-
+/**
+ * 供应商配置
+ */
 export const PROVIDER_CONFIGS = {
   openrouter: {
     defaultBaseUrl: 'https://openrouter.ai/api/v1',

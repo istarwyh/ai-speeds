@@ -1,5 +1,8 @@
-import { faviconDataUrl } from './faviconServer';
+import { faviconDataUrl } from './components/favicon';
 
+/**
+ * 隐私政策页面 HTML 模板
+ */
 export const privacyHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>

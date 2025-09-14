@@ -1,3 +1,6 @@
+/**
+ * Converts OpenAI streaming response format to Anthropic streaming format
+ */
 export function streamOpenAIToAnthropic(openaiStream: ReadableStream, model: string): ReadableStream {
   const messageId = "msg_" + Date.now();
   
