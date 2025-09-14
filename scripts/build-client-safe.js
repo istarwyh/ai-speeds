@@ -10,6 +10,8 @@ const LAST_BUILD_FILE = path.resolve(__dirname, '../.last-build-time');
 
 /**
  * 获取目录下所有文件的最新修改时间
+ * 注意：当前使用同步I/O操作，对于构建脚本来说是可接受的
+ * 如果未来 src/client 目录文件数量大幅增长，可考虑重构为异步版本
  */
 function getLastModified(dir) {
   let lastModified = 0;
@@ -45,9 +47,9 @@ function safeBuildClient() {
     if (fs.existsSync(LOCK_FILE)) {
       const lockTime = parseInt(fs.readFileSync(LOCK_FILE, 'utf8'));
 
-      // 如果锁文件超时，删除它
-      if (currentTime - lockTime > LOCK_TIMEOUT) {
-        console.log('🧹 清理超时的构建锁');
+      // 如果锁文件超时或无效，删除它
+      if (isNaN(lockTime) || currentTime - lockTime > LOCK_TIMEOUT) {
+        console.log(`🧹 清理${isNaN(lockTime) ? '无效的' : '超时的'}构建锁`);
         fs.unlinkSync(LOCK_FILE);
       } else {
         console.log('🔒 构建已在进行中，跳过重复构建');
@@ -62,7 +64,8 @@ function safeBuildClient() {
 
     let lastBuildTime = 0;
     if (fs.existsSync(LAST_BUILD_FILE)) {
-      lastBuildTime = parseInt(fs.readFileSync(LAST_BUILD_FILE, 'utf8'));
+      const timestamp = parseInt(fs.readFileSync(LAST_BUILD_FILE, 'utf8'));
+      lastBuildTime = isNaN(timestamp) ? 0 : timestamp;
     }
 
     // 如果源文件没有变化，跳过构建
