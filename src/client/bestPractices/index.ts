@@ -1,6 +1,3 @@
-// 最佳实践模块的客户端入口文件
-// 这个文件将被 esbuild 打包成单个 IIFE
-
 import { BestPracticesManager } from './core/BestPracticesManager';
 import { initializeApp } from './utils/initialization';
 import { loadHighlightJsStyle } from '../../../shared/utils/highlight';

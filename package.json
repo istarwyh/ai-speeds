@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "build:client": "node scripts/build-client.js",
+    "build:client": "node scripts/build-client-safe.js",
+    "build:client:direct": "node scripts/build-client.js",
     "dev": "NODE_ENV=development wrangler dev",
     "deploy": "NODE_ENV=production wrangler deploy"
   },
