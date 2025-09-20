@@ -17,7 +17,8 @@ export class ArticleService extends BaseContentService<PracticeCard> {
         'software-engineering-with-claude': async () => (await import('../content/software-engineering-with-claude.md')).default,
         'intelligent-undo': async () => (await import('../content/intelligent-undo.md')).default,
         'agent-linus-torvalds': async () => (await import('../content/agent-linus-torvalds.md')).default,
-        'tdd-analyze-requirements': async () => (await import('../content/tdd-analyze-requirements.md')).default
+        'tdd-analyze-requirements': async () => (await import('../content/tdd-analyze-requirements.md')).default,
+        'data-analysis': async () => (await import('../content/data-analysis.md')).default
       };
 
       const contentLoader = contentMap[cardId];
@@ -52,7 +53,8 @@ export class ArticleService extends BaseContentService<PracticeCard> {
       'software-engineering-with-claude': '软件工程与 Claude',
       'intelligent-undo': '智能撤销工具',
       'agent-linus-torvalds': 'Linus Torvalds Agent',
-      'tdd-analyze-requirements': 'Vibe coding with TDD（简单版）'
+      'tdd-analyze-requirements': 'Vibe coding with TDD（简单版）',
+      'data-analysis': 'CAIBAO-DA 专业数据分析师'
     };
 
     return titles[cardId] || cardId;

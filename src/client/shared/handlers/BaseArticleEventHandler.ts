@@ -21,6 +21,8 @@ export interface IArticleRenderer {
   renderArticle(title: string, content: string): string;
   renderLoadingState(): string;
   renderErrorState(error: string): string;
+  initializeCopyFeature?(container: HTMLElement, rawMarkdown?: string): void;
+  destroyCopyFeature?(): void;
 }
 
 /**
@@ -344,6 +346,11 @@ export abstract class BaseArticleEventHandler {
         this.addEnhancedFeatures(markdownContainer);
       }
 
+      // Initialize copy feature for the entire article container
+      if (this.articleRenderer.initializeCopyFeature) {
+        this.articleRenderer.initializeCopyFeature(container, article.rawMarkdown);
+      }
+
       // Back navigation wiring
       this.configureBackNavigation();
 
@@ -393,7 +400,12 @@ export abstract class BaseArticleEventHandler {
 
   protected handleBackToOverview(): void {
     if (!this.onBackToOverview) return;
-    
+
+    // Clean up copy feature before returning to overview
+    if (this.articleRenderer.destroyCopyFeature) {
+      this.articleRenderer.destroyCopyFeature();
+    }
+
     const containerEl = document.getElementById(this.containerId);
     if (containerEl) {
       const articleEl = containerEl.querySelector('.practice-article') as HTMLElement | null;

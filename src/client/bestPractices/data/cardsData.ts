@@ -117,5 +117,20 @@ export const bestPracticesCards: PracticeCard[] = [
     ],
     lastUpdated: '2025-08-31',
     version: '1.0.0'
+  },
+  {
+    id: 'data-analysis',
+    title: 'CAIBAO-DA 专业数据分析师',
+    description: '四阶段数据分析工作流程：数据理解、探索分析、可视化设计、商业洞察与行动建议',
+    category: 'tools',
+    difficulty: 'intermediate',
+    readTime: '12 分钟',
+    tags: ['数据分析', '可视化', 'Python', 'Plotly', '商业洞察'],
+    tips: [
+      { type: 'info', title: '标准流程', content: '遵循四阶段工作流程，确保分析的专业性和完整性' },
+      { type: 'success', title: '可视化要求', content: '生成6+种图表类型，包含精确数值和百分比标注' },
+      { type: 'expert', title: '商业价值', content: '提供具体量化建议和ROI预测，实现数据驱动决策' }
+    ],
+    lastUpdated: '2025-09-20'
   }
 ];

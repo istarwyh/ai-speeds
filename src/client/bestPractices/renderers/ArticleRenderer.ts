@@ -1,4 +1,8 @@
+import { CopyComponent } from '../../shared/components/CopyComponent';
+
 export class ArticleRenderer {
+  private copyComponent: CopyComponent | null = null;
+
   public renderArticle(title: string, content: string): string {
     // 使用 MarkdownViewer 组件来渲染 Markdown 内容
     // 不再显示重复的标题，因为 Markdown 内容中已经包含了标题
@@ -9,12 +13,29 @@ export class ArticleRenderer {
             ← 返回概览
           </button>
         </div>
-        
+
         <div class="practice-article__content" id="markdown-content-container">
           <!-- Markdown 内容将在这里渲染 -->
         </div>
       </div>
     `;
+  }
+
+  public initializeCopyFeature(container: HTMLElement, rawMarkdown?: string): void {
+    // 销毁之前的复制组件
+    if (this.copyComponent) {
+      this.copyComponent.destroy();
+    }
+
+    // 创建新的复制组件，传递原始 Markdown 内容
+    this.copyComponent = new CopyComponent(container, rawMarkdown);
+  }
+
+  public destroyCopyFeature(): void {
+    if (this.copyComponent) {
+      this.copyComponent.destroy();
+      this.copyComponent = null;
+    }
   }
 
   public renderLoadingState(): string {
