@@ -26,38 +26,55 @@ export const markdownStyles = `
   margin: 0;
   padding: 0;
   border-bottom: none;
+  /* Side-by-side buttons layout */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
 }
 
-.practice-article__back-btn {
+.practice-article__back-btn,
+.copy-content-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   background: rgba(255, 255, 255, 0.85);
   border: 1px solid #e5e7eb;
   color: #374151;
-  padding: 6px 12px;
+  padding: 8px 14px;
   border-radius: 999px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1;
+  min-height: 36px;
   transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.12s ease;
   box-shadow: 0 1px 4px rgba(17, 24, 39, 0.06);
   backdrop-filter: saturate(1.2) blur(2px);
 }
 
-.practice-article__back-btn:hover {
+/* Normalize icon size inside copy button */
+.copy-content-btn svg {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+}
+
+.practice-article__back-btn:hover,
+.copy-content-btn:hover {
   background: #ffffff;
   border-color: #d1d5db;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(17, 24, 39, 0.08);
 }
 
-.practice-article__back-btn:active {
+.practice-article__back-btn:active,
+.copy-content-btn:active {
   transform: translateY(0);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
-.practice-article__back-btn:focus-visible {
+.practice-article__back-btn:focus-visible,
+.copy-content-btn:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
 }
@@ -525,9 +542,15 @@ export const markdownStyles = `
     margin: 0;
     padding: 0;
   }
-  .practice-article__back-btn {
-    padding: 8px 12px;
+  .practice-article__back-btn,
+  .copy-content-btn {
+    padding: 8px 14px;
     font-size: 14px;
+    min-height: 36px;
+  }
+  /* Compact label on small screens */
+  .copy-content-btn .copy-text {
+    display: none;
   }
   
   .markdown-content h1 {
