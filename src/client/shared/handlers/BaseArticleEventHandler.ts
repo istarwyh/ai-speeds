@@ -409,7 +409,7 @@ export abstract class BaseArticleEventHandler {
       backButton.removeEventListener('click', existingHandler);
       backButton.removeEventListener('pointerdown', existingHandler);
       backButton.removeEventListener('mousedown', existingHandler);
-      backButton.removeEventListener('touchstart', existingHandler as EventListener, { capture: false } as any);
+      backButton.removeEventListener('touchstart', existingHandler as EventListener, { passive: false });
     }
 
     // Remove any inline onclick to avoid invoking global handlers from other modules
