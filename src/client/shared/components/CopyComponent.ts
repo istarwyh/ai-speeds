@@ -50,12 +50,6 @@ export class CopyComponent {
 
       // 将复制按钮添加到header容器
       headerContainer.appendChild(this.copyButton);
-
-      // 确保header是flex布局，垂直排布
-      (headerContainer as HTMLElement).style.display = 'flex';
-      (headerContainer as HTMLElement).style.flexDirection = 'column';
-      (headerContainer as HTMLElement).style.alignItems = 'flex-start';
-      (headerContainer as HTMLElement).style.gap = '12px';
     } else {
       // 如果找不到header容器，添加到根容器
       this.container.style.position = 'relative';
@@ -70,78 +64,8 @@ export class CopyComponent {
 
   private addCopyButtonStyles(): void {
     if (!this.copyButton) return;
-
-    // 使复制按钮样式与返回按钮完全一致，包括边框和字体
-    Object.assign(this.copyButton.style, {
-      padding: '8px 16px',
-      background: 'transparent',
-      border: '1px solid rgba(203, 213, 225, 0.6)',
-      borderRadius: '20px',
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-      fontSize: '14px',
-      color: '#64748b',
-      fontWeight: 'normal',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-      transition: 'all 0.2s ease',
-      height: 'auto',
-      whiteSpace: 'nowrap',
-      textDecoration: 'none'
-    });
-
-    // 添加悬停效果，与返回按钮一致
-    this.copyButton.addEventListener('mouseenter', () => {
-      if (this.copyButton) {
-        Object.assign(this.copyButton.style, {
-          background: '#f1f5f9',
-          color: '#475569',
-          borderColor: '#cbd5e1'
-        });
-      }
-    });
-
-    this.copyButton.addEventListener('mouseleave', () => {
-      if (this.copyButton) {
-        Object.assign(this.copyButton.style, {
-          background: 'transparent',
-          color: '#64748b',
-          borderColor: 'rgba(203, 213, 225, 0.6)'
-        });
-      }
-    });
-
-    // 响应式调整
-    const mediaQuery = window.matchMedia('(max-width: 768px)');
-    const handleMobileView = (e: MediaQueryListEvent | MediaQueryList) => {
-      if (this.copyButton) {
-        if (e.matches) {
-          // 移动端样式调整
-          Object.assign(this.copyButton.style, {
-            padding: '6px 12px',
-            fontSize: '12px'
-          });
-          const textSpan = this.copyButton.querySelector('.copy-text');
-          if (textSpan) {
-            (textSpan as HTMLElement).style.display = 'none';
-          }
-        } else {
-          // 桌面端样式
-          Object.assign(this.copyButton.style, {
-            padding: '8px 16px',
-            fontSize: '14px'
-          });
-          const textSpan = this.copyButton.querySelector('.copy-text');
-          if (textSpan) {
-            (textSpan as HTMLElement).style.display = 'inline';
-          }
-        }
-      }
-    };
-
-    handleMobileView(mediaQuery);
-    mediaQuery.addListener(handleMobileView);
+    // 使用统一的 CSS 类进行样式控制（见 markdownStyles.ts）
+    this.copyButton.classList.add('copy-content-btn');
   }
 
   private bindEvents(): void {

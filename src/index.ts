@@ -7,6 +7,3 @@ export { sideCardsComponent } from './components/navigation/sideCards';
 // 样式和脚本
 export { allStyles } from './styles';
 export { allScripts } from './scripts';
-
-// 工具函数
-export * from './utils/index';

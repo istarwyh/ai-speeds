@@ -44,6 +44,7 @@ export abstract class BaseArticleEventHandler {
   private _shareService?: GenericShareService<BaseContentCard>;
   private _suppressHistory = false;
   private _preloadCache = new Set<string>(); // 内存缓存，避免重复预加载
+  private _navLock = false; // 短暂导航锁，避免返回时的“幽灵点击”
 
   constructor(
     containerId: string,
@@ -229,6 +230,23 @@ export abstract class BaseArticleEventHandler {
     const event = e as MouseEvent;
     const target = event.target as HTMLElement;
 
+    // If user clicked the back button, handle immediately regardless of view state
+    const backEl = target.closest('[data-action="back-to-overview"]') as HTMLElement | null;
+    if (backEl) {
+      event.preventDefault();
+      event.stopPropagation();
+      (event as any).stopImmediatePropagation?.();
+      this.handleBackToOverview();
+      return;
+    }
+
+    // 返回过渡期间抑制点击
+    if (this._navLock) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
     // Avoid interactions when this container is already in article view
     const containerEl = event.currentTarget as HTMLElement | null;
     const isInArticleView = containerEl?.querySelector('.practice-article');
@@ -321,6 +339,8 @@ export abstract class BaseArticleEventHandler {
 
       // Loading state
       container.innerHTML = this.articleRenderer.renderLoadingState();
+      // Wire back button immediately so users don't need to click twice
+      this.configureBackNavigation();
 
       // Fetch content
       const article = await this.contentService.getArticle(cardId);
@@ -387,14 +407,43 @@ export abstract class BaseArticleEventHandler {
     const existingHandler = (backButton as any)._backHandler;
     if (existingHandler) {
       backButton.removeEventListener('click', existingHandler);
+      backButton.removeEventListener('pointerdown', existingHandler);
+      backButton.removeEventListener('mousedown', existingHandler);
+      backButton.removeEventListener('touchstart', existingHandler as EventListener, { passive: false });
     }
 
     // Remove any inline onclick to avoid invoking global handlers from other modules
     backButton.removeAttribute('onclick');
 
     // Create new handler and store reference for cleanup
-    const backHandler = this.handleBackToOverview.bind(this);
+    const backHandler = (ev: Event) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      (ev as any).stopImmediatePropagation?.();
+      if (this._navLock) return;
+      this._navLock = true;
+
+      // Cancel the next click anywhere (capture) to avoid ghost-click on new view
+      const cancelNextClick = (evt: Event) => {
+        evt.preventDefault();
+        evt.stopPropagation();
+        (evt as any).stopImmediatePropagation?.();
+        document.removeEventListener('click', cancelNextClick, true);
+      };
+      document.addEventListener('click', cancelNextClick, true);
+
+      this.handleBackToOverview();
+      // 释放锁：动画时长 + 缓冲
+      setTimeout(() => {
+        this._navLock = false;
+      }, EXIT_ANIMATION_DURATION + 150);
+    };
     (backButton as any)._backHandler = backHandler;
+    // Prefer pointerdown to避免 mouseup 在新视图触发“幽灵点击”
+    backButton.addEventListener('pointerdown', backHandler);
+    // Fallbacks
+    backButton.addEventListener('mousedown', backHandler);
+    backButton.addEventListener('touchstart', backHandler, { passive: false });
     backButton.addEventListener('click', backHandler);
   }
 
@@ -412,16 +461,17 @@ export abstract class BaseArticleEventHandler {
       if (articleEl) {
         articleEl.classList.add('is-exiting');
         setTimeout(() => {
-          this.onBackToOverview!();
-          // 返回总览后更新 URL 查询参数
+          // 先更新 URL，避免重新初始化时根据旧的 article 深链接再次打开文章
           this.updateHistoryForOverview();
+          this.onBackToOverview!();
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }, EXIT_ANIMATION_DURATION);
         return;
       }
     }
-    this.onBackToOverview();
+    // Fallback：同样先更新 URL 再返回
     this.updateHistoryForOverview();
+    this.onBackToOverview();
   }
 
   // Shared enhancements below
