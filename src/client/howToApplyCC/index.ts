@@ -11,7 +11,7 @@ declare global {
 let manager: HowToApplyCCManager;
 
 export function initializeHowToApplyCC(): void {
-  console.log('初始化 How to Apply CC 模块...');
+  // Initialization started
 
   manager = new HowToApplyCCManager();
   manager.initialize();
@@ -24,7 +24,7 @@ export function initializeHowToApplyCC(): void {
     }
   };
 
-  console.log('How to Apply CC 模块初始化完成');
+  // Initialization completed
 }
 
 // 自动初始化（如果在浏览器环境中）

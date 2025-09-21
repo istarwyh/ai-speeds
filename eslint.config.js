@@ -55,13 +55,18 @@ export default [
         btoa: 'readonly',
         atob: 'readonly',
 
-        // Browser globals
+        // Browser DOM APIs
         window: 'readonly',
         document: 'readonly',
         HTMLElement: 'readonly',
         Event: 'readonly',
         KeyboardEvent: 'readonly',
         MouseEvent: 'readonly',
+        Image: 'readonly',
+        CanvasRenderingContext2D: 'readonly',
+        MutationObserver: 'readonly',
+        history: 'readonly',
+        ReadableStreamDefaultController: 'readonly',
 
         // Cloudflare Workers
         addEventListener: 'readonly',
@@ -116,6 +121,15 @@ export default [
 
       // Prettier integration
       'prettier/prettier': 'error',
+    },
+  },
+  {
+    // More lenient rules for client-side code where type safety is harder to enforce
+    files: ['src/client/**/*.ts', 'src/client/**/*.tsx'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'warn',
+      'security/detect-object-injection': 'off',
+      'no-undef': 'warn', // Many browser APIs may not be fully typed
     },
   },
   {

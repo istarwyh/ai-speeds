@@ -8,6 +8,12 @@ import { MarkdownParser } from '../services/MarkdownParser';
 import { bestPracticesCards } from '../data/cardsData';
 import type { PracticeCard } from '../types/PracticeCard';
 
+interface RouteState {
+  module?: string;
+  view?: string;
+  cardId?: string;
+}
+
 export class BestPracticesManager extends BaseContentManager<PracticeCard> {
   private readonly bpEventHandler: EventHandler;
 
@@ -47,11 +53,11 @@ export class BestPracticesManager extends BaseContentManager<PracticeCard> {
 
     // Sync back/forward navigation
     window.addEventListener('popstate', () => {
-      this.applyRouteFromLocation((history.state as any) || null);
+      this.applyRouteFromLocation((window.history.state as RouteState) || null);
     });
   }
 
-  private applyRouteFromLocation(state?: any): void {
+  private applyRouteFromLocation(state?: RouteState): void {
     try {
       const params = new URLSearchParams(window.location.search);
       const moduleName = state?.module || params.get('module');
@@ -67,7 +73,7 @@ export class BestPracticesManager extends BaseContentManager<PracticeCard> {
       } else {
         this.ensureOverviewReady();
       }
-    } catch (e) {
+    } catch {
       // Fallback: ensure overview shows
       this.ensureOverviewReady();
     }

@@ -11,21 +11,13 @@ const EXIT_ANIMATION_DURATION = 230; // 匹配 CSS 中的动画时长
 
 export class EventHandler extends BaseArticleEventHandler {
   constructor(containerId: string, contentService: IContentService, articleRenderer: IArticleRenderer) {
-    super(containerId, contentService, articleRenderer, () => (window as any).initializeBestPractices());
+    super(containerId, contentService, articleRenderer, () =>
+      (window as unknown as { initializeBestPractices: () => void }).initializeBestPractices(),
+    );
   }
 
-  protected addDebugListeners(container: HTMLElement): void {
-    container.addEventListener(
-      'click',
-      function (e) {
-        console.log('容器收到点击事件:', {
-          target: e.target,
-          targetClass: (e.target as HTMLElement).className,
-          targetTag: (e.target as HTMLElement).tagName,
-        });
-      },
-      true,
-    );
+  protected addDebugListeners(_container: HTMLElement): void {
+    // Debug logging removed for production readiness
   }
 
   protected async beforeEnterArticle(container: HTMLElement): Promise<void> {

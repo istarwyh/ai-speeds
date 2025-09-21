@@ -57,7 +57,7 @@ module.exports = {
   plugins: [
     {
       rules: {
-        'no-secrets-in-message': (parsed: { raw: string }) => {
+        'no-secrets-in-message': parsed => {
           const message = parsed.raw;
           const secretPatterns = [
             /[A-Za-z0-9+/]{40,}/, // Base64 encoded secrets

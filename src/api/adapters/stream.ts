@@ -1,10 +1,32 @@
+interface StreamDelta {
+  content?: string;
+  tool_calls?: Array<{
+    id: string;
+    function?: {
+      name?: string;
+      arguments?: string;
+    };
+  }>;
+}
+
+interface ParsedStreamData {
+  choices?: Array<{
+    delta?: StreamDelta;
+  }>;
+}
+
+interface StreamController {
+  enqueue(chunk: Uint8Array): void;
+  close(): void;
+}
+
 /**
  * Converts OpenAI streaming response format to Anthropic streaming format
  */
 export function streamOpenAIToAnthropic(openaiStream: ReadableStream, model: string): ReadableStream {
   const messageId = 'msg_' + Date.now();
 
-  const enqueueSSE = (controller: ReadableStreamDefaultController, eventType: string, data: any) => {
+  const enqueueSSE = (controller: StreamController, eventType: string, data: unknown) => {
     const sseMessage = `event: ${eventType}\ndata: ${JSON.stringify(data)}\n\n`;
     controller.enqueue(new TextEncoder().encode(sseMessage));
   };
@@ -52,13 +74,13 @@ export function streamOpenAIToAnthropic(openaiStream: ReadableStream, model: str
                   }
 
                   try {
-                    const parsed = JSON.parse(data);
+                    const parsed = JSON.parse(data) as ParsedStreamData;
                     const delta = parsed.choices?.[0]?.delta;
                     if (delta) {
                       processStreamDelta(delta);
                     }
-                  } catch (e) {
-                    // Parse error
+                  } catch {
+                    // Parse error - silently continue
                   }
                 }
               }
@@ -84,15 +106,15 @@ export function streamOpenAIToAnthropic(openaiStream: ReadableStream, model: str
               }
 
               try {
-                const parsed = JSON.parse(data);
+                const parsed = JSON.parse(data) as ParsedStreamData;
                 const delta = parsed.choices?.[0]?.delta;
 
                 if (!delta) {
                   continue;
                 }
                 processStreamDelta(delta);
-              } catch (e) {
-                // Parse error
+              } catch {
+                // Parse error - silently continue
                 continue;
               }
             }
@@ -102,7 +124,7 @@ export function streamOpenAIToAnthropic(openaiStream: ReadableStream, model: str
         reader.releaseLock();
       }
 
-      function processStreamDelta(delta: any) {
+      function processStreamDelta(delta: StreamDelta) {
         // Handle tool calls
         if (delta.tool_calls?.length > 0) {
           // Existing tool call logic

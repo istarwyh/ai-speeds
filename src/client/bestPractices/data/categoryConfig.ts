@@ -1,4 +1,5 @@
-import type { CategoryConfig, DifficultyConfig } from '../types/PracticeCard';
+// Re-export types for external use
+export type { CategoryConfig, DifficultyConfig } from '../types/PracticeCard';
 
 export const categoryIcons: Record<string, string> = {
   workflow: '🔄',

@@ -7,7 +7,9 @@ function initializeBestPractices() {
   // 确保加载高亮主题样式（异步注入，不阻塞初始化）
   try {
     loadHighlightJsStyle();
-  } catch {}
+  } catch {
+    // Style loading failed - continue without highlighting
+  }
   initializeApp(() => {
     const manager = new BestPracticesManager();
     manager.initialize();
@@ -15,7 +17,7 @@ function initializeBestPractices() {
 }
 
 // 导出到全局作用域，供 HTML 调用
-(window as any).initializeBestPractices = initializeBestPractices;
+(window as unknown as { initializeBestPractices: () => void }).initializeBestPractices = initializeBestPractices;
 
 // 自动初始化（如果 DOM 已就绪）
 if (document.readyState === 'loading') {
