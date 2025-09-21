@@ -158,6 +158,12 @@ export function formatAnthropicToOpenAI(
               role: anthropicMessage.role,
               content: anthropicMessage.content,
             });
+          } else if (typeof anthropicMessage.content === 'object' && anthropicMessage.content !== null) {
+            // Handle object content by converting to string representation
+            openAiMessagesFromThisAnthropicMessage.push({
+              role: anthropicMessage.role,
+              content: JSON.stringify(anthropicMessage.content),
+            });
           }
           return openAiMessagesFromThisAnthropicMessage;
         }

@@ -4,6 +4,14 @@
 # Pre-push security and quality checks
 echo "🚀 Running pre-push checks..."
 
+# Type checking
+echo "🔍 Running TypeScript checks..."
+npm run typecheck
+
+# Security audit
+echo "🔒 Running security audit..."
+npm run audit
+
 # Final build verification
 echo "🏗️  Final build verification..."
 npm run build:client

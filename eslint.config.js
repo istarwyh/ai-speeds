@@ -12,7 +12,8 @@ export default [
       'node_modules/**',
       'dist/**',
       'build/**',
-      '.wrangler/**',
+      '.wrangler/**/*',
+      'src/scripts/generated/**',
       '**/*.min.js',
       '**/*.min.css',
       'coverage/**',
@@ -81,11 +82,14 @@ export default [
     },
     rules: {
       // TypeScript specific rules
-      '@typescript-eslint/no-unused-vars': ['error', {
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-      }],
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
+      '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
 
       // Security rules
@@ -99,10 +103,10 @@ export default [
       'no-var': 'error',
       'prefer-const': 'error',
       'no-unused-vars': 'off',
-      'eqeqeq': ['error', 'always'],
-      'curly': ['error', 'all'],
-      'quotes': ['error', 'single'],
-      'semi': ['error', 'always'],
+      eqeqeq: ['error', 'always'],
+      curly: ['error', 'all'],
+      quotes: ['error', 'single'],
+      semi: ['error', 'always'],
       'no-empty': 'warn',
       'no-undef': 'error',
 

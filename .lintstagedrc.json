@@ -1,17 +1,9 @@
 {
   "*.{js,jsx,ts,tsx}": [
-    "eslint --fix",
-    "prettier --write",
-    "git add"
+    "eslint --fix --max-warnings=50",
+    "prettier --write"
   ],
   "*.{json,md,yaml,yml,css,scss,html}": [
-    "prettier --write",
-    "git add"
-  ],
-  "*.{js,jsx,ts,tsx,json}": [
-    "bash -c 'if [ $(wc -c < \"$0\") -gt 500000 ]; then echo \"File $0 is too large\"; exit 1; fi'"
-  ],
-  "src/**/*.{ts,tsx}": [
-    "bash -c 'npx tsc --noEmit --project tsconfig.json'"
+    "prettier --write"
   ]
 }
