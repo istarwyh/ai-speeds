@@ -11,10 +11,10 @@ export interface Env {
   OPENAI_BASE_URL?: string;
   KIMI_BASE_URL?: string;
   SILICONFLOW_BASE_URL?: string;
-  
+
   // Backward compatibility - auto-detects provider type
   OPENAI_COMPATIBLE_BASE_URL?: string;
-  
+
   // Assets binding for static files
   ASSETS: Fetcher;
 

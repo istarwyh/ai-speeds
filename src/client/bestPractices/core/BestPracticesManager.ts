@@ -16,20 +16,16 @@ export class BestPracticesManager extends BaseContentManager<PracticeCard> {
     const articleRenderer = new ArticleRenderer();
     const markdownParser = new MarkdownParser();
     const articleService = new ArticleService(markdownParser);
-    const eventHandler = new EventHandler(
-      'best-practices-overview-cards',
-      articleService,
-      articleRenderer
-    );
+    const eventHandler = new EventHandler('best-practices-overview-cards', articleService, articleRenderer);
     const navigationHandler = new NavigationHandler();
-    
+
     super(
       cardRenderer,
       articleRenderer,
       eventHandler,
       navigationHandler,
       articleService,
-      'best-practices-overview-cards'
+      'best-practices-overview-cards',
     );
 
     this.bpEventHandler = eventHandler;
@@ -59,7 +55,9 @@ export class BestPracticesManager extends BaseContentManager<PracticeCard> {
     try {
       const params = new URLSearchParams(window.location.search);
       const moduleName = state?.module || params.get('module');
-      if (moduleName !== 'best-practices') return; // ignore others
+      if (moduleName !== 'best-practices') {
+        return;
+      } // ignore others
 
       const view = state?.view || params.get('view') || 'overview';
       const cardId = state?.cardId || params.get('cardId') || '';

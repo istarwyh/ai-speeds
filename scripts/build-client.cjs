@@ -52,7 +52,7 @@ async function buildModule(config) {
     exportName,
     description,
     hasMarkdownLoader = true,
-    needsPostProcessing = false
+    needsPostProcessing = false,
   } = config;
 
   // 确保输出目录存在
@@ -62,7 +62,7 @@ async function buildModule(config) {
   }
 
   console.log(`📦 打包${description}模块...`);
-  
+
   // 根据 Node 进程环境决定构建模式（默认 production）
   const nodeEnv = process.env.NODE_ENV === 'development' ? 'development' : 'production';
 
@@ -77,14 +77,14 @@ async function buildModule(config) {
     write: false,
     platform: 'browser',
     define: {
-      'process.env.NODE_ENV': JSON.stringify(nodeEnv)
-    }
+      'process.env.NODE_ENV': JSON.stringify(nodeEnv),
+    },
   };
 
   // 添加 markdown 加载器（如果需要）
   if (hasMarkdownLoader) {
     buildConfig.loader = {
-      '.md': 'text' // 将 .md 文件作为文本加载
+      '.md': 'text', // 将 .md 文件作为文本加载
     };
   }
 
@@ -93,7 +93,7 @@ async function buildModule(config) {
 
   // 获取打包后的代码
   const bundledCode = result.outputFiles[0].text;
-  
+
   // 包装成 TypeScript 导出
   // 使用 JSON.stringify 来正确转义所有特殊字符
   const wrappedCode = `// 自动生成的${description}客户端脚本包
@@ -105,7 +105,7 @@ export const ${exportName} = ${JSON.stringify(bundledCode)};
 
   // 写入文件
   fs.writeFileSync(outputFile, wrappedCode, 'utf8');
-  
+
   // 后处理（如果需要）
   if (needsPostProcessing) {
     let fileContent = fs.readFileSync(outputFile, 'utf8');
@@ -113,7 +113,7 @@ export const ${exportName} = ${JSON.stringify(bundledCode)};
     fileContent = fileContent.replace(/([^\\])\\`/g, '$1\\\\`');
     fs.writeFileSync(outputFile, fileContent, 'utf8');
   }
-  
+
   console.log(`📝 ${description}模块已打包到: ${outputFile}`);
   console.log(`📊 打包大小: ${(bundledCode.length / 1024).toFixed(2)} KB`);
 }
@@ -127,7 +127,7 @@ async function buildBestPracticesModule() {
     outputFile: path.resolve(__dirname, '../src/scripts/generated/bestPracticesBundle.ts'),
     globalName: 'BestPracticesApp',
     exportName: 'bestPracticesClientScript',
-    description: '最佳实践'
+    description: '最佳实践',
   });
 }
 
@@ -140,7 +140,7 @@ async function buildHowToImplementModule() {
     outputFile: path.resolve(__dirname, '../src/scripts/generated/howToImplementBundle.ts'),
     globalName: 'HowToImplementApp',
     exportName: 'howToImplementClientScript',
-    description: 'How to Implement '
+    description: 'How to Implement ',
   });
 }
 
@@ -154,7 +154,7 @@ async function buildHowToApplyCCModule() {
     globalName: 'HowToApplyCCApp',
     exportName: 'howToApplyCCClientScript',
     description: 'How to Apply CC ',
-    needsPostProcessing: true // 修复反引号转义问题
+    needsPostProcessing: true, // 修复反引号转义问题
   });
 }
 
@@ -168,7 +168,7 @@ async function buildProviderDetailsModule() {
     globalName: 'ProviderDetailsApp',
     exportName: 'providerDetailsClientScript',
     description: '供应商详情',
-    hasMarkdownLoader: false // 不需要 markdown 加载器
+    hasMarkdownLoader: false, // 不需要 markdown 加载器
   });
 }
 

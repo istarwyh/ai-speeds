@@ -6,15 +6,15 @@ export interface DifficultyConfig {
 
 export const defaultDifficultyConfig: DifficultyConfig = {
   colors: {
-    'beginner': '#10B981',
-    'intermediate': '#F59E0B', 
-    'advanced': '#EF4444',
-    'expert': '#8B5CF6'
+    beginner: '#10B981',
+    intermediate: '#F59E0B',
+    advanced: '#EF4444',
+    expert: '#8B5CF6',
   },
   labels: {
-    'beginner': '入门',
-    'intermediate': '进阶',
-    'advanced': '高级',
-    'expert': '专家'
-  }
+    beginner: '入门',
+    intermediate: '进阶',
+    advanced: '高级',
+    expert: '专家',
+  },
 };

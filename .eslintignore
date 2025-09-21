@@ -1,0 +1,11 @@
+# ESLint ignore patterns
+node_modules/
+dist/
+build/
+.wrangler/
+*.min.js
+*.min.css
+.git/
+coverage/
+.cache/
+.nyc_output/

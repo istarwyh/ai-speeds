@@ -7,7 +7,7 @@ export const bestPracticesCards: PracticeCard[] = [
     title: '我现在的工作流',
     imageUrl: getImageUrl('best-practice-1'),
     category: 'workflow',
-    tips: [{ type: 'success', title: '效率提升', content: '整个过程开发者只需要提出需求和Review，大大提升开发效率' }]
+    tips: [{ type: 'success', title: '效率提升', content: '整个过程开发者只需要提出需求和Review，大大提升开发效率' }],
   },
   {
     id: 'environment-config',
@@ -38,7 +38,7 @@ export const bestPracticesCards: PracticeCard[] = [
     description: '项目记忆库、上下文窗口优化和长期记忆管理',
     category: 'context',
     tags: ['context', 'memory', 'optimization', 'management'],
-    tips: [{ type: 'success', title: '高级技巧', content: '合理的上下文管理可以让 Claude Code 的表现提升 50% 以上' }]
+    tips: [{ type: 'success', title: '高级技巧', content: '合理的上下文管理可以让 Claude Code 的表现提升 50% 以上' }],
   },
   {
     id: 'automation-batch',
@@ -46,7 +46,7 @@ export const bestPracticesCards: PracticeCard[] = [
     description: '无头模式、自动化脚本、Pre-Commit Hooks 和 Claude Code Hooks',
     category: 'automation',
     tags: ['automation', 'batch', 'hooks', 'ci-cd'],
-    tips: [{ type: 'warning', title: '安全提醒', content: '在自动化环境中使用时，注意 API 密钥的安全管理' }]
+    tips: [{ type: 'warning', title: '安全提醒', content: '在自动化环境中使用时，注意 API 密钥的安全管理' }],
   },
   {
     id: 'concurrent-claude',
@@ -56,8 +56,8 @@ export const bestPracticesCards: PracticeCard[] = [
     tags: ['concurrency', 'multi-instance', 'optimization', 'scaling'],
     tips: [
       { type: 'expert', title: '专家级技巧', content: '合理的多实例使用可以将开发效率提升 3-5 倍' },
-      { type: 'warning', title: '其实', content: '更好的办法是再买两台电脑：）' }
-    ]
+      { type: 'warning', title: '其实', content: '更好的办法是再买两台电脑：）' },
+    ],
   },
   {
     id: 'software-engineering-with-claude',
@@ -70,15 +70,15 @@ export const bestPracticesCards: PracticeCard[] = [
     tags: ['KISS', 'YAGNI', 'DRY', 'SOLID', 'BRIEF'],
     tips: [
       { type: 'info', title: '流程先行', content: '先定义数据与边界，再写代码' },
-      { type: 'success', title: '减复杂', content: '消除特殊分支，代码自然变短' }
+      { type: 'success', title: '减复杂', content: '消除特殊分支，代码自然变短' },
     ],
     sections: [
       { title: 'BRIEF', content: '函数短小、参数精简、纯函数优先', type: 'text' },
       { title: 'KISS', content: '能直不绕，优先简单方案', type: 'text' },
       { title: 'YAGNI', content: '不为未来的假想需求提前设计', type: 'text' },
       { title: 'DRY', content: '消除重复，抽象在恰当层次', type: 'text' },
-      { title: 'SOLID', content: '以可维护性为核心的 OO 原则', type: 'text' }
-    ]
+      { title: 'SOLID', content: '以可维护性为核心的 OO 原则', type: 'text' },
+    ],
   },
   {
     id: 'intelligent-undo',
@@ -87,8 +87,8 @@ export const bestPracticesCards: PracticeCard[] = [
     tags: ['ccundo', 'undo', 'safety', 'backup', 'recovery'],
     tips: [
       { type: 'success', title: '安全保障', content: '有了可靠的撤销机制，可以更大胆地尝试复杂重构和实验性功能' },
-      { type: 'info', title: '级联安全', content: 'ccundo 的级联撤销机制确保项目状态始终保持一致性' }
-    ]
+      { type: 'info', title: '级联安全', content: 'ccundo 的级联撤销机制确保项目状态始终保持一致性' },
+    ],
   },
   {
     id: 'agent-linus-torvalds',
@@ -101,8 +101,8 @@ export const bestPracticesCards: PracticeCard[] = [
     tips: [
       { type: 'expert', title: '好品味', content: '复杂性是万恶之源，3层缩进是极限' },
       { type: 'warning', title: 'Never break userspace', content: '向后兼容性是神圣不可侵犯的' },
-      { type: 'info', title: '实用主义', content: '为现实服务，不为论文服务' }
-    ]
+      { type: 'info', title: '实用主义', content: '为现实服务，不为论文服务' },
+    ],
   },
   {
     id: 'tdd-analyze-requirements',
@@ -113,10 +113,10 @@ export const bestPracticesCards: PracticeCard[] = [
     tips: [
       { type: 'success', title: '结构清晰', content: '通过三段式 Prompt 模板，将复杂需求分解为可测试的场景' },
       { type: 'info', title: '质量保证', content: '先测试后实现，确保代码质量和可维护性' },
-      { type: 'warning', title: '人工Review', content: '测试场景产生后务必进行人工Review，避免错误累积' }
+      { type: 'warning', title: '人工Review', content: '测试场景产生后务必进行人工Review，避免错误累积' },
     ],
     lastUpdated: '2025-08-31',
-    version: '1.0.0'
+    version: '1.0.0',
   },
   {
     id: 'data-analysis',
@@ -129,8 +129,8 @@ export const bestPracticesCards: PracticeCard[] = [
     tips: [
       { type: 'info', title: '标准流程', content: '遵循四阶段工作流程，确保分析的专业性和完整性' },
       { type: 'success', title: '可视化要求', content: '生成6+种图表类型，包含精确数值和百分比标注' },
-      { type: 'expert', title: '商业价值', content: '提供具体量化建议和ROI预测，实现数据驱动决策' }
+      { type: 'expert', title: '商业价值', content: '提供具体量化建议和ROI预测，实现数据驱动决策' },
     ],
-    lastUpdated: '2025-09-20'
-  }
+    lastUpdated: '2025-09-20',
+  },
 ];

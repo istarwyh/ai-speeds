@@ -6,9 +6,9 @@ export class NavigationHandler {
 
   private bindBreadcrumbNavigation(): void {
     // 监听面包屑点击事件
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', e => {
       const target = e.target as HTMLElement;
-      
+
       if (target.matches('.breadcrumb-link')) {
         e.preventDefault();
         const targetId = target.getAttribute('data-target');

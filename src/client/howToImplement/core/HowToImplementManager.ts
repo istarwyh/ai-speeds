@@ -17,17 +17,17 @@ export class HowToImplementManager extends BaseContentManager<ImplementCard> {
     const eventHandler = new HowToImplementEventHandler(
       'how-to-implement-overview-cards',
       contentService,
-      articleRenderer
+      articleRenderer,
     );
     const navigationHandler = new NavigationHandler();
-    
+
     super(
       cardRenderer,
-      articleRenderer, 
+      articleRenderer,
       eventHandler,
       navigationHandler,
       contentService,
-      'how-to-implement-overview-cards'
+      'how-to-implement-overview-cards',
     );
   }
 

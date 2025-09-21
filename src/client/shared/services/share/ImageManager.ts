@@ -46,12 +46,12 @@ export class ImageManager {
   public resolveImageUrl(url: string): string {
     try {
       const absoluteUrl = new URL(url, window.location.href);
-      
+
       // Use proxy for external HTTPS images to avoid CORS issues
       if (absoluteUrl.origin !== window.location.origin && absoluteUrl.protocol === 'https:') {
         return `/img-proxy?src=${encodeURIComponent(absoluteUrl.toString())}`;
       }
-      
+
       return absoluteUrl.toString();
     } catch {
       // If URL parsing fails, return original and let upstream handle errors
@@ -64,14 +64,14 @@ export class ImageManager {
     img: HTMLImageElement,
     maxWidth: number,
     maxHeight?: number,
-    pageImageInfo?: { pageImageWidth?: number; pageImageHeight?: number }
+    pageImageInfo?: { pageImageWidth?: number; pageImageHeight?: number },
   ): { width: number; height: number } {
     // Prefer page display dimensions for consistency
     if (pageImageInfo?.pageImageWidth && pageImageInfo?.pageImageHeight) {
       const pageAspect = pageImageInfo.pageImageHeight / pageImageInfo.pageImageWidth;
       return {
         width: maxWidth,
-        height: Math.round(maxWidth * pageAspect)
+        height: Math.round(maxWidth * pageAspect),
       };
     }
 
@@ -90,7 +90,11 @@ export class ImageManager {
   }
 
   // Create placeholder for failed image loads
-  public createPlaceholder(width: number, height: number, text: string = '封面图'): { width: number; height: number; text: string } {
+  public createPlaceholder(
+    width: number,
+    height: number,
+    text: string = '封面图',
+  ): { width: number; height: number; text: string } {
     return { width, height, text };
   }
 
@@ -104,14 +108,14 @@ export class ImageManager {
   public getCacheStats(): { cached: number; loading: number } {
     return {
       cached: this.imageCache.size,
-      loading: this.loadingPromises.size
+      loading: this.loadingPromises.size,
     };
   }
 
   private createImageLoadPromise(url: string, options: ImageLoadOptions): Promise<HTMLImageElement> {
     return new Promise<HTMLImageElement>((resolve, reject) => {
       const img = new Image();
-      
+
       // Set cross-origin if specified
       if (options.crossOrigin) {
         img.crossOrigin = options.crossOrigin;

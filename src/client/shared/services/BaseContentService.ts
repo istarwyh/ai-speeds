@@ -13,7 +13,7 @@ export abstract class BaseContentService<T extends BaseContentCard> {
   protected markdownParser: any;
   protected cache: Map<string, Article> = new Map();
   protected disableCache: boolean;
-  
+
   constructor(markdownParser: any, disableCache: boolean = process.env.NODE_ENV === 'development') {
     this.markdownParser = markdownParser;
     this.disableCache = disableCache;
@@ -28,12 +28,12 @@ export abstract class BaseContentService<T extends BaseContentCard> {
     try {
       const markdownContent = await this.fetchMarkdownContent(cardId);
       const htmlContent = this.markdownParser.render(markdownContent);
-      
+
       const article: Article = {
         id: cardId,
         title: this.getTitleFromCardId(cardId),
         content: htmlContent,
-        rawMarkdown: markdownContent
+        rawMarkdown: markdownContent,
       };
 
       this.cache.set(cardId, article);

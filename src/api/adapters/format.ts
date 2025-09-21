@@ -23,86 +23,85 @@ interface MessageCreateParamsBase {
  */
 function validateOpenAIToolCalls(messages: any[]): any[] {
   const validatedMessages: any[] = [];
-  
+
   for (let i = 0; i < messages.length; i++) {
     const currentMessage = { ...messages[i] };
-    
+
     // Process assistant messages with tool_calls
-    if (currentMessage.role === "assistant" && currentMessage.tool_calls) {
+    if (currentMessage.role === 'assistant' && currentMessage.tool_calls) {
       const validToolCalls: any[] = [];
       const removedToolCallIds: string[] = [];
-      
+
       // Collect all immediately following tool messages
       const immediateToolMessages: any[] = [];
       let j = i + 1;
-      while (j < messages.length && messages[j].role === "tool") {
+      while (j < messages.length && messages[j].role === 'tool') {
         immediateToolMessages.push(messages[j]);
         j++;
       }
-      
+
       // For each tool_call, check if there's an immediately following tool message
       currentMessage.tool_calls.forEach((toolCall: any) => {
-        const hasImmediateToolMessage = immediateToolMessages.some(toolMsg => 
-          toolMsg.tool_call_id === toolCall.id
-        );
-        
+        const hasImmediateToolMessage = immediateToolMessages.some(toolMsg => toolMsg.tool_call_id === toolCall.id);
+
         if (hasImmediateToolMessage) {
           validToolCalls.push(toolCall);
         } else {
           removedToolCallIds.push(toolCall.id);
         }
       });
-      
+
       // Update the assistant message
       if (validToolCalls.length > 0) {
         currentMessage.tool_calls = validToolCalls;
       } else {
         delete currentMessage.tool_calls;
       }
-      
-      
+
       // Only include message if it has content or valid tool_calls
       if (currentMessage.content || currentMessage.tool_calls) {
         validatedMessages.push(currentMessage);
       }
     }
-    
+
     // Process tool messages
-    else if (currentMessage.role === "tool") {
+    else if (currentMessage.role === 'tool') {
       let hasImmediateToolCall = false;
-      
+
       // Check if the immediately preceding assistant message has matching tool_call
       if (i > 0) {
         const prevMessage = messages[i - 1];
-        if (prevMessage.role === "assistant" && prevMessage.tool_calls) {
-          hasImmediateToolCall = prevMessage.tool_calls.some((toolCall: any) => 
-            toolCall.id === currentMessage.tool_call_id
+        if (prevMessage.role === 'assistant' && prevMessage.tool_calls) {
+          hasImmediateToolCall = prevMessage.tool_calls.some(
+            (toolCall: any) => toolCall.id === currentMessage.tool_call_id,
           );
-        } else if (prevMessage.role === "tool") {
+        } else if (prevMessage.role === 'tool') {
           // Check for assistant message before the sequence of tool messages
           for (let k = i - 1; k >= 0; k--) {
-            if (messages[k].role === "tool") continue;
-            if (messages[k].role === "assistant" && messages[k].tool_calls) {
-              hasImmediateToolCall = messages[k].tool_calls.some((toolCall: any) => 
-                toolCall.id === currentMessage.tool_call_id
+            if (messages[k].role === 'tool') {
+              continue;
+            }
+            if (messages[k].role === 'assistant' && messages[k].tool_calls) {
+              hasImmediateToolCall = messages[k].tool_calls.some(
+                (toolCall: any) => toolCall.id === currentMessage.tool_call_id,
               );
             }
             break;
           }
         }
       }
-      
+
       if (hasImmediateToolCall) {
         validatedMessages.push(currentMessage);
       }
     }
-    
+
     // For all other message types, include as-is
     else {
       validatedMessages.push(currentMessage);
     }
   }
-  
+
   return validatedMessages;
 }
 
@@ -115,25 +114,25 @@ export function mapModel(anthropicModel: string, provider: Provider = 'openroute
     console.warn(`Provider configuration for ${provider} not found, using original model name.`);
     return anthropicModel;
   }
-  
+
   // Check if it's already a valid model for this provider
   if (config.commonModels && config.commonModels.includes(anthropicModel)) {
     return anthropicModel;
   }
-  
+
   // Map Claude model names to provider-specific models
   // Try exact mapping first
   if (config.modelMappings[anthropicModel]) {
     return config.modelMappings[anthropicModel];
   }
-  
+
   // Then try partial matching for model families
   for (const [claudeType, providerModel] of Object.entries(config.modelMappings)) {
     if (anthropicModel.includes(claudeType)) {
       return providerModel;
     }
   }
-  
+
   // Return original model name if no mapping found
   return anthropicModel;
 }
@@ -141,15 +140,20 @@ export function mapModel(anthropicModel: string, provider: Provider = 'openroute
 /**
  * Formats Anthropic API request to OpenAI API format
  */
-export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider: Provider = 'openrouter', providerConfigs: any, env?: Env): any {
+export function formatAnthropicToOpenAI(
+  body: MessageCreateParamsBase,
+  provider: Provider = 'openrouter',
+  providerConfigs: any,
+  env?: Env,
+): any {
   const { model, messages, system = [], temperature, tools, stream } = body;
 
   const openAIMessages = Array.isArray(messages)
-    ? messages.flatMap((anthropicMessage) => {
+    ? messages.flatMap(anthropicMessage => {
         const openAiMessagesFromThisAnthropicMessage: any[] = [];
 
         if (!Array.isArray(anthropicMessage.content)) {
-          if (typeof anthropicMessage.content === "string") {
+          if (typeof anthropicMessage.content === 'string') {
             openAiMessagesFromThisAnthropicMessage.push({
               role: anthropicMessage.role,
               content: anthropicMessage.content,
@@ -158,23 +162,22 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider:
           return openAiMessagesFromThisAnthropicMessage;
         }
 
-        if (anthropicMessage.role === "assistant") {
+        if (anthropicMessage.role === 'assistant') {
           const assistantMessage: any = {
-            role: "assistant",
+            role: 'assistant',
             content: null,
           };
-          let textContent = "";
+          let textContent = '';
           const toolCalls: any[] = [];
 
-          anthropicMessage.content.forEach((contentPart) => {
-            if (contentPart.type === "text") {
-              textContent += (typeof contentPart.text === "string"
-                ? contentPart.text
-                : JSON.stringify(contentPart.text)) + "\n";
-            } else if (contentPart.type === "tool_use") {
+          anthropicMessage.content.forEach(contentPart => {
+            if (contentPart.type === 'text') {
+              textContent +=
+                (typeof contentPart.text === 'string' ? contentPart.text : JSON.stringify(contentPart.text)) + '\n';
+            } else if (contentPart.type === 'tool_use') {
               toolCalls.push({
                 id: contentPart.id,
-                type: "function",
+                type: 'function',
                 function: {
                   name: contentPart.name,
                   arguments: JSON.stringify(contentPart.input),
@@ -193,22 +196,20 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider:
           if (assistantMessage.content || (assistantMessage.tool_calls && assistantMessage.tool_calls.length > 0)) {
             openAiMessagesFromThisAnthropicMessage.push(assistantMessage);
           }
-        } else if (anthropicMessage.role === "user") {
-          let userTextMessageContent = "";
+        } else if (anthropicMessage.role === 'user') {
+          let userTextMessageContent = '';
           const subsequentToolMessages: any[] = [];
 
-          anthropicMessage.content.forEach((contentPart) => {
-            if (contentPart.type === "text") {
-              userTextMessageContent += (typeof contentPart.text === "string"
-                ? contentPart.text
-                : JSON.stringify(contentPart.text)) + "\n";
-            } else if (contentPart.type === "tool_result") {
+          anthropicMessage.content.forEach(contentPart => {
+            if (contentPart.type === 'text') {
+              userTextMessageContent +=
+                (typeof contentPart.text === 'string' ? contentPart.text : JSON.stringify(contentPart.text)) + '\n';
+            } else if (contentPart.type === 'tool_result') {
               subsequentToolMessages.push({
-                role: "tool",
+                role: 'tool',
                 tool_call_id: contentPart.tool_use_id,
-                content: typeof contentPart.content === "string"
-                  ? contentPart.content
-                  : JSON.stringify(contentPart.content),
+                content:
+                  typeof contentPart.content === 'string' ? contentPart.content : JSON.stringify(contentPart.content),
               });
             }
           });
@@ -216,7 +217,7 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider:
           const trimmedUserText = userTextMessageContent.trim();
           if (trimmedUserText.length > 0) {
             openAiMessagesFromThisAnthropicMessage.push({
-              role: "user",
+              role: 'user',
               content: trimmedUserText,
             });
           }
@@ -227,22 +228,28 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider:
     : [];
 
   const systemMessages = Array.isArray(system)
-    ? system.map((item) => ({
-        role: "system",
-        content: [{
-          type: "text",
-          text: item.text,
-          cache_control: {"type": "ephemeral"}
-        }]
+    ? system.map(item => ({
+        role: 'system',
+        content: [
+          {
+            type: 'text',
+            text: item.text,
+            cache_control: { type: 'ephemeral' },
+          },
+        ],
       }))
-    : [{
-        role: "system",
-        content: [{
-          type: "text",
-          text: system,
-          cache_control: {"type": "ephemeral"}
-        }]
-      }];
+    : [
+        {
+          role: 'system',
+          content: [
+            {
+              type: 'text',
+              text: system,
+              cache_control: { type: 'ephemeral' },
+            },
+          ],
+        },
+      ];
 
   const data: any = {
     model: mapModel(model, provider, providerConfigs),
@@ -253,7 +260,7 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider:
 
   if (tools) {
     data.tools = tools.map((item: any) => ({
-      type: "function",
+      type: 'function',
       function: {
         name: item.name,
         description: item.description,
@@ -272,14 +279,14 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider:
  * Formats OpenAI API response to Anthropic API format
  */
 export function formatOpenAIToAnthropic(completion: any, model: string): any {
-  const messageId = "msg_" + Date.now();
+  const messageId = 'msg_' + Date.now();
 
   let content: any = [];
   const firstChoice = completion.choices?.[0];
   const message = firstChoice?.message;
 
   if (message?.content) {
-    content = [{ text: message.content, type: "text" }];
+    content = [{ text: message.content, type: 'text' }];
   } else if (message?.tool_calls) {
     content = message.tool_calls.map((item: any) => {
       return {
@@ -300,10 +307,10 @@ export function formatOpenAIToAnthropic(completion: any, model: string): any {
 
   const result = {
     id: messageId,
-    type: "message",
-    role: "assistant",
+    type: 'message',
+    role: 'assistant',
     content: content,
-    stop_reason: completion.choices[0].finish_reason === 'tool_calls' ? "tool_use" : "end_turn",
+    stop_reason: completion.choices[0].finish_reason === 'tool_calls' ? 'tool_use' : 'end_turn',
     stop_sequence: null,
     model,
   };

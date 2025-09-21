@@ -1,7 +1,6 @@
 import { DEFAULT_SECTION_ID, type SectionId } from '../../lib/config/navigation';
 
-const cls = (id: SectionId): string =>
-  id === DEFAULT_SECTION_ID ? 'nav-tab active' : 'nav-tab';
+const cls = (id: SectionId): string => (id === DEFAULT_SECTION_ID ? 'nav-tab active' : 'nav-tab');
 
 export const navigationComponent = `
 <nav class="main-nav">

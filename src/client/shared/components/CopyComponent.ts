@@ -39,7 +39,9 @@ export class CopyComponent {
   }
 
   private positionCopyButton(): void {
-    if (!this.copyButton) return;
+    if (!this.copyButton) {
+      return;
+    }
 
     // 查找文档header容器，与返回按钮垂直排布
     const headerContainer = this.container.querySelector('.practice-article__header');
@@ -63,15 +65,19 @@ export class CopyComponent {
   }
 
   private addCopyButtonStyles(): void {
-    if (!this.copyButton) return;
+    if (!this.copyButton) {
+      return;
+    }
     // 使用统一的 CSS 类进行样式控制（见 markdownStyles.ts）
     this.copyButton.classList.add('copy-content-btn');
   }
 
   private bindEvents(): void {
-    if (!this.copyButton) return;
+    if (!this.copyButton) {
+      return;
+    }
 
-    this.copyButton.addEventListener('click', (e) => {
+    this.copyButton.addEventListener('click', e => {
       e.preventDefault();
       e.stopPropagation();
       this.copyContent();
@@ -115,14 +121,16 @@ export class CopyComponent {
       '.markdown-content-container',
       '#markdown-content-container',
       '.article-content',
-      '.content'
+      '.content',
     ];
 
     let contentElement: HTMLElement | null = null;
 
     for (const selector of contentSelectors) {
       contentElement = this.container.querySelector(selector);
-      if (contentElement) break;
+      if (contentElement) {
+        break;
+      }
     }
 
     if (!contentElement) {
@@ -134,29 +142,23 @@ export class CopyComponent {
   }
 
   private getFormattedText(element: HTMLElement): string {
-    const walker = document.createTreeWalker(
-      element,
-      NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
-      {
-        acceptNode: (node) => {
-          // 跳过复制按钮和隐藏元素
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            const el = node as HTMLElement;
-            if (el.classList.contains('copy-content-btn') ||
-                el.style.display === 'none' ||
-                el.hidden) {
-              return NodeFilter.FILTER_REJECT;
-            }
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, {
+      acceptNode: node => {
+        // 跳过复制按钮和隐藏元素
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const el = node as HTMLElement;
+          if (el.classList.contains('copy-content-btn') || el.style.display === 'none' || el.hidden) {
+            return NodeFilter.FILTER_REJECT;
           }
-          return NodeFilter.FILTER_ACCEPT;
         }
-      }
-    );
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
 
     let text = '';
     let node: Node | null;
 
-    while (node = walker.nextNode()) {
+    while ((node = walker.nextNode())) {
       if (node.nodeType === Node.TEXT_NODE) {
         const textContent = node.textContent?.trim();
         if (textContent) {
@@ -212,7 +214,9 @@ export class CopyComponent {
   }
 
   private showFeedback(message: string, type: 'success' | 'error'): void {
-    if (!this.copyButton) return;
+    if (!this.copyButton) {
+      return;
+    }
 
     // 保存原始内容和样式
     const originalHtml = this.copyButton.innerHTML;
@@ -221,9 +225,10 @@ export class CopyComponent {
     const originalBackground = this.copyButton.style.background;
 
     // 创建反馈图标
-    const icon = type === 'success'
-      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"></path></svg>'
-      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+    const icon =
+      type === 'success'
+        ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"></path></svg>'
+        : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
 
     // 更新按钮内容
     this.copyButton.innerHTML = `${icon}<span class="copy-text">${message}</span>`;

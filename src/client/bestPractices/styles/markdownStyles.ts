@@ -575,7 +575,7 @@ export function injectMarkdownStyles(): void {
   if (document.getElementById('markdown-styles')) {
     return; // 样式已经注入
   }
-  
+
   const style = document.createElement('style');
   style.id = 'markdown-styles';
   style.textContent = markdownStyles;

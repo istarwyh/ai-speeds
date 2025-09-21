@@ -1,0 +1,117 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  # Built-in pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: check-xml
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+      - id: no-commit-to-branch
+        args: ['--branch', 'main', '--branch', 'master']
+      - id: detect-private-key
+      - id: detect-aws-credentials
+      - id: check-ast
+        types: [python]
+      - id: debug-statements
+        types: [python]
+      - id: name-tests-test
+        args: ['--pytest-test-first']
+
+  # Security scanning
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+
+  # TypeScript/JavaScript linting and formatting
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint
+        entry: npx eslint
+        language: node
+        types: [javascript, typescript, jsx, tsx]
+        args: ['--fix', '--ext', '.js,.jsx,.ts,.tsx']
+
+      - id: prettier
+        name: prettier
+        entry: npx prettier
+        language: node
+        types_or: [javascript, typescript, jsx, tsx, json, markdown, yaml, css, scss, html]
+        args: ['--write']
+
+      - id: typescript-check
+        name: TypeScript type check
+        entry: npx tsc
+        language: node
+        types: [typescript, tsx]
+        args: ['--noEmit']
+        pass_filenames: false
+
+      - id: npm-audit
+        name: npm audit
+        entry: npm audit
+        language: node
+        args: ['--audit-level', 'moderate']
+        pass_filenames: false
+
+      - id: build-check
+        name: Build check
+        entry: npm run build:client
+        language: node
+        pass_filenames: false
+        stages: [push]
+
+  # Commit message linting
+  - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
+    rev: v9.16.0
+    hooks:
+      - id: commitlint
+        stages: [commit-msg]
+        additional_dependencies: ['@commitlint/config-conventional']
+
+  # File size and content checks
+  - repo: local
+    hooks:
+      - id: forbid-binary
+        name: Forbid binaries
+        entry: file --mime --dereference
+        language: system
+        types: [binary]
+        args: ['--mime-type']
+
+      - id: check-file-size
+        name: Check file size
+        entry: bash -c 'for file in "$@"; do size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file"); if [ $size -gt 500000 ]; then echo "File $file is too large ($size bytes > 500KB)"; exit 1; fi; done'
+        language: system
+        pass_filenames: true
+
+  # Additional security checks
+  - repo: https://github.com/PyCQA/bandit
+    rev: '1.7.5'
+    hooks:
+      - id: bandit
+        types: [python]
+
+  - repo: https://github.com/gitguardian/ggshield
+    rev: v1.29.1
+    hooks:
+      - id: ggshield
+        language: python
+        stages: [commit]

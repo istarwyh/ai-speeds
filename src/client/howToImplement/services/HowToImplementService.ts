@@ -5,12 +5,16 @@ export class HowToImplementService extends BaseContentService<ImplementCard> {
   protected async getContentFromFile(cardId: string): Promise<string> {
     try {
       const contentMap: Record<string, () => Promise<string>> = {
-        'claude-code-conversation-example-1': async () => (await import('../content/claude-code-conversation-example-1.md')).default,
+        'claude-code-conversation-example-1': async () =>
+          (await import('../content/claude-code-conversation-example-1.md')).default,
         'claude-code-implementation': async () => (await import('../content/claude-code-implementation.md')).default,
-        'claude-code-output-format-example-1': async () => (await import('../content/claude-code-output-format-example-1.md')).default,
-        'claude-code-system-prompt-cn': async () => (await import('../content/claude-code-system-prompt-cn.md')).default,
-        'claude-code-system-prompt-en': async () => (await import('../content/claude-code-system-prompt-en.md')).default,
-        'claude-code-minusx-insights': async () => (await import('../content/claude-code-minusx-insights.md')).default
+        'claude-code-output-format-example-1': async () =>
+          (await import('../content/claude-code-output-format-example-1.md')).default,
+        'claude-code-system-prompt-cn': async () =>
+          (await import('../content/claude-code-system-prompt-cn.md')).default,
+        'claude-code-system-prompt-en': async () =>
+          (await import('../content/claude-code-system-prompt-en.md')).default,
+        'claude-code-minusx-insights': async () => (await import('../content/claude-code-minusx-insights.md')).default,
       };
 
       const contentLoader = contentMap[cardId];
@@ -40,7 +44,7 @@ export class HowToImplementService extends BaseContentService<ImplementCard> {
       'claude-code-output-format-example-1': 'Claude Code 输出格式示例',
       'claude-code-system-prompt-cn': 'Claude Code 系统提示词 (中文)',
       'claude-code-system-prompt-en': 'Claude Code 系统提示词 (English)',
-      'claude-code-minusx-insights': '如何用好CC：MinusX 深度解析'
+      'claude-code-minusx-insights': '如何用好CC：MinusX 深度解析',
     };
 
     return titles[cardId] || cardId;

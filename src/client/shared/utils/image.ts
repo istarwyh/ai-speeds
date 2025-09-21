@@ -15,7 +15,7 @@ export const resolveProxiedUrl = (url: string): string => {
 };
 
 export const preloadImage = (url: string): Promise<void> => {
-  return new Promise<void>((resolve) => {
+  return new Promise<void>(resolve => {
     try {
       const src = resolveProxiedUrl(url);
       const img = new Image();

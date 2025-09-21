@@ -28,7 +28,7 @@ export class CompactRenderer {
     canvas: HTMLCanvasElement,
     getIcon: (category: string) => string,
     deepLink: string,
-    pageImageInfo?: { pageImageAspect?: number; pageImageWidth?: number; pageImageHeight?: number }
+    pageImageInfo?: { pageImageAspect?: number; pageImageWidth?: number; pageImageHeight?: number },
   ): Promise<void> {
     let ctx = canvas.getContext('2d')!;
     let width = canvas.width;
@@ -46,10 +46,14 @@ export class CompactRenderer {
     }
 
     // 计算布局方案（允许根据内容收缩高度）
-    let layout = this.layoutService.calculateLayout(cardForLayout, {
-      maxWidth: width,
-      minHeight: 0
-    }, pageImageInfo);
+    let layout = this.layoutService.calculateLayout(
+      cardForLayout,
+      {
+        maxWidth: width,
+        minHeight: 0,
+      },
+      pageImageInfo,
+    );
 
     // 如果实际内容高度与 canvas 不一致，则调整 canvas 高度以贴合内容
     if (canvas.height !== layout.totalHeight) {
@@ -59,10 +63,14 @@ export class CompactRenderer {
       width = canvas.width;
       height = canvas.height;
       // 重新计算布局（仍允许收缩，不强制最小高度）
-      layout = this.layoutService.calculateLayout(cardForLayout, {
-        maxWidth: width,
-        minHeight: 0
-      }, pageImageInfo);
+      layout = this.layoutService.calculateLayout(
+        cardForLayout,
+        {
+          maxWidth: width,
+          minHeight: 0,
+        },
+        pageImageInfo,
+      );
     }
 
     const renderCtx: CompactRenderContext = { ctx, width, height, layout };
@@ -82,7 +90,7 @@ export class CompactRenderer {
   // 渲染优化的背景
   private renderBackground(renderCtx: CompactRenderContext): void {
     const { ctx, width, height } = renderCtx;
-    
+
     // 简洁的渐变背景
     const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
     bgGrad.addColorStop(0, '#ffffff');
@@ -107,7 +115,7 @@ export class CompactRenderer {
     section: LayoutSection,
     card: T,
     getIcon: (category: string) => string,
-    deepLink: string
+    deepLink: string,
   ): Promise<void> {
     const { ctx, layout } = renderCtx;
     const x = layout.padding;
@@ -140,7 +148,7 @@ export class CompactRenderer {
     section: LayoutSection,
     card: T,
     getIcon: (category: string) => string,
-    x: number
+    x: number,
   ): void {
     const { iconSize, titleAreaWidth } = section.content;
     const spacing = this.styleManager.getSpacing();
@@ -150,7 +158,7 @@ export class CompactRenderer {
     const icon = getIcon(card.category) || '📋';
     const iconX = x + iconSize / 2;
     const iconY = section.y + iconSize / 2;
-    
+
     // 图标背景
     const iconGrad = ctx.createRadialGradient(iconX, iconY, 0, iconX, iconY, iconSize / 2);
     iconGrad.addColorStop(0, '#ffffff');
@@ -181,7 +189,7 @@ export class CompactRenderer {
     ctx.fillStyle = '#0f172a';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
-    
+
     const titleLines = this.splitLines(ctx, card.title || '', titleAreaWidth, 2);
     titleLines.forEach((line, i) => {
       ctx.fillText(line, titleX, titleY + i * (typography.title + 8));
@@ -190,11 +198,7 @@ export class CompactRenderer {
   }
 
   // 内容区域渲染
-  private renderContentSection(
-    ctx: CanvasRenderingContext2D,
-    section: LayoutSection,
-    x: number
-  ): void {
+  private renderContentSection(ctx: CanvasRenderingContext2D, section: LayoutSection, x: number): void {
     const { text, maxLines, fontSize, lineHeight } = section.content;
     const typography = this.layoutService.getTypographyConfig();
 
@@ -214,7 +218,7 @@ export class CompactRenderer {
     ctx: CanvasRenderingContext2D,
     section: LayoutSection,
     x: number,
-    width: number
+    width: number,
   ): Promise<void> {
     const { imageUrl } = section.content;
     const radius = this.styleManager.getBorderRadius().md;
@@ -250,7 +254,7 @@ export class CompactRenderer {
       const srcX = Math.floor((sw - srcW) / 2);
       const srcY = Math.floor((sh - srcH) / 2);
       ctx.drawImage(img, srcX, srcY, srcW, srcH, destX, destY, destW, destH);
-      
+
       ctx.restore();
 
       // 微妙的内阴影（仅在实际图片区域）
@@ -260,7 +264,6 @@ export class CompactRenderer {
       this.roundRect(ctx, destX + 1, destY + 1, destW - 2, destH - 2, radius - 1);
       ctx.fill();
       ctx.restore();
-
     } catch {
       // 按需求：图片加载失败时，不再绘制占位符或文字，保持原布局
       return;
@@ -268,21 +271,16 @@ export class CompactRenderer {
   }
 
   // 提示框区域渲染
-  private renderTipsSection(
-    ctx: CanvasRenderingContext2D,
-    section: LayoutSection,
-    x: number,
-    width: number
-  ): void {
+  private renderTipsSection(ctx: CanvasRenderingContext2D, section: LayoutSection, x: number, width: number): void {
     const { tips, fontSize, lineHeight, tipPadding, tipGap } = section.content;
     const spacing = this.layoutService.getSpacingConfig();
     let currentY = section.y;
 
     tips.forEach((tip: any, index: number) => {
       const text = tip.title + '：' + tip.content;
-      
+
       // 确保文本不会超出背景框，预留足够的内边距
-      const maxTextWidth = width - (tipPadding * 2) - 12; // 额外预留 12px 避免贴边
+      const maxTextWidth = width - tipPadding * 2 - 12; // 额外预留 12px 避免贴边
       ctx.font = `${fontSize}px ui-sans-serif, -apple-system, system-ui`;
       const lines = this.splitLines(ctx, text, maxTextWidth);
       const tipHeight = lines.length * lineHeight + tipPadding * 2;
@@ -293,10 +291,10 @@ export class CompactRenderer {
         { start: '#f0f9ff', end: '#bae6fd', accent: '#0ea5e9' }, // 蓝色系
         { start: '#f0fdf4', end: '#bbf7d0', accent: '#22c55e' }, // 绿色系
         { start: '#fdf4ff', end: '#e9d5ff', accent: '#a855f7' }, // 紫色系
-        { start: '#fffbeb', end: '#fde68a', accent: '#f59e0b' }  // 黄色系
+        { start: '#fffbeb', end: '#fde68a', accent: '#f59e0b' }, // 黄色系
       ];
       const colorScheme = colorSchemes[index % colorSchemes.length];
-      
+
       const tipGrad = ctx.createLinearGradient(x, currentY, x, currentY + tipHeight);
       tipGrad.addColorStop(0, colorScheme.start);
       tipGrad.addColorStop(1, colorScheme.end);
@@ -330,12 +328,7 @@ export class CompactRenderer {
   }
 
   // 标签区域渲染
-  private renderTagsSection(
-    ctx: CanvasRenderingContext2D,
-    section: LayoutSection,
-    x: number,
-    width: number
-  ): void {
+  private renderTagsSection(ctx: CanvasRenderingContext2D, section: LayoutSection, x: number, width: number): void {
     const { tags, tagHeight, fontSize } = section.content;
     const spacing = this.layoutService.getSpacingConfig();
 
@@ -383,9 +376,21 @@ export class CompactRenderer {
     x: number,
     width: number,
     card: T,
-    deepLink: string
+    deepLink: string,
   ): Promise<void> {
-    const { qrSize, brandHeight, leftColumnWidth, tags = [], tagHeight = 32, fontSize = 20, tagGap = 8, brandTagsGap = 15, footerXPad = 12, footerTopPad = 12, footerBottomPad = 6 } = section.content;
+    const {
+      qrSize,
+      brandHeight,
+      leftColumnWidth,
+      tags = [],
+      tagHeight = 32,
+      fontSize = 20,
+      tagGap = 8,
+      brandTagsGap = 15,
+      footerXPad = 12,
+      footerTopPad = 12,
+      footerBottomPad = 6,
+    } = section.content;
     const spacing = this.layoutService.getSpacingConfig();
     const brandColors = this.styleManager.getBrandColors();
 
@@ -413,7 +418,7 @@ export class CompactRenderer {
 
     try {
       const qrImg = await this.imageManager.loadQRImage(deepLink, qrSize);
-      
+
       // QR码背景（严格在 footer 高度内）
       ctx.fillStyle = '#ffffff';
       this.roundRect(ctx, qrX, qrY, qrSize, qrSize, 8);
@@ -427,7 +432,6 @@ export class CompactRenderer {
 
       // QR码图片
       ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
-
     } catch {
       // QR码占位符
       ctx.fillStyle = '#f1f5f9';
@@ -460,7 +464,12 @@ export class CompactRenderer {
         }
 
         // 标签背景
-        const tagGrad = ctx.createLinearGradient(currentX, currentY - tagHeight / 2, currentX, currentY + tagHeight / 2);
+        const tagGrad = ctx.createLinearGradient(
+          currentX,
+          currentY - tagHeight / 2,
+          currentX,
+          currentY + tagHeight / 2,
+        );
         tagGrad.addColorStop(0, '#f8fafc');
         tagGrad.addColorStop(1, '#e2e8f0');
         ctx.fillStyle = tagGrad;
@@ -489,7 +498,7 @@ export class CompactRenderer {
     ctx: CanvasRenderingContext2D,
     difficulty: string,
     x: number,
-    y: number
+    y: number,
   ): { width: number; height: number } {
     const diffText = this.styleManager.mapDifficulty(difficulty);
     const diffColor = this.styleManager.getDifficultyColor(difficulty);
@@ -535,7 +544,9 @@ export class CompactRenderer {
       if (ctx.measureText(test).width <= maxWidth) {
         current = test;
       } else {
-        if (current) lines.push(current);
+        if (current) {
+          lines.push(current);
+        }
         current = words[i];
         if (maxLines && lines.length >= maxLines - 1) {
           while (ctx.measureText(current + '…').width > maxWidth && current.length > 0) {
@@ -546,7 +557,9 @@ export class CompactRenderer {
         }
       }
     }
-    if (current) lines.push(current);
+    if (current) {
+      lines.push(current);
+    }
     return lines;
   }
 
@@ -566,8 +579,8 @@ export class CompactRenderer {
       const hex = color.slice(1);
       const num = parseInt(hex, 16);
       const r = Math.max(0, Math.min(255, (num >> 16) + factor * 255));
-      const g = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + factor * 255));
-      const b = Math.max(0, Math.min(255, (num & 0x0000FF) + factor * 255));
+      const g = Math.max(0, Math.min(255, ((num >> 8) & 0x00ff) + factor * 255));
+      const b = Math.max(0, Math.min(255, (num & 0x0000ff) + factor * 255));
       return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
     }
     return color;
@@ -584,7 +597,9 @@ export class CompactRenderer {
   private tightCrop(canvas: HTMLCanvasElement, finalHeight: number) {
     try {
       const finalWidth = canvas.width;
-      if (canvas.height === finalHeight) return;
+      if (canvas.height === finalHeight) {
+        return;
+      }
       const off = document.createElement('canvas');
       off.width = finalWidth;
       off.height = finalHeight;

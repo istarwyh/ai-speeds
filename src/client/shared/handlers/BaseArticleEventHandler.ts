@@ -50,7 +50,7 @@ export abstract class BaseArticleEventHandler {
     containerId: string,
     contentService: IContentService,
     articleRenderer: IArticleRenderer,
-    onBackToOverview?: () => void
+    onBackToOverview?: () => void,
   ) {
     this.containerId = containerId;
     this.boundClickHandler = this.handleCardClick.bind(this);
@@ -62,13 +62,17 @@ export abstract class BaseArticleEventHandler {
   // —— 视口预热：卡片进入视口即预热分享所需资源 ——
   protected wireViewportPrewarm(container: HTMLElement): void {
     try {
-      if (!('IntersectionObserver' in window)) return;
+      if (!('IntersectionObserver' in window)) {
+        return;
+      }
       const cards = container.querySelectorAll('.overview-card');
       const seen = new Set<string>();
       const observer = new IntersectionObserver(
-        (entries) => {
+        entries => {
           for (const entry of entries) {
-            if (!entry.isIntersecting) continue;
+            if (!entry.isIntersecting) {
+              continue;
+            }
             const el = entry.target as HTMLElement;
             const id = el.getAttribute('data-card-id');
             if (!id || seen.has(id)) {
@@ -90,9 +94,9 @@ export abstract class BaseArticleEventHandler {
           root: null,
           rootMargin: '200px 0px',
           threshold: 0.15,
-        }
+        },
       );
-      cards.forEach((el) => observer.observe(el));
+      cards.forEach(el => observer.observe(el));
     } catch {
       // 忽略预热异常
     }
@@ -102,14 +106,18 @@ export abstract class BaseArticleEventHandler {
   protected wireSharePreload(container: HTMLElement): void {
     try {
       const buttons = container.querySelectorAll('.overview-card__share-btn');
-      buttons.forEach((btn) => {
+      buttons.forEach(btn => {
         const el = btn as HTMLElement;
         let fired = false;
         const run = () => {
-          if (fired) return;
+          if (fired) {
+            return;
+          }
           fired = true;
           const id = el.getAttribute('data-card-id');
-          if (id) void this.preloadForShare(id);
+          if (id) {
+            void this.preloadForShare(id);
+          }
         };
         el.addEventListener('mouseenter', run, { once: true });
         el.addEventListener('focus', run, { once: true });
@@ -121,15 +129,19 @@ export abstract class BaseArticleEventHandler {
   protected async preloadForShare(cardId: string): Promise<void> {
     try {
       // 检查缓存，避免重复预加载
-      if (this._preloadCache.has(cardId)) return;
+      if (this._preloadCache.has(cardId)) {
+        return;
+      }
       this._preloadCache.add(cardId);
 
       const card = this.resolveCardById(cardId);
-      if (!card) return;
-      
+      if (!card) {
+        return;
+      }
+
       // 性能监控
       const startTime = performance.now();
-      
+
       // 1) 预热封面图（走 /img-proxy 以命中边缘缓存）
       if ((card as any).imageUrl) {
         try {
@@ -140,7 +152,7 @@ export abstract class BaseArticleEventHandler {
           }
         }
       }
-      
+
       // 2) 预热二维码图（直接命中二维码服务的缓存）
       const link = (() => {
         try {
@@ -154,10 +166,8 @@ export abstract class BaseArticleEventHandler {
         }
       })();
       const size = 220;
-      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(
-        link
-      )}`;
-      await new Promise<void>((resolve) => {
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(link)}`;
+      await new Promise<void>(resolve => {
         try {
           const img = new Image();
           img.crossOrigin = 'anonymous';
@@ -223,7 +233,7 @@ export abstract class BaseArticleEventHandler {
   }
 
   // Hook: subclasses may add extra debug listeners; default no-op
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   protected addDebugListeners(_container: HTMLElement): void {}
 
   protected handleCardClick(e: Event): void {
@@ -260,11 +270,15 @@ export abstract class BaseArticleEventHandler {
       event.stopPropagation();
       event.preventDefault();
       const cardId = shareBtn.getAttribute('data-card-id');
-      if (!cardId) return;
+      if (!cardId) {
+        return;
+      }
       // Opportunistically ensure assets are warm before opening preview
       void this.preloadForShare(cardId);
       const card = this.resolveCardById(cardId);
-      if (!card) return;
+      if (!card) {
+        return;
+      }
       // lazy init
       this._shareService =
         this._shareService ||
@@ -277,7 +291,9 @@ export abstract class BaseArticleEventHandler {
     }
 
     const cardId = this.extractCardId(target);
-    if (!cardId) return;
+    if (!cardId) {
+      return;
+    }
 
     this.showDetailedContent(cardId);
   }
@@ -309,9 +325,7 @@ export abstract class BaseArticleEventHandler {
       return cardId;
     }
 
-    const button = target.closest(
-      '.overview-card__action-btn'
-    ) as HTMLElement | null;
+    const button = target.closest('.overview-card__action-btn') as HTMLElement | null;
     if (button) {
       const cardId = button.getAttribute('data-card-id');
       if (!cardId) {
@@ -346,16 +360,11 @@ export abstract class BaseArticleEventHandler {
       const article = await this.contentService.getArticle(cardId);
 
       // Static article shell
-      const articleHtml = this.articleRenderer.renderArticle(
-        article.title,
-        article.content
-      );
+      const articleHtml = this.articleRenderer.renderArticle(article.title, article.content);
       container.innerHTML = articleHtml;
 
       // Render Markdown safely scoped to this container to avoid cross-module ID collisions
-      const markdownContainer = container.querySelector(
-        '#markdown-content-container'
-      ) as HTMLElement | null;
+      const markdownContainer = container.querySelector('#markdown-content-container') as HTMLElement | null;
       if (markdownContainer) {
         const renderer = new SafeMarkdownRenderer();
         const renderedHtml = renderer.render(article.rawMarkdown);
@@ -387,7 +396,7 @@ export abstract class BaseArticleEventHandler {
   }
 
   // Hook: subclasses may animate/prepare before article view is entered
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   protected async beforeEnterArticle(_container: HTMLElement): Promise<void> {
     // default no-op
   }
@@ -395,13 +404,15 @@ export abstract class BaseArticleEventHandler {
   // Back navigation using direct DOM event listeners instead of global window functions
   protected configureBackNavigation(): void {
     const containerEl = document.getElementById(this.containerId);
-    if (!containerEl || !this.onBackToOverview) return;
+    if (!containerEl || !this.onBackToOverview) {
+      return;
+    }
 
-    const backButton = containerEl.querySelector(
-      '[data-action="back-to-overview"]'
-    ) as HTMLButtonElement | null;
+    const backButton = containerEl.querySelector('[data-action="back-to-overview"]') as HTMLButtonElement | null;
 
-    if (!backButton) return;
+    if (!backButton) {
+      return;
+    }
 
     // Remove any existing event listeners to avoid duplicates
     const existingHandler = (backButton as any)._backHandler;
@@ -420,7 +431,9 @@ export abstract class BaseArticleEventHandler {
       ev.preventDefault();
       ev.stopPropagation();
       (ev as any).stopImmediatePropagation?.();
-      if (this._navLock) return;
+      if (this._navLock) {
+        return;
+      }
       this._navLock = true;
 
       // Cancel the next click anywhere (capture) to avoid ghost-click on new view
@@ -448,7 +461,9 @@ export abstract class BaseArticleEventHandler {
   }
 
   protected handleBackToOverview(): void {
-    if (!this.onBackToOverview) return;
+    if (!this.onBackToOverview) {
+      return;
+    }
 
     // Clean up copy feature before returning to overview
     if (this.articleRenderer.destroyCopyFeature) {
@@ -483,7 +498,7 @@ export abstract class BaseArticleEventHandler {
 
   protected addCopyButtonsToCodeBlocks(container: HTMLElement): void {
     const codeBlocks = container.querySelectorAll('pre');
-    codeBlocks.forEach((block) => {
+    codeBlocks.forEach(block => {
       if (!block.querySelector('.copy-button')) {
         const copyButton = document.createElement('button');
         copyButton.className = 'copy-button';
@@ -518,7 +533,9 @@ export abstract class BaseArticleEventHandler {
 
   protected addReadingProgress(): void {
     const existingProgress = document.querySelector('.reading-progress');
-    if (existingProgress) existingProgress.remove();
+    if (existingProgress) {
+      existingProgress.remove();
+    }
 
     const progressBar = document.createElement('div');
     progressBar.className = 'reading-progress';
@@ -526,8 +543,7 @@ export abstract class BaseArticleEventHandler {
 
     const updateProgress = () => {
       const scrollTop = window.pageYOffset;
-      const docHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       const progress = (scrollTop / docHeight) * 100;
       progressBar.style.width = `${Math.min(progress, 100)}%`;
     };
@@ -538,7 +554,9 @@ export abstract class BaseArticleEventHandler {
 
   protected addBackToTopButton(): void {
     const existingButton = document.querySelector('.back-to-top');
-    if (existingButton) existingButton.remove();
+    if (existingButton) {
+      existingButton.remove();
+    }
 
     const backToTopButton = document.createElement('button');
     backToTopButton.className = 'back-to-top';
@@ -567,11 +585,7 @@ export abstract class BaseArticleEventHandler {
       url.searchParams.set('module', this.getModuleName());
       url.searchParams.set('view', 'article');
       url.searchParams.set('cardId', cardId);
-      window.history.pushState(
-        { module: this.getModuleName(), view: 'article', cardId },
-        '',
-        url.toString()
-      );
+      window.history.pushState({ module: this.getModuleName(), view: 'article', cardId }, '', url.toString());
     } catch {}
   }
 
@@ -581,11 +595,7 @@ export abstract class BaseArticleEventHandler {
       url.searchParams.set('module', this.getModuleName());
       url.searchParams.set('view', 'overview');
       url.searchParams.delete('cardId');
-      window.history.pushState(
-        { module: this.getModuleName(), view: 'overview' },
-        '',
-        url.toString()
-      );
+      window.history.pushState({ module: this.getModuleName(), view: 'overview' }, '', url.toString());
     } catch {}
   }
 }
