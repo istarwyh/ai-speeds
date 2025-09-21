@@ -55,7 +55,7 @@ function selectProvider(env: Env): { provider: Provider; baseUrl: string } {
 /**
  * Helper function to handle markdown file requests
  */
-async function handleMarkdownFile(url: URL, env: Env, pathPrefix: string, assetPath: string): Promise<Response> {
+async function handleMarkdownFile(url: URL, env: Env, pathPrefix: string, _assetPath: string): Promise<Response> {
   try {
     // Extract and sanitize filename from path
     const pathSegments = url.pathname.split('/');
@@ -81,7 +81,6 @@ async function handleMarkdownFile(url: URL, env: Env, pathPrefix: string, assetP
       return new Response('Article not found', { status: 404 });
     }
   } catch (error) {
-    console.error(`Error loading ${pathPrefix} article:`, error);
     return new Response('Error loading article', { status: 500 });
   }
 }

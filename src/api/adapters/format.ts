@@ -7,13 +7,60 @@ interface ProviderConfig {
   commonModels?: readonly string[];
 }
 
+interface AnthropicTextContent {
+  type: 'text';
+  text: string;
+}
+
+interface AnthropicToolUseContent {
+  type: 'tool_use';
+  id: string;
+  name: string;
+  input: Record<string, unknown>;
+}
+
+interface AnthropicToolResultContent {
+  type: 'tool_result';
+  tool_use_id: string;
+  content: string | Record<string, unknown>;
+}
+
+type AnthropicContentPart = AnthropicTextContent | AnthropicToolUseContent | AnthropicToolResultContent;
+
+interface AnthropicMessage {
+  role: 'user' | 'assistant';
+  content: string | AnthropicContentPart[];
+}
+
+interface AnthropicTool {
+  name: string;
+  description?: string;
+  input_schema: Record<string, unknown>;
+}
+
 interface MessageCreateParamsBase {
   model: string;
-  messages: any[];
-  system?: any;
+  messages: AnthropicMessage[];
+  system?: string | Record<string, unknown>;
   temperature?: number;
-  tools?: any[];
+  tools?: AnthropicTool[];
   stream?: boolean;
+}
+
+interface OpenAIToolCall {
+  id: string;
+  type: 'function';
+  function: {
+    name: string;
+    arguments: string;
+  };
+}
+
+interface OpenAIMessage {
+  role: 'user' | 'assistant' | 'tool' | 'system';
+  content: string | null;
+  tool_calls?: OpenAIToolCall[];
+  tool_call_id?: string;
 }
 
 /**
@@ -21,19 +68,19 @@ interface MessageCreateParamsBase {
  * Requires tool messages to immediately follow assistant messages with tool_calls.
  * Enforces strict immediate following sequence between tool_calls and tool messages.
  */
-function validateOpenAIToolCalls(messages: any[]): any[] {
-  const validatedMessages: any[] = [];
+function validateOpenAIToolCalls(messages: OpenAIMessage[]): OpenAIMessage[] {
+  const validatedMessages: OpenAIMessage[] = [];
 
   for (let i = 0; i < messages.length; i++) {
     const currentMessage = { ...messages[i] };
 
     // Process assistant messages with tool_calls
     if (currentMessage.role === 'assistant' && currentMessage.tool_calls) {
-      const validToolCalls: any[] = [];
+      const validToolCalls: OpenAIToolCall[] = [];
       const removedToolCallIds: string[] = [];
 
       // Collect all immediately following tool messages
-      const immediateToolMessages: any[] = [];
+      const immediateToolMessages: OpenAIMessage[] = [];
       let j = i + 1;
       while (j < messages.length && messages[j].role === 'tool') {
         immediateToolMessages.push(messages[j]);
@@ -41,7 +88,7 @@ function validateOpenAIToolCalls(messages: any[]): any[] {
       }
 
       // For each tool_call, check if there's an immediately following tool message
-      currentMessage.tool_calls.forEach((toolCall: any) => {
+      currentMessage.tool_calls?.forEach((toolCall: OpenAIToolCall) => {
         const hasImmediateToolMessage = immediateToolMessages.some(toolMsg => toolMsg.tool_call_id === toolCall.id);
 
         if (hasImmediateToolMessage) {
@@ -73,7 +120,7 @@ function validateOpenAIToolCalls(messages: any[]): any[] {
         const prevMessage = messages[i - 1];
         if (prevMessage.role === 'assistant' && prevMessage.tool_calls) {
           hasImmediateToolCall = prevMessage.tool_calls.some(
-            (toolCall: any) => toolCall.id === currentMessage.tool_call_id,
+            (toolCall: OpenAIToolCall) => toolCall.id === currentMessage.tool_call_id,
           );
         } else if (prevMessage.role === 'tool') {
           // Check for assistant message before the sequence of tool messages
@@ -83,7 +130,7 @@ function validateOpenAIToolCalls(messages: any[]): any[] {
             }
             if (messages[k].role === 'assistant' && messages[k].tool_calls) {
               hasImmediateToolCall = messages[k].tool_calls.some(
-                (toolCall: any) => toolCall.id === currentMessage.tool_call_id,
+                (toolCall: OpenAIToolCall) => toolCall.id === currentMessage.tool_call_id,
               );
             }
             break;
@@ -108,10 +155,14 @@ function validateOpenAIToolCalls(messages: any[]): any[] {
 /**
  * Maps Anthropic model names to provider-specific model names
  */
-export function mapModel(anthropicModel: string, provider: Provider = 'openrouter', providerConfigs: any): string {
+export function mapModel(
+  anthropicModel: string,
+  provider: Provider = 'openrouter',
+  providerConfigs: Record<string, ProviderConfig>,
+): string {
   const config = providerConfigs[provider] as ProviderConfig | undefined;
   if (!config) {
-    console.warn(`Provider configuration for ${provider} not found, using original model name.`);
+    // Provider configuration not found, using original model name
     return anthropicModel;
   }
 
@@ -143,14 +194,27 @@ export function mapModel(anthropicModel: string, provider: Provider = 'openroute
 export function formatAnthropicToOpenAI(
   body: MessageCreateParamsBase,
   provider: Provider = 'openrouter',
-  providerConfigs: any,
-  env?: Env,
-): any {
+  providerConfigs: Record<string, ProviderConfig>,
+  _env?: Env,
+): {
+  model: string;
+  messages: OpenAIMessage[];
+  temperature?: number;
+  tools?: Array<{
+    type: 'function';
+    function: {
+      name: string;
+      description?: string;
+      parameters: Record<string, unknown>;
+    };
+  }>;
+  stream?: boolean;
+} {
   const { model, messages, system = [], temperature, tools, stream } = body;
 
   const openAIMessages = Array.isArray(messages)
     ? messages.flatMap(anthropicMessage => {
-        const openAiMessagesFromThisAnthropicMessage: any[] = [];
+        const openAiMessagesFromThisAnthropicMessage: OpenAIMessage[] = [];
 
         if (!Array.isArray(anthropicMessage.content)) {
           if (typeof anthropicMessage.content === 'string') {
@@ -169,28 +233,30 @@ export function formatAnthropicToOpenAI(
         }
 
         if (anthropicMessage.role === 'assistant') {
-          const assistantMessage: any = {
+          const assistantMessage: OpenAIMessage = {
             role: 'assistant',
             content: null,
           };
           let textContent = '';
-          const toolCalls: any[] = [];
+          const toolCalls: OpenAIToolCall[] = [];
 
-          anthropicMessage.content.forEach(contentPart => {
-            if (contentPart.type === 'text') {
-              textContent +=
-                (typeof contentPart.text === 'string' ? contentPart.text : JSON.stringify(contentPart.text)) + '\n';
-            } else if (contentPart.type === 'tool_use') {
-              toolCalls.push({
-                id: contentPart.id,
-                type: 'function',
-                function: {
-                  name: contentPart.name,
-                  arguments: JSON.stringify(contentPart.input),
-                },
-              });
-            }
-          });
+          if (Array.isArray(anthropicMessage.content)) {
+            anthropicMessage.content.forEach(contentPart => {
+              if (contentPart.type === 'text') {
+                textContent +=
+                  (typeof contentPart.text === 'string' ? contentPart.text : JSON.stringify(contentPart.text)) + '\n';
+              } else if (contentPart.type === 'tool_use') {
+                toolCalls.push({
+                  id: contentPart.id,
+                  type: 'function',
+                  function: {
+                    name: contentPart.name,
+                    arguments: JSON.stringify(contentPart.input),
+                  },
+                });
+              }
+            });
+          }
 
           const trimmedTextContent = textContent.trim();
           if (trimmedTextContent.length > 0) {
@@ -204,21 +270,23 @@ export function formatAnthropicToOpenAI(
           }
         } else if (anthropicMessage.role === 'user') {
           let userTextMessageContent = '';
-          const subsequentToolMessages: any[] = [];
+          const subsequentToolMessages: OpenAIMessage[] = [];
 
-          anthropicMessage.content.forEach(contentPart => {
-            if (contentPart.type === 'text') {
-              userTextMessageContent +=
-                (typeof contentPart.text === 'string' ? contentPart.text : JSON.stringify(contentPart.text)) + '\n';
-            } else if (contentPart.type === 'tool_result') {
-              subsequentToolMessages.push({
-                role: 'tool',
-                tool_call_id: contentPart.tool_use_id,
-                content:
-                  typeof contentPart.content === 'string' ? contentPart.content : JSON.stringify(contentPart.content),
-              });
-            }
-          });
+          if (Array.isArray(anthropicMessage.content)) {
+            anthropicMessage.content.forEach(contentPart => {
+              if (contentPart.type === 'text') {
+                userTextMessageContent +=
+                  (typeof contentPart.text === 'string' ? contentPart.text : JSON.stringify(contentPart.text)) + '\n';
+              } else if (contentPart.type === 'tool_result') {
+                subsequentToolMessages.push({
+                  role: 'tool',
+                  tool_call_id: contentPart.tool_use_id,
+                  content:
+                    typeof contentPart.content === 'string' ? contentPart.content : JSON.stringify(contentPart.content),
+                });
+              }
+            });
+          }
 
           const trimmedUserText = userTextMessageContent.trim();
           if (trimmedUserText.length > 0) {
@@ -233,40 +301,44 @@ export function formatAnthropicToOpenAI(
       })
     : [];
 
-  const systemMessages = Array.isArray(system)
-    ? system.map(item => ({
-        role: 'system',
-        content: [
+  const systemMessages =
+    typeof system === 'string'
+      ? [
           {
-            type: 'text',
-            text: item.text,
-            cache_control: { type: 'ephemeral' },
+            role: 'system' as const,
+            content: system,
           },
-        ],
-      }))
-    : [
-        {
-          role: 'system',
-          content: [
-            {
-              type: 'text',
-              text: system,
-              cache_control: { type: 'ephemeral' },
-            },
-          ],
-        },
-      ];
+        ]
+      : Array.isArray(system)
+        ? system.map(item => ({
+            role: 'system' as const,
+            content: typeof item === 'string' ? item : JSON.stringify(item),
+          }))
+        : [];
 
-  const data: any = {
+  const data = {
     model: mapModel(model, provider, providerConfigs),
     messages: [...systemMessages, ...openAIMessages],
     temperature,
     stream,
+  } as {
+    model: string;
+    messages: OpenAIMessage[];
+    temperature?: number;
+    stream?: boolean;
+    tools?: Array<{
+      type: 'function';
+      function: {
+        name: string;
+        description?: string;
+        parameters: Record<string, unknown>;
+      };
+    }>;
   };
 
-  if (tools) {
-    data.tools = tools.map((item: any) => ({
-      type: 'function',
+  if (tools && tools.length > 0) {
+    data.tools = tools.map(item => ({
+      type: 'function' as const,
       function: {
         name: item.name,
         description: item.description,
@@ -281,29 +353,85 @@ export function formatAnthropicToOpenAI(
   return data;
 }
 
+interface OpenAICompletion {
+  choices?: Array<{
+    message?: {
+      content?: string;
+      tool_calls?: Array<{
+        id: string;
+        function?: {
+          name?: string;
+          arguments?: string;
+        };
+      }>;
+    };
+  }>;
+  usage?: {
+    input_tokens?: number;
+    output_tokens?: number;
+  };
+  model?: string;
+}
+
+interface AnthropicResponse {
+  id: string;
+  type: 'message';
+  role: 'assistant';
+  content: Array<
+    | {
+        type: 'text';
+        text: string;
+      }
+    | {
+        type: 'tool_use';
+        id: string;
+        name: string;
+        input: Record<string, unknown>;
+      }
+  >;
+  model: string;
+  stop_reason: 'end_turn' | 'tool_use' | 'max_tokens';
+  stop_sequence: null;
+  usage: {
+    input_tokens: number;
+    output_tokens: number;
+  };
+}
+
 /**
  * Formats OpenAI API response to Anthropic API format
  */
-export function formatOpenAIToAnthropic(completion: any, model: string): any {
+export function formatOpenAIToAnthropic(completion: OpenAICompletion, model: string): AnthropicResponse {
   const messageId = 'msg_' + Date.now();
 
-  let content: any = [];
+  let content: Array<
+    | {
+        type: 'text';
+        text: string;
+      }
+    | {
+        type: 'tool_use';
+        id: string;
+        name: string;
+        input: Record<string, unknown>;
+      }
+  > = [];
   const firstChoice = completion.choices?.[0];
   const message = firstChoice?.message;
 
   if (message?.content) {
     content = [{ text: message.content, type: 'text' }];
   } else if (message?.tool_calls) {
-    content = message.tool_calls.map((item: any) => {
+    content = message.tool_calls.map(item => {
       return {
-        type: 'tool_use',
+        type: 'tool_use' as const,
         id: item.id,
-        name: item.function?.name,
+        name: item.function?.name || '',
         input: (() => {
           try {
             return item.function?.arguments ? JSON.parse(item.function.arguments) : {};
-          } catch (e) {
-            console.error(`解析工具参数时出错: ${e}, 原始参数: ${item.function.arguments}`);
+          } catch {
+            // Failed to parse tool arguments, returning empty object
             return {};
           }
         })(),
@@ -311,14 +439,18 @@ export function formatOpenAIToAnthropic(completion: any, model: string): any {
     });
   }
 
-  const result = {
+  const result: AnthropicResponse = {
     id: messageId,
     type: 'message',
     role: 'assistant',
     content: content,
-    stop_reason: completion.choices[0].finish_reason === 'tool_calls' ? 'tool_use' : 'end_turn',
+    stop_reason: firstChoice?.finish_reason === 'tool_calls' ? 'tool_use' : 'end_turn',
     stop_sequence: null,
     model,
+    usage: {
+      input_tokens: completion.usage?.input_tokens || 0,
+      output_tokens: completion.usage?.output_tokens || 0,
+    },
   };
   return result;
 }

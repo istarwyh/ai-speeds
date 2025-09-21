@@ -1,6 +1,6 @@
 import type { Env } from '../../../env';
 
-export async function handleImgProxy(url: URL, request: Request, env: Env): Promise<Response> {
+export async function handleImgProxy(url: URL, request: Request, _env: Env): Promise<Response> {
   // CORS preflight
   if (request.method === 'OPTIONS') {
     return new Response(null, {

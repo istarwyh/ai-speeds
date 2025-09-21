@@ -97,8 +97,8 @@ export class SafeMarkdownRenderer {
               ignoreIllegals: true,
             });
             return `<pre class="code-block"><code class="hljs language-${language}">${value}</code></pre>`;
-          } catch (e) {
-            console.error(`Error highlighting code block with language ${language}:`, e);
+          } catch {
+            // Error highlighting code block, falling back to escaped text
           }
         }
         // 未知语言或异常：转义原文，保留基本结构
@@ -226,7 +226,7 @@ export class SafeMarkdownRenderer {
       '<': '&lt;',
       '>': '&gt;',
       '"': '&quot;',
-      '\'': '&#39;',
+      "'": '&#39;',
     };
     return String(text).replace(/[&<>"']/g, char => escapeMap[char] || char);
   }
@@ -261,20 +261,13 @@ export class SafeMarkdownRenderer {
    * 渲染代码块
    */
   private renderCodeBlocks(html: string): string {
-    console.log('renderCodeBlocks called, input length:', html.length);
-
     // 先检查是否包含代码块
     const hasCodeBlocks = html.includes('```');
-    console.log('Contains code blocks:', hasCodeBlocks);
-
     if (hasCodeBlocks) {
       // 匹配所有代码块
       const codeBlockMatches = html.match(/```[\s\S]*?```/g);
-      console.log('Found code block matches:', codeBlockMatches?.length || 0);
       if (codeBlockMatches) {
-        codeBlockMatches.forEach((match, index) => {
-          console.log(`Code block ${index}:`, match.substring(0, 100) + '...');
-        });
+        codeBlockMatches.forEach((_match, _index) => {});
       }
     }
 
@@ -283,22 +276,13 @@ export class SafeMarkdownRenderer {
       const lines = codeWithLang.trim().split('\n');
       const firstLine = lines[0] || '';
       const language = firstLine.toLowerCase().trim();
-      const code = lines.slice(1).join('\n').trim();
-
-      console.log('Processing code block:', { language, codeLength: code.length });
-
-      // 检查是否是 Mermaid 图表
+      const code = lines.slice(1).join('\n').trim(); // 检查是否是 Mermaid 图表
       if (language === 'mermaid' || language === 'sequencediagram') {
-        console.log('Detected Mermaid diagram!');
         return this.renderMermaidDiagram(code);
       }
 
-      // 普通代码块
-      console.log('Rendering as regular code block');
-      return `<pre><code class="language-${language}">${this.escapeHtml(code)}</code></pre>`;
+      // 普通代码块return `<pre><code class="language-${language}">${this.escapeHtml(code)}</code></pre>`;
     });
-
-    console.log('renderCodeBlocks finished, output length:', html.length);
     return html;
   }
 
@@ -307,7 +291,6 @@ export class SafeMarkdownRenderer {
    */
   private renderMermaidDiagram(code: string): string {
     const diagramId = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    console.log('Rendering Mermaid diagram:', { diagramId, code: code.substring(0, 100) + '...' });
     return `<div class="mermaid-diagram" id="${diagramId}">${this.escapeHtml(code)}</div>`;
   }
 
@@ -513,21 +496,14 @@ export class SafeMarkdownRenderer {
     const mermaidDiagrams = container.querySelectorAll('.mermaid-diagram');
     if (mermaidDiagrams.length === 0) {
       return;
-    }
-
-    console.log(`Found ${mermaidDiagrams.length} Mermaid diagrams to render`);
-
-    // 动态加载 Mermaid 库
+    } // 动态加载 Mermaid 库
     this.loadMermaidLibrary()
       .then(() => {
-        console.log('Mermaid library loaded successfully');
-        mermaidDiagrams.forEach((diagram, index) => {
-          console.log(`Initializing Mermaid diagram ${index + 1}/${mermaidDiagrams.length}`);
+        mermaidDiagrams.forEach(diagram => {
           this.initializeMermaidDiagram(diagram as HTMLElement);
         });
       })
-      .catch(error => {
-        console.error('Failed to load Mermaid library:', error);
+      .catch(() => {
         // 降级处理：显示原始代码
         mermaidDiagrams.forEach(diagram => {
           const code = diagram.textContent || '';
@@ -543,38 +519,29 @@ export class SafeMarkdownRenderer {
   private loadMermaidLibrary(): Promise<void> {
     return new Promise((resolve, reject) => {
       // 检查是否已经加载
-      if ((window as any).mermaid) {
-        console.log('Mermaid library already loaded');
+      if ((window as { mermaid?: unknown }).mermaid) {
         resolve();
         return;
-      }
-
-      console.log('Loading Mermaid library from CDN...');
-
-      // 创建 script 标签加载 Mermaid
+      } // 创建 script 标签加载 Mermaid
       const script = document.createElement('script');
       script.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
       script.async = true;
       script.onload = () => {
-        console.log('Mermaid library script loaded, initializing...');
         try {
           // 初始化 Mermaid
-          const mermaid = (window as any).mermaid;
+          const mermaid = (window as { mermaid: { initialize: (config: Record<string, unknown>) => void } }).mermaid;
           mermaid.initialize({
             startOnLoad: false,
             theme: 'default',
             securityLevel: 'loose',
             fontFamily: 'monospace',
           });
-          console.log('Mermaid library initialized');
           resolve();
-        } catch (error) {
-          console.error('Error initializing Mermaid:', error);
-          reject(error);
+        } catch {
+          reject(new Error('Failed to initialize Mermaid'));
         }
       };
-      script.onerror = error => {
-        console.error('Failed to load Mermaid script:', error);
+      script.onerror = () => {
         reject(new Error('Failed to load Mermaid library'));
       };
       document.head.appendChild(script);
@@ -585,17 +552,14 @@ export class SafeMarkdownRenderer {
    * 初始化单个 Mermaid 图表
    */
   private initializeMermaidDiagram(element: HTMLElement): void {
-    const mermaid = (window as any).mermaid;
+    const mermaid = (window as { mermaid?: { render: (id: string, code: string) => Promise<{ svg: string }> } })
+      .mermaid;
     if (!mermaid) {
-      console.error('Mermaid library not available');
       return;
     }
 
     const code = element.textContent || '';
     const id = element.id;
-
-    console.log(`Rendering diagram ${id}:`, code.substring(0, 100) + '...');
-
     try {
       // 清空元素内容
       element.textContent = '';
@@ -605,7 +569,6 @@ export class SafeMarkdownRenderer {
       mermaid
         .render(id + '-svg', code)
         .then((result: { svg: string }) => {
-          console.log(`Successfully rendered diagram ${id}`);
           element.innerHTML = result.svg;
           element.classList.add('mermaid-rendered');
 
@@ -614,8 +577,7 @@ export class SafeMarkdownRenderer {
             this.showMermaidFullscreen(result.svg, id);
           });
         })
-        .catch((error: Error) => {
-          console.error(`Mermaid rendering error for ${id}:`, error);
+        .catch((_error: Error) => {
           // 降级显示原始代码
           element.innerHTML = `
                     <div style="color: #dc2626; margin-bottom: 8px;">⚠️ 图表渲染失败</div>
@@ -623,8 +585,7 @@ export class SafeMarkdownRenderer {
                 `;
           element.classList.add('mermaid-error');
         });
-    } catch (error) {
-      console.error(`Mermaid initialization error for ${id}:`, error);
+    } catch {
       // 降级显示原始代码
       element.innerHTML = `
                 <div style="color: #dc2626; margin-bottom: 8px;">⚠️ 图表初始化失败</div>

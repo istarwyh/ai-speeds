@@ -19,8 +19,8 @@ function createAliasCommandElement(aliasCommand: string): HTMLElement {
   copyBtn.className = 'copy-btn';
   copyBtn.textContent = 'Copy';
   copyBtn.onclick = () => {
-    if (typeof (window as any).copyToClipboard === 'function') {
-      (window as any).copyToClipboard(aliasCommand);
+    if (typeof (window as { copyToClipboard?: (text: string) => void }).copyToClipboard === 'function') {
+      (window as { copyToClipboard: (text: string) => void }).copyToClipboard(aliasCommand);
     }
   };
 
@@ -116,7 +116,15 @@ function createApiKeyLinkElement(apiKeyUrl: string): HTMLElement {
 }
 
 // 生成供应商详情内容（使用 DOM 操作）
-function generateProviderDetailsContent(provider: any): HTMLElement {
+function generateProviderDetailsContent(provider: {
+  description: string;
+  aliasCommand?: string;
+  isDirectlyUsable?: boolean;
+  specialConfig?: { notes: string };
+  features: string[];
+  apiKeyUrl: string;
+  repoUrl?: string;
+}): HTMLElement {
   const container = document.createElement('div');
 
   // 添加描述
@@ -184,6 +192,8 @@ export function hideProviderDetails(): void {
 
 // 将函数暴露到全局作用域（用于 onclick 事件）
 if (typeof window !== 'undefined') {
-  (window as any).showProviderDetails = showProviderDetails;
-  (window as any).hideProviderDetails = hideProviderDetails;
+  (window as { showProviderDetails?: unknown; hideProviderDetails?: unknown }).showProviderDetails =
+    showProviderDetails;
+  (window as { showProviderDetails?: unknown; hideProviderDetails?: unknown }).hideProviderDetails =
+    hideProviderDetails;
 }
