@@ -1,5 +1,5 @@
 import { faviconDataUrl } from './components/favicon';
-import { createHead, sidebarComponent, navigationComponent, sideCardsComponent, allStyles, allScripts } from '../index';
+import { createHead, sidebarComponent, navigationComponent, allStyles, allScripts } from '../index';
 import { DEFAULT_SECTION_ID } from '../config/navigation';
 import { getStartedModule } from '../features/get-started';
 import { bestPracticesModule } from '../features/best-practices';

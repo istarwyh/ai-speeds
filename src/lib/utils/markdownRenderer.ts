@@ -529,7 +529,8 @@ export class SafeMarkdownRenderer {
       script.onload = () => {
         try {
           // 初始化 Mermaid
-          const mermaid = (window as { mermaid: { initialize: (config: Record<string, unknown>) => void } }).mermaid;
+          const mermaid = (window as unknown as { mermaid: { initialize: (config: Record<string, unknown>) => void } })
+            .mermaid;
           mermaid.initialize({
             startOnLoad: false,
             theme: 'default',
@@ -598,7 +599,7 @@ export class SafeMarkdownRenderer {
   /**
    * 显示 Mermaid 图表全屏模式
    */
-  private showMermaidFullscreen(svgContent: string, diagramId: string): void {
+  private showMermaidFullscreen(svgContent: string, _diagramId: string): void {
     // 创建全屏模态框
     const modal = document.createElement('div');
     modal.className = 'mermaid-fullscreen-modal';

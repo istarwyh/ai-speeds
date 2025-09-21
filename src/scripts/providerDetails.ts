@@ -1,4 +1,4 @@
-import { providers } from '../features/get-started/types/provider';
+import { providers, Provider } from '../features/get-started/types/provider';
 
 // 创建别名命令元素
 function createAliasCommandElement(aliasCommand: string): HTMLElement {
@@ -20,7 +20,7 @@ function createAliasCommandElement(aliasCommand: string): HTMLElement {
   copyBtn.textContent = 'Copy';
   copyBtn.onclick = () => {
     if (typeof (window as { copyToClipboard?: (text: string) => void }).copyToClipboard === 'function') {
-      (window as { copyToClipboard: (text: string) => void }).copyToClipboard(aliasCommand);
+      (window as unknown as { copyToClipboard: (text: string) => void }).copyToClipboard(aliasCommand);
     }
   };
 
@@ -116,15 +116,7 @@ function createApiKeyLinkElement(apiKeyUrl: string): HTMLElement {
 }
 
 // 生成供应商详情内容（使用 DOM 操作）
-function generateProviderDetailsContent(provider: {
-  description: string;
-  aliasCommand?: string;
-  isDirectlyUsable?: boolean;
-  specialConfig?: { notes: string };
-  features: string[];
-  apiKeyUrl: string;
-  repoUrl?: string;
-}): HTMLElement {
+function generateProviderDetailsContent(provider: Provider): HTMLElement {
   const container = document.createElement('div');
 
   // 添加描述

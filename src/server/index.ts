@@ -55,7 +55,7 @@ function selectProvider(env: Env): { provider: Provider; baseUrl: string } {
 /**
  * Helper function to handle markdown file requests
  */
-async function handleMarkdownFile(url: URL, env: Env, pathPrefix: string, _assetPath: string): Promise<Response> {
+async function handleMarkdownFile(url: URL, env: Env, _pathPrefix: string, assetPath: string): Promise<Response> {
   try {
     // Extract and sanitize filename from path
     const pathSegments = url.pathname.split('/');
@@ -80,7 +80,7 @@ async function handleMarkdownFile(url: URL, env: Env, pathPrefix: string, _asset
     } else {
       return new Response('Article not found', { status: 404 });
     }
-  } catch (error) {
+  } catch {
     return new Response('Error loading article', { status: 500 });
   }
 }
@@ -152,9 +152,11 @@ export default {
       const out = {
         name: 'img-proxy happy case (HTTPS, allowed by whitelist)',
         pass,
-        status: (resp as any).status,
+        status: (resp as Response).status,
         contentType,
-        error: pass ? undefined : `Unexpected response: status=${(resp as any).status}, content-type=${contentType}`,
+        error: pass
+          ? undefined
+          : `Unexpected response: status=${(resp as Response).status}, content-type=${contentType}`,
         reason,
         src,
         body: debugBody?.slice(0, 256),
