@@ -15,12 +15,12 @@ export const DEFAULT_ASSET_CONFIG: AssetConfig = {
     // How to Implement images
     'claude-code-implementation': '202508261857484.png',
     'claude-code-git-integration': '202508261902348.png',
-    
-    // Best Practices images  
+
+    // Best Practices images
     'best-practice-1': '202508232133560.png',
     'best-practice-hooks': '202507202037009.png',
     'linus-torvalds-agent': '202508262218029.png',
-  }
+  },
 };
 
 /**

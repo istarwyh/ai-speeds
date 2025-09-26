@@ -44,23 +44,18 @@ function selectProvider(env: Env): { provider: Provider; baseUrl: string } {
     // 如果无法检测，默认使用 'openai' 提供商配置，因为它是 OpenAI 兼容的 URL
     return { provider: 'openai', baseUrl };
   }
-  
+
   // Default to OpenRouter
   return {
     provider: 'openrouter',
-    baseUrl: env.OPENROUTER_BASE_URL || PROVIDER_CONFIGS.openrouter.defaultBaseUrl
+    baseUrl: env.OPENROUTER_BASE_URL || PROVIDER_CONFIGS.openrouter.defaultBaseUrl,
   };
 }
 
 /**
  * Helper function to handle markdown file requests
  */
-async function handleMarkdownFile(
-  url: URL,
-  env: Env,
-  pathPrefix: string,
-  assetPath: string
-): Promise<Response> {
+async function handleMarkdownFile(url: URL, env: Env, pathPrefix: string, _assetPath: string): Promise<Response> {
   try {
     // Extract and sanitize filename from path
     const pathSegments = url.pathname.split('/');
@@ -78,15 +73,14 @@ async function handleMarkdownFile(
       const content = await assetResponse.text();
       return new Response(content, {
         headers: {
-          "Content-Type": "text/plain; charset=utf-8",
-          "Cache-Control": "public, max-age=3600" // Cache for 1 hour
-        }
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
+        },
       });
     } else {
       return new Response('Article not found', { status: 404 });
     }
   } catch (error) {
-    console.error(`Error loading ${pathPrefix} article:`, error);
     return new Response('Error loading article', { status: 500 });
   }
 }
@@ -94,7 +88,7 @@ async function handleMarkdownFile(
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    
+
     if (url.pathname === '/' && request.method === 'GET') {
       // Redirect root to a stable path with hash so browser URL reflects default section
       const target = new URL(`/home#${DEFAULT_SECTION_ID}`, url);
@@ -104,19 +98,19 @@ export default {
     // Serve SPA at /home (no redirect loop; fragments aren't sent to server)
     if (url.pathname === '/home' && request.method === 'GET') {
       return new Response(indexHtml, {
-        headers: { "Content-Type": "text/html" }
+        headers: { 'Content-Type': 'text/html' },
       });
     }
-    
+
     if (url.pathname === '/terms' && request.method === 'GET') {
       return new Response(termsHtml, {
-        headers: { "Content-Type": "text/html" }
+        headers: { 'Content-Type': 'text/html' },
       });
     }
-    
+
     if (url.pathname === '/privacy' && request.method === 'GET') {
       return new Response(privacyHtml, {
-        headers: { "Content-Type": "text/html" }
+        headers: { 'Content-Type': 'text/html' },
       });
     }
 
@@ -172,28 +166,36 @@ export default {
     }
 
     // Handle markdown file requests for best practices articles
-    if (url.pathname.startsWith('/src/features/best-practices/articles/') && url.pathname.endsWith('.md') && request.method === 'GET') {
+    if (
+      url.pathname.startsWith('/src/features/best-practices/articles/') &&
+      url.pathname.endsWith('.md') &&
+      request.method === 'GET'
+    ) {
       return await handleMarkdownFile(url, env, 'best practices', '');
     }
 
     // Handle markdown file requests for How to Apply CC articles
-    if (url.pathname.startsWith('/src/features/how-to-apply-cc/content/') && url.pathname.endsWith('.md') && request.method === 'GET') {
+    if (
+      url.pathname.startsWith('/src/features/how-to-apply-cc/content/') &&
+      url.pathname.endsWith('.md') &&
+      request.method === 'GET'
+    ) {
       return await handleMarkdownFile(url, env, 'How to Apply CC', 'howToApplyCC-content/');
     }
-    
+
     if (url.pathname === '/v1/messages' && request.method === 'POST') {
       const anthropicRequest = await request.json();
-      const bearerToken = request.headers.get("x-api-key");
+      const bearerToken = request.headers.get('x-api-key');
 
       // Select provider and base URL based on environment configuration
       const { provider, baseUrl } = selectProvider(env);
 
       const openaiRequest = formatAnthropicToOpenAI(anthropicRequest, provider, PROVIDER_CONFIGS);
       const openaiResponse = await fetch(`${baseUrl}/chat/completions`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${bearerToken}`,
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${bearerToken}`,
         },
         body: JSON.stringify(openaiRequest),
       });
@@ -206,20 +208,20 @@ export default {
         const anthropicStream = streamOpenAIToAnthropic(openaiResponse.body as ReadableStream, openaiRequest.model);
         return new Response(anthropicStream, {
           headers: {
-            "Content-Type": "text/event-stream",
-            "Cache-Control": "no-cache",
-            "Connection": "keep-alive",
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            Connection: 'keep-alive',
           },
         });
       } else {
         const openaiData = await openaiResponse.json();
         const anthropicResponse = formatOpenAIToAnthropic(openaiData, openaiRequest.model);
         return new Response(JSON.stringify(anthropicResponse), {
-          headers: { "Content-Type": "application/json" }
+          headers: { 'Content-Type': 'application/json' },
         });
       }
     }
-    
+
     return new Response('Not Found', { status: 404 });
-  }
-}
+  },
+};

@@ -23,9 +23,13 @@ export class CanvasRenderer {
   }
 
   // Enhanced gradient creation
-  public createGradient(ctx: CanvasRenderingContext2D, config: GradientConfig, bounds: { x: number; y: number; width: number; height: number }): CanvasGradient {
+  public createGradient(
+    ctx: CanvasRenderingContext2D,
+    config: GradientConfig,
+    bounds: { x: number; y: number; width: number; height: number },
+  ): CanvasGradient {
     let gradient: CanvasGradient;
-    
+
     if (config.type === 'linear') {
       gradient = ctx.createLinearGradient(bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height);
     } else {
@@ -46,9 +50,14 @@ export class CanvasRenderer {
   // Enhanced background rendering with multiple layers
   public renderBackground(renderCtx: RenderContext): void {
     const { ctx, width, height } = renderCtx;
-    
+
     // Base gradient background
-    const bgGradient = this.createGradient(ctx, this.styleManager.getBackgroundGradient(), { x: 0, y: 0, width, height });
+    const bgGradient = this.createGradient(ctx, this.styleManager.getBackgroundGradient(), {
+      x: 0,
+      y: 0,
+      width,
+      height,
+    });
     ctx.fillStyle = bgGradient;
     ctx.fillRect(0, 0, width, height);
 
@@ -63,7 +72,12 @@ export class CanvasRenderer {
     const headerHeight = 200;
 
     // Header gradient
-    const headerGradient = this.createGradient(ctx, this.styleManager.getHeaderGradient(), { x: 0, y: 0, width, height: headerHeight });
+    const headerGradient = this.createGradient(ctx, this.styleManager.getHeaderGradient(), {
+      x: 0,
+      y: 0,
+      width,
+      height: headerHeight,
+    });
     ctx.fillStyle = headerGradient;
     ctx.fillRect(0, 0, width, headerHeight);
 
@@ -92,7 +106,12 @@ export class CanvasRenderer {
     const spacing = this.styleManager.getSpacing();
 
     // Icon background with enhanced gradient
-    const iconGradient = this.createGradient(ctx, this.styleManager.getIconGradient(), { x: x - radius, y: y - radius, width: radius * 2, height: radius * 2 });
+    const iconGradient = this.createGradient(ctx, this.styleManager.getIconGradient(), {
+      x: x - radius,
+      y: y - radius,
+      width: radius * 2,
+      height: radius * 2,
+    });
     ctx.fillStyle = iconGradient;
     this.roundRect(ctx, x - radius, y - radius, radius * 2, radius * 2, this.styleManager.getBorderRadius().xl);
     ctx.fill();
@@ -101,7 +120,14 @@ export class CanvasRenderer {
     ctx.save();
     ctx.globalCompositeOperation = 'multiply';
     ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
-    this.roundRect(ctx, x - radius + 2, y - radius + 2, radius * 2 - 4, radius * 2 - 4, this.styleManager.getBorderRadius().lg);
+    this.roundRect(
+      ctx,
+      x - radius + 2,
+      y - radius + 2,
+      radius * 2 - 4,
+      radius * 2 - 4,
+      this.styleManager.getBorderRadius().lg,
+    );
     ctx.fill();
     ctx.restore();
 
@@ -120,7 +146,7 @@ export class CanvasRenderer {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#0f172a';
-    
+
     // Add subtle text shadow
     ctx.save();
     ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
@@ -131,7 +157,12 @@ export class CanvasRenderer {
   }
 
   // Enhanced difficulty badge rendering
-  public renderDifficultyBadge(renderCtx: RenderContext, difficulty: string, x: number, y: number): { width: number; height: number } {
+  public renderDifficultyBadge(
+    renderCtx: RenderContext,
+    difficulty: string,
+    x: number,
+    y: number,
+  ): { width: number; height: number } {
     const { ctx } = renderCtx;
     const fontSize = this.styleManager.getFontSizes();
     const spacing = this.styleManager.getSpacing();
@@ -173,7 +204,14 @@ export class CanvasRenderer {
   }
 
   // Enhanced tip rendering with better visual hierarchy
-  public renderTip(renderCtx: RenderContext, text: string, x: number, y: number, maxWidth: number, tipType: string = 'tip'): number {
+  public renderTip(
+    renderCtx: RenderContext,
+    text: string,
+    x: number,
+    y: number,
+    maxWidth: number,
+    tipType: string = 'tip',
+  ): number {
     const { ctx } = renderCtx;
     const spacing = this.styleManager.getSpacing();
     const radius = this.styleManager.getBorderRadius();
@@ -206,8 +244,8 @@ export class CanvasRenderer {
     ctx.fillStyle = tipColors.text;
     ctx.font = `${fontSize.body}px ui-sans-serif, -apple-system, system-ui`;
     let textY = y + padding + fontSize.body;
-    
-    lines.forEach((line) => {
+
+    lines.forEach(line => {
       ctx.fillText(line, x + padding + spacing.sm, textY);
       textY += lineHeight;
     });
@@ -305,13 +343,13 @@ export class CanvasRenderer {
     ctx.save();
     ctx.globalAlpha = 0.02;
     ctx.fillStyle = '#000000';
-    
-    for (let i = 0; i < width * height / 10000; i++) {
+
+    for (let i = 0; i < (width * height) / 10000; i++) {
       const x = Math.random() * width;
       const y = Math.random() * height;
       ctx.fillRect(x, y, 1, 1);
     }
-    
+
     ctx.restore();
   }
 
@@ -321,8 +359,8 @@ export class CanvasRenderer {
       const hex = color.slice(1);
       const num = parseInt(hex, 16);
       const r = Math.max(0, Math.min(255, (num >> 16) + factor * 255));
-      const g = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + factor * 255));
-      const b = Math.max(0, Math.min(255, (num & 0x0000FF) + factor * 255));
+      const g = Math.max(0, Math.min(255, ((num >> 8) & 0x00ff) + factor * 255));
+      const b = Math.max(0, Math.min(255, (num & 0x0000ff) + factor * 255));
       return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
     }
     return color;
@@ -345,7 +383,9 @@ export class CanvasRenderer {
       if (ctx.measureText(test).width <= maxWidth) {
         current = test;
       } else {
-        if (current) lines.push(current);
+        if (current) {
+          lines.push(current);
+        }
         current = words[i];
         if (maxLines && lines.length >= maxLines - 1) {
           while (ctx.measureText(current + '…').width > maxWidth && current.length > 0) {
@@ -356,7 +396,9 @@ export class CanvasRenderer {
         }
       }
     }
-    if (current) lines.push(current);
+    if (current) {
+      lines.push(current);
+    }
     return lines;
   }
 

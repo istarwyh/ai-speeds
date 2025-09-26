@@ -83,14 +83,13 @@ function safeBuildClient() {
     console.log(`📝 源文件最后修改: ${new Date(currentSrcModified).toLocaleTimeString()}`);
 
     // 执行实际的构建脚本
-    execSync('node scripts/build-client.js', {
+    execSync('node scripts/build-client.cjs', {
       stdio: 'inherit',
-      cwd: path.resolve(__dirname, '..')
+      cwd: path.resolve(__dirname, '..'),
     });
 
     // 记录构建完成时间
     fs.writeFileSync(LAST_BUILD_FILE, currentTime.toString(), 'utf8');
-
   } catch (error) {
     console.error('❌ 构建失败:', error.message);
     process.exit(1);

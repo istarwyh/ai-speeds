@@ -12,7 +12,7 @@ import securityAuditAgent from '../content/security-audit-agent.md';
 
 export class HowToApplyCCService extends BaseContentService {
   constructor(markdownParser: MarkdownParser) {
-    super(markdownParser, false); // 第二个参数是 disableCache 
+    super(markdownParser, false); // 第二个参数是 disableCache
   }
 
   protected async getContentFromFile(cardId: string): Promise<string> {
@@ -30,7 +30,9 @@ export class HowToApplyCCService extends BaseContentService {
     };
 
     const content = contentMap[cardId];
-    if (content) return content;
+    if (content) {
+      return content;
+    }
 
     throw new Error(`Content not found for cardId: ${cardId}`);
   }
@@ -50,7 +52,7 @@ export class HowToApplyCCService extends BaseContentService {
       'mcp-tools-integration': 'MCP 工具集成',
       'permission-security': '权限与安全控制',
       'sre-agent-example': 'SRE Agent 实践示例',
-      'security-audit-agent': '安全审计 Agent'
+      'security-audit-agent': '安全审计 Agent',
     };
 
     return titles[cardId] || cardId;

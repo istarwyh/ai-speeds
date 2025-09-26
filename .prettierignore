@@ -1,0 +1,20 @@
+# Ignore build outputs
+dist/
+build/
+*.min.js
+*.min.css
+
+# Ignore node modules
+node_modules/
+
+# Ignore generated files
+*.lock
+*.log
+
+# Ignore specific directories
+.wrangler/
+.cache/
+
+# Ignore documentation that shouldn't be formatted
+CHANGELOG.md
+LICENSE

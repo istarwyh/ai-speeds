@@ -38,7 +38,7 @@ export abstract class BaseContentManager<T extends BaseContentCard> {
     eventHandler: IEventHandler,
     navigationHandler: INavigationHandler,
     contentService: IContentService,
-    containerId: string
+    containerId: string,
   ) {
     this.cardRenderer = cardRenderer;
     this.articleRenderer = articleRenderer;

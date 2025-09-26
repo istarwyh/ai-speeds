@@ -22,7 +22,7 @@ export function waitForElement(selector: string, timeout = 5000): Promise<HTMLEl
       return;
     }
 
-    const observer = new MutationObserver((mutations) => {
+    const observer = new MutationObserver(mutations => {
       const element = document.querySelector(selector) as HTMLElement;
       if (element) {
         observer.disconnect();
@@ -32,7 +32,7 @@ export function waitForElement(selector: string, timeout = 5000): Promise<HTMLEl
 
     observer.observe(document.body, {
       childList: true,
-      subtree: true
+      subtree: true,
     });
 
     // 超时处理

@@ -2,22 +2,42 @@
   "name": "aispeeds",
   "version": "1.0.0",
   "main": "index.ts",
+  "type": "module",
   "scripts": {
-    "build:client": "node scripts/build-client-safe.js",
-    "build:client:direct": "node scripts/build-client.js",
+    "build:client": "node scripts/build-client-safe.cjs",
+    "build:client:direct": "node scripts/build-client.cjs",
     "dev": "NODE_ENV=development wrangler dev",
-    "deploy": "NODE_ENV=production wrangler deploy"
+    "deploy": "NODE_ENV=production wrangler deploy",
+    "prepare": "husky",
+    "lint": "eslint . --fix",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
+    "audit": "npm audit --audit-level=moderate"
   },
   "keywords": [],
   "author": "xiaohui",
   "license": "MIT",
   "description": "Make AI Speeds Us and Provide Universal Claude API Proxy",
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@types/markdown-it": "^14.1.2",
+    "@typescript-eslint/eslint-plugin": "^8.44.0",
+    "@typescript-eslint/parser": "^8.44.0",
+    "commitizen": "^4.3.1",
     "esbuild": "^0.19.0",
+    "eslint": "^9.36.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-security": "^3.0.1",
     "highlight.js": "^11.9.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.6",
     "markdown-it": "^13.0.2",
-    "punycode": "^2.3.1"
+    "prettier": "^3.6.2",
+    "punycode": "^2.3.1",
+    "typescript": "^5.9.2"
   },
   "dependencies": {
     "isomorphic-dompurify": "^2.26.0"

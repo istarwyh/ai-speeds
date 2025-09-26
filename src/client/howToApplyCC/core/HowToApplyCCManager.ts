@@ -17,17 +17,17 @@ export class HowToApplyCCManager extends BaseContentManager<SDKCard> {
     const eventHandler = new HowToApplyCCEventHandler(
       'how-to-apply-cc-overview-cards',
       contentService,
-      articleRenderer
+      articleRenderer,
     );
     const navigationHandler = new NavigationHandler();
-    
+
     super(
       cardRenderer,
-      articleRenderer, 
+      articleRenderer,
       eventHandler,
       navigationHandler,
       contentService,
-      'how-to-apply-cc-overview-cards'
+      'how-to-apply-cc-overview-cards',
     );
   }
 

@@ -1,4 +1,8 @@
-import { BaseArticleEventHandler, IArticleRenderer, IContentService } from '../../shared/handlers/BaseArticleEventHandler';
+import {
+  BaseArticleEventHandler,
+  IArticleRenderer,
+  IContentService,
+} from '../../shared/handlers/BaseArticleEventHandler';
 import { bestPracticesCards } from '../data/cardsData';
 import { categoryIcons } from '../data/categoryConfig';
 
@@ -6,17 +10,8 @@ import { categoryIcons } from '../data/categoryConfig';
 const EXIT_ANIMATION_DURATION = 230; // 匹配 CSS 中的动画时长
 
 export class EventHandler extends BaseArticleEventHandler {
-  constructor(
-    containerId: string,
-    contentService: IContentService,
-    articleRenderer: IArticleRenderer
-  ) {
-    super(
-      containerId,
-      contentService,
-      articleRenderer,
-      () => (window as any).initializeBestPractices()
-    );
+  constructor(containerId: string, contentService: IContentService, articleRenderer: IArticleRenderer) {
+    super(containerId, contentService, articleRenderer, () => (window as any).initializeBestPractices());
   }
 
   protected addDebugListeners(container: HTMLElement): void {
@@ -29,17 +24,15 @@ export class EventHandler extends BaseArticleEventHandler {
           targetTag: (e.target as HTMLElement).tagName,
         });
       },
-      true
+      true,
     );
   }
 
   protected async beforeEnterArticle(container: HTMLElement): Promise<void> {
-    const grid = container.querySelector(
-      '.overview-cards-grid'
-    ) as HTMLElement | null;
+    const grid = container.querySelector('.overview-cards-grid') as HTMLElement | null;
     if (grid) {
       grid.classList.add('is-exiting');
-      await new Promise((resolve) => setTimeout(resolve, EXIT_ANIMATION_DURATION));
+      await new Promise(resolve => setTimeout(resolve, EXIT_ANIMATION_DURATION));
     }
   }
 
@@ -49,7 +42,7 @@ export class EventHandler extends BaseArticleEventHandler {
   }
 
   protected resolveCardById(id: string) {
-    return bestPracticesCards.find((c) => c.id === id) || null;
+    return bestPracticesCards.find(c => c.id === id) || null;
   }
 
   protected getIcon(category: string): string {

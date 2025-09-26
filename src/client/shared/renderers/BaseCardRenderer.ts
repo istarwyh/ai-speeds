@@ -8,7 +8,7 @@ export class BaseCardRenderer<T extends BaseContentCard> {
 
   constructor(
     categoryIcons: Record<string, string> = {},
-    difficultyConfig: DifficultyConfig = defaultDifficultyConfig
+    difficultyConfig: DifficultyConfig = defaultDifficultyConfig,
   ) {
     this.categoryIcons = categoryIcons;
     this.difficultyConfig = difficultyConfig;
@@ -20,12 +20,8 @@ export class BaseCardRenderer<T extends BaseContentCard> {
 
   public renderCard(card: T, index?: number): string {
     const icon = this.categoryIcons[card.category] || '📋';
-    const difficultyColor = card.difficulty
-      ? this.difficultyConfig.colors[card.difficulty]
-      : undefined;
-    const difficultyLabel = card.difficulty
-      ? this.difficultyConfig.labels[card.difficulty]
-      : undefined;
+    const difficultyColor = card.difficulty ? this.difficultyConfig.colors[card.difficulty] : undefined;
+    const difficultyLabel = card.difficulty ? this.difficultyConfig.labels[card.difficulty] : undefined;
 
     const sectionsHtml = this.renderSections(card.sections);
 
@@ -35,13 +31,9 @@ export class BaseCardRenderer<T extends BaseContentCard> {
             </span>`
       : '';
 
-    const readTimeHtml = card.readTime
-      ? `<span class="overview-card__read-time">📖 ${card.readTime}</span>`
-      : '';
+    const readTimeHtml = card.readTime ? `<span class="overview-card__read-time">📖 ${card.readTime}</span>` : '';
 
-    const overviewHtml = card.overview
-      ? `<div class="overview-card__overview">${card.overview}</div>`
-      : '';
+    const overviewHtml = card.overview ? `<div class="overview-card__overview">${card.overview}</div>` : '';
 
     const sectionsBlockHtml = sectionsHtml
       ? `<div class="overview-card__sections">
@@ -52,19 +44,14 @@ export class BaseCardRenderer<T extends BaseContentCard> {
           </div>`
       : '';
 
-    const descriptionHtml = card.description
-      ? `<p class="overview-card__description">${card.description}</p>`
-      : '';
+    const descriptionHtml = card.description ? `<p class="overview-card__description">${card.description}</p>` : '';
 
-    const versionHtml = card.version
-      ? `<span class="overview-card__version">v${card.version}</span>`
-      : '';
+    const versionHtml = card.version ? `<span class="overview-card__version">v${card.version}</span>` : '';
     const updatedHtml = card.lastUpdated
       ? `<span class="overview-card__updated">更新于 ${card.lastUpdated}</span>`
       : '';
-    const metaInfoHtml = versionHtml || updatedHtml
-      ? `<div class="overview-card__meta-info">${versionHtml}${updatedHtml}</div>`
-      : '';
+    const metaInfoHtml =
+      versionHtml || updatedHtml ? `<div class="overview-card__meta-info">${versionHtml}${updatedHtml}</div>` : '';
 
     const coverHtml = card.imageUrl
       ? `<div class="overview-card__cover"><img src="${card.imageUrl}" alt="${card.title}" loading="lazy" decoding="async" fetchpriority="low" /></div>`
@@ -113,24 +100,36 @@ export class BaseCardRenderer<T extends BaseContentCard> {
   }
 
   protected renderSections(sections?: ContentSection[]): string {
-    if (!sections || sections.length === 0) return '';
-    return sections.map(section => `
+    if (!sections || sections.length === 0) {
+      return '';
+    }
+    return sections
+      .map(
+        section => `
       <li class="overview-card__section-item">
         <span class="overview-card__section-title">${section.title}</span>
         <span class="overview-card__section-content">${section.content}</span>
       </li>
-    `).join('');
+    `,
+      )
+      .join('');
   }
 
   protected renderTips(tips?: ContentTip[]): string {
-    if (!tips || tips.length === 0) return '';
-    
-    return tips.map(tip => `
+    if (!tips || tips.length === 0) {
+      return '';
+    }
+
+    return tips
+      .map(
+        tip => `
       <div class="overview-card__tip overview-card__tip--${tip.type}">
         <strong class="overview-card__tip-title">${tip.title}:</strong>
         <span class="overview-card__tip-content">${tip.content}</span>
       </div>
-    `).join('');
+    `,
+      )
+      .join('');
   }
 
   protected renderTipsBlock(tips?: ContentTip[]): string {
@@ -139,10 +138,16 @@ export class BaseCardRenderer<T extends BaseContentCard> {
   }
 
   protected renderTags(tags?: string[]): string {
-    if (!tags || tags.length === 0) return '';
-    return tags.map(tag => `
+    if (!tags || tags.length === 0) {
+      return '';
+    }
+    return tags
+      .map(
+        tag => `
       <span class="overview-card__tag">${tag}</span>
-    `).join('');
+    `,
+      )
+      .join('');
   }
 
   protected renderTagsBlock(tags?: string[]): string {

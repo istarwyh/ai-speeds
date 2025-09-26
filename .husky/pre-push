@@ -1,0 +1,29 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Pre-push security and quality checks
+echo "🚀 Running pre-push checks..."
+
+# Type checking
+echo "🔍 Running TypeScript checks..."
+npm run typecheck
+
+# Security audit
+echo "🔒 Running security audit..."
+npm run audit
+
+# Final build verification
+echo "🏗️  Final build verification..."
+npm run build:client
+
+# Enhanced security scan
+echo "🔒 Enhanced security scanning..."
+if command -v detect-secrets >/dev/null 2>&1; then
+    detect-secrets scan --baseline .secrets.baseline .
+fi
+
+# Dependency vulnerability check
+echo "🛡️  Checking for vulnerabilities..."
+npm audit --audit-level=high
+
+echo "✅ Pre-push checks passed!"

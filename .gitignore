@@ -179,3 +179,4 @@ shared/scripts/generated/
 # Build lock files
 .build-lock
 .last-build-time
+.last-build-time

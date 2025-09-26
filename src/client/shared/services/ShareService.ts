@@ -39,9 +39,7 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
 
   public async shareCard(card: T): Promise<ShareResult> {
     const canvas = await this.renderCanvas(card);
-    const blob = await new Promise<Blob>((resolve) =>
-      canvas.toBlob((b) => resolve(b as Blob), 'image/png', 0.95)
-    );
+    const blob = await new Promise<Blob>(resolve => canvas.toBlob(b => resolve(b as Blob), 'image/png', 0.95));
     try {
       // ClipboardItem may not exist in Safari
       // @ts-ignore
@@ -78,13 +76,16 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
     const baseSize = this.layoutCalculator.computeCanvasSize(opts?.matchElement);
 
     // Measure content height to ensure no clipping
-    const measuredHeight = await this.layoutCalculator.measureContentHeight(card, baseSize.width, pageImageInfo, this.getIcon);
+    const measuredHeight = await this.layoutCalculator.measureContentHeight(
+      card,
+      baseSize.width,
+      pageImageInfo,
+      this.getIcon,
+    );
     const finalSize = { width: baseSize.width, height: Math.max(baseSize.height, measuredHeight) };
 
     const canvas = await this.renderCanvas(card, finalSize, pageImageInfo);
-    const blob = await new Promise<Blob>((resolve) =>
-      canvas.toBlob((b) => resolve(b as Blob), 'image/png', 0.95)
-    );
+    const blob = await new Promise<Blob>(resolve => canvas.toBlob(b => resolve(b as Blob), 'image/png', 0.95));
 
     const overlay = document.createElement('div');
     overlay.className = 'share-preview-overlay';
@@ -143,8 +144,10 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
     const cleanup = () => overlay.remove();
 
     // Close interactions
-    overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) cleanup();
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) {
+        cleanup();
+      }
     });
     header.querySelector('.share-preview-close')?.addEventListener('click', cleanup);
     const onKey = (e: KeyboardEvent) => {
@@ -214,18 +217,16 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
     URL.revokeObjectURL(url);
   }
 
-  private async renderCanvas(
-    card: T,
-    size?: CanvasSize,
-    pageImageInfo?: ImageDisplayInfo
-  ): Promise<HTMLCanvasElement> {
+  private async renderCanvas(card: T, size?: CanvasSize, pageImageInfo?: ImageDisplayInfo): Promise<HTMLCanvasElement> {
     const canvas = document.createElement('canvas');
     const finalSize = size ?? this.layoutCalculator.defaultCanvasSize;
     canvas.width = finalSize.width;
     canvas.height = finalSize.height;
 
     // Ensure fonts loaded for consistent rendering
-    try { await (document as any).fonts?.ready; } catch {}
+    try {
+      await (document as any).fonts?.ready;
+    } catch {}
 
     // Use the new CompactRenderer for improved layout
     await this.compactRenderer.renderCard(card, canvas, this.getIcon, pageImageInfo);
@@ -233,61 +234,64 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
     return canvas;
   }
 
-
   // 分析页面中图片的实际显示尺寸和比例
-  private analyzePageImageDisplay(matchEl?: HTMLElement, imageUrl?: string): {
+  private analyzePageImageDisplay(
+    matchEl?: HTMLElement,
+    imageUrl?: string,
+  ): {
     pageImageAspect?: number;
     pageImageWidth?: number;
     pageImageHeight?: number;
   } {
     try {
-      if (!matchEl || !imageUrl) return {};
-      
+      if (!matchEl || !imageUrl) {
+        return {};
+      }
+
       const coverEl = matchEl.querySelector('.overview-card__cover') as HTMLElement;
       const imgEl = coverEl?.querySelector('img') as HTMLImageElement;
-      
+
       if (imgEl && imgEl.complete && imgEl.naturalWidth > 0) {
         const rect = imgEl.getBoundingClientRect();
         const pageImageAspect = rect.height / rect.width;
-        
+
         // 确保获取的是有效的显示尺寸
         if (rect.width > 0 && rect.height > 0) {
           if (process.env.NODE_ENV === 'development') {
-            console.debug(`Page image display analysis:`, {
+            console.debug('Page image display analysis:', {
               naturalSize: `${imgEl.naturalWidth}x${imgEl.naturalHeight}`,
               displaySize: `${rect.width.toFixed(1)}x${rect.height.toFixed(1)}`,
               pageAspect: pageImageAspect.toFixed(3),
               naturalAspect: (imgEl.naturalHeight / imgEl.naturalWidth).toFixed(3),
-              cssStyle: `height: ${getComputedStyle(imgEl).height}, object-fit: ${getComputedStyle(imgEl).objectFit}`
+              cssStyle: `height: ${getComputedStyle(imgEl).height}, object-fit: ${getComputedStyle(imgEl).objectFit}`,
             });
           }
-          
+
           return {
             pageImageAspect,
             pageImageWidth: rect.width,
-            pageImageHeight: rect.height
+            pageImageHeight: rect.height,
           };
         }
       }
-      
+
       // 如果图片还没有加载完成，等待一下再尝试
       if (imgEl && !imgEl.complete) {
         if (process.env.NODE_ENV === 'development') {
           console.debug('Image not fully loaded, analysis may be incomplete');
         }
       }
-      
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Failed to analyze page image display:', error);
       }
     }
-    
+
     return {};
   }
 
   private async loadImage(url: string): Promise<HTMLImageElement> {
-    await new Promise<void>((resolve) => setTimeout(resolve, 0)); // yield
+    await new Promise<void>(resolve => setTimeout(resolve, 0)); // yield
     return new Promise<HTMLImageElement>((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
@@ -312,7 +316,9 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
 
   private buildDeepLink(card: T): string {
     try {
-      if (this.options.deepLinkBuilder) return this.options.deepLinkBuilder(card);
+      if (this.options.deepLinkBuilder) {
+        return this.options.deepLinkBuilder(card);
+      }
       const url = new URL(window.location.href);
       const moduleName = this.options.moduleName || 'best-practices';
       url.searchParams.set('module', moduleName);

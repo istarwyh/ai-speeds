@@ -5,29 +5,29 @@ import { SafeMarkdownRenderer } from '../../lib/utils/markdownRenderer';
  * 提供安全的 Markdown 渲染和显示功能
  */
 export class MarkdownViewer {
-    private container: HTMLElement;
-    private renderer: SafeMarkdownRenderer;
-    private loadingElement: HTMLElement;
-    private errorElement: HTMLElement;
-    private contentElement: HTMLElement;
+  private container: HTMLElement;
+  private renderer: SafeMarkdownRenderer;
+  private loadingElement: HTMLElement;
+  private errorElement: HTMLElement;
+  private contentElement: HTMLElement;
 
-    constructor(containerId: string) {
-        const container = document.getElementById(containerId);
-        if (!container) {
-            throw new Error(`Container with id "${containerId}" not found`);
-        }
-        this.container = container;
-
-        this.renderer = new SafeMarkdownRenderer();
-        this.initializeElements();
-        this.addStyles();
+  constructor(containerId: string) {
+    const container = document.getElementById(containerId);
+    if (!container) {
+      throw new Error(`Container with id "${containerId}" not found`);
     }
+    this.container = container;
 
-    /**
-     * 初始化 DOM 元素
-     */
-    private initializeElements(): void {
-        this.container.innerHTML = `
+    this.renderer = new SafeMarkdownRenderer();
+    this.initializeElements();
+    this.addStyles();
+  }
+
+  /**
+   * 初始化 DOM 元素
+   */
+  private initializeElements(): void {
+    this.container.innerHTML = `
             <div class="markdown-viewer">
                 <div class="loading" style="display: none;">
                     <div class="loading-spinner"></div>
@@ -40,28 +40,30 @@ export class MarkdownViewer {
             </div>
         `;
 
-        const loadingElement = this.container.querySelector('.loading') as HTMLElement;
-        const errorElement = this.container.querySelector('.error') as HTMLElement;
-        const contentElement = this.container.querySelector('.content') as HTMLElement;
-        
-        if (!loadingElement || !errorElement || !contentElement) {
-            throw new Error('Required elements not found in container');
-        }
-        
-        this.loadingElement = loadingElement;
-        this.errorElement = errorElement;
-        this.contentElement = contentElement;
+    const loadingElement = this.container.querySelector('.loading') as HTMLElement;
+    const errorElement = this.container.querySelector('.error') as HTMLElement;
+    const contentElement = this.container.querySelector('.content') as HTMLElement;
+
+    if (!loadingElement || !errorElement || !contentElement) {
+      throw new Error('Required elements not found in container');
     }
 
-    /**
-     * 添加样式
-     */
-    private addStyles(): void {
-        if (document.getElementById('markdown-viewer-styles')) return;
+    this.loadingElement = loadingElement;
+    this.errorElement = errorElement;
+    this.contentElement = contentElement;
+  }
 
-        const style = document.createElement('style');
-        style.id = 'markdown-viewer-styles';
-        style.textContent = `
+  /**
+   * 添加样式
+   */
+  private addStyles(): void {
+    if (document.getElementById('markdown-viewer-styles')) {
+      return;
+    }
+
+    const style = document.createElement('style');
+    style.id = 'markdown-viewer-styles';
+    style.textContent = `
             .markdown-viewer {
                 width: 100%;
                 height: 100%;
@@ -274,103 +276,103 @@ export class MarkdownViewer {
                 border-radius: 6px;
             }
         `;
-        document.head.appendChild(style);
-    }
+    document.head.appendChild(style);
+  }
 
-    /**
-     * 显示加载状态
-     */
-    showLoading(): void {
-        this.loadingElement.style.display = 'flex';
-        this.errorElement.style.display = 'none';
-        this.contentElement.style.display = 'none';
-    }
+  /**
+   * 显示加载状态
+   */
+  showLoading(): void {
+    this.loadingElement.style.display = 'flex';
+    this.errorElement.style.display = 'none';
+    this.contentElement.style.display = 'none';
+  }
 
-    /**
-     * 显示错误状态
-     */
-    showError(message?: string): void {
-        this.loadingElement.style.display = 'none';
-        this.errorElement.style.display = 'flex';
-        this.contentElement.style.display = 'none';
-        
-        if (message) {
-            const errorMsg = this.errorElement.querySelector('.error-message');
-            if (errorMsg) {
-                errorMsg.textContent = message;
-            }
-        }
-    }
+  /**
+   * 显示错误状态
+   */
+  showError(message?: string): void {
+    this.loadingElement.style.display = 'none';
+    this.errorElement.style.display = 'flex';
+    this.contentElement.style.display = 'none';
 
-    /**
-     * 显示内容
-     */
-    showContent(): void {
-        this.loadingElement.style.display = 'none';
-        this.errorElement.style.display = 'none';
-        this.contentElement.style.display = 'block';
+    if (message) {
+      const errorMsg = this.errorElement.querySelector('.error-message');
+      if (errorMsg) {
+        errorMsg.textContent = message;
+      }
     }
+  }
 
-    /**
-     * 渲染 Markdown 内容
-     */
-    renderMarkdown(markdown: string): void {
-        try {
-            this.showLoading();
-            
-            // 使用安全的渲染器
-            const html = this.renderer.render(markdown);
-            this.contentElement.innerHTML = html;
-            
-            // 应用代码高亮
-            this.renderer.highlightCode(this.contentElement);
-            
-            this.showContent();
-        } catch (error) {
-            console.error('Markdown rendering error:', error);
-            this.showError('渲染失败，请检查内容格式');
-        }
-    }
+  /**
+   * 显示内容
+   */
+  showContent(): void {
+    this.loadingElement.style.display = 'none';
+    this.errorElement.style.display = 'none';
+    this.contentElement.style.display = 'block';
+  }
 
-    /**
-     * 从 URL 加载 Markdown 内容
-     */
-    async loadFromUrl(url: string): Promise<void> {
-        try {
-            this.showLoading();
-            
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            const markdown = await response.text();
-            this.renderMarkdown(markdown);
-        } catch (error) {
-            console.error('Failed to load markdown from URL:', error);
-            this.showError('加载失败，请检查网络连接或文件路径');
-        }
-    }
+  /**
+   * 渲染 Markdown 内容
+   */
+  renderMarkdown(markdown: string): void {
+    try {
+      this.showLoading();
 
-    /**
-     * 清空内容
-     */
-    clear(): void {
-        this.contentElement.innerHTML = '';
-        this.showContent();
-    }
+      // 使用安全的渲染器
+      const html = this.renderer.render(markdown);
+      this.contentElement.innerHTML = html;
 
-    /**
-     * 获取渲染后的 HTML
-     */
-    getRenderedHtml(): string {
-        return this.contentElement.innerHTML;
+      // 应用代码高亮
+      this.renderer.highlightCode(this.contentElement);
+
+      this.showContent();
+    } catch (error) {
+      console.error('Markdown rendering error:', error);
+      this.showError('渲染失败，请检查内容格式');
     }
+  }
+
+  /**
+   * 从 URL 加载 Markdown 内容
+   */
+  async loadFromUrl(url: string): Promise<void> {
+    try {
+      this.showLoading();
+
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const markdown = await response.text();
+      this.renderMarkdown(markdown);
+    } catch (error) {
+      console.error('Failed to load markdown from URL:', error);
+      this.showError('加载失败，请检查网络连接或文件路径');
+    }
+  }
+
+  /**
+   * 清空内容
+   */
+  clear(): void {
+    this.contentElement.innerHTML = '';
+    this.showContent();
+  }
+
+  /**
+   * 获取渲染后的 HTML
+   */
+  getRenderedHtml(): string {
+    return this.contentElement.innerHTML;
+  }
 }
 
 /**
  * 创建 Markdown 查看器实例
  */
 export function createMarkdownViewer(containerId: string): MarkdownViewer {
-    return new MarkdownViewer(containerId);
+  return new MarkdownViewer(containerId);
 }

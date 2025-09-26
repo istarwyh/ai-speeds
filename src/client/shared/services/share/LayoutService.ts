@@ -37,7 +37,7 @@ export class LayoutService {
   public calculateLayout<T extends BaseContentCard>(
     card: T,
     constraints: LayoutConstraints,
-    pageImageInfo?: { pageImageAspect?: number; pageImageWidth?: number; pageImageHeight?: number }
+    pageImageInfo?: { pageImageAspect?: number; pageImageWidth?: number; pageImageHeight?: number },
   ): LayoutPlan {
     const { maxWidth, minHeight } = constraints;
     const contentWidth = maxWidth - this.basePadding * 2;
@@ -64,7 +64,7 @@ export class LayoutService {
     }
 
     // 4. 提示框区域
-    const tips = (card.tips || []);
+    const tips = card.tips || [];
     if (tips.length > 0) {
       const tipsSection = this.calculateTipsSection(tips, contentWidth, currentY);
       sections.push(tipsSection);
@@ -84,7 +84,7 @@ export class LayoutService {
       sections,
       totalHeight,
       contentWidth,
-      padding: this.basePadding
+      padding: this.basePadding,
     };
   }
 
@@ -92,24 +92,24 @@ export class LayoutService {
   private calculateHeaderSection<T extends BaseContentCard>(
     card: T,
     contentWidth: number,
-    startY: number
+    startY: number,
   ): LayoutSection {
     const iconSize = 64; // 稍微增大图标
     const titleFontSize = this.styleManager.getFontSizes().title;
     const spacing = this.styleManager.getSpacing();
-    
+
     // 标题区域宽度（为图标和间距预留空间）
     const titleAreaWidth = contentWidth - iconSize - spacing.lg;
-    
+
     // 估算标题行数（简化计算）
     const avgCharWidth = titleFontSize * 0.6;
     const titleLength = (card.title || '').length;
     const estimatedTitleLines = Math.ceil((titleLength * avgCharWidth) / titleAreaWidth);
     const titleHeight = Math.min(estimatedTitleLines, 2) * (titleFontSize + 8);
-    
+
     // 不再展示元信息（难度标签、阅读时间），不预留高度
     const metaHeight = 0;
-    
+
     // 头部总高度 = 图标高度和(标题高度 + 元信息高度)的最大值
     const headerHeight = Math.max(iconSize, titleHeight + metaHeight + spacing.sm);
 
@@ -121,8 +121,8 @@ export class LayoutService {
         iconSize,
         titleAreaWidth,
         titleHeight,
-        metaHeight
-      }
+        metaHeight,
+      },
     };
   }
 
@@ -130,17 +130,17 @@ export class LayoutService {
   private calculateContentSection<T extends BaseContentCard>(
     card: T,
     contentWidth: number,
-    startY: number
+    startY: number,
   ): LayoutSection {
     const fontSize = this.styleManager.getFontSizes().body;
     const lineHeight = fontSize + 8;
     const maxLines = 4; // 限制最大行数，保持紧凑
-    
+
     const text = (card as any).description || (card as any).overview || '';
     const avgCharWidth = fontSize * 0.5;
     const estimatedLines = Math.ceil((text.length * avgCharWidth) / contentWidth);
     const actualLines = Math.min(estimatedLines, maxLines);
-    
+
     const contentHeight = actualLines * lineHeight;
 
     return {
@@ -151,8 +151,8 @@ export class LayoutService {
         text,
         maxLines,
         fontSize,
-        lineHeight
-      }
+        lineHeight,
+      },
     };
   }
 
@@ -161,7 +161,7 @@ export class LayoutService {
     card: T,
     contentWidth: number,
     startY: number,
-    pageImageInfo?: { pageImageAspect?: number; pageImageWidth?: number; pageImageHeight?: number }
+    pageImageInfo?: { pageImageAspect?: number; pageImageWidth?: number; pageImageHeight?: number },
   ): LayoutSection {
     let imageHeight = 240; // 默认高度
 
@@ -172,7 +172,7 @@ export class LayoutService {
       // 使用16:9的比例作为默认值，这是一个常见且美观的比例
       imageHeight = Math.round(contentWidth * (9 / 16));
     }
-    
+
     // 限制最大和最小高度，避免极端比例
     imageHeight = Math.max(180, Math.min(400, imageHeight));
 
@@ -183,33 +183,29 @@ export class LayoutService {
       content: {
         imageUrl: (card as any).imageUrl,
         aspectRatio: pageImageInfo?.pageImageAspect,
-        fillWidth: true // 新增：标记图片需要占满整个宽度
-      }
+        fillWidth: true, // 新增：标记图片需要占满整个宽度
+      },
     };
   }
 
   // 提示框区域：紧凑排列
-  private calculateTipsSection(
-    tips: any[],
-    contentWidth: number,
-    startY: number
-  ): LayoutSection {
+  private calculateTipsSection(tips: any[], contentWidth: number, startY: number): LayoutSection {
     // 提升字体大小与行高，避免“被压缩”的观感
     const fontSize = this.styleManager.getFontSizes().caption + 2; // 26px
     const lineHeight = Math.round(fontSize * 1.5); // 更舒展的行距，避免压缩感
     const tipPadding = this.styleManager.getSpacing().md;
     const tipGap = this.styleManager.getSpacing().md; // 增大提示之间的间距
-    
+
     let totalHeight = 0;
-    
-    tips.forEach((tip) => {
+
+    tips.forEach(tip => {
       const text = tip.title + '：' + tip.content;
       const avgCharWidth = fontSize * 0.5;
       const estimatedLines = Math.ceil((text.length * avgCharWidth) / (contentWidth - tipPadding * 2));
       const tipHeight = estimatedLines * lineHeight + tipPadding * 2;
       totalHeight += tipHeight + tipGap;
     });
-    
+
     totalHeight -= tipGap; // 移除最后一个间距
 
     return {
@@ -221,22 +217,18 @@ export class LayoutService {
         fontSize,
         lineHeight,
         tipPadding,
-        tipGap
-      }
+        tipGap,
+      },
     };
   }
 
   // 标签区域：紧凑的标签布局
-  private calculateTagsSection(
-    tags: string[],
-    contentWidth: number,
-    startY: number
-  ): LayoutSection {
+  private calculateTagsSection(tags: string[], contentWidth: number, startY: number): LayoutSection {
     const fontSize = this.styleManager.getFontSizes().small;
     const tagHeight = 32;
     const tagPadding = this.styleManager.getSpacing().sm;
     const tagGap = this.styleManager.getSpacing().xs;
-    
+
     // 简化计算：假设标签会换行
     const avgTagWidth = fontSize * 6; // 平均标签宽度估算
     const tagsPerLine = Math.floor(contentWidth / (avgTagWidth + tagGap));
@@ -250,8 +242,8 @@ export class LayoutService {
       content: {
         tags,
         tagHeight,
-        fontSize
-      }
+        fontSize,
+      },
     };
   }
 
@@ -260,7 +252,7 @@ export class LayoutService {
     contentWidth: number,
     startY: number,
     totalWidth: number,
-    tags: string[]
+    tags: string[],
   ): LayoutSection {
     const spacing = this.styleManager.getSpacing();
     const qrSize = 120; // QR码尺寸
@@ -289,9 +281,7 @@ export class LayoutService {
     const brandTagsGap = 30;
 
     // 整个左列内容高度
-    const leftColumnHeight = tags.length > 0
-      ? brandHeight + brandTagsGap + tagsHeight
-      : brandHeight;
+    const leftColumnHeight = tags.length > 0 ? brandHeight + brandTagsGap + tagsHeight : brandHeight;
 
     // Footer 高度取左列与右侧 QR 的最大值，加上下内边距
     const footerHeight = Math.max(qrSize, leftColumnHeight) + footerTopPad + footerBottomPad;
@@ -312,8 +302,8 @@ export class LayoutService {
         footerXPad,
         footerTopPad,
         footerBottomPad,
-        layout: 'horizontal'
-      }
+        layout: 'horizontal',
+      },
     };
   }
 
@@ -324,7 +314,7 @@ export class LayoutService {
       sectionGap: this.sectionGap,
       elementGap: this.elementGap,
       tightGap: 8, // 紧密间距
-      microGap: 4  // 微小间距
+      microGap: 4, // 微小间距
     };
   }
 
@@ -337,7 +327,7 @@ export class LayoutService {
       body: baseFontSize.body - 2, // 稍微减小正文字体
       caption: baseFontSize.caption,
       small: baseFontSize.small,
-      micro: 18 // 新增微小字体
+      micro: 18, // 新增微小字体
     };
   }
 
@@ -345,45 +335,45 @@ export class LayoutService {
   public calculateResponsiveSize(
     baseWidth: number,
     baseHeight: number,
-    targetWidth: number
+    targetWidth: number,
   ): { width: number; height: number } {
     const scale = targetWidth / baseWidth;
     return {
       width: targetWidth,
-      height: Math.round(baseHeight * scale)
+      height: Math.round(baseHeight * scale),
     };
   }
 
   // 验证布局是否合理
   public validateLayout(layout: LayoutPlan): { valid: boolean; issues: string[] } {
     const issues: string[] = [];
-    
+
     // 检查高度是否合理
     if (layout.totalHeight > 2000) {
       issues.push('布局高度过大，可能影响加载性能');
     }
-    
+
     if (layout.totalHeight < 800) {
       issues.push('布局高度过小，可能显示不完整');
     }
-    
+
     // 检查段落间距是否一致
     const gaps: number[] = [];
     for (let i = 1; i < layout.sections.length; i++) {
-      const gap = layout.sections[i].y - (layout.sections[i-1].y + layout.sections[i-1].height);
+      const gap = layout.sections[i].y - (layout.sections[i - 1].y + layout.sections[i - 1].height);
       gaps.push(gap);
     }
-    
+
     const avgGap = gaps.reduce((a, b) => a + b, 0) / gaps.length;
     const hasInconsistentGaps = gaps.some(gap => Math.abs(gap - avgGap) > 8);
-    
+
     if (hasInconsistentGaps) {
       issues.push('段落间距不一致，影响视觉连贯性');
     }
 
     return {
       valid: issues.length === 0,
-      issues
+      issues,
     };
   }
 }

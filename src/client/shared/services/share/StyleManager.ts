@@ -16,10 +16,14 @@ export class StyleManager {
   // Difficulty color mapping
   public getDifficultyColor(difficulty: string): string {
     switch (difficulty) {
-      case 'beginner': return '#10b981'; // emerald-500
-      case 'intermediate': return '#f59e0b'; // amber-500
-      case 'expert': return '#a855f7'; // purple-500
-      default: return '#6b7280'; // gray-500
+      case 'beginner':
+        return '#10b981'; // emerald-500
+      case 'intermediate':
+        return '#f59e0b'; // amber-500
+      case 'expert':
+        return '#a855f7'; // purple-500
+      default:
+        return '#6b7280'; // gray-500
     }
   }
 
@@ -27,35 +31,35 @@ export class StyleManager {
   public getTipColors(tipType: string): ColorScheme {
     switch (tipType) {
       case 'success':
-        return { 
-          background: 'rgba(16, 185, 129, 0.08)', 
+        return {
+          background: 'rgba(16, 185, 129, 0.08)',
           border: '#10b981',
-          text: '#065f46'
+          text: '#065f46',
         };
       case 'info':
-        return { 
-          background: 'rgba(59, 130, 246, 0.08)', 
+        return {
+          background: 'rgba(59, 130, 246, 0.08)',
           border: '#3b82f6',
-          text: '#1e40af'
+          text: '#1e40af',
         };
       case 'warning':
-        return { 
-          background: 'rgba(245, 158, 11, 0.08)', 
+        return {
+          background: 'rgba(245, 158, 11, 0.08)',
           border: '#f59e0b',
-          text: '#92400e'
+          text: '#92400e',
         };
       case 'expert':
-        return { 
-          background: 'rgba(168, 85, 247, 0.08)', 
+        return {
+          background: 'rgba(168, 85, 247, 0.08)',
           border: '#a855f7',
-          text: '#6b21a8'
+          text: '#6b21a8',
         };
       case 'tip':
       default:
-        return { 
-          background: 'rgba(6, 182, 212, 0.08)', 
+        return {
+          background: 'rgba(6, 182, 212, 0.08)',
           border: '#06b6d4',
-          text: '#0e7490'
+          text: '#0e7490',
         };
     }
   }
@@ -65,7 +69,7 @@ export class StyleManager {
     return {
       type: 'linear',
       colors: ['#ffffff', '#fafbfc', '#f8fafc'],
-      stops: [0, 0.6, 1]
+      stops: [0, 0.6, 1],
     };
   }
 
@@ -73,7 +77,7 @@ export class StyleManager {
     return {
       type: 'linear',
       colors: ['#f0f9ff', '#e0f2fe', '#f1f5f9'],
-      stops: [0, 0.5, 1]
+      stops: [0, 0.5, 1],
     };
   }
 
@@ -81,7 +85,7 @@ export class StyleManager {
     return {
       type: 'radial',
       colors: ['#ffffff', '#e0f2fe', '#bae6fd'],
-      stops: [0, 0.7, 1]
+      stops: [0, 0.7, 1],
     };
   }
 
@@ -92,7 +96,7 @@ export class StyleManager {
       primaryLight: '#38bdf8', // sky-400
       accent: '#0284c7', // sky-600
       background: 'rgba(14, 165, 233, 0.08)',
-      text: '#0ea5e9'
+      text: '#0ea5e9',
     };
   }
 
@@ -103,7 +107,7 @@ export class StyleManager {
       subtitle: 32,
       body: 28,
       caption: 24,
-      small: 20
+      small: 20,
     };
   }
 
@@ -115,7 +119,7 @@ export class StyleManager {
       md: 16,
       lg: 24,
       xl: 32,
-      xxl: 48
+      xxl: 48,
     };
   }
 
@@ -126,7 +130,7 @@ export class StyleManager {
       md: 12,
       lg: 16,
       xl: 20,
-      xxl: 24
+      xxl: 24,
     };
   }
 
@@ -135,7 +139,7 @@ export class StyleManager {
     return {
       subtle: 'rgba(0, 0, 0, 0.05)',
       medium: 'rgba(0, 0, 0, 0.1)',
-      strong: 'rgba(0, 0, 0, 0.15)'
+      strong: 'rgba(0, 0, 0, 0.15)',
     };
   }
 
@@ -148,10 +152,14 @@ export class StyleManager {
   // Difficulty text mapping
   public mapDifficulty(difficulty: string): string {
     switch (difficulty) {
-      case 'beginner': return '入门';
-      case 'intermediate': return '进阶';
-      case 'expert': return '专家';
-      default: return difficulty;
+      case 'beginner':
+        return '入门';
+      case 'intermediate':
+        return '进阶';
+      case 'expert':
+        return '专家';
+      default:
+        return difficulty;
     }
   }
 }

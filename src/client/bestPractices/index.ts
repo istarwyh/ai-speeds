@@ -5,7 +5,9 @@ import { loadHighlightJsStyle } from '../../lib/utils/highlight';
 // 全局初始化函数
 function initializeBestPractices() {
   // 确保加载高亮主题样式（异步注入，不阻塞初始化）
-  try { loadHighlightJsStyle(); } catch {}
+  try {
+    loadHighlightJsStyle();
+  } catch {}
   initializeApp(() => {
     const manager = new BestPracticesManager();
     manager.initialize();
