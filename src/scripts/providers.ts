@@ -24,6 +24,16 @@ function scrollToProvider(providerId) {
       providerCard.classList.remove('highlighted');
     }, 3000);
   }
+
+  // 同步更新下方供应商详情与环境配置
+  if (typeof window !== 'undefined' && typeof window.showProviderDetails === 'function') {
+    try {
+      // 打开并渲染供应商详情，这也会触发配置区域更新（见 providerDetails.ts）
+      window.showProviderDetails(providerId);
+    } catch (e) {
+      console.warn('Failed to open provider details for', providerId, e);
+    }
+  }
 }
 
 // 复制到剪贴板

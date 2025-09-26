@@ -172,6 +172,9 @@ export function showProviderDetails(providerId: string): void {
 
   detailsElement.style.display = 'block';
   detailsElement.scrollIntoView({ behavior: 'smooth' });
+
+  // 同步更新环境配置区域
+  updateConfigForProvider(provider);
 }
 
 // 隐藏供应商详情的函数
@@ -188,4 +191,41 @@ if (typeof window !== 'undefined') {
     showProviderDetails;
   (window as { showProviderDetails?: unknown; hideProviderDetails?: unknown }).hideProviderDetails =
     hideProviderDetails;
+}
+
+// 根据所选供应商更新“Configure Environment”配置片段
+function updateConfigForProvider(provider: Provider): void {
+  const container = document.getElementById('config-content');
+  if (!container) {
+    return;
+  }
+
+  // 构建环境变量导出内容
+  const exportLines: string[] = [];
+
+  if (provider.specialConfig?.envVars && Object.keys(provider.specialConfig.envVars).length > 0) {
+    // 使用每个供应商的专用环境变量
+    for (const [key, val] of Object.entries(provider.specialConfig.envVars)) {
+      exportLines.push(`export ${key}="${val}"`);
+    }
+  } else {
+    // 通用规则：有代理地址则使用 BASE_URL，并提供令牌变量占位
+    if (provider.proxyUrl) {
+      exportLines.push(`export ANTHROPIC_BASE_URL="${provider.proxyUrl}"`);
+    }
+
+    // 令牌变量默认采用 ANTHROPIC_AUTH_TOKEN（部分平台为 ANTHROPIC_API_KEY，已在 specialConfig 覆盖）
+    exportLines.push('export ANTHROPIC_AUTH_TOKEN="your-api-key"');
+  }
+
+  const code = exportLines.join('\n');
+
+  const html = `
+    <div class="config-tab">
+      <strong>For ${provider.displayName}:</strong>
+      <div class="code-block"><pre><code>${code}</code></pre></div>
+    </div>
+  `;
+
+  container.innerHTML = html;
 }
