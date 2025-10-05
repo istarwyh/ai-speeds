@@ -12,8 +12,10 @@ async function buildClientScripts() {
   console.log('🔨 开始构建客户端脚本...');
 
   try {
-    // 先生成最佳实践内容映射（SSOT）
+    // 先生成所有模块的内容映射（SSOT）
     await generateBestPracticesContentMap();
+    await generateHowToImplementContentMap();
+    await generateHowToApplyCCContentMap();
 
     // 构建最佳实践模块
     await buildBestPracticesModule();
@@ -122,19 +124,19 @@ export const ${exportName} = ${JSON.stringify(bundledCode)};
 }
 
 /**
- * 生成最佳实践内容映射文件（SSOT）
- * 从 src/client/bestPractices/content/*.md 扫描，生成
- * src/client/bestPractices/generated/contentMap.ts
- * 并校验与 cardsData 中的 id 是否一致。
+ * 通用内容映射生成器（SSOT）
+ * @param {Object} config - 生成配置
+ * @param {string} config.moduleName - 模块名称（用于日志）
+ * @param {string} config.contentDir - 内容目录路径
+ * @param {string} config.generatedDir - 生成文件目录路径
+ * @param {string} config.cardsFile - 卡片数据文件路径
  */
-async function generateBestPracticesContentMap() {
-  const contentDir = path.resolve(__dirname, '../src/client/bestPractices/content');
-  const generatedDir = path.resolve(__dirname, '../src/client/bestPractices/generated');
+async function generateContentMap(config) {
+  const { moduleName, contentDir, generatedDir, cardsFile } = config;
   const outputFile = path.join(generatedDir, 'contentMap.ts');
-  const cardsFile = path.resolve(__dirname, '../src/client/bestPractices/data/cardsData.ts');
 
   if (!fs.existsSync(contentDir)) {
-    console.warn('⚠️ 未找到内容目录:', contentDir);
+    console.warn(`⚠️ 未找到${moduleName}内容目录:`, contentDir);
     return;
   }
   if (!fs.existsSync(generatedDir)) {
@@ -167,7 +169,7 @@ async function generateBestPracticesContentMap() {
   )}\n};\n`;
 
   fs.writeFileSync(outputFile, header + body, 'utf8');
-  console.log('📝 已生成内容映射:', outputFile);
+  console.log(`📝 已生成${moduleName}内容映射:`, outputFile);
 
   // 校验 cardsData 与文件匹配性
   try {
@@ -189,14 +191,50 @@ async function generateBestPracticesContentMap() {
     }
 
     if (missingMd.length) {
-      console.warn('⚠️ 以下卡片缺少对应的 .md 文件:', missingMd.join(', '));
+      console.warn(`⚠️ ${moduleName}以下卡片缺少对应的 .md 文件:`, missingMd.join(', '));
     }
     if (extraMd.length) {
-      console.warn('⚠️ 以下 .md 文件没有匹配的卡片 id:', extraMd.join(', '));
+      console.warn(`⚠️ ${moduleName}以下 .md 文件没有匹配的卡片 id:`, extraMd.join(', '));
     }
   } catch (e) {
-    console.warn('⚠️ 校验 cardsData 失败:', e.message);
+    console.warn(`⚠️ 校验${moduleName} cardsData 失败:`, e.message);
   }
+}
+
+/**
+ * 生成最佳实践内容映射文件（SSOT）
+ */
+async function generateBestPracticesContentMap() {
+  await generateContentMap({
+    moduleName: '最佳实践',
+    contentDir: path.resolve(__dirname, '../src/client/bestPractices/content'),
+    generatedDir: path.resolve(__dirname, '../src/client/bestPractices/generated'),
+    cardsFile: path.resolve(__dirname, '../src/client/bestPractices/data/cardsData.ts'),
+  });
+}
+
+/**
+ * 生成 How to Implement 内容映射文件（SSOT）
+ */
+async function generateHowToImplementContentMap() {
+  await generateContentMap({
+    moduleName: 'How to Implement',
+    contentDir: path.resolve(__dirname, '../src/client/howToImplement/content'),
+    generatedDir: path.resolve(__dirname, '../src/client/howToImplement/generated'),
+    cardsFile: path.resolve(__dirname, '../src/client/howToImplement/data/cardsData.ts'),
+  });
+}
+
+/**
+ * 生成 How to Apply CC 内容映射文件（SSOT）
+ */
+async function generateHowToApplyCCContentMap() {
+  await generateContentMap({
+    moduleName: 'How to Apply CC',
+    contentDir: path.resolve(__dirname, '../src/client/howToApplyCC/content'),
+    generatedDir: path.resolve(__dirname, '../src/client/howToApplyCC/generated'),
+    cardsFile: path.resolve(__dirname, '../src/client/howToApplyCC/data/cardsData.ts'),
+  });
 }
 
 /**

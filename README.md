@@ -101,6 +101,7 @@ graph TB
 - **Framework**: Next.js 15 with Turbopack
 - **Bundler**: esbuild for client modules
 - **Module System**: ES6 with tree-shaking
+- **Content Pipeline**: SSOT markdown loader (auto-generated)
 - **Asset Pipeline**: TypeScript → JavaScript + type checking
 - **Hot Reload**: Next.js dev server with instant updates
 
@@ -113,11 +114,13 @@ git clone https://github.com/your-username/claude-code-router
 cd claude-code-router
 pnpm install
 
+# Build client modules (generates SSOT content maps)
+pnpm run build:client    # Required before first run
+
 # Next.js Development (Recommended)
 pnpm run dev:next        # Start Next.js dev server (http://localhost:3000)
 
 # Legacy Workers Development
-pnpm run build:client    # Build frontend modules
 pnpm run dev             # Start Wrangler dev server
 ```
 
@@ -229,10 +232,24 @@ claude-code-router/
 │   │   │   └── 📁 stream.ts       # 流处理
 │   │   ├── 📁 types.ts           # API 类型定义
 │   │   └── 📁 providers.ts       # 供应商配置
-│   ├── 📁 client/               # 客户端模块化代码 (复用)
+│   ├── 📁 client/               # 客户端模块化代码 (复用) ⭐
 │   │   ├── 📁 bestPractices/     # 最佳实践模块
+│   │   │   ├── 📁 content/        # Markdown 内容文件
+│   │   │   ├── 📁 generated/      # 自动生成的内容映射 (SSOT)
+│   │   │   ├── 📁 services/       # ArticleService (内容加载)
+│   │   │   └── 📁 data/           # cardsData (卡片元数据)
 │   │   ├── 📁 howToApplyCC/      # 如何使用 CC 模块
-│   │   └── 📁 howToImplement/    # 实现指南模块
+│   │   │   ├── 📁 content/        # Markdown 内容文件
+│   │   │   ├── 📁 generated/      # 自动生成的内容映射 (SSOT)
+│   │   │   └── 📁 services/       # HowToApplyCCService
+│   │   ├── 📁 howToImplement/    # 实现指南模块
+│   │   │   ├── 📁 content/        # Markdown 内容文件
+│   │   │   ├── 📁 generated/      # 自动生成的内容映射 (SSOT)
+│   │   │   └── 📁 services/       # HowToImplementService
+│   │   └── 📁 shared/            # 共享工具和服务
+│   │       ├── 📁 services/       # BaseContentService
+│   │       ├── 📁 utils/          # contentLoader (DRY)
+│   │       └── 📁 types/          # 共享类型定义
 │   ├── 📁 features/             # 功能模块 (复用)
 │   │   ├── 📁 get-started/       # 如何用上 CC
 │   │   ├── 📁 best-practices/    # 如何用好 CC
@@ -243,8 +260,9 @@ claude-code-router/
 │   ├── 📁 scripts/              # 脚本系统 (复用)
 │   ├── 📁 lib/                  # 工具函数
 │   └── 📁 config/               # 全局配置
-├── 📁 scripts/                  # 构建自动化
-│   └── 📁 build-client.js        # 客户端模块打包
+├── 📁 scripts/                  # 构建自动化 ⭐
+│   ├── 📁 build-client.cjs       # 客户端模块打包 + SSOT 内容映射生成
+│   └── 📁 build-client-safe.cjs  # 带缓存的安全构建包装器
 ├── 🔧 next.config.mjs           # Next.js 配置
 ├── 🔧 open-next.config.ts       # OpenNext Cloudflare 配置
 └── ⚙️ wrangler.toml             # Cloudflare 配置
@@ -306,6 +324,66 @@ This approach ensures **zero downtime** and **100% code reuse** during migration
 - **🔄 Streaming**: Native Web Streams API + SSE support
 - **🛡️ Type Safety**: Full TypeScript coverage with strict mode
 - **♻️ Code Reuse**: 100% legacy code reuse via adapter pattern
+- **📝 SSOT Content**: Build-time generated markdown loaders (zero maintenance)
+
+## 📝 Content Management (SSOT)
+
+### Architecture
+
+The project uses a **Single Source of Truth (SSOT)** architecture for markdown content:
+
+```mermaid
+graph LR
+    A[content/*.md] -->|Build Time| B[scripts/build-client.cjs]
+    B -->|Scan & Generate| C[generated/contentMap.ts]
+    C -->|Import| D[ArticleService]
+    D -->|Load| E[BaseArticleEventHandler]
+    E -->|Render| F[User Browser]
+    
+    G[data/cardsData.ts] -->|Titles| D
+    
+    style A fill:#e8f5e9
+    style B fill:#fff3e0
+    style C fill:#e3f2fd
+    style D fill:#f3e5f5
+```
+
+### Key Features
+
+- **Zero Maintenance**: Add new articles by creating `.md` files and updating `cardsData.ts`
+- **Build-Time Generation**: Content maps auto-generated from filesystem
+- **Type Safety**: Full TypeScript support for content loaders
+- **DRY Principle**: Titles defined once in `cardsData.ts`
+- **Validation**: Build-time checks for missing files or orphaned content
+
+### Adding New Content
+
+```bash
+# 1. Create markdown file (kebab-case)
+touch src/client/bestPractices/content/new-practice.md
+
+# 2. Add card metadata
+# Edit src/client/bestPractices/data/cardsData.ts
+export const bestPracticesCards = [
+  {
+    id: 'new-practice',  // Must match filename
+    title: 'New Practice',
+    category: 'workflow',
+    // ...
+  },
+];
+
+# 3. Rebuild (auto-generates contentMap.ts)
+pnpm run build:client
+
+# 4. Done! No service code changes needed
+```
+
+### Technical Details
+
+For complete architecture documentation, see:
+- [`docs/tech/SSOT_CONTENT_MAP_REFACTOR.md`](./docs/tech/SSOT_CONTENT_MAP_REFACTOR.md) - SSOT architecture
+- [`docs/tech/ADD_CARD.md`](./docs/tech/ADD_CARD.md) - Step-by-step guide
 
 ## 📦 Migration to Next.js
 

@@ -176,6 +176,9 @@ dist
 src/scripts/generated
 shared/scripts/generated/
 
+# SSOT auto-generated content maps
+src/client/*/generated/contentMap.ts
+
 # Build lock files
 .build-lock
 .last-build-time
