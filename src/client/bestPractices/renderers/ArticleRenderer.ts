@@ -3,7 +3,7 @@ import { CopyComponent } from '../../shared/components/CopyComponent';
 export class ArticleRenderer {
   private copyComponent: CopyComponent | null = null;
 
-  public renderArticle(title: string, content: string): string {
+  public renderArticle(_title: string, _content: string): string {
     // 使用 MarkdownViewer 组件来渲染 Markdown 内容
     // 不再显示重复的标题，因为 Markdown 内容中已经包含了标题
     return `

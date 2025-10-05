@@ -8,7 +8,9 @@ import { applyCCCategoryConfig } from '../data/categoryConfig';
 
 export class HowToApplyCCEventHandler extends BaseArticleEventHandler {
   constructor(containerId: string, contentService: IContentService, articleRenderer: IArticleRenderer) {
-    super(containerId, contentService, articleRenderer, () => (window as any).initializeHowToApplyCC());
+    super(containerId, contentService, articleRenderer, () =>
+      (window as unknown as { initializeHowToApplyCC: () => void }).initializeHowToApplyCC(),
+    );
   }
 
   protected resolveCardById(id: string) {

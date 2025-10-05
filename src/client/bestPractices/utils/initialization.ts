@@ -22,7 +22,7 @@ export function waitForElement(selector: string, timeout = 5000): Promise<HTMLEl
       return;
     }
 
-    const observer = new MutationObserver(mutations => {
+    const observer = new window.MutationObserver(_mutations => {
       const element = document.querySelector(selector) as HTMLElement;
       if (element) {
         observer.disconnect();
@@ -46,8 +46,6 @@ export function waitForElement(selector: string, timeout = 5000): Promise<HTMLEl
 /**
  * 调试工具
  */
-export function debugLog(message: string, data?: any): void {
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`[BestPractices] ${message}`, data);
-  }
+export function debugLog(_message: string, _data?: unknown): void {
+  // Development logging has been removed for production readiness
 }

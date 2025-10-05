@@ -18,7 +18,7 @@ export const preloadImage = (url: string): Promise<void> => {
   return new Promise<void>(resolve => {
     try {
       const src = resolveProxiedUrl(url);
-      const img = new Image();
+      const img = new window.Image();
       img.crossOrigin = 'anonymous';
       img.onload = () => resolve();
       img.onerror = () => resolve();
@@ -27,7 +27,9 @@ export const preloadImage = (url: string): Promise<void> => {
         img.src = src;
       };
       if ('requestIdleCallback' in window) {
-        (window as any).requestIdleCallback(start, { timeout: 500 });
+        (
+          window as unknown as { requestIdleCallback: (callback: () => void, options: { timeout: number }) => void }
+        ).requestIdleCallback(start, { timeout: 500 });
       } else {
         setTimeout(start, 0);
       }

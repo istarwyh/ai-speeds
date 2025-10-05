@@ -49,7 +49,7 @@ export async function handleImgProxy(url: URL, request: Request, _env: Env): Pro
   }
 
   // Enforce whitelist with optional '*' wildcard to allow any host
-  const whitelistRaw = (env.IMAGE_PROXY_WHITELIST || '')
+  const whitelistRaw = (_env.IMAGE_PROXY_WHITELIST || '')
     .split(',')
     .map(h => h.trim().toLowerCase())
     .filter(Boolean);
@@ -65,8 +65,8 @@ export async function handleImgProxy(url: URL, request: Request, _env: Env): Pro
   }
 
   // Fetch with Cloudflare cache
-  const ttl = parseInt(env.IMAGE_PROXY_CACHE_TTL || '86400', 10);
-  const cfInit: RequestInit & { cf?: any } = {
+  const ttl = parseInt(_env.IMAGE_PROXY_CACHE_TTL || '86400', 10);
+  const cfInit: RequestInit & { cf?: { cacheTtl: number; cacheEverything: boolean } } = {
     method: 'GET',
     cf: { cacheTtl: ttl, cacheEverything: true },
     headers: {

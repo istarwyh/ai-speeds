@@ -5,13 +5,13 @@ export interface TestResult {
   pass: boolean;
   status?: number;
   contentType?: string | null;
-  error?: string;
+  error?: string | undefined;
 }
 
 // Pick a stable HTTPS image endpoint
 const DEFAULT_IMG = 'https://httpbin.org/image/png';
 
-export async function runImgProxyHappy(env: Env, _baseUrl: string, src?: string): Promise<TestResult> {
+export async function runImgProxyHappy(_env: Env, baseUrl: string, src?: string): Promise<TestResult> {
   const name = 'img-proxy happy case (HTTPS, allowed by whitelist)';
   try {
     const target = encodeURIComponent(src || DEFAULT_IMG);
@@ -28,7 +28,7 @@ export async function runImgProxyHappy(env: Env, _baseUrl: string, src?: string)
       contentType,
       error: pass ? undefined : `Unexpected response: status=${resp.status}, content-type=${contentType}`,
     };
-  } catch (_e: any) {
-    return { name, pass: false, error: e?.message || String(e) };
+  } catch (e: unknown) {
+    return { name, pass: false, error: e instanceof Error ? e.message : String(e) };
   }
 }

@@ -29,7 +29,7 @@ export const setupComponent = `
             <div class="step-content">
                 <h3>Configure Environment</h3>
                 <p>Add these to your shell config (<code>~/.bashrc</code> or <code>~/.zshrc</code>):</p>
-                <div class="config-tabs">
+                <div class="config-tabs" id="config-content">
                     <div class="config-tab">
                         <strong>For OpenRouter:</strong>
                         <div class="code-block"><pre><code>export ANTHROPIC_BASE_URL="https://cc.xiaohui.cool"

@@ -28,8 +28,8 @@ export class ArticleService extends BaseContentService<PracticeCard> {
       }
 
       return this.getDefaultContent(cardId);
-    } catch (error) {
-      console.warn(`Failed to load content for ${cardId}:`, error);
+    } catch {
+      // Failed to load content - use default
       return this.getDefaultContent(cardId);
     }
   }
@@ -43,7 +43,7 @@ export class ArticleService extends BaseContentService<PracticeCard> {
   }
 
   protected getTitleFromCardId(cardId: string): string {
-    const titles = {
+    const titles: Record<string, string> = {
       'workflow-overview': '我现在的工作流',
       'environment-config': '自定义环境配置',
       'mcp-commands': 'MCP 与常用命令',
