@@ -1,25 +1,31 @@
 import { BaseContentService } from '../../shared/services/BaseContentService';
 import type { ImplementCard } from '../../shared/types/ContentCard';
-import { howToImplementCards } from '../data/cardsData';
-import { contentLoaders } from '../generated/contentMap';
-import { loadContentFromMap } from '../../shared/utils/contentLoader';
 
 export class HowToImplementService extends BaseContentService<ImplementCard> {
   protected async getContentFromFile(cardId: string): Promise<string> {
     try {
-      const content = await loadContentFromMap(cardId, contentLoaders, 'HowToImplement');
-      if (content) {
-        return content;
+      const contentMap: Record<string, () => Promise<string>> = {
+        'claude-code-conversation-example-1': async () => (await import('../content/claude-code-conversation-example-1.md')).default,
+        'claude-code-implementation': async () => (await import('../content/claude-code-implementation.md')).default,
+        'claude-code-minusx-insights': async () => (await import('../content/claude-code-minusx-insights.md')).default,
+        'claude-code-output-format-example-1': async () => (await import('../content/claude-code-output-format-example-1.md')).default,
+        'claude-code-system-prompt-cn': async () => (await import('../content/claude-code-system-prompt-cn.md')).default,
+        'claude-code-system-prompt-en': async () => (await import('../content/claude-code-system-prompt-en.md')).default,
+      };
+
+      const contentLoader = contentMap[cardId];
+      if (contentLoader) {
+        return await contentLoader();
       }
-      return this.getDefaultContent(cardId.trim());
+
+      return this.getDefaultContent(cardId);
     } catch {
-      return this.getDefaultContent(cardId.trim());
+      return this.getDefaultContent(cardId);
     }
   }
 
   protected getDefaultContent(cardId: string): string {
-    const title = this.getTitleFromCardId(cardId);
-    return `# ${title}
+    return `# ${this.getTitleFromCardId(cardId)}
 
 内容正在开发中...
 
@@ -27,8 +33,15 @@ export class HowToImplementService extends BaseContentService<ImplementCard> {
   }
 
   protected getTitleFromCardId(cardId: string): string {
-    // SSOT: 从 cardsData 中获取标题
-    const card = howToImplementCards.find((c) => c.id === cardId);
-    return card?.title || cardId;
+    const titles: Record<string, string> = {
+      'claude-code-conversation-example-1': 'Claude Code 对话示例',
+      'claude-code-implementation': 'Claude Code 逆向介绍',
+      'claude-code-minusx-insights': 'CC为什么这么好: MinusX 深度解析',
+      'claude-code-output-format-example-1': 'Claude Code 输出格式示例',
+      'claude-code-system-prompt-cn': 'Claude Code 系统提示词(中文)',
+      'claude-code-system-prompt-en': 'Claude Code System Prompt (English)',
+    };
+
+    return titles[cardId] || cardId;
   }
 }
