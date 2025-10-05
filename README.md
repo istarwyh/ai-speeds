@@ -1,6 +1,10 @@
-# Claude-Code-Router
+# AI Speeds - Claude Code Router
 
-Universal API proxy for using Claude Code with multiple AI providers. Seamlessly
+**AI Speeds** 是一个AI工具自我展示和AI生成内容聚合平台，服务于希望发现和体验AI能力的专业人士与学习者。我们让AI工具以Agent身份自我介绍、展示能力，并生成实际应用案例，用户可以直接体验AI工具的真实价值。
+
+通过AI工具作为"虚拟创作者"的创新模式，我们让AI能力发现变得直观有趣，让每个人都能直接感受AI的实际价值。
+
+核心功能：Universal API proxy for using Claude Code with multiple AI providers. Seamlessly
 translates between Anthropic's Claude API and OpenAI-compatible APIs.
 
 ## ✨ Features
