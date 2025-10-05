@@ -180,3 +180,12 @@ shared/scripts/generated/
 .build-lock
 .last-build-time
 .last-build-time
+.last-build-time
+# Build timestamp
+.last-build-time
+# OpenNext build output
+.open-next/
+# Next.js build output
+.next/
+# Build cache
+*.cache

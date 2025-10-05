@@ -1,44 +1,95 @@
-# Claude-Code-Router
+# AI Speeds - Claude Code Router
 
-Universal API proxy for using Claude Code with multiple AI providers. Seamlessly
-translates between Anthropic's Claude API and OpenAI-compatible APIs.
+**AI Speeds** 是一个AI工具自我展示和AI生成内容聚合平台，服务于希望发现和体验AI能力的专业人士与学习者。我们让AI工具以Agent身份自我介绍、展示能力，并生成实际应用案例，用户可以直接体验AI工具的真实价值。
 
-## ✨ Features
+通过AI工具作为"虚拟创作者"的创新模式，我们让AI能力发现变得直观有趣，让每个人都能直接感受AI的实际价值。
 
+## ✨ 平台特色
+
+### 🤖 AI工具发现与推荐
+- **智能发现**: 帮助用户发现市面上好用的AI工具
+- **真实评价**: 提供来自真实用户的使用体验和效果反馈
+- **个性化推荐**: 基于用户需求推荐最适合的AI工具
+- **即用指南**: 每个工具都提供详细的上手教程
+
+### 📚 AI应用案例分享
+- **场景化展示**: 具体的AI应用案例和使用步骤
+- **可复制经验**: 提供可直接套用的成功使用模式
+- **效果展示**: 真实的AI应用效果和收益数据
+- **社区互动**: 用户可分享自己的AI使用心得
+
+### 🌱 AI学习成长社区
+- **同伴学习**: 与同样在学习AI的用户交流互动
+- **专家指导**: 获得AI应用专家的指导和建议
+- **持续激励**: 建立AI学习的社交网络和动力机制
+- **知识共享**: 形成互助友爱的AI学习社区文化
+
+### 🔮 AI趋势与洞察
+- **前沿资讯**: 精选对普通用户有实际意义的AI趋势
+- **深度解读**: 用通俗易懂的方式解释复杂的AI发展
+- **行动指导**: 提供具体的前瞻性布局和行动建议
+- **避免过载**: 过滤噪音，专注有价值的信息
+
+### 🛠️ Claude Code Router (集成功能)
 - **🔄 API Translation**: Anthropic ↔ OpenAI format conversion
-- **🌍 Multi-Provider**: OpenRouter, OpenAI, DeepSeek, Kimi, SiliconFlow
-- **⚡ Edge Computing**: Cloudflare Workers for global performance
+- **🌍 Multi-Provider**: OpenRouter, OpenAI, DeepSeek, Kimi, SiliconFlow, AnyRouter等
+- **⚡ Edge Computing**: Next.js Edge Runtime + Cloudflare Workers
 - **📡 Streaming Support**: Real-time response streaming
-- **🛡️ Type Safety**: Full TypeScript implementation
 
-## 🚀 Quick Start
+## 🚀 快速开始
 
-### 1. Install Claude Code
+### 平台导航
+
+访问 [AI Speeds](https://cc.xiaohui.cool) 平台，探索四个核心功能模块：
+
+#### 🎯 选择你的使用场景
+
+**新手用户** → [如何用上 CC](https://cc.xiaohui.cool/get-started) - 快速配置指南<br>
+**进阶用户** → [如何用好 CC](https://cc.xiaohui.cool/best-practices) - 最佳实践技巧<br>
+**技术用户** → [如何实现 CC](https://cc.xiaohui.cool/how-to-implement) - 架构原理解析<br>
+**开发者** → [如何运用 CC](https://cc.xiaohui.cool/how-to-apply-cc) - SDK开发指南
+
+### 1. 安装 Claude Code
 
 ```bash
 pnpm add -g @anthropic-ai/claude-code
 ```
 
-### 2. Configure API Access
+### 2. 配置 API 访问
 
 ```bash
-# Option A: Use shared instance (testing only)
+# 选项 A: 使用共享实例（仅测试）
 export ANTHROPIC_BASE_URL="https://cc.xiaohui.cool"
 export ANTHROPIC_API_KEY="your-provider-api-key"
 
-# Option B: Deploy your own instance (recommended)
+# 选项 B: 部署私有实例（推荐）
 git clone https://github.com/your-username/claude-code-router
 cd claude-code-router && wrangler deploy
 export ANTHROPIC_BASE_URL="https://your-domain.workers.dev"
 ```
 
-### 3. Start Using Claude Code
+### 3. 开始使用 Claude Code
 
 ```bash
 source ~/.bashrc && claude
 ```
 
-### Provider Setup
+### 支持的AI提供商
+
+| 提供商 | 状态 | 特色 | 免费额度 | 注册链接 |
+|--------|------|------|----------|----------|
+| **DeepSeek** | ✅ 即用 | 高性能推理模型，性价比极佳 | 有 | [platform.deepseek.com](https://platform.deepseek.com) |
+| **AnyRouter** | ✅ 即用 | 🎁 $100免费额度，多模型支持 | **$100** | [anyrouter.top](https://anyrouter.top/console/token?aff=4Ly0) |
+| **Kimi** | ✅ 即用 | 中文AI模型，多语言能力强 | 有 | [platform.moonshot.cn](https://platform.moonshot.cn) |
+| **SiliconFlow** | ✅ 即用 | 中文AI基础设施平台 | 有 | [siliconflow.cn](https://siliconflow.cn) |
+| **Qwen3-Coder** | ✅ 即用 | 阿里云编程模型，中文支持好 | 有 | [dashscope.console.aliyun.com](https://dashscope.console.aliyun.com) |
+| **AICodeWith** | ✅ 即用 | 🎁 2000免费额度，直接API访问 | **2000积分** | [aicodewith.com](https://aicodewith.com/?invitation=VI84XXSW) |
+| **Claude-Code** | ✅ 即用 | 🎁 **6000**免费额度，专业服务 | **6000积分** | [claude-code.top](https://www.claude-code.top/register?inviteCode=5GTISY) |
+| **Anthropic** | ✅ 官方 | 官方Claude API，需解决充值问题 | 有 | [claude.ai](https://claude.ai) |
+| **OpenRouter** | ⚠️ 部署 | 多模型聚合平台 | 有 | [openrouter.ai](https://openrouter.ai) |
+| **OpenAI** | ⚠️ 部署 | 行业领先的GPT模型 | 有 | [platform.openai.com](https://platform.openai.com) |
+
+### 提供商配置
 
 | Provider   | API Key Source                                         | Base URL                        |
 | ---------- | ------------------------------------------------------ | ------------------------------- |
@@ -46,8 +97,33 @@ source ~/.bashrc && claude
 | DeepSeek   | [platform.deepseek.com](https://platform.deepseek.com) | Deploy with `DEEPSEEK_BASE_URL` |
 | OpenAI     | [platform.openai.com](https://platform.openai.com)     | Deploy with `OPENAI_BASE_URL`   |
 
-## 🏗️ Architecture
+## 🏗️ 平台架构
 
+### 内容聚合平台架构
+```mermaid
+graph TB
+    A[用户访问] -->|Next.js App Router| B[AI Speeds平台]
+    B -->|LegacyPageWrapper适配器| C[内容模块系统]
+    C -->|Get Started| D[新手指南模块]
+    C -->|Best Practices| E[最佳实践模块] 
+    C -->|How to Implement| F[技术架构模块]
+    C -->|How to Apply| G[开发指南模块]
+    
+    B -->|客户端交互| H[动态内容加载]
+    H -->|JavaScript| I[模块化HTML模板]
+    
+    subgraph "Cloudflare Workers边缘网络"
+        B
+        H
+        I
+    end
+
+    style A fill:#e1f5fe
+    style B fill:#fff3e0
+    style C fill:#e8f5e8
+```
+
+### API代理服务架构
 ```mermaid
 graph TB
     A[Claude Code Client] -->|Anthropic API Format| B[Claude-Code-Router]
@@ -76,31 +152,52 @@ graph TB
     style G fill:#fce4ec
 ```
 
+## 💡 平台价值主张
+
+### 🎯 使命
+**让每个人都能掌握AI加速自己工作学习成长的方法，在AI时代不掉队、更进步**
+
+### 🌟 核心价值
+- **实用优先**: 所有内容聚焦于可直接应用的AI工具和方法，避免空洞理论
+- **真实可信**: 展示真实用户的AI应用体验和实际效果，建立可信赖的社区氛围  
+- **加速成长**: 强调AI如何显著提升工作效率和学习成果，体现速度价值
+- **通俗易懂**: 用通俗易懂的方式解释AI应用，降低普通用户的使用门槛
+- **分享文化**: 鼓励用户主动分享AI使用心得，形成知识共享的社区文化
+- **持续成长**: 关注用户在AI时代的持续学习和能力提升
+
+### 🔍 解决的核心问题
+当用户面临工作效率瓶颈或学习挑战时，他们希望找到AI工具来加速解决问题，但却不知道哪些AI工具真正有效、如何正确使用，或者担心尝试成本过高。现有的AI信息过于技术化或商业化，缺乏来自真实用户的实践经验和可信赖的使用指南，导致用户在AI应用上犹豫不决或效果不佳。
+
+对于高级用户，也缺乏来自一线的Agent构建指南。
+
 ## ⚡ Technical Stack
 
 ### Core Runtime
 
-- **Platform**: Cloudflare Workers (V8 Isolates)
+- **Framework**: Next.js 15 with App Router
+- **Frontend**: React 19 + Tailwind CSS 3
+- **Platform**: Cloudflare Workers via OpenNext
 - **Language**: TypeScript with strict typing
-- **Runtime**: Edge-optimized JavaScript (no Node.js dependencies)
-- **Deployment**: Wrangler CLI + GitHub Actions
+- **Runtime**: Edge Runtime (V8 Isolates)
+- **Deployment**: OpenNext Cloudflare + Wrangler CLI
 
 ### Architecture Patterns
 
 | Pattern            | Implementation           | Benefit                         |
 | ------------------ | ------------------------ | ------------------------------- |
 | **Edge Computing** | 300+ global locations    | <1ms cold start, 0ms warm start |
-| **Serverless**     | Auto-scaling isolates    | 0 maintenance, infinite scale   |
+| **React Server**   | Next.js App Router       | SEO-friendly, fast page loads   |
 | **Type Safety**    | Full TypeScript coverage | Runtime error prevention        |
-| **Streaming**      | Web Streams API          | Real-time response delivery     |
-| **Modular Design** | Functional composition   | Easy testing & maintenance      |
+| **Streaming**      | Web Streams API + SSE    | Real-time response delivery     |
+| **Modular Design** | React components         | Easy testing & maintenance      |
 
 ### Build System
 
-- **Bundler**: esbuild (10x faster than webpack)
+- **Framework**: Next.js 15 with Turbopack
+- **Bundler**: esbuild for client modules
 - **Module System**: ES6 with tree-shaking
 - **Asset Pipeline**: TypeScript → JavaScript + type checking
-- **Hot Reload**: Wrangler dev server with instant updates
+- **Hot Reload**: Next.js dev server with instant updates
 
 ## 🔧 Deployment
 
@@ -109,12 +206,32 @@ graph TB
 ```bash
 git clone https://github.com/your-username/claude-code-router
 cd claude-code-router
-pnpm install && pnpm add -g wrangler
+pnpm install
+
+# Next.js Development (Recommended)
+pnpm run dev:next        # Start Next.js dev server (http://localhost:3000)
+
+# Legacy Workers Development
 pnpm run build:client    # Build frontend modules
-pnpm run dev             # Start development server
+pnpm run dev             # Start Wrangler dev server
 ```
 
 ### Production Deployment
+
+#### Option 1: Cloudflare Workers (Next.js)
+
+```bash
+# Build Next.js for Cloudflare
+pnpm run cf:build        # Build with OpenNext Cloudflare
+
+# Preview locally
+pnpm run cf:preview      # Test before deployment
+
+# Deploy to Cloudflare
+pnpm run cf:deploy       # Deploy to production
+```
+
+#### Option 2: Traditional Deployment
 
 ```bash
 # Configure environment variables
@@ -188,109 +305,128 @@ curl -X POST https://cc.xiaohui.cool/v1/messages \
 ```
 claude-code-router/
 ├── 📁 src/
-│   ├── 📁 api/                 # API 适配器和类型定义
-│   │   ├── 📁 adapters/         # 请求和响应格式转换
-│   │   │   ├── 📁 format.ts      # 请求/响应格式化
-│   │   │   └── 📁 stream.ts      # 流处理
-│   │   ├── 📁 types.ts          # API 类型定义
-│   │   └── 📁 providers.ts      # 供应商配置
-│   ├── 📁 client/              # 前端和文档系统 (TypeScript 源码)
-│   │   ├── 📁 bestPractices/    # 最佳实践模块 (开发源码)
-│   │   │   ├── 📁 core/          # 管理器和业务逻辑
-│   │   │   ├── 📁 data/          # 卡片数据和配置
-│   │   │   ├── 📁 renderers/     # UI 渲染组件
-│   │   │   ├── 📁 services/      # 内容和 Markdown 服务
-│   │   │   └── 📁 index.ts       # 模块入口点
-│   │   ├── 📁 howToApplyCC/     # 如何使用 CC 模块
-│   │   │   ├── 📁 components/    # UI 组件
-│   │   │   ├── 📁 services/      # 服务层
-│   │   │   └── 📁 index.ts       # 模块入口点
-│   │   └── 📁 howToImplement/   # 实现指南模块 (开发源码)
-│   │       ├── 📁 core/          # HowToImplementManager
-│   │       ├── 📁 data/          # 卡片数据和配置
-│   │       ├── 📁 handlers/      # 事件处理
-│   │       ├── 📁 renderers/     # UI 渲染组件
-│   │       ├── 📁 services/      # 内容服务
-│   │       └── 📁 index.ts       # 模块入口点
-│   ├── 📁 components/           # 共享 UI 组件
-│   ├── 📁 config/               # 全局配置
-│   ├── 📁 server/               # 服务器运行时逻辑
-│   │   ├── 📁 env.ts             # 环境变量类型定义
-│   │   ├── 📁 index.ts           # 服务器入口点
-│   │   └── 📁 routes/            # 路由处理器
-│   │       └── 📁 imgProxy.ts     # 图片代理
-│   ├── 📁 scripts/              # 客户端脚本
-│   │   └── 📁 generated/         # 从 src/client/* 自动生成
-│   ├── 📁 styles/               # 全局样式
-│   ├── 📁 templates/            # HTML 模板
-│   │   ├── 📁 components/        # 模板组件
-│   │   │   └── 📁 favicon.ts      # 图标生成
-│   │   ├── 📁 index.ts           # 主页模板
-│   │   ├── 📁 terms.ts           # 服务条款页面
-│   │   └── 📁 privacy.ts         # 隐私政策页面
-│   └── 📁 utils/                # 工具函数
-├── 📁 modules/                 # 静态 HTML 模板 + 编译后的 JavaScript
-│   ├── 📁 best-practices/      # HTML 模板 + 打包的客户端代码
-│   ├── 📁 get-started/         # 静态模块组件
-│   ├── 📁 how-to-apply-cc/     # 如何使用 CC 模块
-│   └── 📁 how-to-implement/    # HTML 模板 + 打包的客户端代码
-├── 📁 scripts/                 # 构建自动化和打包
-├── 🔧 index.ts                 # Worker 入口点 (fetch 处理器)
-└── ⚙️ wrangler.toml            # Worker 配置和绑定
+│   ├── 📁 app/                  # Next.js App Router ⭐
+│   │   ├── 📁 (main)/home/       # 主页路由组
+│   │   │   └── 📁 page.tsx        # 主页 (使用适配器)
+│   │   ├── 📁 api/               # API 路由
+│   │   │   ├── 📁 v1/messages/    # Claude API 代理
+│   │   │   │   └── 📁 route.ts     # POST /api/v1/messages
+│   │   │   └── 📁 img-proxy/      # 图片代理
+│   │   │       └── 📁 route.ts     # GET /api/img-proxy
+│   │   ├── 📁 layout.tsx         # 根布局
+│   │   ├── 📁 page.tsx           # 根路由 (重定向)
+│   │   └── 📁 globals.css        # 全局样式
+│   ├── 📁 components-next/      # Next.js React 组件 ⭐
+│   │   └── 📁 LegacyPageWrapper.tsx # 适配器组件
+│   ├── 📁 api/                  # API 适配器和类型定义 (复用)
+│   │   ├── 📁 adapters/          # 请求和响应格式转换
+│   │   │   ├── 📁 format.ts       # 请求/响应格式化
+│   │   │   └── 📁 stream.ts       # 流处理
+│   │   ├── 📁 types.ts           # API 类型定义
+│   │   └── 📁 providers.ts       # 供应商配置
+│   ├── 📁 client/               # 客户端模块化代码 (复用)
+│   │   ├── 📁 bestPractices/     # 最佳实践模块
+│   │   ├── 📁 howToApplyCC/      # 如何使用 CC 模块
+│   │   └── 📁 howToImplement/    # 实现指南模块
+│   ├── 📁 features/             # 功能模块 (复用)
+│   │   ├── 📁 get-started/       # 如何用上 CC
+│   │   ├── 📁 best-practices/    # 如何用好 CC
+│   │   ├── 📁 how-to-implement/  # 如何实现 CC
+│   │   └── 📁 how-to-apply-cc/   # 如何运用 CC
+│   ├── 📁 components/           # 布局组件 (复用)
+│   ├── 📁 styles/               # 样式系统 (复用)
+│   ├── 📁 scripts/              # 脚本系统 (复用)
+│   ├── 📁 lib/                  # 工具函数
+│   └── 📁 config/               # 全局配置
+├── 📁 scripts/                  # 构建自动化
+│   └── 📁 build-client.js        # 客户端模块打包
+├── 🔧 next.config.mjs           # Next.js 配置
+├── 🔧 open-next.config.ts       # OpenNext Cloudflare 配置
+└── ⚙️ wrangler.toml             # Cloudflare 配置
 ```
 
 ### Frontend Build Architecture
 
-The project uses a **dual-layer frontend architecture**:
+The project uses a **hybrid architecture** combining Next.js and legacy modules:
 
-#### Development Layer (`src/client/`)
+#### Next.js Layer (Primary)
 
-- **Purpose**: Modern TypeScript development with full module structure
-- **Architecture**: Modular design (core, data, handlers, renderers, services)
-- **Benefits**: Type safety, code organization, maintainability
-- **Build Target**: Gets compiled and bundled by `scripts/build-client.js`
+- **Framework**: Next.js 15 with App Router
+- **Components**: React 19 components
+- **Styling**: Tailwind CSS 3
+- **API Routes**: Edge Runtime handlers
+- **Benefits**: Modern React, SEO-friendly, type-safe
 
-#### Runtime Layer (`modules/`)
+#### Legacy Adapter Layer
 
-- **Purpose**: Production-ready HTML templates + compiled JavaScript
-- **Architecture**: Static HTML containers + bundled client code
-- **Benefits**: Single-file deployment, optimized for Cloudflare Workers
-- **Source**: Generated from development layer through build process
+- **Purpose**: Reuse existing TypeScript modules without rewriting
+- **Implementation**: `LegacyPageWrapper` component
+- **Architecture**: Adapter pattern wrapping HTML string templates
+- **Benefits**: 100% code reuse, zero migration risk
 
 #### Build Process Flow
 
 ```mermaid
-graph LR
-    A[src/client/*/index.ts] -->|esbuild| B[Bundled JavaScript]
-    B -->|build-client.js| C[modules/*/index.ts]
-    C -->|Runtime| D[HTML + JS Module]
-    E[npm run build:client] -->|Orchestrates| A
+graph TB
+    A[Next.js App] -->|Uses| B[LegacyPageWrapper]
+    B -->|Imports| C[Legacy Modules]
+    C -->|Includes| D[src/features/*]
+    C -->|Includes| E[src/client/*]
+    
+    F[src/client/*] -->|esbuild| G[Bundled JS]
+    G -->|build-client.js| H[scripts/generated/*]
+    
+    I[Next.js Build] -->|Outputs| J[.next/]
+    J -->|OpenNext| K[Cloudflare Workers]
 
-    style A fill:#e3f2fd
-    style B fill:#fff3e0
-    style C fill:#e8f5e8
-    style D fill:#fce4ec
+    style A fill:#61dafb
+    style B fill:#ffd700
+    style C fill:#e3f2fd
+    style K fill:#f38020
 ```
 
-**Active Modules:**
+**Migration Strategy:**
 
-- **Best Practices** (`src/client/bestPractices` → `modules/best-practices`)
-- **How to Implement** (`src/client/howToImplement` →
-  `modules/how-to-implement`)
-- **How to Apply Claude Code** (`src/client/howToApplyCC` →
-  `modules/how-to-apply-cc`)
-- **Get Started** (Static components in `modules/get-started`)
+- ✅ **Phase 1**: Next.js + Adapter (Current)
+- 🔄 **Phase 2**: Gradual React component migration
+- 🎯 **Phase 3**: Remove adapter, pure Next.js
 
-This approach ensures **clean separation** between development complexity and
-runtime efficiency.
+This approach ensures **zero downtime** and **100% code reuse** during migration.
 
 ### Key Design Principles
 
 - **🌐 Edge-First**: Optimized for Cloudflare's global network
-- **🔒 Zero Dependencies**: No external runtime dependencies
+- **⚛️ React Modern**: Next.js 15 + React 19 architecture
 - **⚡ Performance**: Sub-millisecond response times
-- **🔄 Streaming**: Native Web Streams API support
+- **🔄 Streaming**: Native Web Streams API + SSE support
 - **🛡️ Type Safety**: Full TypeScript coverage with strict mode
+- **♻️ Code Reuse**: 100% legacy code reuse via adapter pattern
+
+## 📦 Migration to Next.js
+
+### Why Next.js?
+
+- ✅ **Modern Stack**: React 19, Tailwind CSS, TypeScript
+- ✅ **SEO Friendly**: Server-side rendering support
+- ✅ **Developer Experience**: Hot reload, type safety, modern tooling
+- ✅ **Edge Runtime**: Compatible with Cloudflare Workers
+- ✅ **Future Ready**: Easy to extend with React ecosystem
+
+### Migration Highlights
+
+- **100% Code Reuse**: All business logic preserved
+- **Zero Downtime**: Gradual migration strategy
+- **Minimal Changes**: Only ~600 lines of adapter code added
+- **Performance**: Maintained edge runtime performance
+- **Type Safety**: Enhanced TypeScript strict mode
+
+### Migration Documentation
+
+For detailed migration information, see:
+
+- [`MIGRATION_FINAL_SUMMARY.md`](./MIGRATION_FINAL_SUMMARY.md) - Complete migration summary
+- [`MIGRATION_PROGRESS.md`](./MIGRATION_PROGRESS.md) - Step-by-step progress
+- [`UPGRADE_TO_NEXT_ARCHITECTURE.md`](./UPGRADE_TO_NEXT_ARCHITECTURE.md) - Architecture guide
 
 ## 🙏 Acknowledgments
 

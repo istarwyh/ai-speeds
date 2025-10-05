@@ -2,10 +2,12 @@
   "compilerOptions": {
     /* Language and Environment */
     "target": "ES2022",
-    "module": "ES2022",
+    "module": "esnext",
     "moduleResolution": "bundler",
-    "lib": ["ES2022", "DOM"],
-
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
     /* Type Checking */
     "strict": true,
     "exactOptionalPropertyTypes": true,
@@ -21,7 +23,6 @@
     "allowUnreachableCode": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-
     /* Modules */
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
@@ -30,7 +31,6 @@
     "isolatedModules": true,
     "preserveSymlinks": true,
     "verbatimModuleSyntax": false,
-
     /* Emit */
     "noEmit": true,
     "declaration": true,
@@ -39,37 +39,49 @@
     "removeComments": false,
     "importHelpers": true,
     "downlevelIteration": true,
-
     /* Interop Constraints */
     "allowJs": true,
     "checkJs": true,
-
     /* Completeness */
     "skipLibCheck": false,
-
     /* Output Options */
     "outDir": "./dist",
-
     /* Path Mapping */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/client/*": ["./src/client/*"],
-      "@/server/*": ["./src/server/*"],
-      "@/api/*": ["./src/api/*"],
-      "@/shared/*": ["./src/shared/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@/client/*": [
+        "./src/client/*"
+      ],
+      "@/server/*": [
+        "./src/server/*"
+      ],
+      "@/api/*": [
+        "./src/api/*"
+      ],
+      "@/shared/*": [
+        "./src/shared/*"
+      ]
     },
-
     /* Advanced Options */
     "resolveJsonModule": true,
     "incremental": true,
-    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
-    "src/**/*",
-    "scripts/**/*",
+    "*.js",
     "*.ts",
-    "*.js"
+    "scripts/**/*",
+    "src/**/*",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
