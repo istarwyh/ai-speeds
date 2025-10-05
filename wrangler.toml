@@ -1,12 +1,20 @@
 name = "aispeeds"
-main = "index.ts"
+# Next.js with OpenNext Cloudflare
+main = ".open-next/worker.js"
 compatibility_date = "2025-05-30"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
 routes = [
   { pattern = "cc.xiaohui.cool", custom_domain = true },
   { pattern = "aispeeds.me", custom_domain = true },
 ]
 
-# Build configuration for client scripts
+# Assets configuration for Next.js
+[assets]
+binding = "ASSETS"
+directory = ".open-next/assets"
+
+# Build configuration for client scripts (legacy, still needed for client modules)
 [build]
 command = "npm run build:client"
 watch_dir = ["src/client"]
