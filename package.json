@@ -7,6 +7,12 @@
     "build:client": "node scripts/build-client-safe.cjs",
     "build:client:direct": "node scripts/build-client.cjs",
     "dev": "NODE_ENV=development wrangler dev",
+    "dev:next": "cross-env NODE_NO_WARNINGS=1 next dev --turbopack",
+    "build:next": "next build",
+    "start:next": "next start",
+    "cf:build": "opennextjs-cloudflare build",
+    "cf:preview": "pnpm cf:build && opennextjs-cloudflare preview",
+    "cf:deploy": "pnpm cf:build && opennextjs-cloudflare deploy",
     "deploy": "NODE_ENV=production wrangler deploy",
     "prepare": "husky",
     "lint": "eslint . --fix",
@@ -21,10 +27,15 @@
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
+    "@opennextjs/cloudflare": "^1.9.1",
     "@types/markdown-it": "^14.1.2",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
     "@typescript-eslint/eslint-plugin": "^8.44.0",
     "@typescript-eslint/parser": "^8.44.0",
+    "autoprefixer": "^10.4.21",
     "commitizen": "^4.3.1",
+    "cross-env": "^10.1.0",
     "esbuild": "^0.19.0",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
@@ -35,11 +46,16 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.1.6",
     "markdown-it": "^13.0.2",
+    "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "punycode": "^2.3.1",
+    "tailwindcss": "3",
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "isomorphic-dompurify": "^2.26.0"
+    "isomorphic-dompurify": "^2.26.0",
+    "next": "^15.5.4",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   }
 }

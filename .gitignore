@@ -180,3 +180,4 @@ shared/scripts/generated/
 .build-lock
 .last-build-time
 .last-build-time
+.last-build-time

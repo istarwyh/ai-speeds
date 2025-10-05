@@ -7,9 +7,8 @@ translates between Anthropic's Claude API and OpenAI-compatible APIs.
 
 - **🔄 API Translation**: Anthropic ↔ OpenAI format conversion
 - **🌍 Multi-Provider**: OpenRouter, OpenAI, DeepSeek, Kimi, SiliconFlow
-- **⚡ Edge Computing**: Cloudflare Workers for global performance
+- **⚡ Edge Computing**: Next.js Edge Runtime + Cloudflare Workers
 - **📡 Streaming Support**: Real-time response streaming
-- **🛡️ Type Safety**: Full TypeScript implementation
 
 ## 🚀 Quick Start
 
@@ -80,27 +79,30 @@ graph TB
 
 ### Core Runtime
 
-- **Platform**: Cloudflare Workers (V8 Isolates)
+- **Framework**: Next.js 15 with App Router
+- **Frontend**: React 19 + Tailwind CSS 3
+- **Platform**: Cloudflare Workers via OpenNext
 - **Language**: TypeScript with strict typing
-- **Runtime**: Edge-optimized JavaScript (no Node.js dependencies)
-- **Deployment**: Wrangler CLI + GitHub Actions
+- **Runtime**: Edge Runtime (V8 Isolates)
+- **Deployment**: OpenNext Cloudflare + Wrangler CLI
 
 ### Architecture Patterns
 
 | Pattern            | Implementation           | Benefit                         |
 | ------------------ | ------------------------ | ------------------------------- |
 | **Edge Computing** | 300+ global locations    | <1ms cold start, 0ms warm start |
-| **Serverless**     | Auto-scaling isolates    | 0 maintenance, infinite scale   |
+| **React Server**   | Next.js App Router       | SEO-friendly, fast page loads   |
 | **Type Safety**    | Full TypeScript coverage | Runtime error prevention        |
-| **Streaming**      | Web Streams API          | Real-time response delivery     |
-| **Modular Design** | Functional composition   | Easy testing & maintenance      |
+| **Streaming**      | Web Streams API + SSE    | Real-time response delivery     |
+| **Modular Design** | React components         | Easy testing & maintenance      |
 
 ### Build System
 
-- **Bundler**: esbuild (10x faster than webpack)
+- **Framework**: Next.js 15 with Turbopack
+- **Bundler**: esbuild for client modules
 - **Module System**: ES6 with tree-shaking
 - **Asset Pipeline**: TypeScript → JavaScript + type checking
-- **Hot Reload**: Wrangler dev server with instant updates
+- **Hot Reload**: Next.js dev server with instant updates
 
 ## 🔧 Deployment
 
@@ -109,12 +111,32 @@ graph TB
 ```bash
 git clone https://github.com/your-username/claude-code-router
 cd claude-code-router
-pnpm install && pnpm add -g wrangler
+pnpm install
+
+# Next.js Development (Recommended)
+pnpm run dev:next        # Start Next.js dev server (http://localhost:3000)
+
+# Legacy Workers Development
 pnpm run build:client    # Build frontend modules
-pnpm run dev             # Start development server
+pnpm run dev             # Start Wrangler dev server
 ```
 
 ### Production Deployment
+
+#### Option 1: Cloudflare Workers (Next.js)
+
+```bash
+# Build Next.js for Cloudflare
+pnpm run cf:build        # Build with OpenNext Cloudflare
+
+# Preview locally
+pnpm run cf:preview      # Test before deployment
+
+# Deploy to Cloudflare
+pnpm run cf:deploy       # Deploy to production
+```
+
+#### Option 2: Traditional Deployment
 
 ```bash
 # Configure environment variables
@@ -188,109 +210,128 @@ curl -X POST https://cc.xiaohui.cool/v1/messages \
 ```
 claude-code-router/
 ├── 📁 src/
-│   ├── 📁 api/                 # API 适配器和类型定义
-│   │   ├── 📁 adapters/         # 请求和响应格式转换
-│   │   │   ├── 📁 format.ts      # 请求/响应格式化
-│   │   │   └── 📁 stream.ts      # 流处理
-│   │   ├── 📁 types.ts          # API 类型定义
-│   │   └── 📁 providers.ts      # 供应商配置
-│   ├── 📁 client/              # 前端和文档系统 (TypeScript 源码)
-│   │   ├── 📁 bestPractices/    # 最佳实践模块 (开发源码)
-│   │   │   ├── 📁 core/          # 管理器和业务逻辑
-│   │   │   ├── 📁 data/          # 卡片数据和配置
-│   │   │   ├── 📁 renderers/     # UI 渲染组件
-│   │   │   ├── 📁 services/      # 内容和 Markdown 服务
-│   │   │   └── 📁 index.ts       # 模块入口点
-│   │   ├── 📁 howToApplyCC/     # 如何使用 CC 模块
-│   │   │   ├── 📁 components/    # UI 组件
-│   │   │   ├── 📁 services/      # 服务层
-│   │   │   └── 📁 index.ts       # 模块入口点
-│   │   └── 📁 howToImplement/   # 实现指南模块 (开发源码)
-│   │       ├── 📁 core/          # HowToImplementManager
-│   │       ├── 📁 data/          # 卡片数据和配置
-│   │       ├── 📁 handlers/      # 事件处理
-│   │       ├── 📁 renderers/     # UI 渲染组件
-│   │       ├── 📁 services/      # 内容服务
-│   │       └── 📁 index.ts       # 模块入口点
-│   ├── 📁 components/           # 共享 UI 组件
-│   ├── 📁 config/               # 全局配置
-│   ├── 📁 server/               # 服务器运行时逻辑
-│   │   ├── 📁 env.ts             # 环境变量类型定义
-│   │   ├── 📁 index.ts           # 服务器入口点
-│   │   └── 📁 routes/            # 路由处理器
-│   │       └── 📁 imgProxy.ts     # 图片代理
-│   ├── 📁 scripts/              # 客户端脚本
-│   │   └── 📁 generated/         # 从 src/client/* 自动生成
-│   ├── 📁 styles/               # 全局样式
-│   ├── 📁 templates/            # HTML 模板
-│   │   ├── 📁 components/        # 模板组件
-│   │   │   └── 📁 favicon.ts      # 图标生成
-│   │   ├── 📁 index.ts           # 主页模板
-│   │   ├── 📁 terms.ts           # 服务条款页面
-│   │   └── 📁 privacy.ts         # 隐私政策页面
-│   └── 📁 utils/                # 工具函数
-├── 📁 modules/                 # 静态 HTML 模板 + 编译后的 JavaScript
-│   ├── 📁 best-practices/      # HTML 模板 + 打包的客户端代码
-│   ├── 📁 get-started/         # 静态模块组件
-│   ├── 📁 how-to-apply-cc/     # 如何使用 CC 模块
-│   └── 📁 how-to-implement/    # HTML 模板 + 打包的客户端代码
-├── 📁 scripts/                 # 构建自动化和打包
-├── 🔧 index.ts                 # Worker 入口点 (fetch 处理器)
-└── ⚙️ wrangler.toml            # Worker 配置和绑定
+│   ├── 📁 app/                  # Next.js App Router ⭐
+│   │   ├── 📁 (main)/home/       # 主页路由组
+│   │   │   └── 📁 page.tsx        # 主页 (使用适配器)
+│   │   ├── 📁 api/               # API 路由
+│   │   │   ├── 📁 v1/messages/    # Claude API 代理
+│   │   │   │   └── 📁 route.ts     # POST /api/v1/messages
+│   │   │   └── 📁 img-proxy/      # 图片代理
+│   │   │       └── 📁 route.ts     # GET /api/img-proxy
+│   │   ├── 📁 layout.tsx         # 根布局
+│   │   ├── 📁 page.tsx           # 根路由 (重定向)
+│   │   └── 📁 globals.css        # 全局样式
+│   ├── 📁 components-next/      # Next.js React 组件 ⭐
+│   │   └── 📁 LegacyPageWrapper.tsx # 适配器组件
+│   ├── 📁 api/                  # API 适配器和类型定义 (复用)
+│   │   ├── 📁 adapters/          # 请求和响应格式转换
+│   │   │   ├── 📁 format.ts       # 请求/响应格式化
+│   │   │   └── 📁 stream.ts       # 流处理
+│   │   ├── 📁 types.ts           # API 类型定义
+│   │   └── 📁 providers.ts       # 供应商配置
+│   ├── 📁 client/               # 客户端模块化代码 (复用)
+│   │   ├── 📁 bestPractices/     # 最佳实践模块
+│   │   ├── 📁 howToApplyCC/      # 如何使用 CC 模块
+│   │   └── 📁 howToImplement/    # 实现指南模块
+│   ├── 📁 features/             # 功能模块 (复用)
+│   │   ├── 📁 get-started/       # 如何用上 CC
+│   │   ├── 📁 best-practices/    # 如何用好 CC
+│   │   ├── 📁 how-to-implement/  # 如何实现 CC
+│   │   └── 📁 how-to-apply-cc/   # 如何运用 CC
+│   ├── 📁 components/           # 布局组件 (复用)
+│   ├── 📁 styles/               # 样式系统 (复用)
+│   ├── 📁 scripts/              # 脚本系统 (复用)
+│   ├── 📁 lib/                  # 工具函数
+│   └── 📁 config/               # 全局配置
+├── 📁 scripts/                  # 构建自动化
+│   └── 📁 build-client.js        # 客户端模块打包
+├── 🔧 next.config.mjs           # Next.js 配置
+├── 🔧 open-next.config.ts       # OpenNext Cloudflare 配置
+└── ⚙️ wrangler.toml             # Cloudflare 配置
 ```
 
 ### Frontend Build Architecture
 
-The project uses a **dual-layer frontend architecture**:
+The project uses a **hybrid architecture** combining Next.js and legacy modules:
 
-#### Development Layer (`src/client/`)
+#### Next.js Layer (Primary)
 
-- **Purpose**: Modern TypeScript development with full module structure
-- **Architecture**: Modular design (core, data, handlers, renderers, services)
-- **Benefits**: Type safety, code organization, maintainability
-- **Build Target**: Gets compiled and bundled by `scripts/build-client.js`
+- **Framework**: Next.js 15 with App Router
+- **Components**: React 19 components
+- **Styling**: Tailwind CSS 3
+- **API Routes**: Edge Runtime handlers
+- **Benefits**: Modern React, SEO-friendly, type-safe
 
-#### Runtime Layer (`modules/`)
+#### Legacy Adapter Layer
 
-- **Purpose**: Production-ready HTML templates + compiled JavaScript
-- **Architecture**: Static HTML containers + bundled client code
-- **Benefits**: Single-file deployment, optimized for Cloudflare Workers
-- **Source**: Generated from development layer through build process
+- **Purpose**: Reuse existing TypeScript modules without rewriting
+- **Implementation**: `LegacyPageWrapper` component
+- **Architecture**: Adapter pattern wrapping HTML string templates
+- **Benefits**: 100% code reuse, zero migration risk
 
 #### Build Process Flow
 
 ```mermaid
-graph LR
-    A[src/client/*/index.ts] -->|esbuild| B[Bundled JavaScript]
-    B -->|build-client.js| C[modules/*/index.ts]
-    C -->|Runtime| D[HTML + JS Module]
-    E[npm run build:client] -->|Orchestrates| A
+graph TB
+    A[Next.js App] -->|Uses| B[LegacyPageWrapper]
+    B -->|Imports| C[Legacy Modules]
+    C -->|Includes| D[src/features/*]
+    C -->|Includes| E[src/client/*]
+    
+    F[src/client/*] -->|esbuild| G[Bundled JS]
+    G -->|build-client.js| H[scripts/generated/*]
+    
+    I[Next.js Build] -->|Outputs| J[.next/]
+    J -->|OpenNext| K[Cloudflare Workers]
 
-    style A fill:#e3f2fd
-    style B fill:#fff3e0
-    style C fill:#e8f5e8
-    style D fill:#fce4ec
+    style A fill:#61dafb
+    style B fill:#ffd700
+    style C fill:#e3f2fd
+    style K fill:#f38020
 ```
 
-**Active Modules:**
+**Migration Strategy:**
 
-- **Best Practices** (`src/client/bestPractices` → `modules/best-practices`)
-- **How to Implement** (`src/client/howToImplement` →
-  `modules/how-to-implement`)
-- **How to Apply Claude Code** (`src/client/howToApplyCC` →
-  `modules/how-to-apply-cc`)
-- **Get Started** (Static components in `modules/get-started`)
+- ✅ **Phase 1**: Next.js + Adapter (Current)
+- 🔄 **Phase 2**: Gradual React component migration
+- 🎯 **Phase 3**: Remove adapter, pure Next.js
 
-This approach ensures **clean separation** between development complexity and
-runtime efficiency.
+This approach ensures **zero downtime** and **100% code reuse** during migration.
 
 ### Key Design Principles
 
 - **🌐 Edge-First**: Optimized for Cloudflare's global network
-- **🔒 Zero Dependencies**: No external runtime dependencies
+- **⚛️ React Modern**: Next.js 15 + React 19 architecture
 - **⚡ Performance**: Sub-millisecond response times
-- **🔄 Streaming**: Native Web Streams API support
+- **🔄 Streaming**: Native Web Streams API + SSE support
 - **🛡️ Type Safety**: Full TypeScript coverage with strict mode
+- **♻️ Code Reuse**: 100% legacy code reuse via adapter pattern
+
+## 📦 Migration to Next.js
+
+### Why Next.js?
+
+- ✅ **Modern Stack**: React 19, Tailwind CSS, TypeScript
+- ✅ **SEO Friendly**: Server-side rendering support
+- ✅ **Developer Experience**: Hot reload, type safety, modern tooling
+- ✅ **Edge Runtime**: Compatible with Cloudflare Workers
+- ✅ **Future Ready**: Easy to extend with React ecosystem
+
+### Migration Highlights
+
+- **100% Code Reuse**: All business logic preserved
+- **Zero Downtime**: Gradual migration strategy
+- **Minimal Changes**: Only ~600 lines of adapter code added
+- **Performance**: Maintained edge runtime performance
+- **Type Safety**: Enhanced TypeScript strict mode
+
+### Migration Documentation
+
+For detailed migration information, see:
+
+- [`MIGRATION_FINAL_SUMMARY.md`](./MIGRATION_FINAL_SUMMARY.md) - Complete migration summary
+- [`MIGRATION_PROGRESS.md`](./MIGRATION_PROGRESS.md) - Step-by-step progress
+- [`UPGRADE_TO_NEXT_ARCHITECTURE.md`](./UPGRADE_TO_NEXT_ARCHITECTURE.md) - Architecture guide
 
 ## 🙏 Acknowledgments
 
