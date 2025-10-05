@@ -5,9 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to
 Semantic Versioning where applicable.
 
-## [Unreleased] - 2025-08-31
+## [Unreleased] - 2025-10-05
 
 ### Changed
+
+- **品牌重塑**: 将项目从 "Claude Code Router" 转型为 "AI Speeds" 平台
+  - 更新了README标题和项目描述
+  - 重新定位为核心功能：Universal API proxy for using Claude Code with multiple AI providers
+  - 强调AI工具自我展示和AI生成内容聚合平台的定位
+
+### Documentation
 
 - Updated `docs/tech/BEST_PRACTICES_SHARE_USER_STORIES.md` to reflect the
   actual implemented behavior of the Best Practices card share feature:
