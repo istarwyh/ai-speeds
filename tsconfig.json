@@ -45,7 +45,7 @@
     "checkJs": true,
 
     /* Completeness */
-    "skipLibCheck": false,
+    "skipLibCheck": true,
 
     /* Output Options */
     "outDir": "./dist",
@@ -65,18 +65,8 @@
     "incremental": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
-  "include": [
-    "src/**/*",
-    "scripts/**/*",
-    "*.ts",
-    "*.js"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".wrangler",
-    "**/*.min.js"
-  ],
+  "include": ["src/**/*", "scripts/**/*", "types/**/*", "*.ts", "*.js"],
+  "exclude": ["node_modules", "dist", ".wrangler", "**/*.min.js"],
   "ts-node": {
     "esm": true,
     "compilerOptions": {

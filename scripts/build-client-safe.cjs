@@ -13,9 +13,16 @@ const LAST_BUILD_FILE = path.resolve(__dirname, '../.last-build-time');
  * 注意：当前使用同步I/O操作，对于构建脚本来说是可接受的
  * 如果未来 src/client 目录文件数量大幅增长，可考虑重构为异步版本
  */
+/**
+ * @param {string} dir
+ * @returns {number}
+ */
 function getLastModified(dir) {
   let lastModified = 0;
 
+/**
+   * @param {string} currentDir
+   */
   function walkDir(currentDir) {
     const files = fs.readdirSync(currentDir);
 
@@ -91,7 +98,7 @@ function safeBuildClient() {
     // 记录构建完成时间
     fs.writeFileSync(LAST_BUILD_FILE, currentTime.toString(), 'utf8');
   } catch (error) {
-    console.error('❌ 构建失败:', error.message);
+    console.error('❌ 构建失败:', error instanceof Error ? error.message : String(error));
     process.exit(1);
   } finally {
     // 清理锁文件

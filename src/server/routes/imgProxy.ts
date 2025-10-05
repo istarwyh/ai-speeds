@@ -1,4 +1,4 @@
-import type { Env } from '../../../env';
+import type { Env } from '../env';
 
 export async function handleImgProxy(url: URL, request: Request, _env: Env): Promise<Response> {
   // CORS preflight
@@ -51,10 +51,10 @@ export async function handleImgProxy(url: URL, request: Request, _env: Env): Pro
   // Enforce whitelist with optional '*' wildcard to allow any host
   const whitelistRaw = (_env.IMAGE_PROXY_WHITELIST || '')
     .split(',')
-    .map(h => h.trim().toLowerCase())
+    .map((h: string) => h.trim().toLowerCase())
     .filter(Boolean);
   const allowAll = whitelistRaw.includes('*');
-  const whitelist = whitelistRaw.filter(h => h !== '*');
+  const whitelist = whitelistRaw.filter((h: string) => h !== '*');
   const host = target.hostname.toLowerCase();
   const allowed = allowAll || whitelist.includes(host);
   if (!allowed) {

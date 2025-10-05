@@ -226,7 +226,6 @@ export class LayoutService {
   private calculateTagsSection(tags: string[], contentWidth: number, startY: number): LayoutSection {
     const fontSize = this.styleManager.getFontSizes().small;
     const tagHeight = 32;
-    const tagPadding = this.styleManager.getSpacing().sm;
     const tagGap = this.styleManager.getSpacing().xs;
 
     // 简化计算：假设标签会换行

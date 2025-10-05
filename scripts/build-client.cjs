@@ -64,18 +64,18 @@ async function buildModule(config) {
   console.log(`📦 打包${description}模块...`);
 
   // 根据 Node 进程环境决定构建模式（默认 production）
-  const nodeEnv = process.env.NODE_ENV === 'development' ? 'development' : 'production';
+  const nodeEnv = process.env['NODE_ENV'] === 'development' ? 'development' : 'production';
 
   // 构建 esbuild 配置
   const buildConfig = {
     entryPoints: [entryPoint],
     bundle: true,
-    format: 'iife',
+    format: /** @type {const} */ ('iife'),
     globalName,
     target: 'es2020',
     minify: nodeEnv === 'production',
     write: false,
-    platform: 'browser',
+    platform: /** @type {const} */ ('browser'),
     define: {
       'process.env.NODE_ENV': JSON.stringify(nodeEnv),
     },
@@ -83,7 +83,7 @@ async function buildModule(config) {
 
   // 添加 markdown 加载器（如果需要）
   if (hasMarkdownLoader) {
-    buildConfig.loader = {
+    /** @type {any} */ (buildConfig).loader = {
       '.md': 'text', // 将 .md 文件作为文本加载
     };
   }
@@ -92,7 +92,7 @@ async function buildModule(config) {
   const result = await esbuild.build(buildConfig);
 
   // 获取打包后的代码
-  const bundledCode = result.outputFiles[0].text;
+  const bundledCode = result.outputFiles?.[0]?.text || '';
 
   // 包装成 TypeScript 导出
   // 使用 JSON.stringify 来正确转义所有特殊字符
@@ -128,6 +128,8 @@ async function buildBestPracticesModule() {
     globalName: 'BestPracticesApp',
     exportName: 'bestPracticesClientScript',
     description: '最佳实践',
+    hasMarkdownLoader: true,
+    needsPostProcessing: false,
   });
 }
 
@@ -141,6 +143,8 @@ async function buildHowToImplementModule() {
     globalName: 'HowToImplementApp',
     exportName: 'howToImplementClientScript',
     description: 'How to Implement ',
+    hasMarkdownLoader: true,
+    needsPostProcessing: false,
   });
 }
 
@@ -154,6 +158,7 @@ async function buildHowToApplyCCModule() {
     globalName: 'HowToApplyCCApp',
     exportName: 'howToApplyCCClientScript',
     description: 'How to Apply CC ',
+    hasMarkdownLoader: true,
     needsPostProcessing: true, // 修复反引号转义问题
   });
 }
@@ -168,7 +173,8 @@ async function buildProviderDetailsModule() {
     globalName: 'ProviderDetailsApp',
     exportName: 'providerDetailsClientScript',
     description: '供应商详情',
-    hasMarkdownLoader: false, // 不需要 markdown 加载器
+    hasMarkdownLoader: false,
+    needsPostProcessing: false,
   });
 }
 
