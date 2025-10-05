@@ -12,6 +12,9 @@ async function buildClientScripts() {
   console.log('🔨 开始构建客户端脚本...');
 
   try {
+    // 先生成最佳实践内容映射（SSOT）
+    await generateBestPracticesContentMap();
+
     // 构建最佳实践模块
     await buildBestPracticesModule();
 
@@ -119,6 +122,84 @@ export const ${exportName} = ${JSON.stringify(bundledCode)};
 }
 
 /**
+ * 生成最佳实践内容映射文件（SSOT）
+ * 从 src/client/bestPractices/content/*.md 扫描，生成
+ * src/client/bestPractices/generated/contentMap.ts
+ * 并校验与 cardsData 中的 id 是否一致。
+ */
+async function generateBestPracticesContentMap() {
+  const contentDir = path.resolve(__dirname, '../src/client/bestPractices/content');
+  const generatedDir = path.resolve(__dirname, '../src/client/bestPractices/generated');
+  const outputFile = path.join(generatedDir, 'contentMap.ts');
+  const cardsFile = path.resolve(__dirname, '../src/client/bestPractices/data/cardsData.ts');
+
+  if (!fs.existsSync(contentDir)) {
+    console.warn('⚠️ 未找到内容目录:', contentDir);
+    return;
+  }
+  if (!fs.existsSync(generatedDir)) {
+    fs.mkdirSync(generatedDir, { recursive: true });
+  }
+
+  const files = fs
+    .readdirSync(contentDir)
+    .filter(f => f.endsWith('.md'))
+    .sort((a, b) => a.localeCompare(b));
+
+  const toSlug = fileName => fileName.replace(/\.md$/i, '').trim().toLowerCase();
+  const toVar = slug =>
+    'md_' + slug.replace(/-([a-z0-9])/g, (_m, c) => c.toUpperCase()).replace(/[^a-zA-Z0-9_]/g, '_');
+
+  const imports = [];
+  const entries = [];
+  const fileSlugs = new Set();
+  for (const file of files) {
+    const slug = toSlug(file);
+    const varName = toVar(slug);
+    imports.push(`import ${varName} from '../content/${file}';`);
+    entries.push(`  '${slug}': async () => ${varName},`);
+    fileSlugs.add(slug);
+  }
+
+  const header = `// 自动生成文件，请勿手动修改\n// 生成时间: ${new Date().toISOString()}\n`;
+  const body = `\n${imports.join('\n')}\n\nexport const contentLoaders: Record<string, () => Promise<string>> = {\n${entries.join(
+    '\n',
+  )}\n};\n`;
+
+  fs.writeFileSync(outputFile, header + body, 'utf8');
+  console.log('📝 已生成内容映射:', outputFile);
+
+  // 校验 cardsData 与文件匹配性
+  try {
+    const cardsSrc = fs.readFileSync(cardsFile, 'utf8');
+    const idRegex = /id\s*:\s*['"]([^'\"]+)['"]/g;
+    const cardIds = new Set();
+    let m;
+    while ((m = idRegex.exec(cardsSrc))) {
+      cardIds.add(m[1].trim().toLowerCase());
+    }
+
+    const missingMd = [];
+    const extraMd = [];
+    for (const id of cardIds) {
+      if (!fileSlugs.has(id)) missingMd.push(id);
+    }
+    for (const slug of fileSlugs) {
+      if (!cardIds.has(slug)) extraMd.push(slug);
+    }
+
+    if (missingMd.length) {
+      console.warn('⚠️ 以下卡片缺少对应的 .md 文件:', missingMd.join(', '));
+    }
+    if (extraMd.length) {
+      console.warn('⚠️ 以下 .md 文件没有匹配的卡片 id:', extraMd.join(', '));
+    }
+  } catch (e) {
+    console.warn('⚠️ 校验 cardsData 失败:', e.message);
+  }
+}
+
+/**
  * 构建最佳实践模块
  */
 async function buildBestPracticesModule() {
@@ -128,6 +209,8 @@ async function buildBestPracticesModule() {
     globalName: 'BestPracticesApp',
     exportName: 'bestPracticesClientScript',
     description: '最佳实践',
+    hasMarkdownLoader: true,
+    needsPostProcessing: false,
   });
 }
 
@@ -141,6 +224,8 @@ async function buildHowToImplementModule() {
     globalName: 'HowToImplementApp',
     exportName: 'howToImplementClientScript',
     description: 'How to Implement ',
+    hasMarkdownLoader: true,
+    needsPostProcessing: false,
   });
 }
 
@@ -154,6 +239,7 @@ async function buildHowToApplyCCModule() {
     globalName: 'HowToApplyCCApp',
     exportName: 'howToApplyCCClientScript',
     description: 'How to Apply CC ',
+    hasMarkdownLoader: true,
     needsPostProcessing: true, // 修复反引号转义问题
   });
 }
@@ -169,6 +255,7 @@ async function buildProviderDetailsModule() {
     exportName: 'providerDetailsClientScript',
     description: '供应商详情',
     hasMarkdownLoader: false, // 不需要 markdown 加载器
+    needsPostProcessing: false,
   });
 }
 
