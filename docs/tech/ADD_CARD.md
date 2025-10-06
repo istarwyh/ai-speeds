@@ -1,7 +1,7 @@
 # 新增客户端模块卡片操作指南
 
-本指南定义向 `src/client/` 下任何模块新增一张卡片的标准流程（SOP）。
-你阅读本指南并收到一段 Markdown 内容后，应严格按此文执行，完成卡片新增。
+本指南定义向 `src/client/`
+下任何模块新增一张卡片的标准流程（SOP）。你阅读本指南并收到一段 Markdown 内容后，应严格按此文执行，完成卡片新增。
 
 ## 适用范围
 
@@ -15,7 +15,8 @@
 
 ## 前置条件
 
-- 已确定**目标模块**（`bestPractices`、`howToImplement`、`howToApplyCC` 或新模块）
+- 已确定**目标模块**（`bestPractices`、`howToImplement`、`howToApplyCC`
+  或新模块）
 - 已准备好文章 Markdown 内容（支持中英文，带适当小标题）
 - 具备卡片必要元信息：
   - 必填：`id`、`title`、`category`
@@ -25,20 +26,24 @@
 
 ### 支持的模块及其分类
 
-| 模块 | 卡片类型 | 分类选项 |
-|------|----------|----------|
-| `bestPractices` | `PracticeCard` | `workflow` \| `configuration` \| `mcp-commands` \| `context` \| `automation` \| `concurrency` \| `tools` |
-| `howToImplement` | `ImplementCard` | `conversation` \| `system-prompt` \| `integration` \| `configuration` \| `implementation` \| `examples` |
-| `howToApplyCC` | `SDKCard` | `quick-start` \| `core-usage` \| `advanced` \| `examples` \| `best-practices` \| `integration` |
+| 模块             | 卡片类型        | 分类选项                                                                                                 |
+| ---------------- | --------------- | -------------------------------------------------------------------------------------------------------- |
+| `bestPractices`  | `PracticeCard`  | `workflow` \| `configuration` \| `mcp-commands` \| `context` \| `automation` \| `concurrency` \| `tools` |
+| `howToImplement` | `ImplementCard` | `conversation` \| `system-prompt` \| `integration` \| `configuration` \| `implementation` \| `examples`  |
+| `howToApplyCC`   | `SDKCard`       | `quick-start` \| `core-usage` \| `advanced` \| `examples` \| `best-practices` \| `integration`           |
 
 ### 类型定义位置
+
 - **统一类型定义**：`src/client/shared/types/ContentCard.ts`
 - **分类图标配置**：`src/client/{moduleName}/data/categoryConfig.ts`
 
 ### 新增分类流程
+
 如需为某个模块新增分类，需同时：
+
 1. 在对应模块的 `categoryConfig.ts` 的 `categoryIcons` 对象中新增图标映射
-2. 在 `src/client/shared/types/ContentCard.ts` 中对应的卡片类型联合类型中加入新分类字面量
+2. 在 `src/client/shared/types/ContentCard.ts`
+   中对应的卡片类型联合类型中加入新分类字面量
 
 ## 命名规范
 
@@ -69,6 +74,7 @@
 - **示例模板**（根据模块选择对应的卡片类型）：
 
 #### Best Practices 模块示例：
+
 ```ts
 {
   id: 'data-analysis',
@@ -86,6 +92,7 @@
 ```
 
 #### How to Implement 模块示例：
+
 ```ts
 {
   id: 'advanced-conversation-patterns',
@@ -99,6 +106,7 @@
 ```
 
 #### How to Apply CC 模块示例：
+
 ```ts
 {
   id: 'production-deployment',
@@ -121,25 +129,25 @@
   - `howToApplyCC` → `HowToApplyCCService`
 
 **示例**：
+
 ```ts
 // 在 contentMap 对象中添加
 'data-analysis': async () => (await import('../content/data-analysis.md')).default,
 ```
 
-- **可选**：在 `getTitleFromCardId()` 方法的 `titles` 对象中添加标题兜底映射：
-```ts
-// 在 titles 对象中添加
-'data-analysis': 'CAIBAO-DA 专业数据分析师',
-```
+> 说明（SSOT）：标题将从 `cardsData.ts` 自动解析，无需在 `ArticleService` 中维护
+> `titles` 映射。
 
 ### 4. **构建与本地验证**
 
 - **构建**：
+
 ```bash
 npm run build:client
 ```
 
 - **本地预览**（Cloudflare Workers 开发服务器）：
+
 ```bash
 npm run dev
 ```
@@ -159,26 +167,33 @@ npm run dev
 
 - 导入路径错误：确认 `contentMap` 中相对路径与文件名一致
 - 分类缺图标/未在类型中注册：
-  - 检查 `src/client/bestPractices/data/categoryConfig.ts` 中的 `categoryIcons` 对象
-  - 检查 `src/client/shared/types/ContentCard.ts` 中的 `PracticeCard.category` 联合类型
+  - 检查 `src/client/bestPractices/data/categoryConfig.ts` 中的 `categoryIcons`
+    对象
+  - 检查 `src/client/shared/types/ContentCard.ts` 中的 `PracticeCard.category`
+    联合类型
 - 构建未更新：确保执行 `npm run build:client`
 - TypeScript 类型错误：确保新增的属性符合 `PracticeCard` 接口定义
 
 ## Definition of Done（完成判定）
 
 ### 通用完成标准
+
 - ✅ **文章文件已落位**：`src/client/{moduleName}/content/<id>.md`
-- ✅ **卡片元数据已注册**：在对应的 `cardsData.ts` 中新增卡片项，符合对应的卡片接口
-- ✅ **内容映射已建立**：在对应的服务类中添加 `contentMap` 映射（及可选标题映射）
+- ✅ **卡片元数据已注册**：在对应的 `cardsData.ts`
+  中新增卡片项，符合对应的卡片接口
+- ✅ **内容映射已建立**：在对应的服务类中添加 `contentMap`
+  映射（及可选标题映射）
 - ✅ **构建验证通过**：`npm run build:client` 无 TypeScript 错误
 - ✅ **手动验收通过**：概览展示、跳转阅读、返回导航、移动端视图
 
 ### 模块特定验收
+
 - **Best Practices**：访问 `/best-practices` 页面验证
 - **How to Implement**：访问 `/how-to-implement` 页面验证
 - **How to Apply CC**：访问 `/how-to-apply-cc` 页面验证
 
 ### 质量检查清单
+
 - [ ] 使用了正确的卡片类型（PracticeCard/ImplementCard/SDKCard）
 - [ ] 分类属于该模块的有效分类选项
 - [ ] 提示信息（tips）内容有价值且类型正确
@@ -192,6 +207,7 @@ npm run dev
 本项目采用**双层前端架构**：
 
 ### 开发层 (`src/client/`)
+
 - **TypeScript 开发环境**，具备完整的类型安全和模块化架构
 - 每个模块遵循一致的目录结构：
   ```
@@ -206,10 +222,12 @@ npm run dev
   ```
 
 ### 运行时层 (`modules/`)
+
 - **生产就绪的 HTML 模板**，包含编译后的 JavaScript
 - 通过构建脚本自动生成，优化用于 Cloudflare Workers 边缘执行
 
 ### 共享架构 (`src/client/shared/`)
+
 - **统一的类型系统**：`ContentCard.ts` 定义所有卡片类型
 - **共享服务基类**：`BaseContentService` 提供通用内容管理逻辑
 - **通用组件和工具**：跨模块复用的渲染器、工具函数等
@@ -219,6 +237,7 @@ npm run dev
 当你（AI）被要求根据一段给定 Markdown 内容新增卡片时：
 
 ### 执行前确认
+
 1. **确定目标模块**：根据内容性质选择合适的模块
    - `bestPractices` - 工作流程、工具使用、最佳实践
    - `howToImplement` - 技术实现、系统设计、对话示例
@@ -230,15 +249,18 @@ npm run dev
    - 包含"SDK"、"API"、"集成"、"开发指南" → `howToApplyCC`
 
 ### 标准执行流程
+
 1. **选择 `id`**（若用户未提供则从标题归一化生成 kebab-case）
 2. **确定分类**：参考对应模块的分类选项（见上方模块分类表格）
 3. **提取元信息**：分析内容生成 `title`、`description`、`tags` 等
-4. **生成提示信息**：根据内容提炼 1–3 条 `tips`（类型可用 `info|success|warning|tip|expert`）
+4. **生成提示信息**：根据内容提炼 1–3 条 `tips`（类型可用
+   `info|success|warning|tip|expert`）
 5. **设置难度等级**：根据内容复杂度选择 `beginner|intermediate|advanced|expert`
 6. **估算阅读时间**：基于内容长度提供 `readTime` 估计
 7. **完成三步操作**：
    - 在 `src/client/{moduleName}/data/cardsData.ts` 中添加卡片元数据
-   - 在 `src/client/{moduleName}/services/{ServiceName}.ts` 中添加内容映射和标题映射
+   - 在 `src/client/{moduleName}/services/{ServiceName}.ts`
+     中添加内容映射（仅 contentMap；标题由 `cardsData.ts` 自动解析）
    - 执行 `npm run build:client` 验证构建
 8. **提供验收清单**：复述修改点并提供人工验收步骤
 
@@ -253,6 +275,7 @@ npm run dev
 ### 新模块扩展指导
 
 如果未来需要添加新模块，应遵循以下模式：
+
 1. 在 `src/client/shared/types/ContentCard.ts` 中定义新的卡片类型
 2. 创建 `src/client/{newModule}/data/categoryConfig.ts` 定义分类图标
 3. 实现继承自 `BaseContentService` 的服务类
