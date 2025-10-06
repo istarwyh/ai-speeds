@@ -119,43 +119,37 @@
 }
 ```
 
-### 3. **建立 id→Markdown 内容映射（文章加载）**
+### 3. **构建与本地验证**
 
-- **文件**：`src/client/{moduleName}/services/{ModuleName}Service.ts`
-- **方法**：在对应服务类的 `getContentFromFile` 方法的 `contentMap` 中新增一条
-- **服务类映射**：
-  - `bestPractices` → `ArticleService`
-  - `howToImplement` → `HowToImplementService`
-  - `howToApplyCC` → `HowToApplyCCService`
+> ⚠️ **重要说明**：内容映射（contentMap）会在构建时**自动生成**，无需手动添加！
 
-**示例**：
+构建脚本会自动：
 
-```ts
-// 在 contentMap 对象中添加
-'data-analysis': async () => (await import('../content/data-analysis.md')).default,
-```
+- 扫描 `src/client/{moduleName}/content/` 目录下的所有 `.md` 文件
+- 生成 `src/client/{moduleName}/generated/contentMap.ts` 文件
+- 建立 `cardId → Markdown内容` 的映射关系
+- 验证每个 `.md` 文件是否有对应的卡片定义（会显示警告但不会中断构建）
 
-> 说明（SSOT）：标题将从 `cardsData.ts` 自动解析，无需在 `ArticleService` 中维护
-> `titles` 映射。
-
-### 4. **构建与本地验证**
-
-- **构建**：
+**构建命令**：
 
 ```bash
-npm run build:client
+pnpm run build:client
 ```
 
-- **本地预览**（Cloudflare Workers 开发服务器）：
+**本地预览**：
 
 ```bash
-npm run dev
+pnpm run dev:next
 ```
 
-- **验收点**：
-  - 对应模块概览页出现新卡片（标题、图片、信息完整）
-  - 点击卡片进入文章页，右上角"返回概览"按钮可用
-  - 移动端展示正常，无遮挡
+**验收点**：
+
+- ✅ 构建成功，无 TypeScript 错误
+- ✅ 在 `generated/contentMap.ts` 中看到新的 cardId 映射
+- ✅ 对应模块概览页出现新卡片（标题、图片、信息完整）
+- ✅ 点击卡片进入文章页，内容正确显示
+- ✅ "返回概览"按钮可用
+- ✅ 移动端展示正常，无遮挡
 
 ## 内容撰写建议
 
@@ -165,14 +159,31 @@ npm run dev
 
 ## 常见错误与排查
 
-- 导入路径错误：确认 `contentMap` 中相对路径与文件名一致
-- 分类缺图标/未在类型中注册：
-  - 检查 `src/client/bestPractices/data/categoryConfig.ts` 中的 `categoryIcons`
-    对象
-  - 检查 `src/client/shared/types/ContentCard.ts` 中的 `PracticeCard.category`
-    联合类型
-- 构建未更新：确保执行 `npm run build:client`
-- TypeScript 类型错误：确保新增的属性符合 `PracticeCard` 接口定义
+### 构建警告：`.md 文件没有匹配的卡片 id`
+
+- **原因**：content 目录下有 `.md` 文件，但 `cardsData.ts` 中没有对应的卡片定义
+- **解决**：
+  - 如果是新卡片：在 `cardsData.ts` 中添加卡片元数据
+  - 如果是废弃文件：删除或移动该 `.md` 文件
+- **注意**：这只是警告，不会中断构建
+
+### 分类缺图标/未在类型中注册
+
+- 检查 `src/client/{moduleName}/data/categoryConfig.ts` 中的 `categoryIcons`
+  对象
+- 检查 `src/client/shared/types/ContentCard.ts` 中对应卡片类型的 `category`
+  联合类型
+
+### TypeScript 类型错误
+
+- 确保新增的属性符合对应的卡片接口定义（`PracticeCard`/`ImplementCard`/`SDKCard`）
+- 检查 `tips` 数组中的 `type` 是否为有效值：`info|success|warning|tip|expert`
+
+### 卡片不显示或内容加载失败
+
+- 确认文件名与 `cardId` 一致（kebab-case）
+- 检查 `generated/contentMap.ts` 中是否有对应映射
+- 重新运行 `pnpm run build:client`
 
 ## Definition of Done（完成判定）
 
@@ -181,9 +192,8 @@ npm run dev
 - ✅ **文章文件已落位**：`src/client/{moduleName}/content/<id>.md`
 - ✅ **卡片元数据已注册**：在对应的 `cardsData.ts`
   中新增卡片项，符合对应的卡片接口
-- ✅ **内容映射已建立**：在对应的服务类中添加 `contentMap`
-  映射（及可选标题映射）
-- ✅ **构建验证通过**：`npm run build:client` 无 TypeScript 错误
+- ✅ **构建验证通过**：`pnpm run build:client` 无 TypeScript 错误
+- ✅ **内容映射已自动生成**：在 `generated/contentMap.ts` 中看到新的映射
 - ✅ **手动验收通过**：概览展示、跳转阅读、返回导航、移动端视图
 
 ### 模块特定验收
@@ -257,18 +267,19 @@ npm run dev
    `info|success|warning|tip|expert`）
 5. **设置难度等级**：根据内容复杂度选择 `beginner|intermediate|advanced|expert`
 6. **估算阅读时间**：基于内容长度提供 `readTime` 估计
-7. **完成三步操作**：
+7. **完成两步操作**：
+   - 在 `src/client/{moduleName}/content/` 创建 `<id>.md` 文件
    - 在 `src/client/{moduleName}/data/cardsData.ts` 中添加卡片元数据
-   - 在 `src/client/{moduleName}/services/{ServiceName}.ts`
-     中添加内容映射（仅 contentMap；标题由 `cardsData.ts` 自动解析）
-   - 执行 `npm run build:client` 验证构建
-8. **提供验收清单**：复述修改点并提供人工验收步骤
+8. **执行构建**：运行 `pnpm run build:client`（会自动生成 contentMap）
+9. **提供验收清单**：复述修改点并提供人工验收步骤
+
+> 💡
+> **关键提示**：不需要手动修改任何 Service 文件！构建脚本会自动扫描 content 目录并生成映射。
 
 ### 重要提醒
 
 - **模块选择优先级**：优先考虑内容的主要用途和目标受众
 - **遵循现有架构**：不要破坏现有的 TypeScript 类型系统和模块化结构
-- **保持一致性**：新增内容应与目标模块现有卡片的风格和质量标准保持一致
 - **类型安全**：确保使用正确的卡片类型和分类选项
 - **验证构建**：确保所有修改都能通过 TypeScript 编译和构建流程
 
