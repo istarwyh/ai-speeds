@@ -45,43 +45,10 @@ hljs.registerLanguage('sql', sql);
 hljs.registerLanguage('diff', diff);
 hljs.registerLanguage('dockerfile', dockerfile);
 
-interface MarkdownRendererOptions {
-  enableCodeHighlight?: boolean;
-  allowedTags?: string[];
-}
-
 export class SafeMarkdownRenderer {
-  private options: MarkdownRendererOptions;
   private md: MarkdownIt;
 
-  // 允许的 HTML 标签白名单
-  private readonly defaultAllowedTags = [
-    'h1',
-    'h2',
-    'h3',
-    'h4',
-    'h5',
-    'h6',
-    'p',
-    'br',
-    'strong',
-    'em',
-    'code',
-    'pre',
-    'ul',
-    'ol',
-    'li',
-    'a',
-    'blockquote',
-  ];
-
-  constructor(options: MarkdownRendererOptions = {}) {
-    this.options = {
-      enableCodeHighlight: true,
-      allowedTags: this.defaultAllowedTags,
-      ...options,
-    };
-
+  constructor() {
     // 初始化 markdown-it
     this.md = new MarkdownIt({
       html: false, // 禁用 HTML 以防止 XSS 攻击
@@ -111,9 +78,19 @@ export class SafeMarkdownRenderer {
     const self = this;
     const defaultFence = this.md.renderer.rules.fence?.bind(this.md.renderer);
     this.md.renderer.rules.fence = function (tokens, idx, options, env, slf) {
-      const token = tokens[idx];
-      const info = (token.info || '').trim().toLowerCase();
-      const content = token.content || '';
+      // Guard index to avoid out-of-range access
+      const safeIdx = Number.isInteger(idx) && idx >= 0 && idx < tokens.length ? idx : -1;
+      if (safeIdx === -1) {
+        return '';
+      }
+      // eslint-disable-next-line security/detect-object-injection
+      const token = tokens[safeIdx];
+      if (!token) {
+        return '';
+      }
+
+      const info = (token.info ?? '').trim().toLowerCase();
+      const content = token.content ?? '';
 
       // 特殊处理 Mermaid，其余交给默认 fence（从而走 highlight 回调）
       if (info === 'mermaid' || info === 'sequencediagram') {
@@ -134,7 +111,17 @@ export class SafeMarkdownRenderer {
     // 自定义 image 渲染：为图片添加安全与表现属性
     const defaultImage = this.md.renderer.rules.image?.bind(this.md.renderer);
     this.md.renderer.rules.image = function (tokens, idx, options, env, slf) {
-      const token = tokens[idx];
+      // Guard index to avoid out-of-range access
+      const safeIdx = Number.isInteger(idx) && idx >= 0 && idx < tokens.length ? idx : -1;
+      if (safeIdx === -1) {
+        return '';
+      }
+      // eslint-disable-next-line security/detect-object-injection
+      const token = tokens[safeIdx];
+      if (!token) {
+        return '';
+      }
+
       const src = token.attrGet('src') || '';
       const alt = token.content || token.attrGet('alt') || '';
 
@@ -171,7 +158,7 @@ export class SafeMarkdownRenderer {
     const html = this.md.render(markdown);
 
     // 使用 DOMPurify 进行 HTML 安全清理
-    const sanitizedHtml = DOMPurify.sanitize(html, {
+    const sanitizeOptions = {
       ALLOWED_TAGS: [
         'h1',
         'h2',
@@ -212,7 +199,9 @@ export class SafeMarkdownRenderer {
         'sizes',
       ],
       ALLOW_DATA_ATTR: false,
-    });
+    };
+
+    const sanitizedHtml = DOMPurify.sanitize(html, sanitizeOptions);
 
     return sanitizedHtml;
   }
@@ -221,235 +210,29 @@ export class SafeMarkdownRenderer {
    * 转义 HTML 字符以防止 XSS
    */
   private escapeHtml(text: string): string {
-    const escapeMap: Record<string, string> = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;',
-    };
-    return String(text).replace(/[&<>"']/g, char => escapeMap[char] || char);
-  }
-
-  /**
-   * 保留已经处理的 HTML 标签，对其他内容进行转义
-   */
-  private preserveHtmlTags(text: string): string {
-    // 对于已经包含 HTML 标签的内容，直接返回
-    if (text.includes('<') && text.includes('>')) {
-      return text;
-    }
-    // 对于纯文本内容，进行转义
-    return this.escapeHtml(text);
-  }
-
-  /**
-   * 渲染标题
-   */
-  private renderHeaders(html: string): string {
-    // 按从大到小的顺序处理标题，对标题内容进行转义
-    html = html.replace(/^######\s(.+)$/gm, (match, title) => `<h6>${this.escapeHtml(title.trim())}</h6>`);
-    html = html.replace(/^#####\s(.+)$/gm, (match, title) => `<h5>${this.escapeHtml(title.trim())}</h5>`);
-    html = html.replace(/^####\s(.+)$/gm, (match, title) => `<h4>${this.escapeHtml(title.trim())}</h4>`);
-    html = html.replace(/^###\s(.+)$/gm, (match, title) => `<h3>${this.escapeHtml(title.trim())}</h3>`);
-    html = html.replace(/^##\s(.+)$/gm, (match, title) => `<h2>${this.escapeHtml(title.trim())}</h2>`);
-    html = html.replace(/^#\s(.+)$/gm, (match, title) => `<h1>${this.escapeHtml(title.trim())}</h1>`);
-    return html;
-  }
-
-  /**
-   * 渲染代码块
-   */
-  private renderCodeBlocks(html: string): string {
-    // 先检查是否包含代码块
-    const hasCodeBlocks = html.includes('```');
-    if (hasCodeBlocks) {
-      // 匹配所有代码块
-      const codeBlockMatches = html.match(/```[\s\S]*?```/g);
-      if (codeBlockMatches) {
-        codeBlockMatches.forEach((_match, _index) => {});
+    const input = String(text);
+    // Use charCode switch to avoid string literal quote style issues
+    return input.replace(/[&<>"']/g, ch => {
+      switch (ch.charCodeAt(0)) {
+        // &
+        case 38:
+          return '&amp;';
+        // <
+        case 60:
+          return '&lt;';
+        // >
+        case 62:
+          return '&gt;';
+        // "
+        case 34:
+          return '&quot;';
+        // '
+        case 39:
+          return '&#39;';
+        default:
+          return ch;
       }
-    }
-
-    // 处理三个反引号的代码块 - 恢复原来的正则表达式
-    html = html.replace(/```([^`]*?)```/gs, (match, codeWithLang) => {
-      const lines = codeWithLang.trim().split('\n');
-      const firstLine = lines[0] || '';
-      const language = firstLine.toLowerCase().trim();
-      const code = lines.slice(1).join('\n').trim(); // 检查是否是 Mermaid 图表
-      if (language === 'mermaid' || language === 'sequencediagram') {
-        return this.renderMermaidDiagram(code);
-      }
-
-      // 普通代码块return `<pre><code class="language-${language}">${this.escapeHtml(code)}</code></pre>`;
     });
-    return html;
-  }
-
-  /**
-   * 渲染 Mermaid 图表
-   */
-  private renderMermaidDiagram(code: string): string {
-    const diagramId = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    return `<div class="mermaid-diagram" id="${diagramId}">${this.escapeHtml(code)}</div>`;
-  }
-
-  /**
-   * 渲染行内代码
-   */
-  private renderInlineCode(html: string): string {
-    // 处理单个反引号的行内代码，但不处理已经在 <pre><code> 中的
-    html = html.replace(/`([^`\n]+)`/g, (match, code) => {
-      // 检查是否在代码块中
-      if (html.indexOf('<pre><code>') !== -1 && html.indexOf('</code></pre>') !== -1) {
-        const preStart = html.lastIndexOf('<pre><code>', html.indexOf(match));
-        const preEnd = html.indexOf('</code></pre>', html.indexOf(match));
-        if (preStart !== -1 && preEnd !== -1 && preStart < html.indexOf(match) && html.indexOf(match) < preEnd) {
-          return match; // 在代码块中，不处理
-        }
-      }
-      return `<code>${this.escapeHtml(code)}</code>`;
-    });
-    return html;
-  }
-
-  /**
-   * 渲染粗体和斜体
-   */
-  private renderBoldItalic(html: string): string {
-    // 粗体 **text**
-    html = html.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
-    // 斜体 *text*
-    html = html.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
-    return html;
-  }
-
-  /**
-   * 渲染链接
-   */
-  private renderLinks(html: string): string {
-    // [text](url) 格式的链接
-    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
-      // 简单的 URL 验证，只允许 http/https
-      if (url.match(/^https?:\/\//)) {
-        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`;
-      }
-      return match; // 不符合条件的链接保持原样
-    });
-    return html;
-  }
-
-  /**
-   * 渲染列表
-   */
-  private renderLists(html: string): string {
-    const lines = html.split('\n');
-    const result: string[] = [];
-    let inUnorderedList = false;
-    let inOrderedList = false;
-    let listItems: string[] = [];
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      const isUnorderedListItem = /^[*+-]\s(.+)$/.test(line);
-      const isOrderedListItem = /^\d+\.\s(.+)$/.test(line);
-
-      if (isUnorderedListItem) {
-        // 如果之前在有序列表中，先结束有序列表
-        if (inOrderedList) {
-          result.push(`<ol>${listItems.join('')}</ol>`);
-          inOrderedList = false;
-          listItems = [];
-        }
-
-        if (!inUnorderedList) {
-          inUnorderedList = true;
-          listItems = [];
-        }
-        const content = line.replace(/^[*+-]\s/, '');
-        // 将换行符转换为 <br> 标签以保持原有格式
-        const formattedContent = content.replace(/\n/g, '<br>');
-        listItems.push(`<li>${formattedContent}</li>`);
-      } else if (isOrderedListItem) {
-        // 如果之前在无序列表中，先结束无序列表
-        if (inUnorderedList) {
-          result.push(`<ul>${listItems.join('')}</ul>`);
-          inUnorderedList = false;
-          listItems = [];
-        }
-
-        if (!inOrderedList) {
-          inOrderedList = true;
-          listItems = [];
-        }
-        const content = line.replace(/^\d+\.\s/, '');
-        listItems.push(`<li>${content}</li>`);
-      } else {
-        // 结束当前列表（无论是有序还是无序）
-        if (inUnorderedList) {
-          result.push(`<ul>${listItems.join('')}</ul>`);
-          inUnorderedList = false;
-          listItems = [];
-        } else if (inOrderedList) {
-          result.push(`<ol>${listItems.join('')}</ol>`);
-          inOrderedList = false;
-          listItems = [];
-        }
-        result.push(line);
-      }
-    }
-
-    // 处理文件末尾的列表
-    if (inUnorderedList && listItems.length > 0) {
-      result.push(`<ul>${listItems.join('')}</ul>`);
-    } else if (inOrderedList && listItems.length > 0) {
-      result.push(`<ol>${listItems.join('')}</ol>`);
-    }
-
-    return result.join('\n');
-  }
-
-  /**
-   * 渲染段落
-   */
-  private renderParagraphs(html: string): string {
-    // 将双换行符转换为段落分隔
-    const paragraphs = html.split('\n\n').filter(p => p.trim());
-
-    return paragraphs
-      .map(paragraph => {
-        const trimmed = paragraph.trim();
-
-        // 如果已经是 HTML 标签（包括 div、pre 等），不要包装在 <p> 中，也不要处理换行
-        if (trimmed.match(/^<(h[1-6]|ul|ol|pre|blockquote|div)/)) {
-          return trimmed;
-        }
-
-        // 空段落不处理
-        if (!trimmed) {
-          return '';
-        }
-
-        // 只对纯文本内容进行换行处理
-        let content = trimmed;
-
-        // 检查是否为纯文本内容（不包含 HTML 标签）
-        const hasHtmlTags = /<[^>]+>/.test(content);
-
-        if (!hasHtmlTags) {
-          // 对于纯文本内容，转义 HTML 字符
-          content = this.escapeHtml(content);
-          // 将单个换行符转换为 <br> 标签
-          content = content.replace(/\n/g, '<br>');
-        } else {
-          // 对于包含 HTML 标签的内容，保持原样
-          // 这些内容通常已经在之前的步骤中正确处理过了
-          content = trimmed;
-        }
-
-        return `<p>${content}</p>`;
-      })
-      .join('\n\n');
   }
 
   /**
@@ -461,18 +244,6 @@ export class SafeMarkdownRenderer {
     this.ensureHighlightCss();
     this.renderMermaidDiagrams(container);
   }
-
-  /**
-   * 动态加载 highlight.js 与默认样式
-   */
-  private loadHighlightJsLibrary(): Promise<void> {
-    // 兼容旧接口：现在 hljs 已随 bundle 打包，这里只负责注入样式后立即 resolve
-    return new Promise(resolve => {
-      this.ensureHighlightCss();
-      resolve();
-    });
-  }
-
   /**
    * 确保高亮样式已加载（已移除 CDN 依赖）
    */
@@ -628,56 +399,11 @@ export class SafeMarkdownRenderer {
 
     document.body.appendChild(modal);
   }
-
-  /**
-   * 应用基础语法高亮
-   */
-  private applyBasicHighlighting(codeBlock: HTMLElement): void {
-    let code = codeBlock.textContent || '';
-
-    // 简单的关键字高亮
-    const keywords = [
-      'function',
-      'const',
-      'let',
-      'var',
-      'if',
-      'else',
-      'for',
-      'while',
-      'return',
-      'class',
-      'interface',
-      'type',
-      'import',
-      'export',
-      'async',
-      'await',
-      'try',
-      'catch',
-      'throw',
-      'new',
-    ];
-
-    keywords.forEach(keyword => {
-      const regex = new RegExp(`\\b${keyword}\\b`, 'g');
-      code = code.replace(regex, `<span class="keyword">${keyword}</span>`);
-    });
-
-    // 字符串高亮
-    code = code.replace(/(["'])((?:(?!\1)[^\\]|\\.)*)(\1)/g, '<span class="string">$1$2$3</span>');
-
-    // 注释高亮
-    code = code.replace(/(\/\/.*$)/gm, '<span class="comment">$1</span>');
-    code = code.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="comment">$1</span>');
-
-    codeBlock.innerHTML = code;
-  }
 }
 
 /**
  * 创建默认的 Markdown 渲染器实例
  */
-export function createMarkdownRenderer(options?: MarkdownRendererOptions): SafeMarkdownRenderer {
-  return new SafeMarkdownRenderer(options);
+export function createMarkdownRenderer(): SafeMarkdownRenderer {
+  return new SafeMarkdownRenderer();
 }

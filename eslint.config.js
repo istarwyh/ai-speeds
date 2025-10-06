@@ -58,6 +58,7 @@ export default [
         // Browser DOM APIs
         window: 'readonly',
         document: 'readonly',
+        navigator: 'readonly',
         HTMLElement: 'readonly',
         Event: 'readonly',
         KeyboardEvent: 'readonly',
