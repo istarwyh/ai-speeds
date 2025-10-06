@@ -24,7 +24,7 @@ export class HowToImplementService extends BaseContentService<ImplementCard> {
 
   protected getTitleFromCardId(cardId: string): string {
     // SSOT: 从 cardsData 中获取标题
-    const card = howToImplementCards.find((c) => c.id === cardId);
+    const card = howToImplementCards.find(c => c.id === cardId);
     return card?.title || cardId;
   }
 }

@@ -13,11 +13,7 @@ export function normalizeCardIdVariants(cardId: string): string[] {
   const normalized = cardId.trim();
   const lower = normalized.toLowerCase();
   // Use a Set to avoid duplicate variants, e.g., if the original id is already lowercase.
-  return Array.from(new Set([
-    normalized,
-    lower,
-    lower.replace(/_/g, '-'),
-  ]));
+  return Array.from(new Set([normalized, lower, lower.replace(/_/g, '-')]));
 }
 
 /**
@@ -33,7 +29,7 @@ export async function loadContentFromMap(
   moduleName: string,
 ): Promise<string | null> {
   const variants = normalizeCardIdVariants(cardId);
-  
+
   // 尝试所有变体
   for (const key of variants) {
     const loader = contentLoaders[key];
@@ -49,12 +45,12 @@ export async function loadContentFromMap(
       }
     }
   }
-  
+
   // 未找到映射
   if (process.env.NODE_ENV === 'development') {
     // eslint-disable-next-line no-console
     console.warn(`[${moduleName}] Missing content mapping for cardId:`, cardId);
   }
-  
+
   return null;
 }

@@ -1,12 +1,17 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # Run pre-commit hooks
 echo "🔍 Running pre-commit checks..."
 
-# Check for large files (excluding generated bundles)
-echo "📏 Checking file sizes..."
-find . -type f -not -path "./node_modules/*" -not -path "./.git/*" -not -path "./.wrangler/*" -not -path "./src/scripts/generated/*" -exec sh -c 'size=$(stat -f%z "$1" 2>/dev/null || stat -c%s "$1"); if [ $size -gt 500000 ]; then echo "❌ File $1 is too large ($size bytes > 500KB)"; exit 1; fi' _ {} \;
+# Check for large files in staged files only (excluding build directories and generated files)
+echo "📏 Checking staged file sizes..."
+git diff --cached --name-only | while read -r file; do
+  if [ -f "$file" ]; then
+    size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file")
+    if [ $size -gt 500000 ]; then
+      echo "❌ Staged file $file is too large ($size bytes > 500KB)"
+      exit 1
+    fi
+  fi
+done
 
 # Run lint-staged for incremental checks
 echo "🧹 Running lint-staged..."

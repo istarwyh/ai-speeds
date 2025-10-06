@@ -2,7 +2,8 @@
 
 ## 概述
 
-成功将所有模块的 Markdown 内容加载重构为 SSOT（Single Source of Truth）架构，消除重复代码，实现零维护的内容映射管理。
+成功将所有模块的 Markdown 内容加载重构为 SSOT（Single Source of
+Truth）架构，消除重复代码，实现零维护的内容映射管理。
 
 ## 架构设计
 
@@ -34,13 +35,13 @@ BaseArticleEventHandler → 渲染
 ```javascript
 async function generateContentMap(config) {
   const { moduleName, contentDir, generatedDir, cardsFile } = config;
-  
+
   // 扫描 .md 文件
   const files = fs.readdirSync(contentDir).filter(f => f.endsWith('.md'));
-  
+
   // 生成导入和映射
   // 'workflow-overview.md' → 'md_workflowOverview' → 'workflow-overview': async () => md_workflowOverview
-  
+
   // 校验与 cardsData 的一致性
   // 警告：卡片缺少 .md 文件
   // 警告：.md 文件没有匹配的卡片
@@ -55,7 +56,7 @@ async function buildClientScripts() {
   await generateBestPracticesContentMap();
   await generateHowToImplementContentMap();
   await generateHowToApplyCCContentMap();
-  
+
   // 然后构建模块
   await buildBestPracticesModule();
   await buildHowToImplementModule();
@@ -70,11 +71,7 @@ async function buildClientScripts() {
 ```typescript
 export function normalizeCardIdVariants(cardId: string): string[] {
   const normalized = cardId.trim();
-  return [
-    normalized,
-    normalized.toLowerCase(),
-    normalized.replace(/_/g, '-'),
-  ];
+  return [normalized, normalized.toLowerCase(), normalized.replace(/_/g, '-')];
 }
 
 export async function loadContentFromMap(
@@ -83,7 +80,7 @@ export async function loadContentFromMap(
   moduleName: string,
 ): Promise<string | null> {
   const variants = normalizeCardIdVariants(cardId);
-  
+
   for (const key of variants) {
     const loader = contentLoaders[key];
     if (loader) {
@@ -91,17 +88,21 @@ export async function loadContentFromMap(
         return await loader();
       } catch (err) {
         if (process.env.NODE_ENV === 'development') {
-          console.warn(`[${moduleName}] Failed to import markdown for`, key, err);
+          console.warn(
+            `[${moduleName}] Failed to import markdown for`,
+            key,
+            err,
+          );
         }
         return null;
       }
     }
   }
-  
+
   if (process.env.NODE_ENV === 'development') {
     console.warn(`[${moduleName}] Missing content mapping for cardId:`, cardId);
   }
-  
+
   return null;
 }
 ```
@@ -118,7 +119,7 @@ protected async getContentFromFile(cardId: string): Promise<string> {
     'environment-config': async () => (await import('../content/environment-config.md')).default,
     // ... 12 个硬编码条目
   };
-  
+
   const contentLoader = contentMap[cardId];
   if (contentLoader) {
     return await contentLoader();
@@ -218,17 +219,19 @@ $ pnpm run build:client:direct
 ### 添加新文章
 
 1. **创建 Markdown 文件**
+
    ```bash
    # 文件名使用 kebab-case
    touch src/client/bestPractices/content/new-practice.md
    ```
 
 2. **添加卡片数据**
+
    ```typescript
    // src/client/bestPractices/data/cardsData.ts
    export const bestPracticesCards: PracticeCard[] = [
      {
-       id: 'new-practice',  // 必须与文件名匹配（小写、kebab-case）
+       id: 'new-practice', // 必须与文件名匹配（小写、kebab-case）
        title: '新实践',
        category: 'workflow',
        // ...
@@ -237,6 +240,7 @@ $ pnpm run build:client:direct
    ```
 
 3. **重新构建**
+
    ```bash
    pnpm run build:client
    ```
@@ -249,11 +253,13 @@ $ pnpm run build:client:direct
 ### 更新现有文章
 
 1. **直接编辑 Markdown 文件**
+
    ```bash
    vim src/client/bestPractices/content/workflow-overview.md
    ```
 
 2. **重新构建**
+
    ```bash
    pnpm run build:client
    ```
@@ -314,7 +320,7 @@ git add src/*/generated/contentMap.ts
 # .github/workflows/build.yml
 - name: Generate content maps
   run: pnpm run build:client
-  
+
 - name: Verify no uncommitted changes
   run: git diff --exit-code src/*/generated/
 ```
@@ -357,4 +363,5 @@ git add src/*/generated/contentMap.ts
 5. ✅ **构建时校验**: 自动检测不一致
 6. ✅ **性能优化**: 构建时打包，运行时高效
 
-这是 Cloudflare Workers 环境下模块化开发的最佳实践，为后续功能扩展奠定了坚实基础。
+这是 Cloudflare
+Workers 环境下模块化开发的最佳实践，为后续功能扩展奠定了坚实基础。

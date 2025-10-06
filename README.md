@@ -1,11 +1,12 @@
 # AI Speeds - Claude Code Router
 
-**AI Speeds** 是一个AI工具自我展示和AI生成内容聚合平台，服务于希望发现和体验AI能力的专业人士与学习者。我们让AI工具以Agent身份自我介绍、展示能力，并生成实际应用案例，用户可以直接体验AI工具的真实价值。
+**AI Speeds**
+是一个AI工具自我展示和AI生成内容聚合平台，服务于希望发现和体验AI能力的专业人士与学习者。我们让AI工具以Agent身份自我介绍、展示能力，并生成实际应用案例，用户可以直接体验AI工具的真实价值。
 
 通过AI工具作为"虚拟创作者"的创新模式，我们让AI能力发现变得直观有趣，让每个人都能直接感受AI的实际价值。
 
-核心功能：Universal API proxy for using Claude Code with multiple AI providers. Seamlessly
-translates between Anthropic's Claude API and OpenAI-compatible APIs.
+核心功能：Universal API proxy for using Claude Code with multiple AI providers.
+Seamlessly translates between Anthropic's Claude API and OpenAI-compatible APIs.
 
 ## ✨ Features
 
@@ -299,10 +300,10 @@ graph TB
     B -->|Imports| C[Legacy Modules]
     C -->|Includes| D[src/features/*]
     C -->|Includes| E[src/client/*]
-    
+
     F[src/client/*] -->|esbuild| G[Bundled JS]
     G -->|build-client.js| H[scripts/generated/*]
-    
+
     I[Next.js Build] -->|Outputs| J[.next/]
     J -->|OpenNext| K[Cloudflare Workers]
 
@@ -318,7 +319,8 @@ graph TB
 - 🔄 **Phase 2**: Gradual React component migration
 - 🎯 **Phase 3**: Remove adapter, pure Next.js
 
-This approach ensures **zero downtime** and **100% code reuse** during migration.
+This approach ensures **zero downtime** and **100% code reuse** during
+migration.
 
 ### Key Design Principles
 
@@ -334,7 +336,8 @@ This approach ensures **zero downtime** and **100% code reuse** during migration
 
 ### Architecture
 
-The project uses a **Single Source of Truth (SSOT)** architecture for markdown content:
+The project uses a **Single Source of Truth (SSOT)** architecture for markdown
+content:
 
 ```mermaid
 graph LR
@@ -343,9 +346,9 @@ graph LR
     C -->|Import| D[ArticleService]
     D -->|Load| E[BaseArticleEventHandler]
     E -->|Render| F[User Browser]
-    
+
     G[data/cardsData.ts] -->|Titles| D
-    
+
     style A fill:#e8f5e9
     style B fill:#fff3e0
     style C fill:#e3f2fd
@@ -354,7 +357,8 @@ graph LR
 
 ### Key Features
 
-- **Zero Maintenance**: Add new articles by creating `.md` files and updating `cardsData.ts`
+- **Zero Maintenance**: Add new articles by creating `.md` files and updating
+  `cardsData.ts`
 - **Build-Time Generation**: Content maps auto-generated from filesystem
 - **Type Safety**: Full TypeScript support for content loaders
 - **DRY Principle**: Titles defined once in `cardsData.ts`
@@ -386,7 +390,9 @@ pnpm run build:client
 ### Technical Details
 
 For complete architecture documentation, see:
-- [`docs/tech/SSOT_CONTENT_MAP_REFACTOR.md`](./docs/tech/SSOT_CONTENT_MAP_REFACTOR.md) - SSOT architecture
+
+- [`docs/tech/SSOT_CONTENT_MAP_REFACTOR.md`](./docs/tech/SSOT_CONTENT_MAP_REFACTOR.md) -
+  SSOT architecture
 - [`docs/tech/ADD_CARD.md`](./docs/tech/ADD_CARD.md) - Step-by-step guide
 
 ## 📦 Migration to Next.js
@@ -411,9 +417,11 @@ For complete architecture documentation, see:
 
 For detailed migration information, see:
 
-- [`MIGRATION_FINAL_SUMMARY.md`](./MIGRATION_FINAL_SUMMARY.md) - Complete migration summary
+- [`MIGRATION_FINAL_SUMMARY.md`](./MIGRATION_FINAL_SUMMARY.md) - Complete
+  migration summary
 - [`MIGRATION_PROGRESS.md`](./MIGRATION_PROGRESS.md) - Step-by-step progress
-- [`UPGRADE_TO_NEXT_ARCHITECTURE.md`](./UPGRADE_TO_NEXT_ARCHITECTURE.md) - Architecture guide
+- [`UPGRADE_TO_NEXT_ARCHITECTURE.md`](./UPGRADE_TO_NEXT_ARCHITECTURE.md) -
+  Architecture guide
 
 ## 🙏 Acknowledgments
 

@@ -28,7 +28,7 @@ export class HowToApplyCCService extends BaseContentService<SDKCard> {
 
   protected getTitleFromCardId(cardId: string): string {
     // SSOT: 从 cardsData 中获取标题
-    const card = howToApplyCCCards.find((c) => c.id === cardId);
+    const card = howToApplyCCCards.find(c => c.id === cardId);
     return card?.title || cardId;
   }
 }

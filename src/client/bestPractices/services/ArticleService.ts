@@ -25,8 +25,7 @@ export class ArticleService extends BaseContentService<PracticeCard> {
   }
 
   protected getTitleFromCardId(cardId: string): string {
-    const card = bestPracticesCards.find((c) => c.id === cardId);
+    const card = bestPracticesCards.find(c => c.id === cardId);
     return card?.title || cardId;
   }
 }
-

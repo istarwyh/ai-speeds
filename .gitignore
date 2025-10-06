@@ -182,4 +182,5 @@ src/client/*/generated/
 # Build lock files
 .build-lock
 .last-build-time
+.open-next
 
