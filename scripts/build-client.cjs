@@ -174,7 +174,7 @@ async function generateContentMap(config) {
   // 校验 cardsData 与文件匹配性
   try {
     const cardsSrc = fs.readFileSync(cardsFile, 'utf8');
-    const idRegex = /id\s*:\s*['"]([^'\"]+)['"]/g;
+    const idRegex = /id\s*:\s*['\"`]([^'\"`]+)['\"`]/g;
     const cardIds = new Set();
     let m;
     while ((m = idRegex.exec(cardsSrc))) {

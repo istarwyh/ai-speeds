@@ -6,15 +6,11 @@ import { loadContentFromMap } from '../../shared/utils/contentLoader';
 
 export class HowToImplementService extends BaseContentService<ImplementCard> {
   protected async getContentFromFile(cardId: string): Promise<string> {
-    try {
-      const content = await loadContentFromMap(cardId, contentLoaders, 'HowToImplement');
-      if (content) {
-        return content;
-      }
-      return this.getDefaultContent(cardId.trim());
-    } catch {
-      return this.getDefaultContent(cardId.trim());
+    const content = await loadContentFromMap(cardId, contentLoaders, 'HowToImplement');
+    if (content) {
+      return content;
     }
+    return this.getDefaultContent(cardId.trim());
   }
 
   protected getDefaultContent(cardId: string): string {

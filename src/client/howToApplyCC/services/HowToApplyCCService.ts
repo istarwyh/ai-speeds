@@ -10,15 +10,11 @@ export class HowToApplyCCService extends BaseContentService<SDKCard> {
     super(markdownParser, false);
   }
   protected async getContentFromFile(cardId: string): Promise<string> {
-    try {
-      const content = await loadContentFromMap(cardId, contentLoaders, 'HowToApplyCC');
-      if (content) {
-        return content;
-      }
-      return this.getDefaultContent(cardId.trim());
-    } catch {
-      return this.getDefaultContent(cardId.trim());
+    const content = await loadContentFromMap(cardId, contentLoaders, 'HowToApplyCC');
+    if (content) {
+      return content;
     }
+    return this.getDefaultContent(cardId.trim());
   }
 
   protected getDefaultContent(cardId: string): string {

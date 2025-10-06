@@ -8,16 +8,11 @@ export type { Article } from '../../shared/services/BaseContentService';
 
 export class ArticleService extends BaseContentService<PracticeCard> {
   protected async getContentFromFile(cardId: string): Promise<string> {
-    try {
-      const content = await loadContentFromMap(cardId, contentLoaders, 'BestPractices');
-      if (content) {
-        return content;
-      }
-      return this.getDefaultContent(cardId.trim());
-    } catch {
-      // Failed to load content - use default
-      return this.getDefaultContent(cardId.trim());
+    const content = await loadContentFromMap(cardId, contentLoaders, 'BestPractices');
+    if (content) {
+      return content;
     }
+    return this.getDefaultContent(cardId.trim());
   }
 
   protected getDefaultContent(cardId: string): string {

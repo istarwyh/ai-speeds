@@ -11,11 +11,13 @@
  */
 export function normalizeCardIdVariants(cardId: string): string[] {
   const normalized = cardId.trim();
-  return [
+  const lower = normalized.toLowerCase();
+  // Use a Set to avoid duplicate variants, e.g., if the original id is already lowercase.
+  return Array.from(new Set([
     normalized,
-    normalized.toLowerCase(),
-    normalized.replace(/_/g, '-'),
-  ];
+    lower,
+    lower.replace(/_/g, '-'),
+  ]));
 }
 
 /**
