@@ -50,17 +50,14 @@ export async function POST(request: NextRequest) {
   try {
     const anthropicRequest = await request.json();
     const bearerToken = request.headers.get('x-api-key');
-    
+
     if (!bearerToken) {
-      return NextResponse.json(
-        { error: 'Missing API key' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Missing API key' }, { status: 401 });
     }
-    
+
     const { provider, baseUrl } = selectProvider(process.env);
     const openaiRequest = formatAnthropicToOpenAI(anthropicRequest, provider, PROVIDER_CONFIGS);
-    
+
     const openaiResponse = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -69,41 +66,32 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify(openaiRequest),
     });
-    
+
     if (!openaiResponse.ok) {
       const error = await openaiResponse.text();
-      return NextResponse.json(
-        { error },
-        { status: openaiResponse.status }
-      );
+      return NextResponse.json({ error }, { status: openaiResponse.status });
     }
-    
+
     if (openaiRequest.stream) {
-      const anthropicStream = streamOpenAIToAnthropic(
-        openaiResponse.body as ReadableStream,
-        openaiRequest.model
-      );
-      
+      const anthropicStream = streamOpenAIToAnthropic(openaiResponse.body as ReadableStream, openaiRequest.model);
+
       return new NextResponse(anthropicStream, {
         headers: {
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
+          Connection: 'keep-alive',
         },
       });
     }
-    
+
     const openaiData = await openaiResponse.json();
     const anthropicResponse = formatOpenAIToAnthropic(openaiData, openaiRequest.model);
-    
+
     return NextResponse.json(anthropicResponse);
   } catch (error) {
     console.error('API Error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
