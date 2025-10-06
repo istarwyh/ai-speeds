@@ -6,17 +6,6 @@ export const metadata: Metadata = {
   description: 'Make AI Speeds Us',
 };
 
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'AI Speeds',
-  description: 'Make AI Speeds Us',
-};
-
-export default function MainLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function MainLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

@@ -24,8 +24,8 @@ export const componentStyles = `
 
 .practices-page__header {
   width: 100%;
-  margin: 0 0 3rem 0;
-  padding: 2rem; /* 将内边距移到子元素 */
+  margin: 0 0 var(--space-fluid-md) 0;
+  padding: var(--space-fluid-md);
   box-sizing: border-box;
 }
 
@@ -33,8 +33,8 @@ export const componentStyles = `
 
 .practices-page__footer {
   width: 100%;
-  margin: 2rem 0 0 0;
-  padding: 2rem; /* 将内边距移到子元素 */
+  margin: var(--space-fluid-md) 0 0 0;
+  padding: var(--space-fluid-md);
   box-sizing: border-box;
 }
 
@@ -77,8 +77,9 @@ export const componentStyles = `
 }
 
 .section-header h2 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-size: var(--font-size-3xl);
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--space-fluid-sm);
   background: linear-gradient(135deg, var(--primary), var(--color-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -86,19 +87,19 @@ export const componentStyles = `
 }
 
 .section-subtitle {
-  font-size: 1.2rem;
+  font-size: var(--font-size-lg);
   color: var(--text-secondary);
   max-width: 600px;
   margin: 0 auto;
-  line-height: 1.6;
+  line-height: var(--line-height-relaxed);
 }
 
 /* Best Practices Styles */
 .practices-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: var(--space-fluid-md);
+  margin-bottom: var(--space-fluid-md);
   width: 100%;
   max-width: none;
 }
@@ -108,11 +109,12 @@ export const componentStyles = `
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* 默认最多4列 */
   grid-auto-rows: min-content; /* 让行高度自适应内容 */
-  gap: 2.5rem;
+  gap: var(--space-fluid-md);
   max-width: 1600px;
   margin: 0 auto;
   box-sizing: border-box;
   align-items: start; /* 卡片顶部对齐 */
+  padding: 0 var(--mobile-padding);
 }
 
 /* 移动端单列布局 */
@@ -2010,12 +2012,9 @@ export const componentStyles = `
         right: -100%;
     }
 
+    /* 移动端隐藏 sidebar-toggle 按钮 */
     .sidebar-toggle {
-        top: 10px;
-        right: 10px;
-        width: 45px;
-        height: 45px;
-        font-size: 18px;
+        display: none;
     }
 
     .hero h1 {

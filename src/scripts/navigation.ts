@@ -255,5 +255,6 @@ window.updateBreadcrumb = updateBreadcrumb;
 
 // Initialize navigation when DOM is loaded
 document.addEventListener('DOMContentLoaded', initNavigation);
-// initMobileHeaderAutoHide now handles its own initialization
+// Initialize mobile header auto-hide
+initMobileHeaderAutoHide();
 `;

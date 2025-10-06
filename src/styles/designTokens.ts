@@ -60,17 +60,17 @@ export const designTokens = `
     --font-family-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     --font-family-mono: 'JetBrains Mono', 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', Consolas, 'Courier New', monospace;
     
-    /* Font Sizes */
-    --font-size-xs: 0.75rem;
-    --font-size-sm: 0.875rem;
-    --font-size-base: 1rem;
-    --font-size-lg: 1.125rem;
-    --font-size-xl: 1.25rem;
-    --font-size-2xl: 1.5rem;
-    --font-size-3xl: 1.875rem;
-    --font-size-4xl: 2.25rem;
+    /* Font Sizes - 流式排版（使用 clamp 实现响应式）*/
+    --font-size-xs: clamp(0.75rem, 1.5vw, 0.875rem);
+    --font-size-sm: clamp(0.875rem, 2vw, 1rem);
+    --font-size-base: clamp(1rem, 2.5vw, 1.125rem);
+    --font-size-lg: clamp(1.125rem, 3vw, 1.25rem);
+    --font-size-xl: clamp(1.25rem, 3.5vw, 1.5rem);
+    --font-size-2xl: clamp(1.5rem, 4vw, 2rem);
+    --font-size-3xl: clamp(1.875rem, 5vw + 0.5rem, 2.5rem);
+    --font-size-4xl: clamp(2.25rem, 6vw + 0.5rem, 3rem);
     
-    /* Spacing */
+    /* Spacing - 固定间距 */
     --space-1: 0.25rem;
     --space-2: 0.5rem;
     --space-3: 0.75rem;
@@ -82,6 +82,13 @@ export const designTokens = `
     --space-12: 3rem;
     --space-16: 4rem;
     --space-20: 5rem;
+    
+    /* 流式间距（响应式）*/
+    --space-fluid-xs: clamp(0.25rem, 1vw, 0.5rem);
+    --space-fluid-sm: clamp(0.5rem, 2vw, 1rem);
+    --space-fluid-md: clamp(1rem, 3vw, 2rem);
+    --space-fluid-lg: clamp(2rem, 5vw, 4rem);
+    --space-fluid-xl: clamp(3rem, 7vw, 6rem);
     
     /* Border Radius */
     --radius-sm: 0.25rem;
@@ -101,5 +108,17 @@ export const designTokens = `
     --transition-fast: 0.15s ease-out;
     --transition-normal: 0.2s ease-out;
     --transition-slow: 0.3s ease-out;
+    
+    /* Line Heights */
+    --line-height-tight: 1.2;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.7;
+    --line-height-loose: 1.8;
+    
+    /* Mobile Specific */
+    --mobile-nav-height: 70px;
+    --mobile-padding: clamp(1rem, 4vw, 2rem);
+    --mobile-touch-target: 48px; /* 移动端最小触摸目标 */
+    --desktop-touch-target: 44px; /* 桌面端最小触摸目标 */
 }
 `;

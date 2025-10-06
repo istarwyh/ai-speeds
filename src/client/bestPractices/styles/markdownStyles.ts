@@ -7,7 +7,7 @@ export const markdownStyles = `
 .practice-article {
   max-width: 900px;
   margin: 0 auto;
-  padding: 20px;
+  padding: clamp(1rem, 3vw, 1.5rem);
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -46,7 +46,8 @@ export const markdownStyles = `
   cursor: pointer;
   font-size: 14px;
   line-height: 1;
-  min-height: 36px;
+  min-height: 44px; /* 确保触摸友好 */
+  min-width: 44px;
   transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.12s ease;
   box-shadow: 0 1px 4px rgba(17, 24, 39, 0.06);
   backdrop-filter: saturate(1.2) blur(2px);
@@ -82,6 +83,7 @@ export const markdownStyles = `
 .practice-article__content {
   line-height: 1.7;
   color: #374151;
+  font-size: clamp(1rem, 2.5vw, 1.0625rem);
 }
 
 /* 文章进入/退出动画 */
@@ -532,38 +534,146 @@ export const markdownStyles = `
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .practice-article {
-    margin: 10px;
-    padding: 16px;
+  body {
+    font-size: 16px; /* 防止 iOS 自动缩放 */
+    -webkit-text-size-adjust: 100%;
   }
+  
+  .practice-article {
+    margin: 0.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
   .practice-article__header {
-    top: 10px;
-    right: 10px;
+    top: 8px;
+    right: 8px;
     margin: 0;
     padding: 0;
   }
+  
   .practice-article__back-btn,
   .copy-content-btn {
-    padding: 8px 14px;
-    font-size: 14px;
-    min-height: 36px;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    min-height: 48px; /* 移动端触摸目标 */
+    min-width: 48px;
   }
+  
   /* Compact label on small screens */
   .copy-content-btn .copy-text {
     display: none;
   }
   
+  /* 流式标题大小 */
   .markdown-content h1 {
-    font-size: 1.875rem;
+    font-size: clamp(1.5rem, 5vw, 2.25rem);
+    margin-bottom: 1rem;
   }
   
   .markdown-content h2 {
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+    margin: 1.5rem 0 0.75rem 0;
+    padding-left: 8px;
+  }
+  
+  .markdown-content h3 {
+    font-size: clamp(1.125rem, 3.5vw, 1.375rem);
+    margin: 1.25rem 0 0.625rem 0;
+  }
+  
+  .markdown-content h4 {
+    font-size: clamp(1rem, 3vw, 1.125rem);
+  }
+  
+  /* 移动端文本优化 */
+  .markdown-content p,
+  .markdown-content li {
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+  
+  /* 代码块移动端优化 */
+  .markdown-content pre.code-block {
+    margin: 1rem -1rem; /* 负边距实现全宽 */
+    border-radius: 0;
+    font-size: 0.875rem;
+    padding: 0;
+  }
+  
+  .markdown-content pre.code-block code {
+    padding: 1rem;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* iOS 平滑滚动 */
+    white-space: pre;
+    word-break: normal;
+  }
+  
+  /* 代码块滚动提示 */
+  .markdown-content pre.code-block::after {
+    content: '← 滑动查看更多 →';
+    display: block;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #6b7280;
+    padding: 0.5rem;
+    background: #f1f5f9;
+    border-top: 1px solid #e2e8f0;
+  }
+  
+  .markdown-content pre.code-block.scrolled::after {
+    display: none;
+  }
+  
+  /* 表格移动端优化 */
+  .markdown-content table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.875rem;
+  }
+  
+  .markdown-content th,
+  .markdown-content td {
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+  }
+  
+  /* 列表移动端优化 */
+  .markdown-content ul,
+  .markdown-content ol {
+    padding-left: 1.25rem;
+  }
+  
+  .markdown-content li {
+    margin-bottom: 0.75rem;
+  }
+}
+
+/* 小屏幕手机优化 (iPhone SE 等) */
+@media (max-width: 375px) {
+  .practice-article {
+    margin: 0.25rem;
+    padding: 0.875rem;
+  }
+  
+  .practice-article__back-btn,
+  .copy-content-btn {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.8125rem;
+  }
+  
+  .markdown-content h1 {
     font-size: 1.5rem;
   }
   
-  .markdown-content pre {
-    padding: 12px;
-    font-size: 0.8rem;
+  .markdown-content h2 {
+    font-size: 1.25rem;
+  }
+  
+  .markdown-content pre.code-block code {
+    font-size: 0.8125rem;
   }
 }
 `;
