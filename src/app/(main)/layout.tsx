@@ -1,8 +1,16 @@
 import type { Metadata } from 'next';
+import React from 'react';
 
 export const metadata: Metadata = {
-  title: 'Claude Code Router',
-  description: 'Universal Claude API Proxy - Make AI Speeds Us',
+  title: 'AI Speeds',
+  description: 'Make AI Speeds Us',
+};
+
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'AI Speeds',
+  description: 'Make AI Speeds Us',
 };
 
 export default function MainLayout({

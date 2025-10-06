@@ -4,8 +4,8 @@ import { designTokens } from '../styles/designTokens';
 import type { ReactNode } from 'react';
 
 export const metadata: Metadata = {
-  title: 'Claude Code Router',
-  description: 'Universal Claude API Proxy - Make AI Speeds Us',
+  title: 'AI Speeds Me',
+  description: 'Make AI Speeds Us',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
