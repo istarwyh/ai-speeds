@@ -126,11 +126,7 @@
 'data-analysis': async () => (await import('../content/data-analysis.md')).default,
 ```
 
-- **可选**：在 `getTitleFromCardId()` 方法的 `titles` 对象中添加标题兜底映射：
-```ts
-// 在 titles 对象中添加
-'data-analysis': 'CAIBAO-DA 专业数据分析师',
-```
+> 说明（SSOT）：标题将从 `cardsData.ts` 自动解析，无需在 `ArticleService` 中维护 `titles` 映射。
 
 ### 4. **构建与本地验证**
 
@@ -238,7 +234,7 @@ npm run dev
 6. **估算阅读时间**：基于内容长度提供 `readTime` 估计
 7. **完成三步操作**：
    - 在 `src/client/{moduleName}/data/cardsData.ts` 中添加卡片元数据
-   - 在 `src/client/{moduleName}/services/{ServiceName}.ts` 中添加内容映射和标题映射
+   - 在 `src/client/{moduleName}/services/{ServiceName}.ts` 中添加内容映射（仅 contentMap；标题由 `cardsData.ts` 自动解析）
    - 执行 `npm run build:client` 验证构建
 8. **提供验收清单**：复述修改点并提供人工验收步骤
 
