@@ -4,30 +4,33 @@ export { bestPracticesModule } from './best-practices';
 export { implementationModule } from './how-to-implement';
 export { howToApplyCCModule } from './how-to-apply-cc';
 
-// 模块配置
+// 导入UI常量
+import { UI_TEXTS } from '../config/ui-texts';
+
+// 模块配置 - 使用单一数据源
 export const moduleConfig = {
   'get-started': {
-    title: '如何用上 CC',
-    icon: '🚀',
-    description: '快速开始使用 Claude Code Router，连接你喜欢的 AI 模型',
+    title: UI_TEXTS.MODULE_TITLES['get-started'],
+    icon: UI_TEXTS.MODULE_ICONS['get-started'],
+    description: UI_TEXTS.MODULE_DESCRIPTIONS['get-started'],
     order: 1,
   },
   'best-practices': {
-    title: '如何用好 CC',
-    icon: '⚡',
-    description: '基于 Anthropic 官方最佳实践的深度指南',
+    title: UI_TEXTS.MODULE_TITLES['best-practices'],
+    icon: UI_TEXTS.MODULE_ICONS['best-practices'],
+    description: UI_TEXTS.MODULE_DESCRIPTIONS['best-practices'],
     order: 2,
   },
   'how-to-implement': {
-    title: '如何实现 CC',
-    icon: '🔧',
-    description: '深入了解 Claude Code Router 的技术架构与实现原理',
+    title: UI_TEXTS.MODULE_TITLES['how-to-implement'],
+    icon: UI_TEXTS.MODULE_ICONS['how-to-implement'],
+    description: UI_TEXTS.MODULE_DESCRIPTIONS['how-to-implement'],
     order: 3,
   },
   'how-to-apply-cc': {
-    title: '如何运用 CC',
-    icon: '🎯',
-    description: '掌握 Claude Code SDK，构建专业的 AI Agent 应用',
+    title: UI_TEXTS.MODULE_TITLES['how-to-apply-cc'],
+    icon: UI_TEXTS.MODULE_ICONS['how-to-apply-cc'],
+    description: UI_TEXTS.MODULE_DESCRIPTIONS['how-to-apply-cc'],
     order: 4,
   },
 };
