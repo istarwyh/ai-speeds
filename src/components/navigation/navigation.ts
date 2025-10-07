@@ -22,6 +22,10 @@ export const navigationComponent = `
         <span class="nav-icon">🎯</span>
         <span class="nav-text">如何运用 CC</span>
       </button>
+      <button class="nav-tab" onclick="window.location.href='/trends/20251007'">
+        <span class="nav-icon">📈</span>
+        <span class="nav-text">AI 趋势</span>
+      </button>
     </div>
   </div>
 </nav>`;

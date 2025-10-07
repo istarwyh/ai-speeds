@@ -57,28 +57,6 @@ export const howToImplementCards: ImplementCard[] = [
     ],
   },
   {
-    id: 'claude-code-conversation-example-1',
-    title: 'Claude Code 对话示例',
-    description: '真实的 Claude Code 使用对话记录，展示完整的开发流程和交互模式',
-    category: 'conversation',
-    difficulty: 'beginner',
-    readTime: '15 分钟',
-    tags: ['对话示例', '实际案例', '工作流程', 'Python开发'],
-    overview: '通过真实对话记录了解 Claude Code 的工作方式，学习如何与 AI 协作开发俄罗斯方块游戏。',
-    sections: [
-      { title: '对话流程分析', content: '从需求提出到代码完成的完整交互过程', type: 'text' },
-      { title: '工具使用示例', content: 'TodoWrite、LS、Write、Edit 等工具的实际应用', type: 'code' },
-      { title: '任务分解策略', content: '如何将复杂任务拆分为可管理的步骤', type: 'list' },
-    ],
-    tips: [
-      {
-        type: 'success',
-        title: '学习要点',
-        content: '注意观察 Claude Code 如何使用 TodoWrite 工具来规划和跟踪任务进度',
-      },
-    ],
-  },
-  {
     id: 'claude-code-minusx-insights',
     title: 'CC为什么这么好: MinusX 深度解析',
     category: 'implementation',
