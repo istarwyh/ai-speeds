@@ -30,6 +30,30 @@ export const navigationStyles = `
   body.mobile-nav-space.nav-hidden .container {
     margin-top: 0;
   }
+  
+  /* 移动端触摸优化 */
+  .nav-container {
+    padding: 0 var(--mobile-padding);
+  }
+  
+  .nav-tab {
+    padding: 0.625rem 1rem; /* 压缩高度：10px 16px */
+    min-height: var(--mobile-touch-target);
+    min-width: var(--mobile-touch-target);
+    font-size: var(--font-size-sm);
+  }
+  
+  .nav-tabs {
+    gap: 0.5rem; /* 增加间距避免误触 */
+  }
+  
+  .nav-icon {
+    font-size: 1rem; /* 压缩图标大小 */
+  }
+  
+  .nav-text {
+    font-size: 0.8125rem; /* 压缩文字大小 */
+  }
 }
 
 .nav-container {
@@ -56,6 +80,7 @@ export const navigationStyles = `
   transition: all 0.3s ease;
   border-bottom: 3px solid transparent;
   position: relative;
+  min-height: var(--desktop-touch-target);
 }
 
 .nav-tab:hover {
@@ -83,6 +108,22 @@ export const navigationStyles = `
   body.mobile-nav-space.nav-hidden .practices-page {
     top: 0;
     transition: top 0.2s ease-in-out;
+  }
+}
+
+/* 小屏幕手机优化 (iPhone SE 等) */
+@media (max-width: 375px) {
+  .nav-tab {
+    padding: 0.5rem 0.75rem; /* 进一步压缩 */
+    font-size: 0.75rem;
+  }
+  
+  .nav-icon {
+    font-size: 0.9rem;
+  }
+  
+  .nav-text {
+    font-size: 0.75rem;
   }
 }
 `;

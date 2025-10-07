@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     return new NextResponse(imageBuffer, {
       headers: {
         'Content-Type': contentType,
-        'Cache-Control': `public, max-age=${process.env.IMAGE_PROXY_CACHE_TTL || '86400'}`,
+        'Cache-Control': `public, max-age=${process.env['IMAGE_PROXY_CACHE_TTL'] || '86400'}`,
         'Access-Control-Allow-Origin': '*',
       },
     });
