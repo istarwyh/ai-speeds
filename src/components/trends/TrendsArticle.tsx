@@ -6,14 +6,15 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { cn } from '@/lib/utils';
 
 const imageUrls = {
-  heroImage: 'https://lf-code-agent.coze.cn/obj/x-ai-cn/286927358722/attachment/image_20251007103810.png',
+  heroImage: `/api/img-proxy?src=${encodeURIComponent('https://lf-code-agent.coze.cn/obj/x-ai-cn/286927358722/attachment/image_20251007103810.png')}`,
   userGrowth:
-    'https://space.coze.cn/api/coze_space/gen_image?image_size=landscape_16_9&prompt=Data%20visualization%20of%20AI%20user%20growth%20trend&sign=6eb5ee831767c682c21278f7da78317f',
-  valuation: 'https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202510071209392.png',
-  chatgptOS: 'https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202510071210260.png',
-  agentKit: 'https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202510071212193.png',
-  codex: 'https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202510071213436.png',
-  gpt5: 'https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202510071214348.png',
+    `/api/img-proxy?src=${encodeURIComponent('https://space.coze.cn/api/coze_space/gen_image?image_size=landscape_16_9&prompt=Data%20visualization%20of%20AI%20user%20growth%20trend&sign=6eb5ee831767c682c21278f7da78317f')}`,
+  valuation: `/api/img-proxy?src=${encodeURIComponent('https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202510071209392.png')}`,
+  chatgptOS: `/api/img-proxy?src=${encodeURIComponent('https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202510071210260.png')}`,
+  agentKit: `/api/img-proxy?src=${encodeURIComponent('https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202510071212193.png')}`,
+  codex: `/api/img-proxy?src=${encodeURIComponent('https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202510071213436.png')}`,
+  gpt5: `/api/img-proxy?src=${encodeURIComponent('https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202510071214348.png')}`,
+  features: `/api/img-proxy?src=${encodeURIComponent('https://lf-code-agent.coze.cn/obj/x-ai-cn/286927358722/attachment/image_20251007104017.png')}`,
 };
 
 const growthData = [
@@ -337,7 +338,7 @@ export function TrendsArticle() {
                 className='rounded-xl overflow-hidden shadow-2xl'
               >
                 <img
-                  src='https://lf-code-agent.coze.cn/obj/x-ai-cn/286927358722/attachment/image_20251007104017.png'
+                  src={features[activeFeature]?.image || imageUrls.features}
                   alt={features[activeFeature]?.title || 'Feature image'}
                   className='w-full h-auto rounded-xl'
                 />
