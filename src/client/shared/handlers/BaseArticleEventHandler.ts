@@ -492,6 +492,7 @@ export abstract class BaseArticleEventHandler {
   // Shared enhancements below
   protected addEnhancedFeatures(container: HTMLElement): void {
     this.addCopyButtonsToCodeBlocks(container);
+    this.addCodeBlockScrollIndicators(container);
     this.addReadingProgress();
     this.addBackToTopButton();
   }
@@ -505,6 +506,34 @@ export abstract class BaseArticleEventHandler {
         copyButton.textContent = '复制';
         copyButton.onclick = () => this.copyCodeBlock(block as HTMLElement, copyButton);
         block.appendChild(copyButton);
+      }
+    });
+  }
+
+  protected addCodeBlockScrollIndicators(container: HTMLElement): void {
+    // Only apply on mobile devices (max-width: 768px)
+    if (window.innerWidth > 768) {
+      return;
+    }
+
+    const codeBlocks = container.querySelectorAll('.code-block');
+    codeBlocks.forEach((block) => {
+      const preElement = block.querySelector('pre');
+      if (!preElement) {
+        return;
+      }
+
+      // Add scroll event listener to detect when user starts scrolling
+      preElement.addEventListener('scroll', () => {
+        // Add scrolled class when user scrolls more than 10 pixels
+        if (preElement.scrollLeft > 10) {
+          block.classList.add('scrolled');
+        }
+      }, { passive: true });
+
+      // Also check on initial load if content is already scrolled
+      if (preElement.scrollLeft > 10) {
+        block.classList.add('scrolled');
       }
     });
   }
