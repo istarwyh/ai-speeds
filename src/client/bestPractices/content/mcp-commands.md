@@ -1,6 +1,7 @@
 # MCP 与常用命令 - 扩展 Claude Code 的能力边界
 
-掌握 MCP (Model Context Protocol) 服务器的集成和管理，以及如何创建和使用自定义命令。
+掌握 MCP (Model Context
+Protocol) 服务器的集成和管理，以及如何创建和使用自定义命令。
 
 ## 1. MCP 服务器集成
 
@@ -56,11 +57,15 @@ claude --resume
 
 # 进入 Claude Debug 模式，会打印很多运行时日志
 claude --debug
+
+开启 YOLO 无限制模式
+claude  --dangerously-skip-permissions.
 ```
 
 ## 3. 自定义 Slash 命令
 
-**创建命令**：在 `.claude/commands/` 目录下创建 Markdown 文件。可以在家目录下或者当前项目下。
+**创建命令**：在 `.claude/commands/`
+目录下创建 Markdown 文件。可以在家目录下或者当前项目下。
 
 ```bash
 mkdir -p .claude/commands
@@ -91,7 +96,8 @@ mkdir -p .claude/commands
 
 ## 4. Meta-Slash-Commands
 
-和 Meta-Prompt 类似，又到了套娃的环节了！当然不用命令，直接说和 CC 说创建一个 Slash Command 也可以。
+和 Meta-Prompt 类似，又到了套娃的环节了！当然不用命令，直接说和 CC 说创建一个 Slash
+Command 也可以。
 
 **版本管理的斜杠命令生成器**：
 
@@ -105,11 +111,13 @@ author: xiaohui
 
 # 生成带版本管理的斜杠命令
 
-您正在创建一个内置版本管理的新 Slash Command。根据 `$ARGUMENTS` 中的用户需求，生成一个完整的带版本控制的 Slash Command 文件。
+您正在创建一个内置版本管理的新 Slash Command。根据 `$ARGUMENTS`
+中的用户需求，生成一个完整的带版本控制的 Slash Command 文件。
 
 ## 版本管理功能
 
 此命令支持：
+
 - **语义化版本控制** (MAJOR.MINOR.PATCH)
 - 更新现有命令时**自动创建备份**
 - 在 YAML Frontmatter 中**跟踪版本历史**
@@ -129,7 +137,4 @@ author: xiaohui
 - **模块化设计**：命令不要太大，方便组合
 - **版本管理**：为重要命令添加版本控制
 - **文档完善**：每个命令都要有清晰的说明
-- **权限控制**：合理设置 allowed-tools 权限
-- **测试验证**：创建命令后要充分测试
-
-MCP 服务器让 Claude Code 具备无限扩展的可能性，通过合理的配置和使用，可以大大提升开发效率。
+- claude --help 可以看到所有命令
