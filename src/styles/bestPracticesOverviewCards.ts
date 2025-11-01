@@ -139,8 +139,18 @@ export const bestPracticesOverviewCardStyles = `
   }
 
   .overview-card__icon {
-    font-size: 2rem;
-    line-height: 1;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--bp-primary);
+  }
+
+  .overview-card__icon svg {
+    width: 100%;
+    height: 100%;
   }
 
   .overview-card__title {
@@ -179,7 +189,20 @@ export const bestPracticesOverviewCardStyles = `
     font-size: 0.875rem;
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.375rem;
+  }
+
+  .overview-card__read-time-icon {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .overview-card__read-time-icon svg {
+    width: 100%;
+    height: 100%;
   }
 
   /* 卡片内容 */
