@@ -4,10 +4,7 @@
     "target": "ES2022",
     "module": "esnext",
     "moduleResolution": "bundler",
-    "lib": [
-      "ES2022",
-      "DOM"
-    ],
+    "lib": ["ES2022", "DOM"],
     /* Type Checking */
     "strict": true,
     "exactOptionalPropertyTypes": true,
@@ -43,27 +40,17 @@
     "allowJs": true,
     "checkJs": true,
     /* Completeness */
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     /* Output Options */
     "outDir": "./dist",
     /* Path Mapping */
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@/client/*": [
-        "./src/client/*"
-      ],
-      "@/server/*": [
-        "./src/server/*"
-      ],
-      "@/api/*": [
-        "./src/api/*"
-      ],
-      "@/shared/*": [
-        "./src/shared/*"
-      ]
+      "@/*": ["./src/*"],
+      "@/client/*": ["./src/client/*"],
+      "@/server/*": ["./src/server/*"],
+      "@/api/*": ["./src/api/*"],
+      "@/shared/*": ["./src/shared/*"]
     },
     /* Advanced Options */
     "resolveJsonModule": true,
@@ -76,19 +63,8 @@
       }
     ]
   },
-  "include": [
-    "*.js",
-    "*.ts",
-    "scripts/**/*",
-    "src/**/*",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".wrangler",
-    "**/*.min.js"
-  ],
+  "include": ["*.js", "*.ts", "scripts/**/*", "src/**/*", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", "dist", ".wrangler", "**/*.min.js"],
   "ts-node": {
     "esm": true,
     "compilerOptions": {

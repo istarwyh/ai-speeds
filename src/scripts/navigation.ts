@@ -1,32 +1,33 @@
 import { DEFAULT_SECTION_ID } from '../config/navigation';
+import { UI_TEXTS } from '../config/ui-texts';
 
 export const navigationScript = `
 // Navigation tab switching
 function initNavigation() {
   const navTabs = document.querySelectorAll('.nav-tab');
   const contentSections = document.querySelectorAll('.content-section, .practices-page');
-  
+
   function showSection(sectionId) {
     // Remove active class from all tabs
     navTabs.forEach(t => t.classList.remove('active'));
-    
+
     // Add active class to corresponding tab
     const activeTab = document.querySelector('[data-section="' + sectionId + '"]');
     if (activeTab) {
       activeTab.classList.add('active');
     }
-    
+
     // Hide all content sections
     contentSections.forEach(section => {
       section.style.display = 'none';
     });
-    
+
     // Show corresponding content section
     const targetElement = document.getElementById(sectionId);
     if (targetElement) {
       targetElement.style.display = 'block';
     }
-    
+
     // Special handling for best-practices section
     if (sectionId === 'best-practices') {
       // Ensure we show the overview when navigating to best-practices
@@ -36,7 +37,7 @@ function initNavigation() {
         }, 100);
       }
     }
-    
+
     // Special handling for how-to-apply-cc section
     if (sectionId === 'how-to-apply-cc') {
       // Ensure we show the overview when navigating to how-to-apply-cc
@@ -47,7 +48,7 @@ function initNavigation() {
       }
     }
   }
-  
+
   navTabs.forEach(tab => {
     tab.addEventListener('click', () => {
       const targetSection = tab.dataset.section;
@@ -56,12 +57,12 @@ function initNavigation() {
       window.location.hash = targetSection;
     });
   });
-  
+
   // Handle initial hash or default to configured section
   const hash = window.location.hash.slice(1); // Remove # from hash
   const initialSection = hash || '${DEFAULT_SECTION_ID}';
   showSection(initialSection);
-  
+
   // Handle hash changes (back/forward navigation)
   window.addEventListener('hashchange', () => {
     const newHash = window.location.hash.slice(1) || '${DEFAULT_SECTION_ID}';
@@ -73,7 +74,7 @@ function initNavigation() {
 function copyCommand(button) {
   const commandBlock = button.closest('.command-block');
   const command = commandBlock.dataset.command;
-  
+
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(command).then(() => {
       showCopySuccess(button);
@@ -90,7 +91,7 @@ function showCopySuccess(button) {
   const originalText = button.innerHTML;
   button.innerHTML = '✓';
   button.style.color = '#28a745';
-  
+
   setTimeout(() => {
     button.innerHTML = originalText;
     button.style.color = '';
@@ -107,7 +108,7 @@ function fallbackCopyTextToClipboard(text, button) {
   document.body.appendChild(textArea);
   textArea.focus();
   textArea.select();
-  
+
   try {
     const successful = document.execCommand('copy');
     if (successful) {
@@ -116,7 +117,7 @@ function fallbackCopyTextToClipboard(text, button) {
   } catch (err) {
     console.error('Failed to copy command:', err);
   }
-  
+
   document.body.removeChild(textArea);
 }
 
@@ -131,23 +132,23 @@ function toggleFooterVisibility(isArticleView) {
 function updateBreadcrumb(isArticleView, articleTitle = '') {
   const header = document.querySelector('.practices-page__header');
   if (!header) return;
-  
+
   if (isArticleView && articleTitle) {
     const breadcrumb = document.createElement('div');
     breadcrumb.className = 'practices-page__breadcrumb';
     breadcrumb.innerHTML = \`
       <button class="breadcrumb-back" onclick="showBestPracticesOverview()">
-        ← 返回概览
+        ${UI_TEXTS.BUTTONS.BACK_TO_OVERVIEW}
       </button>
-      <span class="breadcrumb-path">如何用好 CC > \${articleTitle}</span>
+      <span class="breadcrumb-path">${UI_TEXTS.NAVIGATION.BEST_PRACTICES}${UI_TEXTS.BREADCRUMB.SEPARATOR}\${articleTitle}</span>
     \`;
-    
+
     // Remove existing breadcrumb if any
     const existing = header.querySelector('.practices-page__breadcrumb');
     if (existing) {
       existing.remove();
     }
-    
+
     header.appendChild(breadcrumb);
   } else {
     // Remove breadcrumb when showing overview
@@ -239,7 +240,7 @@ function initMobileHeaderAutoHide() {
     if (mq.addEventListener) mq.addEventListener('change', onMQChange);
     else if (mq.addListener) mq.addListener(onMQChange);
   }
-  
+
   // Ensure initialization happens after DOM is fully ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initialize);

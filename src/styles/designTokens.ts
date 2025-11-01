@@ -9,7 +9,12 @@ export const designTokens = `
     --color-success: #10b981;
     --color-warning: #f59e0b;
     --color-error: #ef4444;
-    
+
+    /* Teal Scale */
+    --color-teal-400: #7eddd6;
+    --color-teal-500: #4ecdc4;
+    --color-teal-600: #3ba29c;
+
     /* Text Colors */
     --color-text-primary: #0f172a;
     --color-text-secondary: #475569;
@@ -21,6 +26,7 @@ export const designTokens = `
     --color-bg-secondary: #f8fafc;
     --color-bg-tertiary: #f1f5f9;
     --color-bg-accent: #eff6ff;
+    --color-bg-warm: #fffcf8;
     
     /* Surface (Glass) Overlays */
     --color-surface-glass-1: rgba(255, 255, 255, 0.06);
