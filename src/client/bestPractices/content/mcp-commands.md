@@ -59,7 +59,7 @@ claude --resume
 claude --debug
 
 开启 YOLO 无限制模式
-claude  --dangerously-skip-permissions.
+claude  --dangerously-skip-permissions
 ```
 
 ## 3. 自定义 Slash 命令
