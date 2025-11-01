@@ -233,77 +233,123 @@ export default function StyleGuidePage() {
         <section className='mb-10'>
           <h2 className='text-xl font-semibold mb-4'>Brand Icon - AI Speeds</h2>
           <div className='bg-bg-primary rounded-xl border border-border-light p-8'>
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
-              {/* Default variant */}
-              <div className='flex flex-col items-center gap-4'>
-                <div className='bg-bg-secondary rounded-lg p-6 border border-border-light'>
+            {/* Spiral Ascent Design */}
+            <div className='mb-8'>
+              <h3 className='text-lg font-medium text-text-primary mb-4'>Spiral Ascent 🌀</h3>
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
+                {/* Default variant */}
+                <div className='flex flex-col items-center gap-4'>
+                  <div className='bg-bg-secondary rounded-lg p-6 border border-border-light'>
+                    <BrandIcon size={64} variant='default' />
+                  </div>
+                  <div className='text-center'>
+                    <p className='text-sm font-medium text-text-primary'>Default</p>
+                    <p className='text-xs text-text-muted'>Upward growth path</p>
+                  </div>
+                </div>
+
+                {/* Gradient variant */}
+                <div className='flex flex-col items-center gap-4'>
+                  <div className='bg-bg-secondary rounded-lg p-6 border border-border-light'>
+                    <BrandIcon size={64} variant='gradient' />
+                  </div>
+                  <div className='text-center'>
+                    <p className='text-sm font-medium text-text-primary'>Gradient</p>
+                    <p className='text-xs text-text-muted'>Dynamic ascent</p>
+                  </div>
+                </div>
+
+                {/* Monochrome variant */}
+                <div className='flex flex-col items-center gap-4'>
+                  <div className='bg-bg-secondary rounded-lg p-6 border border-border-light'>
+                    <BrandIcon size={64} variant='monochrome' className='text-text-primary' />
+                  </div>
+                  <div className='text-center'>
+                    <p className='text-sm font-medium text-text-primary'>Monochrome</p>
+                    <p className='text-xs text-text-muted'>Minimal path</p>
+                  </div>
+                </div>
+
+                {/* Simple/Favicon */}
+                <div className='flex flex-col items-center gap-4'>
+                  <div className='bg-bg-secondary rounded-lg p-6 border border-border-light'>
+                    <BrandIconSimple size={48} />
+                  </div>
+                  <div className='text-center'>
+                    <p className='text-sm font-medium text-text-primary'>Simple</p>
+                    <p className='text-xs text-text-muted'>For favicon (16x16)</p>
+                  </div>
+                </div>
+
+                {/* Wordmark */}
+                <div className='flex flex-col items-center gap-4 md:col-span-2'>
+                  <div className='bg-bg-secondary rounded-lg p-6 border border-border-light w-full flex items-center justify-center'>
+                    <BrandWordmark size={180} />
+                  </div>
+                  <div className='text-center'>
+                    <p className='text-sm font-medium text-text-primary'>Wordmark</p>
+                    <p className='text-xs text-text-muted'>Icon + text for headers</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Size Comparison */}
+            <div className='mb-8 pt-6 border-t border-border-light'>
+              <h3 className='text-lg font-medium text-text-primary mb-4'>Size Variants</h3>
+              <div className='flex items-center justify-center gap-8 bg-bg-secondary rounded-lg p-8 border border-border-light'>
+                <div className='flex flex-col items-center gap-2'>
+                  <BrandIcon size={16} variant='default' />
+                  <span className='text-xs text-text-muted'>16px</span>
+                </div>
+                <div className='flex flex-col items-center gap-2'>
+                  <BrandIcon size={24} variant='default' />
+                  <span className='text-xs text-text-muted'>24px</span>
+                </div>
+                <div className='flex flex-col items-center gap-2'>
+                  <BrandIcon size={32} variant='default' />
+                  <span className='text-xs text-text-muted'>32px</span>
+                </div>
+                <div className='flex flex-col items-center gap-2'>
+                  <BrandIcon size={48} variant='default' />
+                  <span className='text-xs text-text-muted'>48px</span>
+                </div>
+                <div className='flex flex-col items-center gap-2'>
                   <BrandIcon size={64} variant='default' />
-                </div>
-                <div className='text-center'>
-                  <p className='text-sm font-medium text-text-primary'>Default</p>
-                  <p className='text-xs text-text-muted'>Full color with AI nodes</p>
-                </div>
-              </div>
-
-              {/* Gradient variant */}
-              <div className='flex flex-col items-center gap-4'>
-                <div className='bg-bg-secondary rounded-lg p-6 border border-border-light'>
-                  <BrandIcon size={64} variant='gradient' />
-                </div>
-                <div className='text-center'>
-                  <p className='text-sm font-medium text-text-primary'>Gradient</p>
-                  <p className='text-xs text-text-muted'>Teal to blue gradient</p>
-                </div>
-              </div>
-
-              {/* Monochrome variant */}
-              <div className='flex flex-col items-center gap-4'>
-                <div className='bg-bg-secondary rounded-lg p-6 border border-border-light'>
-                  <BrandIcon size={64} variant='monochrome' className='text-text-primary' />
-                </div>
-                <div className='text-center'>
-                  <p className='text-sm font-medium text-text-primary'>Monochrome</p>
-                  <p className='text-xs text-text-muted'>Single color variant</p>
-                </div>
-              </div>
-
-              {/* Simple/Favicon */}
-              <div className='flex flex-col items-center gap-4'>
-                <div className='bg-bg-secondary rounded-lg p-6 border border-border-light'>
-                  <BrandIconSimple size={48} />
-                </div>
-                <div className='text-center'>
-                  <p className='text-sm font-medium text-text-primary'>Simple</p>
-                  <p className='text-xs text-text-muted'>For favicon (16x16)</p>
-                </div>
-              </div>
-
-              {/* Wordmark */}
-              <div className='flex flex-col items-center gap-4 md:col-span-2'>
-                <div className='bg-bg-secondary rounded-lg p-6 border border-border-light w-full flex items-center justify-center'>
-                  <BrandWordmark size={180} />
-                </div>
-                <div className='text-center'>
-                  <p className='text-sm font-medium text-text-primary'>Wordmark</p>
-                  <p className='text-xs text-text-muted'>Icon + text for headers</p>
+                  <span className='text-xs text-text-muted'>64px</span>
                 </div>
               </div>
             </div>
 
             {/* Design concept */}
-            <div className='mt-8 pt-6 border-t border-border-light'>
+            <div className='pt-6 border-t border-border-light'>
               <h3 className='text-sm font-semibold text-text-primary mb-3'>Design Concept</h3>
               <ul className='space-y-2 text-sm text-text-secondary'>
                 <li className='flex items-start gap-2'>
-                  <span className='text-accent'>⚡</span>
+                  <span className='text-accent'>🌀</span>
                   <span>
-                    <strong className='text-text-primary'>Lightning bolt:</strong> Represents speed and acceleration
+                    <strong className='text-text-primary'>Spiral path:</strong> Represents continuous learning and
+                    iterative growth journey
+                  </span>
+                </li>
+                <li className='flex items-start gap-2'>
+                  <span className='text-accent'>⬆️</span>
+                  <span>
+                    <strong className='text-text-primary'>Upward arrow:</strong> Shows direction and acceleration toward
+                    goals
+                  </span>
+                </li>
+                <li className='flex items-start gap-2'>
+                  <span className='text-accent'>🎯</span>
+                  <span>
+                    <strong className='text-text-primary'>Peak highlight:</strong> Achievement and growth destination
                   </span>
                 </li>
                 <li className='flex items-start gap-2'>
                   <span className='text-accent'>🔗</span>
                   <span>
-                    <strong className='text-text-primary'>Circuit nodes:</strong> AI and neural network connections
+                    <strong className='text-text-primary'>AI nodes:</strong> Milestones along the growth path powered by
+                    AI
                   </span>
                 </li>
                 <li className='flex items-start gap-2'>
@@ -522,16 +568,16 @@ export default function StyleGuidePage() {
                 </div>
               </div>
 
-              {/* Card 3 - Secondary */}
+              {/* Card 3 - Yellow */}
               <div className='bg-bg-primary rounded-2xl shadow-lg border border-border-light overflow-hidden hover:shadow-xl transition-shadow'>
-                <div className='h-32 bg-gradient-to-br from-secondary to-purple-700'></div>
+                <div className='h-32 bg-gradient-to-br from-yellow-400 to-yellow-600'></div>
                 <div className='p-4 flex flex-col gap-3'>
                   <div className='flex items-start justify-between gap-2'>
                     <h3 className='text-base font-semibold'>Analytics Dashboard</h3>
-                    <span className='px-2 py-1 rounded-md text-xs text-white bg-secondary'>Pro</span>
+                    <span className='px-2 py-1 rounded-md text-xs text-white bg-yellow-500'>Pro</span>
                   </div>
                   <p className='text-sm text-text-secondary'>Track performance metrics and insights in real-time.</p>
-                  <button className='mt-2 w-full px-4 py-2 rounded-lg bg-secondary text-white hover:opacity-90 transition-opacity'>
+                  <button className='mt-2 w-full px-4 py-2 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600 transition-colors'>
                     View Stats
                   </button>
                 </div>

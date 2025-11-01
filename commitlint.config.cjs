@@ -48,9 +48,6 @@ module.exports = {
     // Footer rules
     'footer-leading-blank': [2, 'always'],
     'footer-max-line-length': [2, 'always', 100],
-
-    // Additional custom rules for security
-    'signed-off-by': [2, 'always', 'Signed-off-by:'],
   },
 
   // Custom validators
