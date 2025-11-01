@@ -48,7 +48,8 @@ export const navigationStyles = `
   }
   
   .nav-icon {
-    font-size: 1rem; /* 压缩图标大小 */
+    width: 16px;
+    height: 16px;
   }
   
   .nav-text {
@@ -96,7 +97,16 @@ export const navigationStyles = `
 }
 
 .nav-icon {
-  font-size: 1.2rem;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-icon svg {
+  width: 100%;
+  height: 100%;
 }
 
 .nav-text {

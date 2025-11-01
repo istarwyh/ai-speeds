@@ -163,4 +163,19 @@ export const bestPracticesCards: PracticeCard[] = [
     ],
     lastUpdated: '2025-10-06',
   },
+  {
+    id: 'bento-grid-presentation',
+    title: 'Bento Grid 信息可视化设计规范',
+    description: '使用 Bento Grid 布局和迷你卡片系统,将复杂文档转化为视觉冲击力强的单页应用的完整工作流程',
+    category: 'workflow',
+    difficulty: 'advanced',
+    readTime: '15 分钟',
+    tags: ['可视化', 'Bento Grid', 'TailwindCSS', 'Chart.js', 'UI设计', '响应式'],
+    tips: [
+      { type: 'info', title: '核心理念', content: '一个核心要点 = 一张迷你卡片,实现信息的细粒度拆分与语义重组' },
+      { type: 'success', title: '视觉效果', content: 'Apple 官网式滚动淡入动画 + 瀑布流效果,打造极致视觉体验' },
+      { type: 'expert', title: '技术栈', content: 'TailwindCSS 3+ + Chart.js + Framer Motion + Intersection Observer' },
+    ],
+    lastUpdated: '2025-11-01',
+  },
 ];
