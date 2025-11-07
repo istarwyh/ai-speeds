@@ -178,4 +178,19 @@ export const bestPracticesCards: PracticeCard[] = [
     ],
     lastUpdated: '2025-11-01',
   },
+  {
+    id: 'magazine-presentation',
+    title: '杂志之场',
+    description: '以"场"的哲学呈现信息：空即是满、重力分层、色彩呼吸。一套将原始信息凝结为杂志式静态页面的完整思维模型',
+    category: 'workflow',
+    difficulty: 'advanced',
+    readTime: '5 分钟',
+    tags: ['设计哲学', '信息呈现', 'HTML', '排版', '杂志式设计'],
+    tips: [
+      { type: 'expert', title: '核心原则', content: '严肃是最高级的设计。留白处有最大张力，元素只在必要处显现' },
+      { type: 'info', title: '排版律', content: '移动优先。字要大，行要短。一屏之内，尽收眼底' },
+      { type: 'success', title: '生成之势', content: '先骨架，后血肉；先呼吸，后言语；先情绪，后信息' },
+    ],
+    lastUpdated: '2025-11-07',
+  },
 ];
