@@ -1,12 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { 
-  sidebarComponent, 
-  navigationComponent, 
-  allStyles, 
-  allScripts 
-} from '@/index';
+import { navigationComponent, allStyles, allScripts } from '@/index';
 import { getStartedModule } from '@/features/get-started';
 import { bestPracticesModule } from '@/features/best-practices';
 import { implementationModule } from '@/features/how-to-implement';
@@ -16,7 +11,7 @@ import { DEFAULT_SECTION_ID } from '@/config/navigation';
 /**
  * 遗留页面包装器 - 复用现有的所有模块和组件
  * 采用客户端渲染以保持现有的交互逻辑
- * 
+ *
  * 这是一个适配器组件，将现有的 HTML 字符串模板系统
  * 适配到 Next.js React 架构中
  */
@@ -38,25 +33,26 @@ export function LegacyPageWrapper() {
 
     // 等待 DOM 完全渲染后再执行脚本
     // 使用 requestAnimationFrame 确保 DOM 已渲染
-    const rafId = requestAnimationFrame(() => {
+    const rafId = window.requestAnimationFrame(() => {
       try {
         // 替换 DOMContentLoaded 事件监听为立即执行
         const modifiedScripts = allScripts.replace(
           /document\.addEventListener\(['"]DOMContentLoaded['"],\s*(\w+)\)/g,
-          '$1()'
+          '$1()',
         );
-        
+
         // 使用 Function 而不是 eval 以获得更好的作用域控制
         const scriptFunc = new Function(modifiedScripts);
         scriptFunc();
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Error executing legacy scripts:', error);
       }
     });
 
     // 清理函数
     return () => {
-      cancelAnimationFrame(rafId);
+      window.cancelAnimationFrame(rafId);
       // 移除样式
       const styleElement = document.getElementById(styleId);
       if (styleElement) {
@@ -67,14 +63,11 @@ export function LegacyPageWrapper() {
 
   return (
     <>
-      {/* 侧边栏 - 复用现有组件 */}
-      <div dangerouslySetInnerHTML={{ __html: sidebarComponent }} />
-      
-      {/* 导航栏 - 复用现有组件 */}
+      {/* 导航栏 - 左侧边栏 */}
       <div dangerouslySetInnerHTML={{ __html: navigationComponent }} />
-      
+
       {/* 主内容区 - 复用所有功能模块 */}
-      <div className="container">
+      <div className='content-wrapper'>
         <div dangerouslySetInnerHTML={{ __html: getStartedModule }} />
         <div dangerouslySetInnerHTML={{ __html: bestPracticesModule }} />
         <div dangerouslySetInnerHTML={{ __html: implementationModule }} />
