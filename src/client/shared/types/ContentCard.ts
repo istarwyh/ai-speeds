@@ -7,8 +7,6 @@ export interface BaseContentCard {
   category: string;
   tags?: string[];
   tips?: ContentTip[];
-  difficulty?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
-  readTime?: string;
   overview?: string;
   sections?: ContentSection[];
   lastUpdated?: string;
@@ -28,10 +26,6 @@ export interface ContentTip {
 }
 
 export interface CategoryConfig {
-  [key: string]: string;
-}
-
-export interface DifficultyConfig {
   [key: string]: string;
 }
 

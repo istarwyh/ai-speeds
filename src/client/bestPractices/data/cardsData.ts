@@ -14,8 +14,6 @@ export const bestPracticesCards: PracticeCard[] = [
     title: '自定义环境配置',
     description: '配置 CLAUDE.md 文件、权限管理和 GitHub CLI 集成',
     category: 'configuration',
-    difficulty: 'beginner',
-    readTime: '8 分钟',
     tips: [{ type: 'info', title: '最佳实践', content: 'CLAUDE.md 文件应该放在项目根目录，作为项目的记忆库' }],
   },
   {
@@ -64,8 +62,6 @@ export const bestPracticesCards: PracticeCard[] = [
     title: '软件工程与 Claude',
     description: '用软件工程方法驯服 AI：Brief、KISS、YAGNI、DRY、SOLID 的落地指南',
     category: 'workflow',
-    difficulty: 'intermediate',
-    readTime: '10 分钟',
     imageUrl: 'https://miro.medium.com/v2/resize:fit:4800/format:webp/1*tLFdzFI5tHrMRwYLoYZGBw.jpeg',
     tags: ['KISS', 'YAGNI', 'DRY', 'SOLID', 'BRIEF'],
     tips: [
@@ -94,8 +90,6 @@ export const bestPracticesCards: PracticeCard[] = [
     id: 'agent-linus-torvalds',
     title: 'Linus Torvalds Agent',
     category: 'automation',
-    difficulty: 'expert',
-    readTime: '15 分钟',
     imageUrl: 'https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202508311459990.png',
     tags: ['Linus', 'Linux', '代码品味', '实用主义', '工程质量'],
     tips: [
@@ -123,8 +117,6 @@ export const bestPracticesCards: PracticeCard[] = [
     title: 'CAIBAO-DA 专业数据分析师',
     description: '四阶段数据分析工作流程：数据理解、探索分析、可视化设计、商业洞察与行动建议',
     category: 'tools',
-    difficulty: 'intermediate',
-    readTime: '12 分钟',
     tags: ['数据分析', '可视化', 'Python', 'Plotly', '商业洞察'],
     tips: [
       { type: 'info', title: '标准流程', content: '遵循四阶段工作流程，确保分析的专业性和完整性' },
@@ -138,8 +130,6 @@ export const bestPracticesCards: PracticeCard[] = [
     title: 'AI Speeds 产品定位',
     description: 'AI工具自我展示和AI生成内容聚合平台，让AI工具以Agent身份展示能力，用户可直接体验AI的真实价值',
     category: 'tools',
-    difficulty: 'intermediate',
-    readTime: '8 分钟',
     tags: ['产品设计', 'AI平台', 'Agent', '用户体验', '社区'],
     tips: [
       { type: 'info', title: '创新模式', content: 'AI工具作为"虚拟创作者"，让AI能力发现变得直观有趣' },
@@ -153,8 +143,6 @@ export const bestPracticesCards: PracticeCard[] = [
     title: '告别手动创建设计系统，利用Cursor高效开发风格统一的高品质UI',
     description: '基于 shadcn/ui + Tailwind 构建设计系统，通过 AI 遵循规范快速开发页面，实现视觉统一和高效协作',
     category: 'tools',
-    difficulty: 'intermediate',
-    readTime: '15 分钟',
     tags: ['设计系统', 'shadcn/ui', 'Tailwind', 'Cursor', 'UI开发', '组件封装'],
     tips: [
       { type: 'info', title: '技术选型', content: '选择源码开放、可编程的 shadcn/ui + Tailwind，而非黑盒式 UI 框架' },
@@ -168,8 +156,6 @@ export const bestPracticesCards: PracticeCard[] = [
     title: 'Bento Grid 信息可视化设计规范',
     description: '使用 Bento Grid 布局和迷你卡片系统,将复杂文档转化为视觉冲击力强的单页应用的完整工作流程',
     category: 'workflow',
-    difficulty: 'advanced',
-    readTime: '15 分钟',
     tags: ['可视化', 'Bento Grid', 'TailwindCSS', 'Chart.js', 'UI设计', '响应式'],
     tips: [
       { type: 'info', title: '核心理念', content: '一个核心要点 = 一张迷你卡片,实现信息的细粒度拆分与语义重组' },
@@ -183,8 +169,6 @@ export const bestPracticesCards: PracticeCard[] = [
     title: '杂志之场',
     description: '以"场"的哲学呈现信息：空即是满、重力分层、色彩呼吸。一套将原始信息凝结为杂志式静态页面的完整思维模型',
     category: 'workflow',
-    difficulty: 'advanced',
-    readTime: '5 分钟',
     tags: ['设计哲学', '信息呈现', 'HTML', '排版', '杂志式设计'],
     tips: [
       { type: 'expert', title: '核心原则', content: '严肃是最高级的设计。留白处有最大张力，元素只在必要处显现' },

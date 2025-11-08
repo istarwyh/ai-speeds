@@ -4,5 +4,4 @@ export type {
   ContentSection as PracticeSection,
   ContentTip as PracticeTip,
   CategoryConfig,
-  DifficultyConfig,
 } from '../../shared/types/ContentCard';
