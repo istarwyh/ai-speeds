@@ -1,5 +1,10 @@
 export const navigationStyles = `
 /* Navigation Styles */
+:root {
+  --sidebar-width: 250px;
+  --active-border-width: 3px;
+}
+
 .main-nav {
   background: var(--color-surface-glass);
   border-right: 1px solid var(--color-surface-glass-2);
@@ -7,7 +12,7 @@ export const navigationStyles = `
   left: 0;
   top: 0;
   bottom: 0;
-  width: 250px;
+  width: var(--sidebar-width);
   z-index: 100;
   overflow-y: auto;
   display: flex;
@@ -51,8 +56,8 @@ export const navigationStyles = `
 .nav-tab.active {
   color: var(--color-primary);
   background: var(--color-surface-glass-2);
-  border-left: 3px solid var(--color-primary);
-  padding-left: calc(1rem - 3px);
+  border-left: var(--active-border-width) solid var(--color-primary);
+  padding-left: calc(1rem - var(--active-border-width));
 }
 
 .nav-icon {
@@ -76,7 +81,7 @@ export const navigationStyles = `
 
 /* Content area adjustment for sidebar */
 .content-wrapper {
-  margin-left: 250px;
+  margin-left: var(--sidebar-width);
   flex: 1;
   padding: var(--space-6);
 }
@@ -121,9 +126,9 @@ export const navigationStyles = `
 
   .nav-tab.active {
     border-left: none;
-    border-bottom: 3px solid var(--color-primary);
+    border-bottom: var(--active-border-width) solid var(--color-primary);
     padding-left: 1rem;
-    padding-bottom: calc(0.625rem - 3px);
+    padding-bottom: calc(0.625rem - var(--active-border-width));
   }
 
   .nav-icon {
