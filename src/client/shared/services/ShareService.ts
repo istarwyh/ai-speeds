@@ -47,7 +47,7 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
     const blob = await this.canvasToBlob(canvas);
 
     const overlay = this.createOverlay();
-    const modal = this.createModal(canvas);
+    const { modal, buttons } = this.createModal(canvas);
 
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
@@ -57,7 +57,7 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
       opts?.onClose?.();
     };
 
-    this.attachEventListeners(overlay, modal, blob, card, cleanup);
+    this.attachEventListeners(overlay, modal, blob, card, cleanup, buttons);
 
     // Focus for accessibility
     const closeBtn = modal.querySelector('.share-preview-close') as HTMLButtonElement;
@@ -154,7 +154,15 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
   /**
    * 创建弹窗
    */
-  private createModal(canvas: HTMLCanvasElement): HTMLDivElement {
+  private createModal(canvas: HTMLCanvasElement): {
+    modal: HTMLDivElement;
+    buttons: {
+      copyBtn: HTMLButtonElement;
+      downloadBtn: HTMLButtonElement;
+      copyLinkBtn: HTMLButtonElement;
+      cancelBtn: HTMLButtonElement;
+    };
+  } {
     const modal = document.createElement('div');
     modal.className = 'share-preview-modal';
     modal.setAttribute('role', 'dialog');
@@ -178,25 +186,36 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
       align-items: center;
       justify-content: space-between;
     `;
-    header.innerHTML = `
-      <div style="font-size: 18px; font-weight: 600; color: #0f172a;">分享预览</div>
-      <button class="share-preview-close" aria-label="关闭预览" style="
-        background: none;
-        border: none;
-        font-size: 28px;
-        line-height: 1;
-        cursor: pointer;
-        color: #64748b;
-        padding: 0;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-        transition: all 0.2s;
-      " onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='none'">×</button>
+
+    const title = document.createElement('div');
+    title.style.cssText = 'font-size: 18px; font-weight: 600; color: #0f172a;';
+    title.textContent = '分享预览';
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'share-preview-close';
+    closeBtn.setAttribute('aria-label', '关闭预览');
+    closeBtn.textContent = '×';
+    closeBtn.style.cssText = `
+      background: none;
+      border: none;
+      font-size: 28px;
+      line-height: 1;
+      cursor: pointer;
+      color: #64748b;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: all 0.2s;
     `;
+    closeBtn.onmouseover = () => (closeBtn.style.background = '#f1f5f9');
+    closeBtn.onmouseout = () => (closeBtn.style.background = 'none');
+
+    header.appendChild(title);
+    header.appendChild(closeBtn);
 
     const body = document.createElement('div');
     body.className = 'share-preview-body';
@@ -241,14 +260,15 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
 
     const copyBtn = document.createElement('button');
     copyBtn.className = 'share-action primary';
+    copyBtn.setAttribute('data-action', 'copy');
     copyBtn.textContent = '复制到剪贴板';
-    copyBtn.style.cssText =
-      buttonStyle + 'background: #0ea5e9; color: white;' + 'onmouseover="this.style.background=\'#0284c7\'"';
+    copyBtn.style.cssText = buttonStyle + 'background: #0ea5e9; color: white;';
     copyBtn.onmouseover = () => (copyBtn.style.background = '#0284c7');
     copyBtn.onmouseout = () => (copyBtn.style.background = '#0ea5e9');
 
     const downloadBtn = document.createElement('button');
     downloadBtn.className = 'share-action';
+    downloadBtn.setAttribute('data-action', 'download');
     downloadBtn.textContent = '下载图片';
     downloadBtn.style.cssText = buttonStyle + 'background: #f1f5f9; color: #0f172a;';
     downloadBtn.onmouseover = () => (downloadBtn.style.background = '#e2e8f0');
@@ -256,6 +276,7 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
 
     const copyLinkBtn = document.createElement('button');
     copyLinkBtn.className = 'share-action';
+    copyLinkBtn.setAttribute('data-action', 'copy-link');
     copyLinkBtn.textContent = '复制链接';
     copyLinkBtn.style.cssText = buttonStyle + 'background: #f1f5f9; color: #0f172a;';
     copyLinkBtn.onmouseover = () => (copyLinkBtn.style.background = '#e2e8f0');
@@ -263,6 +284,7 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
 
     const cancelBtn = document.createElement('button');
     cancelBtn.className = 'share-action subtle';
+    cancelBtn.setAttribute('data-action', 'cancel');
     cancelBtn.textContent = '取消';
     cancelBtn.style.cssText = buttonStyle + 'background: transparent; color: #64748b;';
     cancelBtn.onmouseover = () => (cancelBtn.style.background = '#f1f5f9');
@@ -271,7 +293,10 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
     actions.append(copyBtn, downloadBtn, copyLinkBtn, cancelBtn);
     modal.append(header, body, actions);
 
-    return modal;
+    return {
+      modal,
+      buttons: { copyBtn, downloadBtn, copyLinkBtn, cancelBtn },
+    };
   }
 
   /**
@@ -283,6 +308,12 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
     blob: Blob,
     card: T,
     cleanup: () => void,
+    buttons: {
+      copyBtn: HTMLButtonElement;
+      downloadBtn: HTMLButtonElement;
+      copyLinkBtn: HTMLButtonElement;
+      cancelBtn: HTMLButtonElement;
+    },
   ): void {
     // Close on overlay click
     overlay.addEventListener('click', e => {
@@ -304,7 +335,7 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
     document.addEventListener('keydown', onKey);
 
     // Copy to clipboard
-    modal.querySelector('.share-action.primary')?.addEventListener('click', async () => {
+    buttons.copyBtn.addEventListener('click', async () => {
       const ok = await this.tryClipboard(blob);
       if (ok) {
         this.toast('已复制到剪贴板');
@@ -317,16 +348,14 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
     });
 
     // Download
-    const downloadBtn = Array.from(modal.querySelectorAll('.share-action')).find(btn => btn.textContent === '下载图片');
-    downloadBtn?.addEventListener('click', () => {
+    buttons.downloadBtn.addEventListener('click', () => {
       this.triggerDownload(blob, (card.title as string) || 'share-card');
       this.toast('已开始下载');
       cleanup();
     });
 
     // Copy link
-    const copyLinkBtn = Array.from(modal.querySelectorAll('.share-action')).find(btn => btn.textContent === '复制链接');
-    copyLinkBtn?.addEventListener('click', async () => {
+    buttons.copyLinkBtn.addEventListener('click', async () => {
       try {
         const link = this.buildDeepLink(card);
         await navigator.clipboard.writeText(link);
@@ -337,7 +366,7 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
     });
 
     // Cancel
-    modal.querySelector('.share-action.subtle')?.addEventListener('click', cleanup);
+    buttons.cancelBtn.addEventListener('click', cleanup);
   }
 
   /**
