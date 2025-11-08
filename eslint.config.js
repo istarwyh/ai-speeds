@@ -60,10 +60,15 @@ export default [
         document: 'readonly',
         navigator: 'readonly',
         HTMLElement: 'readonly',
+        HTMLDivElement: 'readonly',
+        HTMLButtonElement: 'readonly',
+        HTMLCanvasElement: 'readonly',
         Event: 'readonly',
         KeyboardEvent: 'readonly',
         MouseEvent: 'readonly',
         Image: 'readonly',
+        Blob: 'readonly',
+        ClipboardItem: 'readonly',
         CanvasRenderingContext2D: 'readonly',
         MutationObserver: 'readonly',
         history: 'readonly',
@@ -126,7 +131,7 @@ export default [
   },
   {
     // More lenient rules for client-side code where type safety is harder to enforce
-    files: ['src/client/**/*.ts', 'src/client/**/*.tsx'],
+    files: ['src/client/**/*.ts', 'src/client/**/*.tsx', 'src/components-next/**/*.ts', 'src/components-next/**/*.tsx'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn',
       'security/detect-object-injection': 'off',
