@@ -125,8 +125,3 @@ export const navigationIconMap: Record<string, keyof typeof heroicons> = {
   'how-to-apply-cc': 'target',
   'ai-trends': 'chartBar',
 };
-
-// 特殊图标映射
-export const specialIconMap: Record<string, keyof typeof heroicons> = {
-  'read-time': 'bookOpen',
-};

@@ -29,7 +29,6 @@ export class BaseCardRenderer<T extends BaseContentCard> {
     const sectionsHtml = this.renderSections(card.sections);
 
     const overviewHtml = card.overview ? `<div class="overview-card__overview">${card.overview}</div>` : '';
-
     const sectionsBlockHtml = sectionsHtml
       ? `<div class="overview-card__sections">
             <h4 class="overview-card__sections-title">主要内容：</h4>

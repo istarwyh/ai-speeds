@@ -243,33 +243,48 @@ export const bestPracticesOverviewCardStyles = `
   }
 
   .overview-card__tip--success {
-    background: rgba(16, 185, 129, 0.1);
-    border-left: 4px solid #10b981;
+    background: var(--color-surface-glass-1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-left: 3px solid #10b981;
     color: var(--bp-text-primary);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
   }
 
   .overview-card__tip--info {
-    background: rgba(59, 130, 246, 0.1);
-    border-left: 4px solid #3b82f6;
+    background: var(--color-surface-glass-1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-left: 3px solid #3b82f6;
     color: var(--bp-text-primary);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
   }
 
   .overview-card__tip--warning {
-    background: rgba(245, 158, 11, 0.1);
-    border-left: 4px solid #f59e0b;
+    background: var(--color-surface-glass-1);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-left: 3px solid #f59e0b;
     color: var(--bp-text-primary);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
   }
 
   .overview-card__tip--tip {
-    background: rgba(6, 182, 212, 0.1); /* cyan-500 @ 10% */
-    border-left: 4px solid #06b6d4; /* cyan-500 */
+    background: var(--color-surface-glass-1);
+    border: 1px solid rgba(6, 182, 212, 0.2); /* cyan-500 @ 20% */
+    border-left: 3px solid #06b6d4; /* cyan-500 */
     color: var(--bp-text-primary);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
   }
 
   .overview-card__tip--expert {
-    background: rgba(168, 85, 247, 0.1); /* purple-500 @ 10% */
-    border-left: 4px solid #a855f7; /* purple-500 */
+    background: var(--color-surface-glass-1);
+    border: 1px solid rgba(168, 85, 247, 0.2); /* purple-500 @ 20% */
+    border-left: 3px solid #a855f7; /* purple-500 */
     color: var(--bp-text-primary);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
   }
 
   /* 标签 */
