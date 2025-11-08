@@ -2,8 +2,10 @@ export const sidebarScript = `
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
+    if (!sidebar || !overlay) return;
+
     const isOpen = sidebar.classList.contains('open');
-    
+
     if (isOpen) {
         sidebar.classList.remove('open');
         overlay.classList.remove('active');
@@ -16,6 +18,8 @@ function toggleSidebar() {
 function closeSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
+    if (!sidebar || !overlay) return;
+
     sidebar.classList.remove('open');
     overlay.classList.remove('active');
 }

@@ -175,11 +175,13 @@ function initMobileHeaderAutoHide() {
   }
 
   function showNav() {
+    if (!nav) return;
     nav.classList.remove('nav--hidden');
     document.body.classList.remove('nav-hidden');
   }
 
   function hideNav() {
+    if (!nav) return;
     nav.classList.add('nav--hidden');
     document.body.classList.add('nav-hidden');
   }
