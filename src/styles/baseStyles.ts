@@ -36,35 +36,24 @@ body {
     font-family: var(--font-family-primary);
     line-height: var(--line-height-normal);
     color: var(--color-text-primary);
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    background: var(--color-bg-primary);
     min-height: 100vh;
-    padding: var(--space-4);
+    padding: 0;
     overflow-x: hidden;
 }
 
 .container {
-    max-width: 1400px;
-    width: 92%;
-    margin: 0 auto;
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
     background: var(--color-bg-primary);
-    border-radius: var(--radius-3xl);
-    box-shadow: var(--shadow-xl);
+    border-radius: 0;
+    box-shadow: none;
     overflow: hidden;
     position: relative;
     padding-bottom: var(--space-8);
-}
-
-@media (max-width: 1600px) {
-    .container {
-        max-width: 1300px;
-    }
-}
-
-@media (max-width: 1400px) {
-    .container {
-        max-width: 1100px;
-        width: 95%;
-    }
+    display: flex;
+    min-height: 100vh;
 }
 
 @media (max-width: 768px) {
@@ -72,20 +61,19 @@ body {
         font-size: 16px; /* 防止 iOS 自动缩放 */
         line-height: var(--line-height-relaxed);
         -webkit-text-size-adjust: 100%;
-        padding: var(--space-2);
+        padding: 0;
     }
-    
+
     .container {
-        width: 95%;
-        border-radius: var(--radius-2xl);
+        flex-direction: column;
     }
-    
+
     /* 移动端文本优化 */
     p, li {
         line-height: var(--line-height-relaxed);
         margin-bottom: 1rem;
     }
-    
+
     h1, h2, h3, h4, h5, h6 {
         line-height: var(--line-height-tight);
         margin-bottom: 0.75rem;

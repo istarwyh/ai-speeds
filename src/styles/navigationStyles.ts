@@ -1,99 +1,63 @@
 export const navigationStyles = `
 /* Navigation Styles */
-.main-nav {
-  background: transparent;
-  border-bottom: none;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: blur(10px);
+:root {
+  --sidebar-width: 250px;
+  --active-border-width: 3px;
 }
 
-/* Mobile: make header fixed and allow hide/show via transform */
-@media (max-width: 768px) {
-  .main-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    transform: translateY(0);
-    transition: transform 0.2s ease-in-out;
-  }
-  .main-nav.nav--hidden {
-    transform: translateY(-100%);
-  }
-  /* Offset page content under the fixed nav */
-  body.mobile-nav-space .container {
-    margin-top: var(--mobile-nav-height, 70px);
-    transition: margin-top 0.2s ease-in-out;
-  }
-  body.mobile-nav-space.nav-hidden .container {
-    margin-top: 0;
-  }
-  
-  /* 移动端触摸优化 */
-  .nav-container {
-    padding: 0 var(--mobile-padding);
-  }
-  
-  .nav-tab {
-    padding: 0.625rem 1rem; /* 压缩高度：10px 16px */
-    min-height: var(--mobile-touch-target);
-    min-width: var(--mobile-touch-target);
-    font-size: var(--font-size-sm);
-  }
-  
-  .nav-tabs {
-    gap: 0.5rem; /* 增加间距避免误触 */
-  }
-  
-  .nav-icon {
-    width: 16px;
-    height: 16px;
-  }
-  
-  .nav-text {
-    font-size: 0.8125rem; /* 压缩文字大小 */
-  }
+.main-nav {
+  background: var(--color-surface-glass);
+  border-right: 1px solid var(--color-surface-glass-2);
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  z-index: 100;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .nav-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
+  padding: var(--space-6) var(--space-2);
+  flex: 1;
 }
 
 .nav-tabs {
   display: flex;
-  gap: 0;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .nav-tab {
-  background: none;
+  background: transparent;
   border: none;
-  padding: 1rem 2rem;
+  padding: 1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   color: var(--color-text-secondary);
   font-weight: 500;
   transition: all 0.3s ease;
-  border-bottom: 3px solid transparent;
+  border-radius: var(--radius-md);
   position: relative;
   min-height: var(--desktop-touch-target);
+  text-align: left;
+  width: 100%;
 }
 
 .nav-tab:hover {
   color: var(--color-text-primary);
-  background: transparent;
-  border-bottom-color: var(--color-surface-glass-2);
+  background: var(--color-surface-glass-2);
 }
 
 .nav-tab.active {
-  color: var(--color-text-primary);
-  border-bottom-color: var(--color-primary);
-  background: transparent;
+  color: var(--color-primary);
+  background: var(--color-surface-glass-2);
+  border-left: var(--active-border-width) solid var(--color-primary);
+  padding-left: calc(1rem - var(--active-border-width));
 }
 
 .nav-icon {
@@ -102,6 +66,7 @@ export const navigationStyles = `
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .nav-icon svg {
@@ -111,27 +76,92 @@ export const navigationStyles = `
 
 .nav-text {
   font-size: 0.95rem;
+  flex: 1;
 }
 
-/* When nav is hidden on mobile, allow content to reclaim space */
+/* Content area adjustment for sidebar */
+.content-wrapper {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  padding: var(--space-6);
+}
+
+/* Mobile: make header fixed and allow hide/show via transform */
 @media (max-width: 768px) {
-  body.mobile-nav-space.nav-hidden .practices-page {
+  .main-nav {
+    position: fixed;
     top: 0;
-    transition: top 0.2s ease-in-out;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--color-surface-glass-2);
+    transform: translateY(0);
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .main-nav.nav--hidden {
+    transform: translateY(-100%);
+  }
+
+  .nav-container {
+    padding: 0 var(--mobile-padding);
+  }
+
+  .nav-tabs {
+    flex-direction: row;
+    gap: 0.5rem;
+    overflow-x: auto;
+  }
+
+  .nav-tab {
+    padding: 0.625rem 1rem;
+    min-height: var(--mobile-touch-target);
+    min-width: var(--mobile-touch-target);
+    font-size: var(--font-size-sm);
+    flex-shrink: 0;
+  }
+
+  .nav-tab.active {
+    border-left: none;
+    border-bottom: var(--active-border-width) solid var(--color-primary);
+    padding-left: 1rem;
+    padding-bottom: calc(0.625rem - var(--active-border-width));
+  }
+
+  .nav-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .nav-text {
+    font-size: 0.8125rem;
+  }
+
+  .content-wrapper {
+    margin-left: 0;
+    margin-top: var(--mobile-nav-height, 70px);
+    transition: margin-top 0.2s ease-in-out;
+  }
+
+  body.mobile-nav-space.nav-hidden .content-wrapper {
+    margin-top: 0;
   }
 }
 
 /* 小屏幕手机优化 (iPhone SE 等) */
 @media (max-width: 375px) {
   .nav-tab {
-    padding: 0.5rem 0.75rem; /* 进一步压缩 */
+    padding: 0.5rem 0.75rem;
     font-size: 0.75rem;
   }
-  
+
   .nav-icon {
     font-size: 0.9rem;
   }
-  
+
   .nav-text {
     font-size: 0.75rem;
   }
