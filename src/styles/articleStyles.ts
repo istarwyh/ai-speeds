@@ -166,20 +166,6 @@ export const articleStyles = `
   letter-spacing: 0.5px;
 }
 
-.article-hero__difficulty {
-  background: var(--difficulty-color, #10b981);
-  color: white;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.article-hero__read-time {
-  color: #6b7280;
-  font-size: 14px;
-}
-
 .article-hero__title {
   font-size: 2.5rem;
   font-weight: 700;

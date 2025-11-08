@@ -165,46 +165,6 @@ export const bestPracticesOverviewCardStyles = `
     overflow: hidden;
   }
 
-  .overview-card__meta {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .overview-card__difficulty {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.25rem 0.75rem;
-    background: var(--difficulty-color, var(--bp-accent));
-    color: white;
-    border-radius: 20px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    opacity: 0.9;
-  }
-
-  .overview-card__read-time {
-    color: var(--bp-text-secondary);
-    font-size: 0.875rem;
-    display: flex;
-    align-items: center;
-    gap: 0.375rem;
-  }
-
-  .overview-card__read-time-icon {
-    width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .overview-card__read-time-icon svg {
-    width: 100%;
-    height: 100%;
-  }
-
   /* 卡片内容 */
   .overview-card__content {
     margin-bottom: 1.5rem;
@@ -510,10 +470,6 @@ export const bestPracticesOverviewCardStyles = `
 
     .overview-card__title {
       font-size: 1.3rem;
-    }
-
-    .overview-card__meta {
-      gap: 0.75rem;
     }
 
     .overview-card__footer {

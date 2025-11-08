@@ -1,18 +1,12 @@
 import type { BaseContentCard, ContentSection, ContentTip } from '../types/ContentCard';
-import { defaultDifficultyConfig, type DifficultyConfig } from '../config/cardConfig';
-import { heroicons, categoryIconMap, specialIconMap } from '../config/heroicons';
+import { heroicons, categoryIconMap } from '../config/heroicons';
 
 // 通用卡片渲染器 - 符合 SOLID 原则的单一职责
 export class BaseCardRenderer<T extends BaseContentCard> {
   protected categoryIcons: Record<string, string> = {};
-  protected difficultyConfig: DifficultyConfig;
 
-  constructor(
-    categoryIcons: Record<string, string> = {},
-    difficultyConfig: DifficultyConfig = defaultDifficultyConfig,
-  ) {
+  constructor(categoryIcons: Record<string, string> = {}) {
     this.categoryIcons = categoryIcons;
-    this.difficultyConfig = difficultyConfig;
   }
 
   // 获取 SVG 图标
@@ -31,24 +25,8 @@ export class BaseCardRenderer<T extends BaseContentCard> {
 
   public renderCard(card: T, index?: number): string {
     const iconSvg = this.getSvgIcon(card.category);
-    const difficultyColor = card.difficulty ? this.difficultyConfig.colors[card.difficulty] : undefined;
-    const difficultyLabel = card.difficulty ? this.difficultyConfig.labels[card.difficulty] : undefined;
 
     const sectionsHtml = this.renderSections(card.sections);
-
-    const difficultyHtml = difficultyLabel
-      ? `<span class="overview-card__difficulty"${difficultyColor ? ` style="--difficulty-color: ${difficultyColor}"` : ''}>
-              ${difficultyLabel}
-            </span>`
-      : '';
-
-    const readTimeIconSvg = heroicons[specialIconMap['read-time']];
-    const readTimeHtml = card.readTime
-      ? `<span class="overview-card__read-time">
-          <span class="overview-card__read-time-icon">${readTimeIconSvg}</span>
-          <span>${card.readTime}</span>
-        </span>`
-      : '';
 
     const overviewHtml = card.overview ? `<div class="overview-card__overview">${card.overview}</div>` : '';
 
@@ -84,10 +62,6 @@ export class BaseCardRenderer<T extends BaseContentCard> {
           <div class="overview-card__title-section">
             <div class="overview-card__icon">${iconSvg}</div>
             <h3 class="overview-card__title">${card.title}</h3>
-          </div>
-          <div class="overview-card__meta">
-            ${difficultyHtml}
-            ${readTimeHtml}
           </div>
         </div>
         <button class="overview-card__share-btn" data-card-id="${card.id}" aria-label="分享此卡片" title="分享">
