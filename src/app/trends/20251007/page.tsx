@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { TrendsArticle } from '@/components/trends/TrendsArticle';
+import { TrendsArticle } from '@/legacy/components/trends/TrendsArticle';
 
 export const metadata: Metadata = {
   title: 'OpenAI DevDay 2025 新闻 - AI 趋势',

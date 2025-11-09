@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
-import { navigationComponent, allStyles, allScripts } from '@/index';
-import { getStartedModule } from '@/features/get-started';
-import { bestPracticesModule } from '@/features/best-practices';
-import { implementationModule } from '@/features/how-to-implement';
-import { howToApplyCCModule } from '@/features/how-to-apply-cc';
+import { navigationComponent, allStyles, allScripts } from '@/legacy';
+import { getStartedModule } from '@/legacy/features/get-started';
+import { bestPracticesModule } from '@/legacy/features/best-practices';
+import { implementationModule } from '@/legacy/features/how-to-implement';
+import { howToApplyCCModule } from '@/legacy/features/how-to-apply-cc';
 import { DEFAULT_SECTION_ID } from '@/config/navigation';
 
 /**

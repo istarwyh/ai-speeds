@@ -14,6 +14,7 @@ export default [
       'build/**',
       '.wrangler/**',
       'src/scripts/generated/**',
+      'src/legacy/**', // Legacy code - no linting required
       '**/*.min.js',
       '**/*.min.css',
       'coverage/**',

@@ -30,7 +30,7 @@ async function buildClientScripts() {
     await buildProviderDetailsModule();
 
     console.log('✅ 客户端脚本构建完成！');
-    console.log('📝 客户端脚本已生成到 src/scripts/generated/ 目录');
+    console.log('📝 客户端脚本已生成到 src/legacy/scripts/generated/ 目录');
     console.log('🎯 模块文件保持简洁，无需注入代码');
   } catch (error) {
     console.error('❌ 构建失败:', error);
@@ -207,9 +207,9 @@ async function generateContentMap(config) {
 async function generateBestPracticesContentMap() {
   await generateContentMap({
     moduleName: '最佳实践',
-    contentDir: path.resolve(__dirname, '../src/client/bestPractices/content'),
-    generatedDir: path.resolve(__dirname, '../src/client/bestPractices/generated'),
-    cardsFile: path.resolve(__dirname, '../src/client/bestPractices/data/cardsData.ts'),
+    contentDir: path.resolve(__dirname, '../src/legacy/client/bestPractices/content'),
+    generatedDir: path.resolve(__dirname, '../src/legacy/client/bestPractices/generated'),
+    cardsFile: path.resolve(__dirname, '../src/legacy/client/bestPractices/data/cardsData.ts'),
   });
 }
 
@@ -219,9 +219,9 @@ async function generateBestPracticesContentMap() {
 async function generateHowToImplementContentMap() {
   await generateContentMap({
     moduleName: 'How to Implement',
-    contentDir: path.resolve(__dirname, '../src/client/howToImplement/content'),
-    generatedDir: path.resolve(__dirname, '../src/client/howToImplement/generated'),
-    cardsFile: path.resolve(__dirname, '../src/client/howToImplement/data/cardsData.ts'),
+    contentDir: path.resolve(__dirname, '../src/legacy/client/howToImplement/content'),
+    generatedDir: path.resolve(__dirname, '../src/legacy/client/howToImplement/generated'),
+    cardsFile: path.resolve(__dirname, '../src/legacy/client/howToImplement/data/cardsData.ts'),
   });
 }
 
@@ -231,9 +231,9 @@ async function generateHowToImplementContentMap() {
 async function generateHowToApplyCCContentMap() {
   await generateContentMap({
     moduleName: 'How to Apply CC',
-    contentDir: path.resolve(__dirname, '../src/client/howToApplyCC/content'),
-    generatedDir: path.resolve(__dirname, '../src/client/howToApplyCC/generated'),
-    cardsFile: path.resolve(__dirname, '../src/client/howToApplyCC/data/cardsData.ts'),
+    contentDir: path.resolve(__dirname, '../src/legacy/client/howToApplyCC/content'),
+    generatedDir: path.resolve(__dirname, '../src/legacy/client/howToApplyCC/generated'),
+    cardsFile: path.resolve(__dirname, '../src/legacy/client/howToApplyCC/data/cardsData.ts'),
   });
 }
 
@@ -242,8 +242,8 @@ async function generateHowToApplyCCContentMap() {
  */
 async function buildBestPracticesModule() {
   await buildModule({
-    entryPoint: path.resolve(__dirname, '../src/client/bestPractices/index.ts'),
-    outputFile: path.resolve(__dirname, '../src/scripts/generated/bestPracticesBundle.ts'),
+    entryPoint: path.resolve(__dirname, '../src/legacy/client/bestPractices/index.ts'),
+    outputFile: path.resolve(__dirname, '../src/legacy/scripts/generated/bestPracticesBundle.ts'),
     globalName: 'BestPracticesApp',
     exportName: 'bestPracticesClientScript',
     description: '最佳实践',
@@ -257,8 +257,8 @@ async function buildBestPracticesModule() {
  */
 async function buildHowToImplementModule() {
   await buildModule({
-    entryPoint: path.resolve(__dirname, '../src/client/howToImplement/index.ts'),
-    outputFile: path.resolve(__dirname, '../src/scripts/generated/howToImplementBundle.ts'),
+    entryPoint: path.resolve(__dirname, '../src/legacy/client/howToImplement/index.ts'),
+    outputFile: path.resolve(__dirname, '../src/legacy/scripts/generated/howToImplementBundle.ts'),
     globalName: 'HowToImplementApp',
     exportName: 'howToImplementClientScript',
     description: 'How to Implement ',
@@ -272,8 +272,8 @@ async function buildHowToImplementModule() {
  */
 async function buildHowToApplyCCModule() {
   await buildModule({
-    entryPoint: path.resolve(__dirname, '../src/client/howToApplyCC/index.ts'),
-    outputFile: path.resolve(__dirname, '../src/scripts/generated/howToApplyCCBundle.ts'),
+    entryPoint: path.resolve(__dirname, '../src/legacy/client/howToApplyCC/index.ts'),
+    outputFile: path.resolve(__dirname, '../src/legacy/scripts/generated/howToApplyCCBundle.ts'),
     globalName: 'HowToApplyCCApp',
     exportName: 'howToApplyCCClientScript',
     description: 'How to Apply CC ',
@@ -287,8 +287,8 @@ async function buildHowToApplyCCModule() {
  */
 async function buildProviderDetailsModule() {
   await buildModule({
-    entryPoint: path.resolve(__dirname, '../src/scripts/providerDetails.ts'),
-    outputFile: path.resolve(__dirname, '../src/scripts/generated/providerDetailsBundle.ts'),
+    entryPoint: path.resolve(__dirname, '../src/legacy/scripts/scripts/providerDetails.ts'),
+    outputFile: path.resolve(__dirname, '../src/legacy/scripts/generated/providerDetailsBundle.ts'),
     globalName: 'ProviderDetailsApp',
     exportName: 'providerDetailsClientScript',
     description: '供应商详情',
