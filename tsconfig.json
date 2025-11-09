@@ -49,7 +49,7 @@
       "@/*": ["./src/*"],
       "@/client/*": ["./src/client/*"],
       "@/server/*": ["./src/server/*"],
-      "@/api/*": ["./src/api/*"],
+      "@/services/*": ["./src/services/*"],
       "@/shared/*": ["./src/shared/*"]
     },
     /* Advanced Options */
@@ -64,7 +64,7 @@
     ]
   },
   "include": ["*.js", "*.ts", "scripts/**/*", "src/**/*", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "dist", ".wrangler", "**/*.min.js"],
+  "exclude": ["node_modules", "dist", ".wrangler", "**/*.min.js", "src/legacy"],
   "ts-node": {
     "esm": true,
     "compilerOptions": {

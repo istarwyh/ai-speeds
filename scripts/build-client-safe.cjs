@@ -59,7 +59,7 @@ function safeBuildClient() {
     }
 
     // 检查源文件是否有变化
-    const srcDir = path.resolve(__dirname, '../src/client');
+    const srcDir = path.resolve(__dirname, '../src/legacy/client');
     const currentSrcModified = getLastModified(srcDir);
 
     let lastBuildTime = 0;

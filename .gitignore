@@ -174,10 +174,12 @@ dist
 
 # Generated files
 src/scripts/generated
+src/legacy/scripts/generated
 shared/scripts/generated/
 
 # SSOT auto-generated content maps
 src/client/*/generated/
+src/legacy/client/*/generated/
 
 # Build lock files
 .build-lock
