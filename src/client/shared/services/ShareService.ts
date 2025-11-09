@@ -27,7 +27,12 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
       container.querySelectorAll<HTMLElement>('*').forEach(el => {
         el.style.backgroundImage = 'none';
       });
-    } catch {}
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.warn('ShareService.stripAssets failed:', error);
+      }
+    }
   }
 
   // 移除动画和过渡效果,确保克隆元素完全可见
@@ -43,7 +48,12 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
           el.style.opacity = '1';
         }
       });
-    } catch {}
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.warn('ShareService.stripAnimations failed:', error);
+      }
+    }
   }
 
   // 将外部资源统一改写为本地代理，避免 CORS 污染
@@ -96,7 +106,12 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
           el.style.backgroundImage = rewritten;
         }
       });
-    } catch {}
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.warn('ShareService.rewriteAssets failed:', error);
+      }
+    }
   }
 
   /**
