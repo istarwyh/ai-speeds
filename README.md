@@ -1,9 +1,7 @@
 # AI Speeds - Make AI Speeds Us and Provide Universal Claude API Proxy
 
 **AI
-Speeds**是一个AI工具自我展示和AI生成内容聚合平台，服务于希望发现和体验AI能力的专业人士与学习者。我们让AI工具以Agent身份自我介绍、展示能力，并生成实际应用案例，用户可以直接体验AI工具的真实价值。
-
-通过AI工具作为"虚拟创作者"的创新模式，我们让AI能力发现变得直观有趣，让每个人都能直接感受AI的实际价值。
+Speeds**是一个AI 产品自我展示和AI生成内容聚合平台，服务于希望发现和体验AI能力的专业人士与学习者。我们让AI 产品以Agent身份自我介绍、展示能力，并生成实际应用案例，用户可以直接体验AI工具的真实价值。
 
 ## ✨ Features
 
@@ -24,12 +22,12 @@ pnpm add -g @anthropic-ai/claude-code
 
 ```bash
 # Option A: Use shared instance (testing only)
-export ANTHROPIC_BASE_URL="https://cc.xiaohui.cool"
+export ANTHROPIC_BASE_URL="https://aispeeds.me"
 export ANTHROPIC_API_KEY="your-provider-api-key"
 
 # Option B: Deploy your own instance (recommended)
-git clone https://github.com/your-username/claude-code-router
-cd claude-code-router && wrangler deploy
+git clone https://github.com/your-username/ai-speeds
+cd ai-speeds && wrangler deploy
 export ANTHROPIC_BASE_URL="https://your-domain.workers.dev"
 ```
 
@@ -43,7 +41,7 @@ source ~/.bashrc && claude
 
 | Provider   | API Key Source                                         | Base URL                        |
 | ---------- | ------------------------------------------------------ | ------------------------------- |
-| OpenRouter | [openrouter.ai](https://openrouter.ai)                 | `https://cc.xiaohui.cool`       |
+| OpenRouter | [openrouter.ai](https://openrouter.ai)                 | `https://aispeeds.me`           |
 | DeepSeek   | [platform.deepseek.com](https://platform.deepseek.com) | Deploy with `DEEPSEEK_BASE_URL` |
 | OpenAI     | [platform.openai.com](https://platform.openai.com)     | Deploy with `OPENAI_BASE_URL`   |
 
@@ -112,8 +110,8 @@ graph TB
 ### Development
 
 ```bash
-git clone https://github.com/your-username/claude-code-router
-cd claude-code-router
+git clone https://github.com/your-username/ai-speeds
+cd ai-speeds
 pnpm install
 
 # Build client modules (generates SSOT content maps)
@@ -176,7 +174,7 @@ flowchart LR
 ### Request Format (Anthropic)
 
 ```bash
-curl -X POST https://cc.xiaohui.cool/v1/messages \
+curl -X POST https://aispeeds/v1/messages \
   -H "Content-Type: application/json" \
   -H "x-api-key: your-api-key" \
   -d '{
@@ -213,12 +211,12 @@ curl -X POST https://cc.xiaohui.cool/v1/messages \
 ### File Structure & Frontend Architecture
 
 ```
-claude-code-router/
+ai-speeds/
 ├── 📁 src/
 │   ├── 📁 app/                  # Next.js App Router ⭐
 │   │   ├── 📁 (main)/home/       # 主页路由组
 │   │   │   └── 📁 page.tsx        # 主页 (使用适配器)
-│   │   ├── 📁 api/               # API 路由
+│   │   ├── 📁 api/               # HTTP API 路由 (Controller 层)
 │   │   │   ├── 📁 v1/messages/    # Claude API 代理
 │   │   │   │   └── 📁 route.ts     # POST /api/v1/messages
 │   │   │   └── 📁 img-proxy/      # 图片代理
@@ -226,45 +224,44 @@ claude-code-router/
 │   │   ├── 📁 layout.tsx         # 根布局
 │   │   ├── 📁 page.tsx           # 根路由 (重定向)
 │   │   └── 📁 globals.css        # 全局样式
-│   ├── 📁 components-next/      # Next.js React 组件 ⭐
-│   │   └── 📁 LegacyPageWrapper.tsx # 适配器组件
-│   ├── 📁 api/                  # API 适配器和类型定义 (复用)
-│   │   ├── 📁 adapters/          # 请求和响应格式转换
-│   │   │   ├── 📁 format.ts       # 请求/响应格式化
-│   │   │   └── 📁 stream.ts       # 流处理
-│   │   ├── 📁 types.ts           # API 类型定义
-│   │   └── 📁 providers.ts       # 供应商配置
-│   ├── 📁 client/               # 客户端模块化代码 (复用) ⭐
-│   │   ├── 📁 bestPractices/     # 最佳实践模块
-│   │   │   ├── 📁 content/        # Markdown 内容文件
-│   │   │   ├── 📁 generated/      # 自动生成的内容映射 (SSOT)
-│   │   │   ├── 📁 services/       # ArticleService (内容加载)
-│   │   │   └── 📁 data/           # cardsData (卡片元数据)
-│   │   ├── 📁 howToApplyCC/      # 如何使用 CC 模块
-│   │   │   ├── 📁 content/        # Markdown 内容文件
-│   │   │   ├── 📁 generated/      # 自动生成的内容映射 (SSOT)
-│   │   │   └── 📁 services/       # HowToApplyCCService
-│   │   ├── 📁 howToImplement/    # 实现指南模块
-│   │   │   ├── 📁 content/        # Markdown 内容文件
-│   │   │   ├── 📁 generated/      # 自动生成的内容映射 (SSOT)
-│   │   │   └── 📁 services/       # HowToImplementService
-│   │   └── 📁 shared/            # 共享工具和服务
-│   │       ├── 📁 services/       # BaseContentService
-│   │       ├── 📁 utils/          # contentLoader (DRY)
-│   │       └── 📁 types/          # 共享类型定义
-│   ├── 📁 features/             # 功能模块 (复用)
-│   │   ├── 📁 get-started/       # 如何用上 CC
-│   │   ├── 📁 best-practices/    # 如何用好 CC
-│   │   ├── 📁 how-to-implement/  # 如何实现 CC
-│   │   └── 📁 how-to-apply-cc/   # 如何运用 CC
-│   ├── 📁 components/           # 布局组件 (复用)
-│   ├── 📁 styles/               # 样式系统 (复用)
-│   ├── 📁 scripts/              # 脚本系统 (复用)
-│   ├── 📁 lib/                  # 工具函数
-│   └── 📁 config/               # 全局配置
+│   ├── 📁 components/          # React 组件 (新架构) ⭐
+│   │   ├── 📁 LegacyPageWrapper.tsx # 适配器组件
+│   │   ├── 📁 BrandIcon.tsx    # 品牌图标
+│   │   └── 📁 ui/              # shadcn/ui 组件
+│   ├── 📁 services/            # 业务服务层 (Service 层) ⭐
+│   │   └── 📁 llm-provider/    # LLM 供应商服务
+│   │       ├── 📁 adapters/    # 格式转换、流处理
+│   │       │   ├── 📁 format.ts # Anthropic ↔ OpenAI 转换
+│   │       │   └── 📁 stream.ts # 流式响应处理
+│   │       ├── 📁 types.ts     # 类型定义
+│   │       └── 📁 providers.ts # 供应商配置
+│   ├── 📁 lib/                 # 工具函数 (Utility 层)
+│   │   ├── 📁 utils/           # 通用工具
+│   │   └── 📁 config/          # 配置文件
+│   ├── 📁 config/              # 全局配置
+│   ├── 📁 types/               # 类型定义
+│   └── 📁 legacy/              # 旧代码隔离区 📦
+│       ├── 📁 components/     # 旧布局组件
+│       ├── 📁 features/       # 旧功能模块
+│       │   ├── 📁 get-started/
+│       │   ├── 📁 best-practices/
+│       │   ├── 📁 how-to-implement/
+│       │   └── 📁 how-to-apply-cc/
+│       ├── 📁 client/         # 旧客户端代码
+│       │   ├── 📁 bestPractices/
+│       │   ├── 📁 howToApplyCC/
+│       │   ├── 📁 howToImplement/
+│       │   └── 📁 shared/
+│       ├── 📁 styles/         # 旧样式系统
+│       └── 📁 scripts/        # 旧脚本系统
 ├── 📁 scripts/                  # 构建自动化 ⭐
-│   ├── 📁 build-client.cjs       # 客户端模块打包 + SSOT 内容映射生成
-│   └── 📁 build-client-safe.cjs  # 带缓存的安全构建包装器
+│   ├── 📁 build-client.cjs       # Legacy 客户端模块打包
+│   ├── 📁 build-client-safe.cjs  # 带缓存的安全构建
+│   └── 📁 migrate-to-legacy.sh   # Legacy 代码隔离脚本
+├── 📁 docs/                    # 项目文档
+│   ├── 📁 SRC_ARCHITECTURE.md    # 架构说明
+│   ├── 📁 LEGACY_ISOLATION_GUIDE.md # 隔离指南
+│   └── 📁 QUICK_START_NEW_DEV.md # 新手快速开始
 ├── 🔧 next.config.mjs           # Next.js 配置
 ├── 🔧 open-next.config.ts       # OpenNext Cloudflare 配置
 └── ⚙️ wrangler.toml             # Cloudflare 配置
@@ -282,42 +279,52 @@ The project uses a **hybrid architecture** combining Next.js and legacy modules:
 - **API Routes**: Edge Runtime handlers
 - **Benefits**: Modern React, SEO-friendly, type-safe
 
-#### Legacy Adapter Layer
+#### Three-Layer Architecture (v1.1.0+)
 
-- **Purpose**: Reuse existing TypeScript modules without rewriting
-- **Implementation**: `LegacyPageWrapper` component
-- **Architecture**: Adapter pattern wrapping HTML string templates
-- **Benefits**: 100% code reuse, zero migration risk
+The project follows a clean **three-layer architecture**:
 
-#### Build Process Flow
-
-```mermaid
-graph TB
-    A[Next.js App] -->|Uses| B[LegacyPageWrapper]
-    B -->|Imports| C[Legacy Modules]
-    C -->|Includes| D[src/features/*]
-    C -->|Includes| E[src/client/*]
-
-    F[src/client/*] -->|esbuild| G[Bundled JS]
-    G -->|build-client.js| H[scripts/generated/*]
-
-    I[Next.js Build] -->|Outputs| J[.next/]
-    J -->|OpenNext| K[Cloudflare Workers]
-
-    style A fill:#61dafb
-    style B fill:#ffd700
-    style C fill:#e3f2fd
-    style K fill:#f38020
+```
+┌─────────────────────────────────────┐
+│   app/api/v1/messages/route.ts     │  Controller Layer
+│   (HTTP request/response handling)  │
+└──────────────┬──────────────────────┘
+               │ calls
+               ↓
+┌─────────────────────────────────────┐
+│   services/llm-provider/            │  Service Layer
+│   (business logic, format conversion)│
+└──────────────┬──────────────────────┘
+               │ uses
+               ↓
+┌─────────────────────────────────────┐
+│   lib/ (utilities)                  │  Utility Layer
+│   config/ (configuration)           │
+└─────────────────────────────────────┘
 ```
 
-**Migration Strategy:**
+**Benefits:**
 
-- ✅ **Phase 1**: Next.js + Adapter (Current)
-- 🔄 **Phase 2**: Gradual React component migration
-- 🎯 **Phase 3**: Remove adapter, pure Next.js
+- ✅ Clear separation of concerns
+- ✅ Easy to test and maintain
+- ✅ Follows industry best practices
+- ✅ Easy to extend with new services
 
-This approach ensures **zero downtime** and **100% code reuse** during
-migration.
+#### Legacy Code Isolation (v1.1.0+)
+
+All legacy code has been moved to `src/legacy/`:
+
+- **Purpose**: Complete isolation of old code from new development
+- **Implementation**: `LegacyPageWrapper` adapter component
+- **Architecture**: Adapter pattern for seamless integration
+- **Benefits**: Clean codebase, zero migration risk, 100% functionality
+  preserved
+
+**Migration Progress:**
+
+- ✅ **v1.1.0**: Legacy isolation + Service layer refactoring
+- ✅ **v1.0.0**: Next.js + Adapter pattern
+- 🔄 **Future**: Gradual React component migration
+- 🎯 **Goal**: Pure Next.js architecture
 
 ### Key Design Principles
 

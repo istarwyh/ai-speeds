@@ -180,27 +180,62 @@ src/app/                    # Next.js App Router
 
 ```
 src/
-├── api/                    # API 适配器和类型定义
-│   ├── adapters/           # 请求和响应格式转换
-│   ├── types.ts            # API 类型定义
-│   └── providers.ts        # 提供商配置
-├── client/                 # 客户端模块化代码
-├── features/               # 功能模块
-├── components-next/        # Next.js React 组件
-├── components/             # 布局组件 (复用)
-├── styles/                 # 样式系统
-└── scripts/                # 脚本系统
+├── app/                    # Next.js App Router
+│   ├── api/                # HTTP API 路由 (Controller 层)
+│   └── (main)/             # 页面路由
+├── components/             # React 组件 (新架构)
+├── services/               # 业务服务层 (Service 层)
+│   └── llm-provider/       # LLM 供应商服务
+│       ├── adapters/       # 格式转换、流处理
+│       ├── types.ts        # 类型定义
+│       └── providers.ts    # 供应商配置
+├── lib/                    # 工具函数 (Utility 层)
+├── config/                 # 配置文件
+├── types/                  # 类型定义
+└── legacy/                 # 旧代码隔离区
+    ├── components/         # 旧布局组件
+    ├── features/           # 旧功能模块
+    ├── client/             # 旧客户端代码
+    ├── styles/             # 旧样式系统
+    └── scripts/            # 旧脚本系统
 ```
 
-## 迁移架构
+## 架构演进
 
-项目采用**适配器模式**进行渐进式迁移：
+### ✅ 已完成的重构 (2025-11-09)
 
-### 当前阶段 (Phase 1)
+**Legacy 代码隔离**
 
-- ✅ Next.js + 适配器模式
-- ✅ 100% 代码复用，零迁移风险
-- ✅ 使用 `LegacyPageWrapper` 包装现有 HTML 模块
+- ✅ 所有旧代码移至 `src/legacy/` 目录
+- ✅ 新架构使用 `src/app/` 和 `src/components/`
+- ✅ 通过 `LegacyPageWrapper` 适配器保持功能正常
+
+**服务层重构**
+
+- ✅ `src/api/` → `src/services/llm-provider/`
+- ✅ 清晰的三层架构：Controller → Service → Utility
+- ✅ 职责分离：API 路由 vs 业务逻辑
+
+### 当前架构模式
+
+```
+┌─────────────────────────────────────┐
+│   app/api/v1/messages/route.ts     │  Controller 层
+│   (处理 HTTP 请求/响应)              │
+└──────────────┬──────────────────────┘
+               │ 调用
+               ↓
+┌─────────────────────────────────────┐
+│   services/llm-provider/            │  Service 层
+│   (业务逻辑、格式转换、供应商管理)    │
+└──────────────┬──────────────────────┘
+               │ 使用
+               ↓
+┌─────────────────────────────────────┐
+│   lib/ (工具函数)                   │  Utility 层
+│   config/ (配置)                    │
+└─────────────────────────────────────┘
+```
 
 ### 迁移策略
 
@@ -228,13 +263,6 @@ export function LegacyPageWrapper() {
 ### 环境变量
 
 ```bash
-# 提供商配置 (优先级顺序)
-DEEPSEEK_BASE_URL="https://api.deepseek.com"
-OPENAI_BASE_URL="https://api.openai.com"
-KIMI_BASE_URL="https://api.moonshot.cn"
-SILICONFLOW_BASE_URL="https://api.siliconflow.cn"
-OPENROUTER_BASE_URL="https://openrouter.ai/api"
-
 # 图片代理配置
 IMAGE_PROXY_WHITELIST="*"
 IMAGE_PROXY_CACHE_TTL="86400"
@@ -343,7 +371,7 @@ pnpm run typecheck      # TypeScript 检查
 
 ---
 
-_最后更新: 2025-10-05_ _项目版本: 1.0.0_
+_最后更新: 2025-11-09_ _项目版本: 1.1.0_
 
 ## 质量标准
 
