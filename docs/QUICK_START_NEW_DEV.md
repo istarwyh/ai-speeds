@@ -6,7 +6,7 @@
 
 这个项目正在从 **Legacy 字符串模板系统** 迁移到 **Next.js App Router 架构**。
 
-- ✅ **新架构**：`src/app/` + `src/components-next/` (Next.js 15 + React 19 +
+- ✅ **新架构**：`src/app/` + `src/components/` (Next.js 15 + React 19 +
   shadcn/ui)
 - 📦 **Legacy 代码**：`src/legacy/` (隔离后) 或 `src/components/`,
   `src/features/` 等 (隔离前)
@@ -39,9 +39,9 @@ npm run dev
 ```
 src/
 ├── app/              # ✨ 新架构 - 你的工作区
-├── components-next/  # ✨ 新架构 - 你的工作区
+├── components/  # ✨ 新架构 - 你的工作区
 ├── legacy/           # 📦 旧代码 - 不要碰
-├── api/              # ✅ 复用 - 可以用
+├── services/         # ✅ 复用 - 业务服务层 - 可以用
 ├── lib/              # ✅ 复用 - 可以用
 └── types/            # ✅ 复用 - 可以用
 ```
@@ -68,8 +68,8 @@ mkdir -p src/app/\(main\)/my-feature
 touch src/app/\(main\)/my-feature/page.tsx
 
 # 2. 创建组件
-mkdir -p src/components-next/features
-touch src/components-next/features/MyFeature.tsx
+mkdir -p src/components/features
+touch src/components/features/MyFeature.tsx
 
 # 3. 安装需要的 shadcn/ui 组件
 npx shadcn@latest add button
@@ -82,7 +82,7 @@ npx shadcn@latest add card
 
 ```tsx
 // src/app/(main)/my-feature/page.tsx
-import { MyFeature } from '@/components-next/features/MyFeature';
+import { MyFeature } from '@/components/features/MyFeature';
 
 export default function MyFeaturePage() {
   return <MyFeature />;
@@ -92,12 +92,12 @@ export default function MyFeaturePage() {
 ### 2. 创建客户端组件
 
 ```tsx
-// src/components-next/features/MyFeature.tsx
+// src/components/features/MyFeature.tsx
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components-next/ui/button';
-import { Card } from '@/components-next/ui/card';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 export function MyFeature() {
@@ -121,7 +121,7 @@ export function MyFeature() {
 
 ```tsx
 // src/app/(main)/data-page/page.tsx
-import { fetchProviders } from '@/api/providers';
+import { fetchProviders } from '@/services/llm-provider/providers';
 
 // 服务端组件 - 可以直接 async
 export default async function DataPage() {
@@ -160,7 +160,7 @@ export default async function DataPage() {
 'use client';
 
 import { useEffect, useState } from 'react';
-import { fetchProviders } from '@/api/providers';
+import { fetchProviders } from '@/services/llm-provider/providers';
 import { cn } from '@/lib/utils';
 import type { Provider } from '@/types/provider';
 
@@ -259,13 +259,8 @@ npx shadcn@latest add button card dialog
 ### 使用组件
 
 ```tsx
-import { Button } from '@/components-next/ui/button';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from '@/components-next/ui/card';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 export function Example() {
   return (
@@ -301,7 +296,7 @@ src/legacy/scripts/
 import { something } from '@/legacy/features/...';
 
 // ✅ 正确：只在适配器中导入
-// src/components-next/LegacyPageWrapper.tsx
+// src/components/LegacyPageWrapper.tsx
 ```
 
 ### ❌ 不要混用架构
@@ -333,7 +328,7 @@ touch src/app/\(main\)/best-practices/page.tsx
 ### Step 2: 用 React 重写
 
 ```tsx
-// src/components-next/features/BestPractices.tsx
+// src/components/features/BestPractices.tsx
 'use client';
 
 export function BestPractices() {
@@ -351,7 +346,7 @@ export function BestPractices() {
 
 ```tsx
 // src/app/(main)/best-practices/page.tsx
-import { BestPractices } from '@/components-next/features/BestPractices';
+import { BestPractices } from '@/components/features/BestPractices';
 
 export default function BestPracticesPage() {
   return <BestPractices />;
@@ -361,7 +356,7 @@ export default function BestPracticesPage() {
 ### Step 4: 从适配器移除
 
 ```tsx
-// src/components-next/LegacyPageWrapper.tsx
+// src/components/LegacyPageWrapper.tsx
 // 删除或注释掉旧模块的导入和渲染
 // import { bestPracticesModule } from '@/legacy/features/best-practices';
 ```
@@ -449,4 +444,4 @@ A: 不要调试，直接迁移到新架构。如果必须修复 bug：
 4. ✅ 学习 shadcn/ui 组件
 5. ✅ 开始迁移 Legacy 功能
 
-**记住：所有新开发都在 `src/app/` 和 `src/components-next/` 下进行！**
+**记住：所有新开发都在 `src/app/` 和 `src/components/` 下进行！**

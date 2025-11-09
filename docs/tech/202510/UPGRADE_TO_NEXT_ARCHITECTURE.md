@@ -1,7 +1,8 @@
 # Claude Code Router 升级到 Next.js + OpenNext Cloudflare 架构方案
 
 > **调研日期**: 2025-10-05  
-> **目标**: 将当前 Cloudflare Workers 项目升级到 Next.js 15 + OpenNext Cloudflare 架构  
+> **目标**: 将当前 Cloudflare Workers 项目升级到 Next.js 15 + OpenNext
+> Cloudflare 架构  
 > **参考项目**: shipany-2.6.0-cloudflare
 
 ---
@@ -10,14 +11,14 @@
 
 ### 升级核心价值
 
-| 维度 | 当前架构 | 目标架构 | 提升 |
-|------|---------|---------|------|
-| **开发效率** | 手动路由 + 字符串模板 | Next.js App Router + React 组件 | **10x** |
-| **类型安全** | 部分 TypeScript | 全栈 TypeScript + 严格模式 | **100%** |
-| **UI 开发** | 原生 CSS + 手动 DOM | Tailwind + shadcn/ui + React | **5x** |
-| **功能完整性** | API 代理 | API + 认证 + 数据库 + 支付 | **全栈** |
-| **部署方式** | Cloudflare Workers | Workers + Edge Runtime + SSR | **现代化** |
-| **可维护性** | 中等 | 高 | **显著提升** |
+| 维度           | 当前架构              | 目标架构                        | 提升         |
+| -------------- | --------------------- | ------------------------------- | ------------ |
+| **开发效率**   | 手动路由 + 字符串模板 | Next.js App Router + React 组件 | **10x**      |
+| **类型安全**   | 部分 TypeScript       | 全栈 TypeScript + 严格模式      | **100%**     |
+| **UI 开发**    | 原生 CSS + 手动 DOM   | Tailwind + shadcn/ui + React    | **5x**       |
+| **功能完整性** | API 代理              | API + 认证 + 数据库 + 支付      | **全栈**     |
+| **部署方式**   | Cloudflare Workers    | Workers + Edge Runtime + SSR    | **现代化**   |
+| **可维护性**   | 中等                  | 高                              | **显著提升** |
 
 ### 关键决策点
 
@@ -34,12 +35,14 @@
 ### 当前项目 (shipany-2.6.0-cloudflare) 的优势
 
 #### 1. **现代化框架栈**
+
 - **Next.js 15.2.3** - 最新版本的 React 框架
 - **React 19.0.0** - 最新的 React 版本
 - **TypeScript 5.7.2** - 强类型支持
 - **Tailwind CSS 4.1.4** - 现代化 CSS 框架
 
 #### 2. **完整的全栈能力**
+
 ```typescript
 // shipany 使用 Next.js App Router 架构
 src/app/
@@ -63,6 +66,7 @@ src/server/index.ts         # 单一入口文件
 ```
 
 #### 3. **OpenNext Cloudflare 集成**
+
 - **@opennextjs/cloudflare 1.2.1** - 专门为 Cloudflare 优化的 Next.js 适配器
 - 自动处理静态资源、服务端渲染、API 路由
 - 支持增量静态再生成 (ISR)
@@ -77,13 +81,14 @@ src/server/index.ts         # 单一入口文件
 ```
 
 #### 4. **数据库集成 (Drizzle ORM)**
+
 ```typescript
 // src/db/config.ts
-import { defineConfig } from "drizzle-kit";
+import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
-  schema: "./src/db/schema.ts",
-  dialect: "postgresql",
+  schema: './src/db/schema.ts',
+  dialect: 'postgresql',
   dbCredentials: {
     url: process.env.DATABASE_URL!,
   },
@@ -96,6 +101,7 @@ export default defineConfig({
 - 完整的 ORM 功能
 
 #### 5. **认证系统 (NextAuth.js 5.0)**
+
 ```typescript
 // src/auth/config.ts
 - Google OAuth
@@ -106,15 +112,17 @@ export default defineConfig({
 ```
 
 #### 6. **国际化 (next-intl)**
+
 ```typescript
 // src/middleware.ts
 export default createMiddleware(routing);
 
 // 支持多语言
-"/(en|en-US|zh|zh-CN|zh-TW|zh-HK|zh-MO|ja|ko|ru|fr|de|ar|es|it)/:path*"
+('/(en|en-US|zh|zh-CN|zh-TW|zh-HK|zh-MO|ja|ko|ru|fr|de|ar|es|it)/:path*');
 ```
 
 #### 7. **AI SDK 集成**
+
 ```typescript
 // 多个 AI 提供商支持
 "@ai-sdk/deepseek": "^0.1.11",
@@ -125,6 +133,7 @@ export default createMiddleware(routing);
 ```
 
 #### 8. **现代化 UI 组件库**
+
 ```typescript
 // Radix UI + shadcn/ui
 - 完整的无障碍组件
@@ -134,12 +143,14 @@ export default createMiddleware(routing);
 ```
 
 #### 9. **支付集成 (Stripe)**
+
 ```typescript
 "@stripe/stripe-js": "^5.4.0",
 "stripe": "^17.5.0",
 ```
 
 #### 10. **文档系统 (Fumadocs)**
+
 ```typescript
 "fumadocs-core": "^15.6.3",
 "fumadocs-mdx": "^11.6.11",
@@ -147,12 +158,14 @@ export default createMiddleware(routing);
 ```
 
 #### 11. **开发体验**
+
 - **Turbopack** - 极速开发服务器
 - **Bundle Analyzer** - 包大小分析
 - **Hot Module Replacement** - 热更新
 - **TypeScript 严格模式** - 类型安全
 
 #### 12. **生产优化**
+
 ```javascript
 // next.config.mjs
 output: "standalone",           // 独立部署
@@ -165,36 +178,42 @@ experimental: { mdxRs: true },  // Rust MDX 编译器
 ### claude-code-router 的局限性
 
 #### 1. **手动路由管理**
+
 ```typescript
 // 需要手动匹配每个路由
 if (url.pathname === '/home' && request.method === 'GET') {
-  return new Response(indexHtml, { headers: { 'Content-Type': 'text/html' }});
+  return new Response(indexHtml, { headers: { 'Content-Type': 'text/html' } });
 }
 ```
 
 #### 2. **字符串模板 HTML**
+
 ```typescript
 // src/templates/index.ts
-export const indexHtml = `<!DOCTYPE html>...`;  // 难以维护
+export const indexHtml = `<!DOCTYPE html>...`; // 难以维护
 ```
 
 #### 3. **无组件化**
+
 - 无法复用 UI 组件
 - 无法使用 React 生态
 - 无法使用现代 CSS 框架
 
 #### 4. **无数据库集成**
+
 - 无持久化存储
 - 无用户管理
 - 无状态管理
 
 #### 5. **构建复杂**
+
 ```json
 // 需要手动构建客户端脚本
 "build:client": "node scripts/build-client-safe.cjs",
 ```
 
 #### 6. **无 SSR/SSG**
+
 - 只能提供静态 HTML
 - 无服务端渲染
 - 无增量静态生成
@@ -206,6 +225,7 @@ export const indexHtml = `<!DOCTYPE html>...`;  // 难以维护
 ### 阶段 1: 项目初始化
 
 #### 1.1 创建新的 Next.js 项目
+
 ```bash
 cd ~/Desktop/code-open
 npx create-next-app@latest claude-code-router-next --typescript --tailwind --app --no-src-dir
@@ -213,6 +233,7 @@ cd claude-code-router-next
 ```
 
 #### 1.2 安装核心依赖
+
 ```bash
 # OpenNext Cloudflare
 pnpm add @opennextjs/cloudflare
@@ -222,13 +243,14 @@ pnpm add -D wrangler cross-env
 ```
 
 #### 1.3 配置 Next.js
+
 ```javascript
 // next.config.mjs
-import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
+  output: 'standalone',
   reactStrictMode: true,
 };
 
@@ -238,9 +260,10 @@ initOpenNextCloudflareForDev();
 ```
 
 #### 1.4 创建 OpenNext 配置
+
 ```typescript
 // open-next.config.ts
-import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+import { defineCloudflareConfig } from '@opennextjs/cloudflare';
 
 export default defineCloudflareConfig({
   // 可选: 启用 R2 缓存
@@ -249,6 +272,7 @@ export default defineCloudflareConfig({
 ```
 
 #### 1.5 配置 Wrangler
+
 ```toml
 # wrangler.toml
 name = "claude-code-router-next"
@@ -268,6 +292,7 @@ enabled = true
 ```
 
 #### 1.6 更新 package.json
+
 ```json
 {
   "scripts": {
@@ -287,15 +312,20 @@ enabled = true
 #### 2.1 迁移 API 路由
 
 **旧架构 (claude-code-router):**
+
 ```typescript
 // src/server/index.ts
 if (url.pathname === '/v1/messages' && request.method === 'POST') {
   const anthropicRequest = await request.json();
   const bearerToken = request.headers.get('x-api-key');
-  
+
   const { provider, baseUrl } = selectProvider(env);
-  const openaiRequest = formatAnthropicToOpenAI(anthropicRequest, provider, PROVIDER_CONFIGS);
-  
+  const openaiRequest = formatAnthropicToOpenAI(
+    anthropicRequest,
+    provider,
+    PROVIDER_CONFIGS,
+  );
+
   const openaiResponse = await fetch(`${baseUrl}/chat/completions`, {
     method: 'POST',
     headers: {
@@ -304,12 +334,13 @@ if (url.pathname === '/v1/messages' && request.method === 'POST') {
     },
     body: JSON.stringify(openaiRequest),
   });
-  
+
   // ... 处理响应
 }
 ```
 
 **新架构 (Next.js App Router):**
+
 ```typescript
 // app/api/v1/messages/route.ts
 import { NextRequest, NextResponse } from 'next/server';
@@ -321,17 +352,14 @@ export async function POST(request: NextRequest) {
   try {
     const anthropicRequest = await request.json();
     const bearerToken = request.headers.get('x-api-key');
-    
+
     if (!bearerToken) {
-      return NextResponse.json(
-        { error: 'Missing API key' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Missing API key' }, { status: 401 });
     }
-    
+
     const { provider, baseUrl } = selectProvider(process.env);
     const openaiRequest = formatAnthropicToOpenAI(anthropicRequest, provider);
-    
+
     const openaiResponse = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -340,39 +368,39 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify(openaiRequest),
     });
-    
+
     if (!openaiResponse.ok) {
       const error = await openaiResponse.text();
-      return NextResponse.json(
-        { error },
-        { status: openaiResponse.status }
-      );
+      return NextResponse.json({ error }, { status: openaiResponse.status });
     }
-    
+
     if (openaiRequest.stream) {
       const anthropicStream = streamOpenAIToAnthropic(
         openaiResponse.body as ReadableStream,
-        openaiRequest.model
+        openaiRequest.model,
       );
-      
+
       return new NextResponse(anthropicStream, {
         headers: {
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
+          Connection: 'keep-alive',
         },
       });
     }
-    
+
     const openaiData = await openaiResponse.json();
-    const anthropicResponse = formatOpenAIToAnthropic(openaiData, openaiRequest.model);
-    
+    const anthropicResponse = formatOpenAIToAnthropic(
+      openaiData,
+      openaiRequest.model,
+    );
+
     return NextResponse.json(anthropicResponse);
   } catch (error) {
     console.error('API Error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -383,14 +411,20 @@ export const runtime = 'edge'; // 使用 Edge Runtime
 #### 2.2 迁移图片代理
 
 **旧架构:**
+
 ```typescript
 // src/server/routes/imgProxy.ts
-export async function handleImgProxy(url: URL, request: Request, env: Env): Promise<Response> {
+export async function handleImgProxy(
+  url: URL,
+  request: Request,
+  env: Env,
+): Promise<Response> {
   // ... 实现
 }
 ```
 
 **新架构:**
+
 ```typescript
 // app/api/img-proxy/route.ts
 import { NextRequest, NextResponse } from 'next/server';
@@ -398,69 +432,60 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const src = searchParams.get('src');
-  
+
   if (!src) {
     return NextResponse.json(
       { error: 'Missing src parameter' },
-      { status: 400 }
+      { status: 400 },
     );
   }
-  
+
   // 验证 URL
   let imageUrl: URL;
   try {
     imageUrl = new URL(src);
   } catch {
-    return NextResponse.json(
-      { error: 'Invalid URL' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Invalid URL' }, { status: 400 });
   }
-  
+
   // 验证协议
   if (imageUrl.protocol !== 'https:') {
     return NextResponse.json(
       { error: 'Only HTTPS URLs are allowed' },
-      { status: 400 }
+      { status: 400 },
     );
   }
-  
+
   // 白名单检查
   const whitelist = process.env.IMAGE_PROXY_WHITELIST || '*';
   if (whitelist !== '*') {
     const allowedHosts = whitelist.split(',').map(h => h.trim());
     if (!allowedHosts.includes(imageUrl.hostname)) {
-      return NextResponse.json(
-        { error: 'Host not allowed' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Host not allowed' }, { status: 403 });
     }
   }
-  
+
   try {
     const imageResponse = await fetch(imageUrl.toString(), {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; ImageProxy/1.0)',
       },
     });
-    
+
     if (!imageResponse.ok) {
       return NextResponse.json(
         { error: 'Failed to fetch image' },
-        { status: imageResponse.status }
+        { status: imageResponse.status },
       );
     }
-    
+
     const contentType = imageResponse.headers.get('content-type');
     if (!contentType?.startsWith('image/')) {
-      return NextResponse.json(
-        { error: 'Not an image' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Not an image' }, { status: 400 });
     }
-    
+
     const imageBuffer = await imageResponse.arrayBuffer();
-    
+
     return new NextResponse(imageBuffer, {
       headers: {
         'Content-Type': contentType,
@@ -472,7 +497,7 @@ export async function GET(request: NextRequest) {
     console.error('Image proxy error:', error);
     return NextResponse.json(
       { error: 'Failed to proxy image' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -483,6 +508,7 @@ export const runtime = 'edge';
 #### 2.3 迁移前端页面
 
 **旧架构 (字符串模板):**
+
 ```typescript
 // src/templates/index.ts
 export const indexHtml = `
@@ -501,6 +527,7 @@ export const indexHtml = `
 ```
 
 **新架构 (React 组件):**
+
 ```typescript
 // app/page.tsx
 import { Metadata } from 'next';
@@ -535,7 +562,7 @@ import { Button } from '@/components/ui/button';
 
 export function Navigation() {
   const [activeSection, setActiveSection] = useState('get-started');
-  
+
   return (
     <nav className="border-b">
       <div className="container mx-auto px-4">
@@ -573,11 +600,11 @@ pnpm add -D drizzle-kit
 
 ```typescript
 // lib/db/config.ts
-import { defineConfig } from "drizzle-kit";
+import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
-  schema: "./lib/db/schema.ts",
-  dialect: "postgresql",
+  schema: './lib/db/schema.ts',
+  dialect: 'postgresql',
   dbCredentials: {
     url: process.env.DATABASE_URL!,
   },
@@ -586,22 +613,22 @@ export default defineConfig({
 
 ```typescript
 // lib/db/schema.ts
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
-export const users = pgTable("users", {
-  uuid: uuid("uuid").primaryKey().defaultRandom(),
-  email: text("email").notNull().unique(),
-  nickname: text("nickname"),
-  avatar_url: text("avatar_url"),
-  created_at: timestamp("created_at").defaultNow(),
+export const users = pgTable('users', {
+  uuid: uuid('uuid').primaryKey().defaultRandom(),
+  email: text('email').notNull().unique(),
+  nickname: text('nickname'),
+  avatar_url: text('avatar_url'),
+  created_at: timestamp('created_at').defaultNow(),
 });
 
-export const apiKeys = pgTable("api_keys", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  user_uuid: uuid("user_uuid").references(() => users.uuid),
-  key: text("key").notNull().unique(),
-  name: text("name"),
-  created_at: timestamp("created_at").defaultNow(),
+export const apiKeys = pgTable('api_keys', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  user_uuid: uuid('user_uuid').references(() => users.uuid),
+  key: text('key').notNull().unique(),
+  name: text('name'),
+  created_at: timestamp('created_at').defaultNow(),
 });
 ```
 
@@ -613,9 +640,9 @@ pnpm add next-auth@beta
 
 ```typescript
 // auth.ts
-import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
-import GitHub from "next-auth/providers/github";
+import NextAuth from 'next-auth';
+import Google from 'next-auth/providers/google';
+import GitHub from 'next-auth/providers/github';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -647,7 +674,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 ```typescript
 // app/api/auth/[...nextauth]/route.ts
-import { handlers } from "@/auth";
+import { handlers } from '@/auth';
 
 export const { GET, POST } = handlers;
 export const runtime = 'edge';
@@ -791,6 +818,7 @@ bucket_name = "your-bucket"
 ## 迁移检查清单
 
 ### 功能迁移
+
 - [ ] API 路由 (`/v1/messages`)
 - [ ] 图片代理 (`/img-proxy`)
 - [ ] 健康检查 (`/__test/health`)
@@ -798,6 +826,7 @@ bucket_name = "your-bucket"
 - [ ] Markdown 文件服务
 
 ### 新增功能
+
 - [ ] 数据库集成
 - [ ] 用户认证
 - [ ] 国际化
@@ -806,6 +835,7 @@ bucket_name = "your-bucket"
 - [ ] 文档系统 (可选)
 
 ### 配置
+
 - [ ] Next.js 配置
 - [ ] OpenNext 配置
 - [ ] Wrangler 配置
@@ -813,6 +843,7 @@ bucket_name = "your-bucket"
 - [ ] Tailwind 配置
 
 ### 测试
+
 - [ ] API 端点测试
 - [ ] 认证流程测试
 - [ ] 图片代理测试
@@ -823,10 +854,11 @@ bucket_name = "your-bucket"
 ## 性能优化建议
 
 ### 1. 启用 R2 缓存
+
 ```typescript
 // open-next.config.ts
-import { defineCloudflareConfig } from "@opennextjs/cloudflare";
-import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";
+import { defineCloudflareConfig } from '@opennextjs/cloudflare';
+import r2IncrementalCache from '@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache';
 
 export default defineCloudflareConfig({
   incrementalCache: r2IncrementalCache,
@@ -834,12 +866,14 @@ export default defineCloudflareConfig({
 ```
 
 ### 2. 使用 Edge Runtime
+
 ```typescript
 // app/api/*/route.ts
 export const runtime = 'edge';
 ```
 
 ### 3. 静态生成
+
 ```typescript
 // app/page.tsx
 export const dynamic = 'force-static';
@@ -847,6 +881,7 @@ export const revalidate = 3600; // 1 hour
 ```
 
 ### 4. 图片优化
+
 ```typescript
 // next.config.mjs
 images: {
@@ -893,6 +928,7 @@ images: {
 ### 阶段 0: 准备工作 (1-2天)
 
 #### 0.1 环境准备
+
 ```bash
 # 确保工具版本
 node --version  # >= 18.0.0
@@ -905,12 +941,14 @@ cp -r claude-code-router claude-code-router-backup
 ```
 
 #### 0.2 学习 shipany 架构
+
 - [ ] 阅读 `/Users/mac/Desktop/code-open/shipany-2.6.0-cloudflare/CLAUDE.md`
 - [ ] 研究目录结构 `src/app/`, `src/components/`, `src/lib/`
 - [ ] 理解 OpenNext Cloudflare 工作原理
 - [ ] 熟悉 Next.js 15 App Router 模式
 
 #### 0.3 创建迁移分支
+
 ```bash
 cd claude-code-router
 git checkout -b feat/migrate-to-nextjs
@@ -922,20 +960,23 @@ git push -u origin feat/migrate-to-nextjs
 ### 阶段 1: Next.js 项目初始化 (2-3天)
 
 #### 1.1 创建新项目结构
+
 ```bash
 # 在当前项目中初始化 Next.js
 pnpm create next-app@latest . --typescript --tailwind --app --no-src-dir
 ```
 
 **选择配置:**
+
 - ✅ TypeScript
 - ✅ ESLint
 - ✅ Tailwind CSS
 - ✅ App Router
 - ❌ src/ directory (使用根目录)
-- ✅ Import alias (@/*)
+- ✅ Import alias (@/\*)
 
 #### 1.2 安装核心依赖
+
 ```bash
 # OpenNext Cloudflare 适配器
 pnpm add @opennextjs/cloudflare
@@ -953,19 +994,20 @@ pnpm add lucide-react
 #### 1.3 配置文件设置
 
 **next.config.mjs:**
+
 ```javascript
-import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
+  output: 'standalone',
   reactStrictMode: true,
-  pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
+  pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "**",
+        protocol: 'https',
+        hostname: '**',
       },
     ],
   },
@@ -977,8 +1019,9 @@ initOpenNextCloudflareForDev();
 ```
 
 **open-next.config.ts:**
+
 ```typescript
-import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+import { defineCloudflareConfig } from '@opennextjs/cloudflare';
 
 export default defineCloudflareConfig({
   // 可选: 启用 R2 缓存
@@ -987,6 +1030,7 @@ export default defineCloudflareConfig({
 ```
 
 **wrangler.toml:**
+
 ```toml
 name = "claude-code-router"
 main = ".open-next/worker.js"
@@ -1007,6 +1051,7 @@ IMAGE_PROXY_CACHE_TTL = "86400"
 ```
 
 **package.json scripts:**
+
 ```json
 {
   "scripts": {
@@ -1023,6 +1068,7 @@ IMAGE_PROXY_CACHE_TTL = "86400"
 ```
 
 #### 1.4 TypeScript 配置
+
 ```json
 // tsconfig.json
 {
@@ -1051,6 +1097,7 @@ IMAGE_PROXY_CACHE_TTL = "86400"
 ```
 
 #### 1.5 初始化 shadcn/ui
+
 ```bash
 pnpm dlx shadcn@latest init
 
@@ -1067,6 +1114,7 @@ pnpm dlx shadcn@latest add dropdown-menu
 ### 阶段 2: 迁移核心 API 功能 (3-5天)
 
 #### 2.1 创建 lib 目录结构
+
 ```bash
 mkdir -p lib/{api,utils,types}
 mkdir -p lib/api/{adapters,providers,types}
@@ -1075,36 +1123,35 @@ mkdir -p lib/api/{adapters,providers,types}
 #### 2.2 迁移 API 适配器
 
 **lib/api/adapters/format.ts:**
+
 ```typescript
-// 从 src/api/adapters/format.ts 迁移
+// 从 src/services/llm-provider/adapters/format.ts 迁移
 import { Provider } from '../types';
 import { PROVIDER_CONFIGS } from '../providers';
 
 export function formatAnthropicToOpenAI(
   anthropicRequest: any,
   provider: Provider,
-  configs = PROVIDER_CONFIGS
+  configs = PROVIDER_CONFIGS,
 ) {
   // 保持原有逻辑
   const config = configs[provider];
   // ... 实现
 }
 
-export function formatOpenAIToAnthropic(
-  openaiData: any,
-  model: string
-) {
+export function formatOpenAIToAnthropic(openaiData: any, model: string) {
   // 保持原有逻辑
   // ... 实现
 }
 ```
 
 **lib/api/adapters/stream.ts:**
+
 ```typescript
-// 从 src/api/adapters/stream.ts 迁移
+// 从 src/services/llm-provider/adapters/stream.ts 迁移
 export function streamOpenAIToAnthropic(
   openaiStream: ReadableStream,
-  model: string
+  model: string,
 ): ReadableStream {
   // 保持原有逻辑
   // ... 实现
@@ -1114,8 +1161,9 @@ export function streamOpenAIToAnthropic(
 #### 2.3 迁移 Provider 配置
 
 **lib/api/providers/index.ts:**
+
 ```typescript
-// 从 src/api/providers/index.ts 迁移
+// 从 src/services/llm-provider/providers/index.ts 迁移
 export const PROVIDER_CONFIGS = {
   deepseek: {
     defaultBaseUrl: 'https://api.deepseek.com',
@@ -1133,9 +1181,13 @@ export function selectProvider(env: Record<string, string | undefined>) {
 #### 2.4 创建 API 路由
 
 **app/api/v1/messages/route.ts:**
+
 ```typescript
 import { NextRequest, NextResponse } from 'next/server';
-import { formatAnthropicToOpenAI, formatOpenAIToAnthropic } from '@/lib/api/adapters/format';
+import {
+  formatAnthropicToOpenAI,
+  formatOpenAIToAnthropic,
+} from '@/lib/api/adapters/format';
 import { streamOpenAIToAnthropic } from '@/lib/api/adapters/stream';
 import { selectProvider } from '@/lib/api/providers';
 
@@ -1143,17 +1195,14 @@ export async function POST(request: NextRequest) {
   try {
     const anthropicRequest = await request.json();
     const bearerToken = request.headers.get('x-api-key');
-    
+
     if (!bearerToken) {
-      return NextResponse.json(
-        { error: 'Missing API key' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Missing API key' }, { status: 401 });
     }
-    
+
     const { provider, baseUrl } = selectProvider(process.env);
     const openaiRequest = formatAnthropicToOpenAI(anthropicRequest, provider);
-    
+
     const openaiResponse = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -1162,36 +1211,39 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify(openaiRequest),
     });
-    
+
     if (!openaiResponse.ok) {
       const error = await openaiResponse.text();
       return NextResponse.json({ error }, { status: openaiResponse.status });
     }
-    
+
     if (openaiRequest.stream) {
       const anthropicStream = streamOpenAIToAnthropic(
         openaiResponse.body as ReadableStream,
-        openaiRequest.model
+        openaiRequest.model,
       );
-      
+
       return new NextResponse(anthropicStream, {
         headers: {
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
+          Connection: 'keep-alive',
         },
       });
     }
-    
+
     const openaiData = await openaiResponse.json();
-    const anthropicResponse = formatOpenAIToAnthropic(openaiData, openaiRequest.model);
-    
+    const anthropicResponse = formatOpenAIToAnthropic(
+      openaiData,
+      openaiRequest.model,
+    );
+
     return NextResponse.json(anthropicResponse);
   } catch (error) {
     console.error('API Error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -1200,28 +1252,35 @@ export const runtime = 'edge';
 ```
 
 **app/api/img-proxy/route.ts:**
+
 ```typescript
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const src = searchParams.get('src');
-  
+
   if (!src) {
-    return NextResponse.json({ error: 'Missing src parameter' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Missing src parameter' },
+      { status: 400 },
+    );
   }
-  
+
   let imageUrl: URL;
   try {
     imageUrl = new URL(src);
   } catch {
     return NextResponse.json({ error: 'Invalid URL' }, { status: 400 });
   }
-  
+
   if (imageUrl.protocol !== 'https:') {
-    return NextResponse.json({ error: 'Only HTTPS URLs are allowed' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Only HTTPS URLs are allowed' },
+      { status: 400 },
+    );
   }
-  
+
   const whitelist = process.env.IMAGE_PROXY_WHITELIST || '*';
   if (whitelist !== '*') {
     const allowedHosts = whitelist.split(',').map(h => h.trim());
@@ -1229,28 +1288,28 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Host not allowed' }, { status: 403 });
     }
   }
-  
+
   try {
     const imageResponse = await fetch(imageUrl.toString(), {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; ImageProxy/1.0)',
       },
     });
-    
+
     if (!imageResponse.ok) {
       return NextResponse.json(
         { error: 'Failed to fetch image' },
-        { status: imageResponse.status }
+        { status: imageResponse.status },
       );
     }
-    
+
     const contentType = imageResponse.headers.get('content-type');
     if (!contentType?.startsWith('image/')) {
       return NextResponse.json({ error: 'Not an image' }, { status: 400 });
     }
-    
+
     const imageBuffer = await imageResponse.arrayBuffer();
-    
+
     return new NextResponse(imageBuffer, {
       headers: {
         'Content-Type': contentType,
@@ -1260,7 +1319,10 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Image proxy error:', error);
-    return NextResponse.json({ error: 'Failed to proxy image' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to proxy image' },
+      { status: 500 },
+    );
   }
 }
 
@@ -1274,6 +1336,7 @@ export const runtime = 'edge';
 #### 3.1 创建布局系统
 
 **app/layout.tsx:**
+
 ```typescript
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -1302,6 +1365,7 @@ export default function RootLayout({
 #### 3.2 创建主页
 
 **app/page.tsx:**
+
 ```typescript
 import { Navigation } from '@/components/navigation';
 import { GetStartedSection } from '@/components/sections/get-started';
@@ -1325,6 +1389,7 @@ export default function HomePage() {
 #### 3.3 迁移导航组件
 
 **components/navigation.tsx:**
+
 ```typescript
 'use client';
 
@@ -1334,7 +1399,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export function Navigation() {
   const [activeTab, setActiveTab] = useState('get-started');
-  
+
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
@@ -1359,6 +1424,7 @@ export function Navigation() {
 #### 3.4 迁移内容组件
 
 **components/sections/get-started.tsx:**
+
 ```typescript
 'use client';
 
@@ -1388,6 +1454,7 @@ export function GetStartedSection() {
 ```
 
 **components/sections/best-practices.tsx:**
+
 ```typescript
 'use client';
 
@@ -1413,6 +1480,7 @@ export function BestPracticesSection() {
 #### 3.5 迁移 Markdown 内容系统
 
 **lib/mdx/index.ts:**
+
 ```typescript
 import fs from 'fs';
 import path from 'path';
@@ -1424,7 +1492,7 @@ export function getMarkdownContent(slug: string) {
   const fullPath = path.join(contentDirectory, `${slug}.md`);
   const fileContents = fs.readFileSync(fullPath, 'utf8');
   const { data, content } = matter(fileContents);
-  
+
   return {
     frontmatter: data,
     content,
@@ -1433,13 +1501,14 @@ export function getMarkdownContent(slug: string) {
 ```
 
 **app/practices/[slug]/page.tsx:**
+
 ```typescript
 import { getMarkdownContent } from '@/lib/mdx';
 import { MarkdownRenderer } from '@/components/markdown-renderer';
 
 export default function PracticePage({ params }: { params: { slug: string } }) {
   const { frontmatter, content } = getMarkdownContent(params.slug);
-  
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-4">{frontmatter.title}</h1>
@@ -1456,6 +1525,7 @@ export default function PracticePage({ params }: { params: { slug: string } }) {
 #### 4.1 迁移设计令牌
 
 **app/globals.css:**
+
 ```css
 @tailwind base;
 @tailwind components;
@@ -1484,6 +1554,7 @@ export default function PracticePage({ params }: { params: { slug: string } }) {
 #### 4.2 配置 Tailwind
 
 **tailwind.config.ts:**
+
 ```typescript
 import type { Config } from 'tailwindcss';
 
@@ -1515,6 +1586,7 @@ export default config;
 ### 阶段 5: 测试与优化 (3-5天)
 
 #### 5.1 本地测试
+
 ```bash
 # 开发模式测试
 pnpm dev
@@ -1524,6 +1596,7 @@ pnpm dev
 ```
 
 #### 5.2 Cloudflare 预览
+
 ```bash
 # 构建并预览
 pnpm cf:preview
@@ -1536,10 +1609,11 @@ pnpm cf:preview
 #### 5.3 性能优化
 
 **启用 R2 缓存:**
+
 ```typescript
 // open-next.config.ts
-import { defineCloudflareConfig } from "@opennextjs/cloudflare";
-import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";
+import { defineCloudflareConfig } from '@opennextjs/cloudflare';
+import r2IncrementalCache from '@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache';
 
 export default defineCloudflareConfig({
   incrementalCache: r2IncrementalCache,
@@ -1547,6 +1621,7 @@ export default defineCloudflareConfig({
 ```
 
 **优化图片加载:**
+
 ```typescript
 // next.config.mjs
 images: {
@@ -1560,6 +1635,7 @@ images: {
 ### 阶段 6: 部署上线 (1-2天)
 
 #### 6.1 环境变量配置
+
 ```bash
 # .env.production
 NEXT_PUBLIC_WEB_URL="https://cc.xiaohui.cool"
@@ -1575,6 +1651,7 @@ IMAGE_PROXY_CACHE_TTL="86400"
 ```
 
 #### 6.2 部署到 Cloudflare
+
 ```bash
 # 最终构建
 pnpm build
@@ -1587,6 +1664,7 @@ curl https://cc.xiaohui.cool/api/v1/messages
 ```
 
 #### 6.3 DNS 配置
+
 - 更新 Cloudflare DNS 记录
 - 配置自定义域名
 - 启用 SSL/TLS
@@ -1597,12 +1675,12 @@ curl https://cc.xiaohui.cool/api/v1/messages
 
 ### 高风险项
 
-| 风险 | 影响 | 概率 | 缓解措施 |
-|------|------|------|---------|
-| API 兼容性破坏 | 高 | 中 | 保持原有 API 接口不变，添加完整测试 |
-| 性能下降 | 中 | 低 | 使用 Edge Runtime，启用缓存优化 |
-| 部署失败 | 高 | 低 | 充分测试 cf:preview，保留回滚方案 |
-| 学习曲线 | 中 | 高 | 参考 shipany 示例，逐步学习 |
+| 风险           | 影响 | 概率 | 缓解措施                            |
+| -------------- | ---- | ---- | ----------------------------------- |
+| API 兼容性破坏 | 高   | 中   | 保持原有 API 接口不变，添加完整测试 |
+| 性能下降       | 中   | 低   | 使用 Edge Runtime，启用缓存优化     |
+| 部署失败       | 高   | 低   | 充分测试 cf:preview，保留回滚方案   |
+| 学习曲线       | 中   | 高   | 参考 shipany 示例，逐步学习         |
 
 ### 缓解策略
 
@@ -1616,12 +1694,14 @@ curl https://cc.xiaohui.cool/api/v1/messages
 ## ✅ 迁移检查清单
 
 ### 准备阶段
+
 - [ ] 备份当前项目
 - [ ] 学习 shipany 架构
 - [ ] 创建迁移分支
 - [ ] 准备开发环境
 
 ### 开发阶段
+
 - [ ] Next.js 项目初始化
 - [ ] 配置 OpenNext Cloudflare
 - [ ] 迁移 API 路由
@@ -1630,12 +1710,14 @@ curl https://cc.xiaohui.cool/api/v1/messages
 - [ ] 迁移 Markdown 内容
 
 ### 测试阶段
+
 - [ ] 本地功能测试
 - [ ] API 兼容性测试
 - [ ] 性能基准测试
 - [ ] Cloudflare 预览测试
 
 ### 部署阶段
+
 - [ ] 环境变量配置
 - [ ] 生产构建
 - [ ] Cloudflare 部署
@@ -1647,6 +1729,7 @@ curl https://cc.xiaohui.cool/api/v1/messages
 ## 🚀 shipany 最佳实践学习要点
 
 ### 1. 项目结构组织
+
 ```
 ✅ 学习点: 清晰的分层架构
 - app/ - 路由和页面
@@ -1656,6 +1739,7 @@ curl https://cc.xiaohui.cool/api/v1/messages
 ```
 
 ### 2. API 路由设计
+
 ```typescript
 ✅ 学习点: Edge Runtime + 错误处理
 export const runtime = 'edge';
@@ -1665,6 +1749,7 @@ return NextResponse.json({ error }, { status });
 ```
 
 ### 3. 组件设计模式
+
 ```typescript
 ✅ 学习点: 客户端/服务端组件分离
 'use client';  // 仅在需要交互时使用
@@ -1677,6 +1762,7 @@ export default async function Page() {
 ```
 
 ### 4. 类型安全
+
 ```typescript
 ✅ 学习点: 完整的 TypeScript 覆盖
 // 定义清晰的接口
@@ -1688,6 +1774,7 @@ interface ApiResponse<T> {
 ```
 
 ### 5. 性能优化
+
 ```typescript
 ✅ 学习点: 静态生成 + 增量更新
 export const dynamic = 'force-static';
@@ -1695,6 +1782,7 @@ export const revalidate = 3600;
 ```
 
 ### 6. 国际化支持
+
 ```typescript
 ✅ 学习点: next-intl 集成
 // middleware.ts
@@ -1702,6 +1790,7 @@ export default createMiddleware(routing);
 ```
 
 ### 7. 数据库集成
+
 ```typescript
 ✅ 学习点: Drizzle ORM + PostgreSQL
 // 类型安全的数据库操作
@@ -1709,6 +1798,7 @@ const users = await db.select().from(usersTable);
 ```
 
 ### 8. 认证系统
+
 ```typescript
 ✅ 学习点: NextAuth.js v5
 export const { auth, signIn, signOut } = NextAuth({
@@ -1721,24 +1811,28 @@ export const { auth, signIn, signOut } = NextAuth({
 ## 📈 预期收益
 
 ### 开发效率提升
+
 - **组件复用**: React 组件 vs 字符串模板
 - **类型安全**: 全栈 TypeScript 支持
 - **开发工具**: Turbopack + HMR
 - **预计提升**: **10x**
 
 ### 功能扩展能力
+
 - **数据库**: 用户管理、数据持久化
 - **认证**: OAuth 登录
 - **支付**: Stripe 集成
 - **国际化**: 多语言支持
 
 ### 用户体验改善
+
 - **SSR/SSG**: SEO 优化
 - **响应式**: 现代 UI 组件
 - **性能**: Edge Runtime 优化
 - **可访问性**: Radix UI 支持
 
 ### 可维护性提升
+
 - **代码组织**: 清晰的目录结构
 - **测试覆盖**: Jest + Playwright
 - **文档完善**: TypeScript 自文档化
@@ -1749,6 +1843,7 @@ export const { auth, signIn, signOut } = NextAuth({
 ## 🎯 总结与建议
 
 ### 核心优势
+
 1. ✅ **现代化技术栈** - Next.js 15 + React 19
 2. ✅ **完整开发生态** - TypeScript + Tailwind + shadcn/ui
 3. ✅ **生产级功能** - 认证 + 数据库 + 支付
@@ -1756,6 +1851,7 @@ export const { auth, signIn, signOut } = NextAuth({
 5. ✅ **卓越开发体验** - Turbopack + HMR + 类型安全
 
 ### 实施建议
+
 1. **渐进式迁移** - 分阶段实施，降低风险
 2. **保持兼容** - API 接口保持不变
 3. **充分测试** - 每个阶段完成后测试
@@ -1763,6 +1859,7 @@ export const { auth, signIn, signOut } = NextAuth({
 5. **文档先行** - 记录所有变更和决策
 
 ### 下一步行动
+
 1. ✅ **立即开始** - 创建迁移分支
 2. ✅ **快速验证** - 完成阶段 1-2，验证可行性
 3. ✅ **全面迁移** - 按计划执行所有阶段

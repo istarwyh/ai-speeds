@@ -228,7 +228,7 @@ pnpm add tailwindcss-animate
 
 ```bash
 # 创建组件目录
-mkdir -p src/components-next/ui
+mkdir -p src/components/ui
 
 # 推荐首先复制的基础组件：
 # - button.tsx
@@ -243,7 +243,7 @@ mkdir -p src/components-next/ui
 
 ### 第 6 步：创建组件索引
 
-创建 `src/components-next/ui/index.ts`：
+创建 `src/components/ui/index.ts`：
 
 ```typescript
 // 基础组件
@@ -303,7 +303,7 @@ export {
 ### 基础按钮
 
 ```tsx
-import { Button } from '@/components-next/ui';
+import { Button } from '@/components/ui';
 
 export function Example() {
   return (
@@ -326,7 +326,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-} from '@/components-next/ui';
+} from '@/components/ui';
 
 export function AIToolCard() {
   return (
@@ -346,7 +346,7 @@ export function AIToolCard() {
 ### 表单示例
 
 ```tsx
-import { Button, Input, Label } from '@/components-next/ui';
+import { Button, Input, Label } from '@/components/ui';
 import { useForm } from 'react-hook-form';
 
 export function LoginForm() {
@@ -380,7 +380,7 @@ import {
   CardTitle,
   CardContent,
   Input,
-} from '@/components-next/ui';
+} from '@/components/ui';
 
 // 在页面中添加新的 section
 <section className='mb-10'>
@@ -473,7 +473,7 @@ import {
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"],
-      "@/components-next/*": ["./src/components-next/*"],
+      "@/components/*": ["./src/components/*"],
       "@/lib/*": ["./src/lib/*"]
     }
   }

@@ -1,4 +1,4 @@
-import { LegacyPageWrapper } from '@/components-next/LegacyPageWrapper';
+import { LegacyPageWrapper } from '@/components/LegacyPageWrapper';
 
 /**
  * 主页 - 复用现有的所有模块和组件

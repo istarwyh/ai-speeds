@@ -3,6 +3,7 @@
 ## 📊 当前状态评估
 
 ### 已有的移动端支持
+
 - ✅ Viewport meta 标签配置
 - ✅ 响应式断点系统（768px, 1200px, 1400px, 1600px）
 - ✅ 移动端导航栏自动隐藏
@@ -10,6 +11,7 @@
 - ✅ 部分页面全宽布局（如何用好 CC 页面）
 
 ### 需要改进的方面
+
 - ⚠️ 触摸目标尺寸不统一
 - ⚠️ 缺少触摸反馈效果
 - ⚠️ 文本在小屏幕上可读性待优化
@@ -23,10 +25,11 @@
 ### 阶段一：基础体验优化（1-2天）
 
 #### 任务 1.1：触摸目标尺寸标准化
-**优先级**: 🔴 高
-**工作量**: 2-3小时
+
+**优先级**: 🔴 高 **工作量**: 2-3小时
 
 **文件修改**:
+
 ```typescript
 // src/styles/componentStyles.ts
 // 在现有的移动端样式中添加
@@ -42,12 +45,12 @@
     min-width: 48px;
     padding: 0.875rem 1.25rem;
   }
-  
+
   /* 增加导航栏间距避免误触 */
   .nav-tabs {
     gap: 0.5rem;
   }
-  
+
   /* 卡片间距优化 */
   .practices-grid,
   .overview-cards-grid {
@@ -57,6 +60,7 @@
 ```
 
 **验证标准**:
+
 - [ ] 所有可点击元素在移动端至少 48x48px
 - [ ] 相邻可点击元素间距至少 8px
 - [ ] 在 iPhone SE (375px) 上测试无误触
@@ -64,10 +68,11 @@
 ---
 
 #### 任务 1.2：添加触摸反馈效果
-**优先级**: 🔴 高
-**工作量**: 1-2小时
+
+**优先级**: 🔴 高 **工作量**: 1-2小时
 
 **文件修改**:
+
 ```typescript
 // src/styles/baseStyles.ts
 // 在 body 样式后添加
@@ -118,6 +123,7 @@ button:active,
 ```
 
 **验证标准**:
+
 - [ ] 点击按钮有明显的视觉反馈
 - [ ] 双击不会触发页面缩放
 - [ ] 长按不会弹出系统菜单（除非需要）
@@ -125,10 +131,11 @@ button:active,
 ---
 
 #### 任务 1.3：优化 Viewport 配置
-**优先级**: 🟡 中
-**工作量**: 30分钟
+
+**优先级**: 🟡 中 **工作量**: 30分钟
 
 **文件修改**:
+
 ```typescript
 // src/app/layout.tsx
 export const metadata: Metadata = {
@@ -137,9 +144,9 @@ export const metadata: Metadata = {
   viewport: {
     width: 'device-width',
     initialScale: 1,
-    maximumScale: 5,        // 允许用户缩放（无障碍要求）
-    userScalable: true,     // 允许用户缩放
-    viewportFit: 'cover',   // iOS 刘海屏适配
+    maximumScale: 5, // 允许用户缩放（无障碍要求）
+    userScalable: true, // 允许用户缩放
+    viewportFit: 'cover', // iOS 刘海屏适配
   },
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#2563eb' },
@@ -149,6 +156,7 @@ export const metadata: Metadata = {
 ```
 
 **验证标准**:
+
 - [ ] 页面在 iPhone X 及以上机型正确显示（刘海屏适配）
 - [ ] 用户可以通过捏合手势缩放页面
 - [ ] 主题色在浏览器 UI 中正确显示
@@ -158,10 +166,11 @@ export const metadata: Metadata = {
 ### 阶段二：布局与排版优化（2-3天）
 
 #### 任务 2.1：实现流式排版系统
-**优先级**: 🔴 高
-**工作量**: 3-4小时
+
+**优先级**: 🔴 高 **工作量**: 3-4小时
 
 **文件修改**:
+
 ```typescript
 // src/styles/designTokens.ts
 // 替换现有的固定字体大小为流式字体大小
@@ -220,12 +229,12 @@ export const designTokens = `
     line-height: var(--line-height-relaxed);
     -webkit-text-size-adjust: 100%;
   }
-  
+
   p, li {
     line-height: var(--line-height-relaxed);
     margin-bottom: 1rem;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
     line-height: var(--line-height-tight);
     margin-bottom: 0.75rem;
@@ -234,6 +243,7 @@ export const designTokens = `
 ```
 
 **验证标准**:
+
 - [ ] 标题在 320px 到 1920px 之间流畅缩放
 - [ ] 文本在移动端至少 16px（避免 iOS 自动缩放）
 - [ ] 行高在移动端增加到 1.7（提升可读性）
@@ -241,10 +251,11 @@ export const designTokens = `
 ---
 
 #### 任务 2.2：优化网格布局
-**优先级**: 🔴 高
-**工作量**: 2-3小时
+
+**优先级**: 🔴 高 **工作量**: 2-3小时
 
 **文件修改**:
+
 ```typescript
 // src/styles/bestPracticesOverviewCards.ts
 // 优化卡片网格布局
@@ -307,6 +318,7 @@ export const designTokens = `
 ```
 
 **验证标准**:
+
 - [ ] 小屏幕（<640px）单列布局
 - [ ] 平板（640-1023px）2列布局
 - [ ] 桌面（>1024px）3列布局
@@ -315,10 +327,11 @@ export const designTokens = `
 ---
 
 #### 任务 2.3：代码块移动端优化
-**优先级**: 🟡 中
-**工作量**: 2小时
+
+**优先级**: 🟡 中 **工作量**: 2小时
 
 **文件修改**:
+
 ```typescript
 // src/client/bestPractices/styles/markdownStyles.ts
 // 在现有样式中添加移动端优化
@@ -330,19 +343,19 @@ export const designTokens = `
     font-size: 0.875rem;
     padding: 0;
   }
-  
+
   .markdown-content .code-block pre {
     padding: 1rem;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch; /* iOS 平滑滚动 */
   }
-  
+
   .markdown-content .code-block code {
     white-space: pre;
     word-break: normal;
     overflow-wrap: normal;
   }
-  
+
   /* 复制按钮移动端优化 */
   .markdown-content .copy-button {
     min-height: 44px;
@@ -350,7 +363,7 @@ export const designTokens = `
     padding: 0.75rem;
     font-size: 0.875rem;
   }
-  
+
   /* 代码块滚动提示 */
   .markdown-content .code-block::after {
     content: '← 滑动查看更多 →';
@@ -361,7 +374,7 @@ export const designTokens = `
     padding: 0.5rem;
     background: var(--color-bg-secondary);
   }
-  
+
   .markdown-content .code-block.scrolled::after {
     display: none;
   }
@@ -374,7 +387,7 @@ export const designTokens = `
 
 private setupCodeBlockScroll(): void {
   const codeBlocks = document.querySelectorAll('.code-block pre');
-  
+
   codeBlocks.forEach((block) => {
     block.addEventListener('scroll', () => {
       const parent = block.closest('.code-block');
@@ -387,6 +400,7 @@ private setupCodeBlockScroll(): void {
 ```
 
 **验证标准**:
+
 - [ ] 代码块可以横向滚动
 - [ ] 滚动流畅（iOS 平滑滚动）
 - [ ] 有滚动提示（首次显示）
@@ -397,12 +411,13 @@ private setupCodeBlockScroll(): void {
 ### 阶段三：性能优化（2-3天）
 
 #### 任务 3.1：实现图片懒加载
-**优先级**: 🟡 中
-**工作量**: 2-3小时
+
+**优先级**: 🟡 中 **工作量**: 2-3小时
 
 **创建新组件**:
+
 ```typescript
-// src/components-next/LazyImage.tsx
+// src/components/LazyImage.tsx
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -413,11 +428,11 @@ interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   placeholder?: string;
 }
 
-export function LazyImage({ 
-  src, 
-  alt, 
+export function LazyImage({
+  src,
+  alt,
   placeholder = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"%3E%3Crect fill="%23f0f0f0" width="400" height="300"/%3E%3C/svg%3E',
-  ...props 
+  ...props
 }: LazyImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(false);
@@ -435,9 +450,9 @@ export function LazyImage({
           }
         });
       },
-      { 
+      {
         rootMargin: '50px', // 提前 50px 开始加载
-        threshold: 0.01 
+        threshold: 0.01
       }
     );
 
@@ -464,9 +479,10 @@ export function LazyImage({
 ```
 
 **使用示例**:
+
 ```typescript
 // 在需要的地方替换 <img> 标签
-import { LazyImage } from '@/components-next/LazyImage';
+import { LazyImage } from '@/components/LazyImage';
 
 <LazyImage
   src="/images/hero.jpg"
@@ -477,6 +493,7 @@ import { LazyImage } from '@/components-next/LazyImage';
 ```
 
 **验证标准**:
+
 - [ ] 图片在进入视口前不加载
 - [ ] 加载时有占位符显示
 - [ ] 加载完成后平滑过渡
@@ -485,10 +502,11 @@ import { LazyImage } from '@/components-next/LazyImage';
 ---
 
 #### 任务 3.2：优化动画性能
-**优先级**: 🟢 低
-**工作量**: 1-2小时
+
+**优先级**: 🟢 低 **工作量**: 1-2小时
 
 **文件修改**:
+
 ```typescript
 // src/styles/componentStyles.ts
 // 添加性能优化样式
@@ -531,6 +549,7 @@ import { LazyImage } from '@/components-next/LazyImage';
 ```
 
 **验证标准**:
+
 - [ ] 动画帧率 > 30fps（移动端）
 - [ ] 动画帧率 > 60fps（桌面端）
 - [ ] 尊重用户的动画偏好设置
@@ -539,10 +558,11 @@ import { LazyImage } from '@/components-next/LazyImage';
 ---
 
 #### 任务 3.3：实施代码分割
-**优先级**: 🟢 低
-**工作量**: 2-3小时
+
+**优先级**: 🟢 低 **工作量**: 2-3小时
 
 **文件修改**:
+
 ```typescript
 // src/app/page.tsx
 // 使用 Next.js 动态导入
@@ -552,8 +572,8 @@ import { Suspense } from 'react';
 
 // 懒加载非关键组件
 const LegacyPageWrapper = dynamic(
-  () => import('@/components-next/LegacyPageWrapper').then(mod => ({ 
-    default: mod.LegacyPageWrapper 
+  () => import('@/components/LegacyPageWrapper').then(mod => ({
+    default: mod.LegacyPageWrapper
   })),
   {
     loading: () => <div>加载中...</div>,
@@ -578,18 +598,18 @@ export default function RootPage() {
 const nextConfig = {
   // 启用 SWC 压缩
   swcMinify: true,
-  
+
   // 优化图片
   images: {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
-  
+
   // 启用实验性功能
   experimental: {
     optimizeCss: true, // CSS 优化
-    optimizePackageImports: ['@/components-next'], // 包导入优化
+    optimizePackageImports: ['@/components'], // 包导入优化
   },
 };
 
@@ -597,6 +617,7 @@ export default nextConfig;
 ```
 
 **验证标准**:
+
 - [ ] 首屏加载时间 < 3秒
 - [ ] JavaScript bundle 大小减少 > 20%
 - [ ] 非关键资源延迟加载
@@ -608,15 +629,15 @@ export default nextConfig;
 
 ### 设备测试矩阵
 
-| 设备 | 屏幕尺寸 | 浏览器 | 测试重点 |
-|-----|---------|--------|---------|
-| iPhone SE | 375x667 | Safari | 小屏幕布局、触摸目标 |
-| iPhone 12 | 390x844 | Safari | 标准移动端体验 |
-| iPhone 14 Pro Max | 430x932 | Safari | 大屏手机、刘海屏适配 |
-| iPad Mini | 768x1024 | Safari | 平板竖屏 |
-| iPad Pro | 1024x1366 | Safari | 平板横屏 |
-| Samsung Galaxy S21 | 360x800 | Chrome | Android 兼容性 |
-| Google Pixel 6 | 412x915 | Chrome | Android 性能 |
+| 设备               | 屏幕尺寸  | 浏览器 | 测试重点             |
+| ------------------ | --------- | ------ | -------------------- |
+| iPhone SE          | 375x667   | Safari | 小屏幕布局、触摸目标 |
+| iPhone 12          | 390x844   | Safari | 标准移动端体验       |
+| iPhone 14 Pro Max  | 430x932   | Safari | 大屏手机、刘海屏适配 |
+| iPad Mini          | 768x1024  | Safari | 平板竖屏             |
+| iPad Pro           | 1024x1366 | Safari | 平板横屏             |
+| Samsung Galaxy S21 | 360x800   | Chrome | Android 兼容性       |
+| Google Pixel 6     | 412x915   | Chrome | Android 性能         |
 
 ### 功能测试清单
 
@@ -624,6 +645,7 @@ export default nextConfig;
 ## 移动端功能测试
 
 ### 布局与排版
+
 - [ ] 所有内容在小屏幕上可见，无横向滚动（除代码块）
 - [ ] 文字大小至少 16px，避免 iOS 自动缩放
 - [ ] 行高和段落间距适合移动端阅读
@@ -631,6 +653,7 @@ export default nextConfig;
 - [ ] 刘海屏设备（iPhone X+）正确显示
 
 ### 交互
+
 - [ ] 所有按钮和链接至少 44x44px（iOS）或 48x48px（Android）
 - [ ] 触摸反馈明显（视觉缩放或颜色变化）
 - [ ] 双击不会触发页面缩放
@@ -639,6 +662,7 @@ export default nextConfig;
 - [ ] 下拉菜单和弹窗在移动端可用
 
 ### 性能
+
 - [ ] 首屏加载时间 < 3秒（4G 网络）
 - [ ] 图片懒加载正常工作
 - [ ] 滚动流畅，无卡顿（60fps）
@@ -647,6 +671,7 @@ export default nextConfig;
 - [ ] Core Web Vitals 全部通过
 
 ### 兼容性
+
 - [ ] iOS Safari 15+ 正常显示
 - [ ] Android Chrome 90+ 正常显示
 - [ ] 横屏和竖屏都正常
@@ -654,6 +679,7 @@ export default nextConfig;
 - [ ] 暗色模式正常工作
 
 ### 可访问性
+
 - [ ] 用户可以通过捏合手势缩放页面
 - [ ] 屏幕阅读器可以正确读取内容
 - [ ] 键盘导航正常工作
@@ -713,24 +739,24 @@ lighthouse https://your-site.com \
 
 ### 性能指标
 
-| 指标 | 当前值 | 目标值 | 优先级 |
-|-----|-------|-------|--------|
-| Lighthouse Performance | ? | > 90 | 🔴 高 |
-| First Contentful Paint (FCP) | ? | < 1.8s | 🔴 高 |
-| Largest Contentful Paint (LCP) | ? | < 2.5s | 🔴 高 |
-| First Input Delay (FID) | ? | < 100ms | 🟡 中 |
-| Cumulative Layout Shift (CLS) | ? | < 0.1 | 🟡 中 |
-| Time to Interactive (TTI) | ? | < 3.8s | 🟡 中 |
-| Total Blocking Time (TBT) | ? | < 200ms | 🟢 低 |
+| 指标                           | 当前值 | 目标值  | 优先级 |
+| ------------------------------ | ------ | ------- | ------ |
+| Lighthouse Performance         | ?      | > 90    | 🔴 高  |
+| First Contentful Paint (FCP)   | ?      | < 1.8s  | 🔴 高  |
+| Largest Contentful Paint (LCP) | ?      | < 2.5s  | 🔴 高  |
+| First Input Delay (FID)        | ?      | < 100ms | 🟡 中  |
+| Cumulative Layout Shift (CLS)  | ?      | < 0.1   | 🟡 中  |
+| Time to Interactive (TTI)      | ?      | < 3.8s  | 🟡 中  |
+| Total Blocking Time (TBT)      | ?      | < 200ms | 🟢 低  |
 
 ### 用户体验指标
 
-| 指标 | 测量方法 | 目标值 |
-|-----|---------|--------|
-| 触摸目标尺寸 | 手动测量 | 100% ≥ 44px |
-| 触摸反馈延迟 | 用户感知 | < 100ms |
-| 滚动流畅度 | 帧率监控 | > 30fps |
-| 文本可读性 | 用户测试 | 满意度 > 80% |
+| 指标         | 测量方法 | 目标值       |
+| ------------ | -------- | ------------ |
+| 触摸目标尺寸 | 手动测量 | 100% ≥ 44px  |
+| 触摸反馈延迟 | 用户感知 | < 100ms      |
+| 滚动流畅度   | 帧率监控 | > 30fps      |
+| 文本可读性   | 用户测试 | 满意度 > 80% |
 
 ---
 
@@ -772,6 +798,7 @@ npm run analyze # 需要配置 @next/bundle-analyzer
 ### 预期收益
 
 实施完成后，预期可以获得：
+
 - ✅ **性能提升 30-50%**（首屏加载时间）
 - ✅ **用户体验提升 40%**（触摸交互、可读性）
 - ✅ **移动端转化率提升 20%**（更好的可用性）

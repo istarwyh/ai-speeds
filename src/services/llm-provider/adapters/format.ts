@@ -1,5 +1,5 @@
 import { Provider } from '../types';
-import { Env } from '../../server/env';
+import { Env } from '../../../server/env';
 
 interface ProviderConfig {
   defaultBaseUrl: string;

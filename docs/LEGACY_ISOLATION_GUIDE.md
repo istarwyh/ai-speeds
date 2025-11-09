@@ -81,7 +81,7 @@ src/
 ### Step 3: 更新适配器
 
 ```typescript
-// src/components-next/LegacyPageWrapper.tsx
+// src/components/LegacyPageWrapper.tsx
 'use client';
 
 import { useEffect } from 'react';
@@ -126,9 +126,9 @@ const entries = [
     "paths": {
       "@/*": ["./src/*"],
       "@/legacy/*": ["./src/legacy/*"],
-      "@/components/*": ["./src/components-next/*"],
+      "@/components/*": ["./src/components/*"],
       "@/lib/*": ["./src/lib/*"],
-      "@/api/*": ["./src/api/*"]
+      "@/services/llm-provider/*": ["./src/services/llm-provider/*"]
     }
   }
 }
@@ -165,13 +165,13 @@ mv src/styles/*.ts src/legacy/styles/ 2>/dev/null || true
 # 恢复 designTokens
 git checkout src/styles/designTokens.ts
 
-# 4. 创建 components-next 目录（如果不存在）
-echo "✨ 确保 components-next 目录存在..."
-mkdir -p src/components-next
+# 4. 创建 components 目录（如果不存在）
+echo "✨ 确保 components 目录存在..."
+mkdir -p src/components
 
 # 5. 更新导入路径
 echo "🔄 更新导入路径..."
-find src/components-next -type f -name "*.tsx" -o -name "*.ts" | while read file; do
+find src/components -type f -name "*.tsx" -o -name "*.ts" | while read file; do
   sed -i '' 's|@/index|@/legacy|g' "$file"
   sed -i '' 's|@/features/|@/legacy/features/|g' "$file"
   sed -i '' 's|@/components/|@/legacy/components/|g' "$file"
@@ -203,7 +203,7 @@ echo ""
 echo "📋 后续步骤："
 echo "1. 检查 src/legacy/ 目录确认代码已移动"
 echo "2. 运行 npm run dev 测试应用"
-echo "3. 开始在 src/app/ 和 src/components-next/ 下进行新开发"
+echo "3. 开始在 src/app/ 和 src/components/ 下进行新开发"
 echo ""
 echo "⚠️ 注意事项："
 echo "- 旧代码现在在 src/legacy/ 目录下"
@@ -240,7 +240,7 @@ src/
 │   └── api/                      # API 路由
 │       └── v1/                   # API 版本
 │
-├── components-next/              # React 组件（shadcn/ui）
+├── components/              # React 组件（shadcn/ui）
 │   ├── ui/                       # shadcn/ui 组件
 │   ├── features/                 # 功能组件
 │   └── layouts/                  # 布局组件
@@ -263,14 +263,14 @@ src/
 
 2. **组件使用 shadcn/ui**
    - `npx shadcn@latest add button`
-   - 放在 `src/components-next/ui/`
+   - 放在 `src/components/ui/`
 
 3. **样式使用 Tailwind CSS**
    - 基于 `src/styles/designTokens.ts` 的设计令牌
    - 使用 CSS 变量：`bg-[var(--color-bg-primary)]`
 
 4. **不要修改 legacy 目录**
-   - 所有新开发在 `src/app/` 和 `src/components-next/`
+   - 所有新开发在 `src/app/` 和 `src/components/`
    - 如需复用 legacy 功能，先迁移到新架构
 
 ## 🔄 逐步迁移策略
@@ -286,7 +286,7 @@ src/
 2. **使用 React 组件重写**
 
    ```typescript
-   // src/components-next/features/BestPractices.tsx
+   // src/components/features/BestPractices.tsx
    'use client';
 
    export function BestPractices() {

@@ -82,7 +82,7 @@ src/
 │   ├── page.tsx                  # 根页面
 │   └── globals.css               # 全局样式
 │
-├── components-next/              # React 组件 (新架构) ✨
+├── components/              # React 组件 (新架构) ✨
 │   ├── ui/                       # shadcn/ui 组件
 │   ├── features/                 # 功能组件
 │   ├── layouts/                  # 布局组件
@@ -130,12 +130,12 @@ Next.js App Router
 
 新功能开发
 ├── app/(main)/dashboard/page.tsx
-│   ├── @/components-next/features/* ✨
+│   ├── @/components/features/* ✨
 │   ├── @/lib/utils/* ✅
-│   └── @/api/* ✅
+│   └── @/services/llm-provider/* ✅
 │
-└── components-next/features/*
-    ├── @/components-next/ui/* (shadcn/ui) ✨
+└── components/features/*
+    ├── @/components/ui/* (shadcn/ui) ✨
     ├── @/lib/hooks/* ✅
     └── @/types/* ✅
 ```
@@ -147,7 +147,7 @@ Next.js App Router
 **完全使用 Next.js 最佳实践**
 
 - `app/` - App Router 路由
-- `components-next/` - React 组件（shadcn/ui）
+- `components/` - React 组件（shadcn/ui）
 - 使用 Server Components（默认）
 - 需要交互时使用 'use client'
 - Tailwind CSS + CSS 变量
@@ -185,7 +185,7 @@ Next.js App Router
 2. **创建组件**
 
    ```bash
-   src/components-next/features/NewFeature.tsx
+   src/components/features/NewFeature.tsx
    ```
 
 3. **使用 shadcn/ui**
@@ -202,7 +202,7 @@ Next.js App Router
 
 5. **复用 API 和工具**
    ```tsx
-   import { fetchProviders } from '@/api/providers';
+   import { fetchProviders } from '@/services/llm-provider/providers';
    import { cn } from '@/lib/utils';
    ```
 
@@ -216,7 +216,7 @@ Next.js App Router
 当需要迁移某个 legacy 功能时：
 
 1. 在 `src/app/` 创建新路由
-2. 在 `src/components-next/` 用 React 重写
+2. 在 `src/components/` 用 React 重写
 3. 测试新功能完全正常
 4. 从 `LegacyPageWrapper` 移除旧模块
 5. 删除 `src/legacy/` 中对应代码
