@@ -1,5 +1,6 @@
 import type { BaseContentCard } from '../types/ContentCard';
 import html2canvas from 'html2canvas';
+import { resolveProxiedUrl } from '../utils/image';
 
 export type ShareResult = { method: 'clipboard' | 'download'; ok: boolean };
 
@@ -17,6 +18,85 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
 
   constructor(options: ShareServiceOptions<T> = {}) {
     this.options = options;
+  }
+
+  // 移除/清空外部资源，作为兜底方案（图片缺失但不阻塞分享）
+  private stripAssets(container: HTMLElement): void {
+    try {
+      container.querySelectorAll('img, picture, source').forEach(el => el.remove());
+      container.querySelectorAll<HTMLElement>('*').forEach(el => {
+        el.style.backgroundImage = 'none';
+      });
+    } catch {}
+  }
+
+  // 移除动画和过渡效果,确保克隆元素完全可见
+  private stripAnimations(container: HTMLElement): void {
+    try {
+      container.querySelectorAll<HTMLElement>('*').forEach(el => {
+        el.style.animation = 'none';
+        el.style.transition = 'none';
+        el.style.transform = 'none';
+        // 确保所有元素都是可见的
+        const computedOpacity = window.getComputedStyle(el).opacity;
+        if (computedOpacity === '0') {
+          el.style.opacity = '1';
+        }
+      });
+    } catch {}
+  }
+
+  // 将外部资源统一改写为本地代理，避免 CORS 污染
+  private rewriteAssets(container: HTMLElement): void {
+    try {
+      // <img>
+      const imgs = container.querySelectorAll('img');
+      imgs.forEach(img => {
+        const src = img.getAttribute('src') || '';
+        if (!src) {
+          return;
+        }
+        img.crossOrigin = 'anonymous';
+        if (img.hasAttribute('srcset')) {
+          img.removeAttribute('srcset');
+        }
+        img.setAttribute('src', resolveProxiedUrl(src));
+      });
+
+      // <source srcset>
+      const sources = container.querySelectorAll('source');
+      sources.forEach(source => {
+        const srcset = source.getAttribute('srcset');
+        if (!srcset) {
+          return;
+        }
+        const rewritten = srcset
+          .split(',')
+          .map(item => {
+            const parts = item.trim().split(/\s+/);
+            if (!parts[0]) {
+              return item;
+            }
+            parts[0] = resolveProxiedUrl(parts[0]);
+            return parts.join(' ');
+          })
+          .join(', ');
+        source.setAttribute('srcset', rewritten);
+      });
+
+      // background-image（使用计算样式，覆盖为内联样式）
+      const all = container.querySelectorAll<HTMLElement>('*');
+      all.forEach(el => {
+        const bg = window.getComputedStyle(el).backgroundImage || '';
+        if (!bg || bg === 'none') {
+          return;
+        }
+        const rewritten = bg.replace(/url\(("|')?(.*?)(\1)?\)/g, (_m, _q, url) => `url(${resolveProxiedUrl(url)})`);
+        if (rewritten !== bg) {
+          el.style.backgroundImage = rewritten;
+        }
+      });
+    } catch {}
   }
 
   /**
@@ -43,25 +123,33 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
    * 打开预览弹窗
    */
   public async openPreview(cardElement: HTMLElement, card: T, opts?: { onClose?: () => void }): Promise<void> {
-    const canvas = await this.renderCanvas(cardElement);
-    const blob = await this.canvasToBlob(canvas);
+    try {
+      const canvas = await this.renderCanvas(cardElement);
+      const blob = await this.canvasToBlob(canvas);
 
-    const overlay = this.createOverlay();
-    const { modal, buttons } = this.createModal(canvas);
+      const overlay = this.createOverlay();
+      const { modal, buttons } = this.createModal(canvas);
 
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
+      overlay.appendChild(modal);
+      document.body.appendChild(overlay);
 
-    const cleanup = () => {
-      overlay.remove();
-      opts?.onClose?.();
-    };
+      const cleanup = () => {
+        overlay.remove();
+        opts?.onClose?.();
+      };
 
-    this.attachEventListeners(overlay, modal, blob, card, cleanup, buttons);
+      this.attachEventListeners(overlay, modal, blob, card, cleanup, buttons);
 
-    // Focus for accessibility
-    const closeBtn = modal.querySelector('.share-preview-close') as HTMLButtonElement;
-    closeBtn?.focus();
+      // Focus for accessibility
+      const closeBtn = modal.querySelector('.share-preview-close') as HTMLButtonElement;
+      closeBtn?.focus();
+    } catch (err) {
+      this.toast('预览生成失败，请稍后重试');
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.warn('openPreview failed:', err);
+      }
+    }
   }
 
   /**
@@ -71,22 +159,151 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
     // 确保字体加载完成
     try {
       await (document as any).fonts?.ready;
-    } catch {
-      // Ignore font loading errors
+    } catch {}
+
+    // 获取原始元素的尺寸和样式
+    const rect = element.getBoundingClientRect();
+    const computedStyle = window.getComputedStyle(element);
+
+    // Debug: 输出元素尺寸信息
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.log('renderCanvas - element:', element);
+      // eslint-disable-next-line no-console
+      console.log('renderCanvas - rect:', rect);
+      // eslint-disable-next-line no-console
+      console.log('renderCanvas - computedStyle.display:', computedStyle.display);
     }
 
-    // 使用 html2canvas 转换 DOM 为 Canvas
-    const canvas = await html2canvas(element, {
-      backgroundColor: '#ffffff',
-      scale: 2, // 2x for retina displays
-      logging: false,
-      useCORS: true, // 允许跨域图片
-      allowTaint: false,
-      imageTimeout: 15000,
-      removeContainer: true,
+    const snapshot = async (target: HTMLElement): Promise<HTMLCanvasElement> =>
+      html2canvas(target, {
+        backgroundColor: '#ffffff',
+        scale: 2,
+        logging: process.env.NODE_ENV === 'development',
+        useCORS: true,
+        allowTaint: false,
+        imageTimeout: 15000,
+        removeContainer: true,
+        width: rect.width,
+        height: rect.height,
+        onclone: (_clonedDoc: Document, clonedElement: HTMLElement) => {
+          // 确保克隆文档中的元素可见且样式正确
+          clonedElement.style.visibility = 'visible';
+          clonedElement.style.opacity = '1';
+          clonedElement.style.display = computedStyle.display;
+
+          if (process.env.NODE_ENV === 'development') {
+            // eslint-disable-next-line no-console
+            console.log('onclone - clonedElement:', clonedElement);
+            // eslint-disable-next-line no-console
+            console.log('onclone - computed width:', window.getComputedStyle(clonedElement).width);
+            // eslint-disable-next-line no-console
+            console.log('onclone - computed height:', window.getComputedStyle(clonedElement).height);
+            // eslint-disable-next-line no-console
+            console.log('onclone - innerHTML length:', clonedElement.innerHTML.length);
+          }
+        },
+      });
+
+    // 离屏克隆方案，规避跨域图片和 DOM 分离问题
+    const offscreen = document.createElement('div');
+    // 关键修复:使用opacity:0代替visibility:hidden,确保Tailwind CSS类和响应式样式正确应用
+    offscreen.style.cssText =
+      'position:absolute;left:0;top:0;pointer-events:none;opacity:0;z-index:-9999;overflow:hidden;';
+
+    const clone = element.cloneNode(true) as HTMLElement;
+    // 保留原始元素的关键样式
+    clone.style.width = `${rect.width}px`;
+    clone.style.height = `${rect.height}px`;
+    clone.style.display = computedStyle.display;
+    clone.style.position = 'relative';
+    clone.style.visibility = 'visible'; // 确保克隆元素可见
+    clone.style.opacity = '1'; // 强制可见,覆盖动画的opacity:0
+    clone.style.animation = 'none'; // 移除动画,避免opacity:0
+    clone.style.transform = 'none'; // 重置transform,避免动画偏移
+
+    // 复制所有计算样式到内联样式,确保 Tailwind CSS 类生效
+    Array.from(computedStyle).forEach(prop => {
+      try {
+        const value = computedStyle.getPropertyValue(prop);
+        if (value && value !== 'initial' && value !== 'inherit') {
+          clone.style.setProperty(prop, value, computedStyle.getPropertyPriority(prop));
+        }
+      } catch {
+        // 忽略无效属性
+      }
     });
 
-    return canvas;
+    // 递归复制所有子元素的计算样式
+    const copyStylesToDescendants = (original: Element, cloned: Element) => {
+      const originalChildren = original.children;
+      const clonedChildren = cloned.children;
+      for (let i = 0; i < originalChildren.length && i < clonedChildren.length; i++) {
+        const originalChild = originalChildren[i] as HTMLElement;
+        const clonedChild = clonedChildren[i] as HTMLElement;
+        if (originalChild && clonedChild) {
+          const childStyles = window.getComputedStyle(originalChild);
+          Array.from(childStyles).forEach(prop => {
+            try {
+              const value = childStyles.getPropertyValue(prop);
+              if (value && value !== 'initial' && value !== 'inherit') {
+                clonedChild.style.setProperty(prop, value, childStyles.getPropertyPriority(prop));
+              }
+            } catch {
+              // 忽略无效属性
+            }
+          });
+          copyStylesToDescendants(originalChild, clonedChild);
+        }
+      }
+    };
+
+    offscreen.appendChild(clone);
+    document.body.appendChild(offscreen);
+
+    // 复制所有子元素样式
+    copyStylesToDescendants(element, clone);
+
+    // 移除所有动画,确保元素完全可见
+    this.stripAnimations(offscreen);
+
+    // Rewrite assets to avoid CORS taint
+    this.rewriteAssets(offscreen);
+
+    // 等待所有图片加载完成
+    const images = offscreen.querySelectorAll('img');
+    await Promise.all(
+      Array.from(images).map(img => {
+        if (img.complete) {
+          return Promise.resolve();
+        }
+        return new Promise<void>(resolve => {
+          const timeout = setTimeout(() => resolve(), 3000);
+          img.onload = () => {
+            clearTimeout(timeout);
+            resolve();
+          };
+          img.onerror = () => {
+            clearTimeout(timeout);
+            resolve();
+          };
+        });
+      }),
+    );
+
+    try {
+      return await snapshot(clone);
+    } catch (err) {
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.error('html2canvas failed, retrying without external assets:', err);
+      }
+      // 如果代理资源仍失败，移除外部资源后重试
+      this.stripAssets(offscreen);
+      return await snapshot(clone);
+    } finally {
+      offscreen.remove();
+    }
   }
 
   /**
@@ -146,7 +363,6 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
       align-items: center;
       justify-content: center;
       z-index: 9999;
-      backdrop-filter: blur(4px);
     `;
     return overlay;
   }
@@ -175,6 +391,8 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
       max-height: 90vh;
       overflow: auto;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+      z-index: 10000;
     `;
 
     const header = document.createElement('div');
@@ -228,12 +446,17 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
     canvasWrapper.style.cssText = `
       max-width: 100%;
       overflow: auto;
+      display: flex;
+      justify-content: center;
     `;
     canvas.style.cssText = `
-      max-width: 100%;
+      width: auto;
       height: auto;
+      max-width: min(${canvas.width / 2}px, 90vw - 48px);
+      max-height: calc(90vh - 200px);
       display: block;
       border-radius: 8px;
+      object-fit: contain;
     `;
     canvasWrapper.appendChild(canvas);
     body.appendChild(canvasWrapper);

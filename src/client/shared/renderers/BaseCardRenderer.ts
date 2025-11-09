@@ -1,5 +1,6 @@
 import type { BaseContentCard, ContentSection, ContentTip } from '../types/ContentCard';
 import { heroicons, categoryIconMap } from '../config/heroicons';
+import { resolveProxiedUrl } from '../utils/image';
 
 // 通用卡片渲染器 - 符合 SOLID 原则的单一职责
 export class BaseCardRenderer<T extends BaseContentCard> {
@@ -48,7 +49,7 @@ export class BaseCardRenderer<T extends BaseContentCard> {
       versionHtml || updatedHtml ? `<div class="overview-card__meta-info">${versionHtml}${updatedHtml}</div>` : '';
 
     const coverHtml = card.imageUrl
-      ? `<div class="overview-card__cover"><img src="${card.imageUrl}" alt="${card.title}" loading="lazy" decoding="async" fetchpriority="low" /></div>`
+      ? `<div class="overview-card__cover"><img src="${resolveProxiedUrl(card.imageUrl)}" alt="${card.title}" loading="lazy" decoding="async" fetchpriority="low" crossOrigin="anonymous" referrerpolicy="no-referrer" /></div>`
       : '';
 
     // 动态设置动画延迟

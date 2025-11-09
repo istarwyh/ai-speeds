@@ -31,14 +31,30 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const imageResponse = await fetch(imageUrl.toString(), {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; ImageProxy/1.0)',
-      },
-    });
+    // Friendly headers for CDNs that check hotlinking and content negotiation
+    const headers: Record<string, string> = {
+      'User-Agent': 'Mozilla/5.0 (compatible; ImageProxy/1.0) AppleWebKit/537.36 Chrome/120 Safari/537.36',
+      Accept: 'image/avif,image/webp,image/*,*/*;q=0.8',
+      Referer: `${imageUrl.origin}/`,
+    };
+
+    // Timeout protection
+    const controller = new AbortController(); // eslint-disable-line no-undef
+    const timeoutMs = Number(process.env['IMAGE_PROXY_TIMEOUT_MS'] || 12000);
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    let imageResponse: Response;
+    try {
+      imageResponse = await fetch(imageUrl.toString(), {
+        headers,
+        signal: controller.signal,
+        redirect: 'follow',
+      });
+    } finally {
+      clearTimeout(timer);
+    }
 
     if (!imageResponse.ok) {
-      return NextResponse.json({ error: 'Failed to fetch image' }, { status: imageResponse.status });
+      return fallbackTransparentPng(imageResponse.status);
     }
 
     const contentType = imageResponse.headers.get('content-type');
@@ -57,8 +73,24 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Image proxy error:', error);
-    return NextResponse.json({ error: 'Failed to proxy image' }, { status: 500 });
+    return fallbackTransparentPng(500);
   }
 }
 
 export const runtime = 'nodejs';
+
+// Transparent 1x1 PNG (base64)
+function fallbackTransparentPng(status: number) {
+  const base64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAoMBgBY9J8wAAAAASUVORK5CYII=';
+  const buf = Buffer.from(base64, 'base64');
+  return new NextResponse(buf, {
+    status: 200,
+    headers: {
+      'Content-Type': 'image/png',
+      'Cache-Control': 'public, max-age=300',
+      'Access-Control-Allow-Origin': '*',
+      'X-Img-Proxy-Fallback': '1',
+      'X-Img-Proxy-Status': String(status),
+    },
+  });
+}
