@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
 
     // Timeout protection
     const controller = new AbortController(); // eslint-disable-line no-undef
-    const timeoutMs = Number(process.env['IMAGE_PROXY_TIMEOUT_MS'] || 12000);
+    const timeoutMs = Number(process.env['IMAGE_PROXY_TIMEOUT_MS']) || 12000;
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     let imageResponse: Response;
     try {

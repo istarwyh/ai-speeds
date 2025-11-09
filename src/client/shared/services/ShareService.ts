@@ -212,7 +212,7 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
       'position:absolute;left:0;top:0;pointer-events:none;opacity:0;z-index:-9999;overflow:hidden;';
 
     const clone = element.cloneNode(true) as HTMLElement;
-    // 保留原始元素的关键样式
+    // 保留原始元素的关键样式（只复制核心布局属性,减少性能开销）
     clone.style.width = `${rect.width}px`;
     clone.style.height = `${rect.height}px`;
     clone.style.display = computedStyle.display;
@@ -222,47 +222,8 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
     clone.style.animation = 'none'; // 移除动画,避免opacity:0
     clone.style.transform = 'none'; // 重置transform,避免动画偏移
 
-    // 复制所有计算样式到内联样式,确保 Tailwind CSS 类生效
-    Array.from(computedStyle).forEach(prop => {
-      try {
-        const value = computedStyle.getPropertyValue(prop);
-        if (value && value !== 'initial' && value !== 'inherit') {
-          clone.style.setProperty(prop, value, computedStyle.getPropertyPriority(prop));
-        }
-      } catch {
-        // 忽略无效属性
-      }
-    });
-
-    // 递归复制所有子元素的计算样式
-    const copyStylesToDescendants = (original: Element, cloned: Element) => {
-      const originalChildren = original.children;
-      const clonedChildren = cloned.children;
-      for (let i = 0; i < originalChildren.length && i < clonedChildren.length; i++) {
-        const originalChild = originalChildren[i] as HTMLElement;
-        const clonedChild = clonedChildren[i] as HTMLElement;
-        if (originalChild && clonedChild) {
-          const childStyles = window.getComputedStyle(originalChild);
-          Array.from(childStyles).forEach(prop => {
-            try {
-              const value = childStyles.getPropertyValue(prop);
-              if (value && value !== 'initial' && value !== 'inherit') {
-                clonedChild.style.setProperty(prop, value, childStyles.getPropertyPriority(prop));
-              }
-            } catch {
-              // 忽略无效属性
-            }
-          });
-          copyStylesToDescendants(originalChild, clonedChild);
-        }
-      }
-    };
-
     offscreen.appendChild(clone);
     document.body.appendChild(offscreen);
-
-    // 复制所有子元素样式
-    copyStylesToDescendants(element, clone);
 
     // 移除所有动画,确保元素完全可见
     this.stripAnimations(offscreen);
