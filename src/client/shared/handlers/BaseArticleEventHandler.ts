@@ -282,11 +282,13 @@ export abstract class BaseArticleEventHandler {
       // lazy init
       this._shareService =
         this._shareService ||
-        new GenericShareService<BaseContentCard>(this.getIcon.bind(this), {
+        new GenericShareService<BaseContentCard>({
           moduleName: this.getModuleName(),
         });
       const cardEl = shareBtn.closest('.overview-card') as HTMLElement | null;
-      void this._shareService.openPreview(card, { matchElement: cardEl || undefined });
+      if (cardEl && cardEl.isConnected) {
+        void this._shareService.openPreview(cardEl, card);
+      }
       return;
     }
 
@@ -476,9 +478,11 @@ export abstract class BaseArticleEventHandler {
       if (articleEl) {
         articleEl.classList.add('is-exiting');
         setTimeout(() => {
-          // 先更新 URL，避免重新初始化时根据旧的 article 深链接再次打开文章
+          // 先更新 URL,避免重新初始化时根据旧的 article 深链接再次打开文章
           this.updateHistoryForOverview();
-          this.onBackToOverview!();
+          if (this.onBackToOverview) {
+            this.onBackToOverview();
+          }
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }, EXIT_ANIMATION_DURATION);
         return;
@@ -517,19 +521,23 @@ export abstract class BaseArticleEventHandler {
     }
 
     const codeBlocks = container.querySelectorAll('.code-block');
-    codeBlocks.forEach((block) => {
+    codeBlocks.forEach(block => {
       const preElement = block.querySelector('pre');
       if (!preElement) {
         return;
       }
 
       // Add scroll event listener to detect when user starts scrolling
-      preElement.addEventListener('scroll', () => {
-        // Add scrolled class when user scrolls more than 10 pixels
-        if (preElement.scrollLeft > 10) {
-          block.classList.add('scrolled');
-        }
-      }, { passive: true });
+      preElement.addEventListener(
+        'scroll',
+        () => {
+          // Add scrolled class when user scrolls more than 10 pixels
+          if (preElement.scrollLeft > 10) {
+            block.classList.add('scrolled');
+          }
+        },
+        { passive: true },
+      );
 
       // Also check on initial load if content is already scrolled
       if (preElement.scrollLeft > 10) {
