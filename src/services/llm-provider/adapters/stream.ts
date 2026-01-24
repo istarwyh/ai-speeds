@@ -126,7 +126,7 @@ export function streamOpenAIToAnthropic(openaiStream: ReadableStream, model: str
 
       function processStreamDelta(delta: StreamDelta) {
         // Handle tool calls
-        if (delta.tool_calls?.length > 0) {
+        if (delta.tool_calls && delta.tool_calls.length > 0) {
           // Existing tool call logic
           for (const toolCall of delta.tool_calls) {
             const toolCallId = toolCall.id;
