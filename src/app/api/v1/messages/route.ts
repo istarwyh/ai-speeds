@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { formatAnthropicToOpenAI, formatOpenAIToAnthropic } from '@/services/llm-provider/adapters/format';
+import { formatAnthropicToOpenAI, formatOpenAIResponseToAnthropic } from '@/services/llm-provider/adapters/format';
 import { streamOpenAIToAnthropic } from '@/services/llm-provider/adapters/stream';
 import { PROVIDER_CONFIGS } from '@/services/llm-provider/providers';
 import type { Provider } from '@/services/llm-provider/types';
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     }
 
     const openaiData = await openaiResponse.json();
-    const anthropicResponse = formatOpenAIToAnthropic(openaiData, openaiRequest.model);
+    const anthropicResponse = formatOpenAIResponseToAnthropic(openaiData, openaiRequest.model);
 
     return NextResponse.json(anthropicResponse);
   } catch (error) {

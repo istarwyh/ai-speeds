@@ -291,28 +291,56 @@ export function formatAnthropicToOpenAI(
 
   // Convert tools
   let tools:
-    | Array<{ type: string; function: { name: string; description: string; parameters: Record<string, unknown> } }>
+    | Array<{ type: 'function'; function: { name: string; description?: string; parameters: Record<string, unknown> } }>
     | undefined;
-  if (body.tools && body.tools.length > 0) {
+  if (body.tools) {
     tools = body.tools.map(tool => ({
-      type: 'function',
+      type: 'function' as const,
       function: {
         name: tool.name,
-        description: tool.description ?? '',
+        ...(tool.description && { description: tool.description }),
         parameters: tool.input_schema,
       },
     }));
   }
 
-  return {
+  const result: {
+    model: string;
+    messages: OpenAIMessage[];
+    temperature?: number;
+    max_tokens?: number;
+    stream?: boolean;
+    tools?: Array<{
+      type: 'function';
+      function: {
+        name: string;
+        description?: string;
+        parameters: Record<string, unknown>;
+      };
+    }>;
+    tool_choice?: ToolChoice;
+  } = {
     model,
     messages: tools ? validateOpenAIToolCalls(messages) : messages,
-    ...(body.temperature !== null && { temperature: body.temperature }),
-    ...(body.max_tokens !== null && { max_tokens: body.max_tokens }),
-    ...(body.stream !== null && { stream: body.stream }),
-    ...(tools && { tools }),
-    ...(body.tool_choice && { tool_choice: body.tool_choice }),
   };
+
+  if (body.temperature !== null && body.temperature !== undefined) {
+    result.temperature = body.temperature;
+  }
+  if (body.max_tokens !== null && body.max_tokens !== undefined) {
+    result.max_tokens = body.max_tokens;
+  }
+  if (body.stream !== null && body.stream !== undefined) {
+    result.stream = body.stream;
+  }
+  if (tools) {
+    result.tools = tools;
+  }
+  if (body.tool_choice) {
+    result.tool_choice = body.tool_choice;
+  }
+
+  return result;
 }
 
 /**
@@ -341,19 +369,26 @@ export function formatOpenAIResponseToAnthropic(
         type: 'message',
         role: 'assistant',
         content: [content],
-        stop_reason: message?.tool_calls?.length ? 'tool_use' : 'end_turn',
+        stop_reason:
+          message?.tool_calls && Array.isArray(message.tool_calls) && message.tool_calls.length > 0
+            ? 'tool_use'
+            : 'end_turn',
         stop_sequence: null,
         model: requestedModel,
         usage: {
           input_tokens:
-            (completion as Record<string, unknown>).usage !== undefined &&
-            (completion as Record<string, Record<string, unknown>>).usage?.input_tokens
-              ? ((completion as Record<string, Record<string, unknown>>).usage.input_tokens as number)
+            completion['usage'] !== undefined &&
+            typeof completion['usage'] === 'object' &&
+            completion['usage'] !== null &&
+            'input_tokens' in completion['usage']
+              ? (completion['usage']['input_tokens'] as number)
               : 0,
           output_tokens:
-            (completion as Record<string, unknown>).usage !== undefined &&
-            (completion as Record<string, Record<string, unknown>>).usage?.output_tokens
-              ? ((completion as Record<string, Record<string, unknown>>).usage.output_tokens as number)
+            completion['usage'] !== undefined &&
+            typeof completion['usage'] === 'object' &&
+            completion['usage'] !== null &&
+            'output_tokens' in completion['usage']
+              ? (completion['usage']['output_tokens'] as number)
               : 0,
         },
       };
