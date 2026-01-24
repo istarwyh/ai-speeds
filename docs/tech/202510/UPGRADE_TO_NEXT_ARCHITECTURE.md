@@ -774,7 +774,7 @@ AUTH_GITHUB_SECRET="..."
 
 # API 提供商
 OPENAI_BASE_URL="https://api.openai.com/v1"
-DEEPSEEK_BASE_URL="https://api.deepseek.com/v1"
+DEEPSEEK_BASE_URL="https://api.deepseek.com/anthropic"
 OPENROUTER_BASE_URL="https://openrouter.ai/api/v1"
 
 # 图片代理
@@ -1166,7 +1166,7 @@ export function streamOpenAIToAnthropic(
 // 从 src/services/llm-provider/providers/index.ts 迁移
 export const PROVIDER_CONFIGS = {
   deepseek: {
-    defaultBaseUrl: 'https://api.deepseek.com',
+    defaultBaseUrl: 'https://api.deepseek.com/anthropic',
     // ...
   },
   // ... 其他配置
@@ -1638,7 +1638,7 @@ images: {
 
 ```bash
 # .env.production
-NEXT_PUBLIC_WEB_URL="https://cc.xiaohui.cool"
+NEXT_PUBLIC_WEB_URL="https://aispeeds.me"
 
 # API 提供商
 DEEPSEEK_BASE_URL="https://api.deepseek.com"
@@ -1660,7 +1660,7 @@ pnpm build
 pnpm cf:deploy
 
 # 验证部署
-curl https://cc.xiaohui.cool/api/v1/messages
+curl https://aispeeds.me/api/v1/messages
 ```
 
 #### 6.3 DNS 配置
