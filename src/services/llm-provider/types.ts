@@ -1,7 +1,7 @@
 /**
  * API 类型定义
  */
-export type Provider = 'openrouter' | 'deepseek' | 'openai' | 'kimi' | 'siliconflow';
+export type Provider = 'openrouter' | 'deepseek' | 'openai' | 'kimi' | 'siliconflow' | 'nvidia-nim';
 
 export interface ModelMapping {
   [key: string]: string;

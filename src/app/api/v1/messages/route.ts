@@ -21,28 +21,36 @@ function selectProvider(env: Record<string, string | undefined>): { provider: Pr
   if (env['SILICONFLOW_BASE_URL']) {
     return { provider: 'siliconflow', baseUrl: env['SILICONFLOW_BASE_URL'] };
   }
+  if (env['OPENROUTER_BASE_URL']) {
+    return { provider: 'openrouter', baseUrl: env['OPENROUTER_BASE_URL'] };
+  }
+  if (env['NVIDIA_NIM_BASE_URL']) {
+    return { provider: 'nvidia-nim', baseUrl: env['NVIDIA_NIM_BASE_URL'] };
+  }
 
   // Auto-detect provider from generic OPENAI_COMPATIBLE_BASE_URL
   if (env['OPENAI_COMPATIBLE_BASE_URL']) {
     const baseUrl = env['OPENAI_COMPATIBLE_BASE_URL'].toLowerCase();
 
-    if (baseUrl.includes('deepseek')) {
-      return { provider: 'deepseek', baseUrl };
+    if (baseUrl.includes('nvidia') || baseUrl.includes('nim')) {
+      return { provider: 'nvidia-nim', baseUrl: env['OPENAI_COMPATIBLE_BASE_URL'] };
+    } else if (baseUrl.includes('deepseek')) {
+      return { provider: 'deepseek', baseUrl: env['OPENAI_COMPATIBLE_BASE_URL'] };
     } else if (baseUrl.includes('openai')) {
-      return { provider: 'openai', baseUrl };
+      return { provider: 'openai', baseUrl: env['OPENAI_COMPATIBLE_BASE_URL'] };
     } else if (baseUrl.includes('moonshot')) {
-      return { provider: 'kimi', baseUrl };
+      return { provider: 'kimi', baseUrl: env['OPENAI_COMPATIBLE_BASE_URL'] };
     } else if (baseUrl.includes('siliconflow')) {
-      return { provider: 'siliconflow', baseUrl };
+      return { provider: 'siliconflow', baseUrl: env['OPENAI_COMPATIBLE_BASE_URL'] };
     }
-    // 如果无法检测，默认使用 'openai' 提供商配置
-    return { provider: 'openai', baseUrl };
+    // 如果无法检测，默认使用 'nvidia-nim' 提供商配置
+    return { provider: 'nvidia-nim', baseUrl: env['OPENAI_COMPATIBLE_BASE_URL'] };
   }
 
-  // Default to OpenRouter
+  // Default to NVIDIA NIM (项目默认 provider)
   return {
-    provider: 'openrouter',
-    baseUrl: env['OPENROUTER_BASE_URL'] || PROVIDER_CONFIGS.openrouter.defaultBaseUrl,
+    provider: 'nvidia-nim',
+    baseUrl: PROVIDER_CONFIGS['nvidia-nim'].defaultBaseUrl,
   };
 }
 
