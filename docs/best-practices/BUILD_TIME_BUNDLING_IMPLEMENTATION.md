@@ -2,14 +2,15 @@
 
 ## 概述
 
-成功实施了构建时打包方案，使用 esbuild 将模块化的 TypeScript 代码打包成单个 IIFE 字符串，然后嵌入到 Cloudflare Workers 服务的 HTML 中。
+成功实施了构建时打包方案，使用 esbuild 将模块化的 TypeScript 代码打包成单个 IIFE 字符串，然后嵌入到 Cloudflare
+Workers 服务的 HTML 中。
 
 ## 实施架构
 
 ### 1. 项目结构
 
 ```
-claude-code-router/
+ai-speeds/
 ├── src/client/bestPractices/           # 客户端源码（模块化）
 │   ├── index.ts                        # 入口文件
 │   ├── core/BestPracticesManager.ts    # 主管理器
@@ -46,12 +47,14 @@ claude-code-router/
 ### 3. 技术特点
 
 #### 开发时优势
+
 - ✅ **完全模块化**：清晰的文件结构和职责分离
 - ✅ **TypeScript 支持**：完整的类型检查和 IDE 支持
 - ✅ **热重载**：文件变化时自动重新构建
 - ✅ **调试友好**：保留源码结构，便于调试
 
 #### 运行时优势
+
 - ✅ **Workers 兼容**：生成单个 IIFE，完全兼容 Cloudflare Workers
 - ✅ **性能优化**：打包后体积小（29.58 KB），加载快速
 - ✅ **无依赖**：运行时不需要模块加载器
@@ -63,9 +66,15 @@ claude-code-router/
 
 ```javascript
 async function buildBestPracticesModule() {
-  const entryPoint = path.resolve(__dirname, '../src/client/bestPractices/index.ts');
-  const outputFile = path.resolve(__dirname, '../shared/scripts/generated/bestPracticesBundle.ts');
-  
+  const entryPoint = path.resolve(
+    __dirname,
+    '../src/client/bestPractices/index.ts',
+  );
+  const outputFile = path.resolve(
+    __dirname,
+    '../shared/scripts/generated/bestPracticesBundle.ts',
+  );
+
   // 使用 esbuild 打包
   const result = await esbuild.build({
     entryPoints: [entryPoint],
@@ -75,14 +84,14 @@ async function buildBestPracticesModule() {
     target: 'es2020',
     minify: false,
     write: false,
-    platform: 'browser'
+    platform: 'browser',
   });
 
   const bundledCode = result.outputFiles[0].text;
-  
+
   // 使用 JSON.stringify 来正确转义所有特殊字符
   const wrappedCode = `export const bestPracticesClientScript = ${JSON.stringify(bundledCode)};`;
-  
+
   fs.writeFileSync(outputFile, wrappedCode, 'utf8');
 }
 ```
@@ -115,6 +124,7 @@ if (document.readyState === 'loading') {
 ### 3. 集成配置
 
 #### package.json
+
 ```json
 {
   "scripts": {
@@ -129,6 +139,7 @@ if (document.readyState === 'loading') {
 ```
 
 #### wrangler.toml
+
 ```toml
 [build]
 command = "npm run build:client"
@@ -138,21 +149,26 @@ watch_dir = "src/client"
 ## 使用方式
 
 ### 1. 开发模式
+
 ```bash
 npm run dev
 ```
+
 - 自动构建客户端脚本
 - 启动 Wrangler 开发服务器
 - 文件变化时自动重新构建
 
 ### 2. 部署模式
+
 ```bash
 npm run deploy
 ```
+
 - 构建最新的客户端脚本
 - 部署到 Cloudflare Workers
 
 ### 3. 在 Workers 中使用
+
 ```typescript
 import { bestPracticesOverviewCardsScript } from './shared/scripts/bestPractices/bestPracticesCards';
 
@@ -167,17 +183,20 @@ const html = `
 ## 优势总结
 
 ### 1. 解决了原有问题
+
 - ❌ **字符串拼接维护困难** → ✅ **模块化开发**
 - ❌ **缺乏类型安全** → ✅ **完整 TypeScript 支持**
 - ❌ **调试困难** → ✅ **清晰的源码结构**
 - ❌ **扩展性差** → ✅ **高度可扩展的架构**
 
 ### 2. 保持了 Workers 兼容性
+
 - ✅ **运行时无依赖**：生成单个 IIFE 文件
 - ✅ **完全兼容**：在 Workers 环境中正常运行
 - ✅ **性能优秀**：打包后体积小，加载快速
 
 ### 3. 开发体验优秀
+
 - ✅ **模块化开发**：清晰的文件组织和职责分离
 - ✅ **类型安全**：完整的 TypeScript 类型检查
 - ✅ **热重载**：开发时自动重新构建
@@ -194,4 +213,5 @@ const html = `
 
 ## 结论
 
-构建时打包方案成功地解决了 Cloudflare Workers 环境下的模块化开发问题，既保持了开发时的模块化优势，又确保了运行时的兼容性和性能。这是一个可扩展、可维护的长期解决方案。
+构建时打包方案成功地解决了 Cloudflare
+Workers 环境下的模块化开发问题，既保持了开发时的模块化优势，又确保了运行时的兼容性和性能。这是一个可扩展、可维护的长期解决方案。

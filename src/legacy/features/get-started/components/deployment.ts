@@ -25,8 +25,8 @@ export const deploymentComponent = `
                     <div class="step-content">
                         <div class="step-title">Clone & Setup</div>
                         <div class="code-snippet">
-                            <code>git clone https://github.com/istarwyh/claude-code-router && cd claude-code-router && pnpm install</code>
-                            <button class="copy-btn" onclick="copyToClipboard('git clone https://github.com/istarwyh/claude-code-router && cd claude-code-router && pnpm install')">📋</button>
+                            <code>git clone https://github.com/istarwyh/ai-speeds && cd ai-speeds && pnpm install</code>
+                            <button class="copy-btn" onclick="copyToClipboard('git clone https://github.com/istarwyh/ai-speeds && cd ai-speeds && pnpm install')">📋</button>
                         </div>
                     </div>
                 </div>
@@ -162,7 +162,7 @@ function toggleConfigDetails(providerId) {
 <!-- Footer -->
 <div class="footer">
     <div class="footer-links">
-        <a href="https://github.com/istarwyh/claude-code-router" target="_blank">GitHub</a>
+        <a href="https://github.com/istarwyh/ai-speeds" target="_blank">GitHub</a>
         <a href="https://claude.ai/code" target="_blank">Claude Code</a>
         <a href="https://developers.cloudflare.com/workers/" target="_blank">Cloudflare Workers</a>
         <a href="/terms">Terms</a>

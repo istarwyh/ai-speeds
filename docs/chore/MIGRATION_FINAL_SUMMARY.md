@@ -48,7 +48,7 @@ OpenNext Cloudflare** 架构，采用**最小化变更、最大化复用**的策
 ### 目录结构
 
 ```
-claude-code-router/
+ai-speeds/
 ├── src/
 │   ├── app/                          # Next.js App Router ⭐
 │   │   ├── (main)/home/             # 主页

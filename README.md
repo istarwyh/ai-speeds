@@ -49,7 +49,7 @@ source ~/.bashrc && claude
 
 ```mermaid
 graph TB
-    A[Claude Code Client] -->|Anthropic API Format| B[Claude-Code-Router]
+    A[Claude Code Client] -->|Anthropic API Format| B[AI-Speeds-Me]
     B -->|Provider Selection| C{Environment Config}
     C -->|OpenRouter| D[OpenRouter API]
     C -->|DeepSeek| E[DeepSeek API]
@@ -431,7 +431,7 @@ For detailed migration information, see:
 
 Built with inspiration from:
 
-- [claude-code-router](https://github.com/musistudio/claude-code-router)
+- [ai-speeds](https://github.com/musistudio/ai-speeds)
 - [claude-code-proxy](https://github.com/kiyo-e/claude-code-proxy)
 
 ## ⚖️ License & Disclaimer

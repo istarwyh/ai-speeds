@@ -184,7 +184,7 @@ directory = ".open-next/assets"
 ## 📁 最终目录结构
 
 ```
-claude-code-router/
+ai-speeds/
 ├── src/
 │   ├── app/                    # Next.js App Router ⭐
 │   │   ├── (main)/home/       # 主页
