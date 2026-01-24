@@ -32,7 +32,7 @@ export const setupComponent = `
                 <div class="config-tabs" id="config-content">
                     <div class="config-tab">
                         <strong>For OpenRouter:</strong>
-                        <div class="code-block"><pre><code>export ANTHROPIC_BASE_URL="https://cc.xiaohui.cool"
+                        <div class="code-block"><pre><code>export ANTHROPIC_BASE_URL="https://aispeeds.me"
 export ANTHROPIC_API_KEY="your-openrouter-api-key"</code></pre></div>
                     </div>
                     <div class="config-tab">

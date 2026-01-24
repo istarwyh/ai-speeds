@@ -76,11 +76,27 @@ export const PROVIDER_CONFIGS = {
     commonModels: ['gpt-4o', 'gpt-4o-mini', 'gpt-3.5-turbo'],
   },
   kimi: {
-    defaultBaseUrl: '',
-    modelMappings: {} as ModelMapping,
+    defaultBaseUrl: 'https://api.moonshot.cn/v1',
+    modelMappings: {
+      'claude-3-5-haiku-20241022': 'moonshot-v1-8k',
+      'claude-3-5-sonnet-20241022': 'moonshot-v1-32k',
+      'claude-3-opus-20240229': 'moonshot-v1-128k',
+      haiku: 'moonshot-v1-8k',
+      sonnet: 'moonshot-v1-32k',
+      opus: 'moonshot-v1-128k',
+    } as ModelMapping,
+    commonModels: ['moonshot-v1-8k', 'moonshot-v1-32k', 'moonshot-v1-128k'],
   },
   siliconflow: {
-    defaultBaseUrl: '',
-    modelMappings: {} as ModelMapping,
+    defaultBaseUrl: 'https://api.siliconflow.cn/v1',
+    modelMappings: {
+      'claude-3-5-haiku-20241022': 'Qwen/Qwen2.5-7B-Instruct',
+      'claude-3-5-sonnet-20241022': 'Qwen/Qwen2.5-14B-Instruct',
+      'claude-3-opus-20240229': 'Qwen/Qwen2.5-72B-Instruct',
+      haiku: 'Qwen/Qwen2.5-7B-Instruct',
+      sonnet: 'Qwen/Qwen2.5-14B-Instruct',
+      opus: 'Qwen/Qwen2.5-72B-Instruct',
+    } as ModelMapping,
+    commonModels: ['Qwen/Qwen2.5-7B-Instruct', 'Qwen/Qwen2.5-14B-Instruct'],
   },
 } as const;

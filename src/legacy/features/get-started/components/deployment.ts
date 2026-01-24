@@ -25,8 +25,8 @@ export const deploymentComponent = `
                     <div class="step-content">
                         <div class="step-title">Clone & Setup</div>
                         <div class="code-snippet">
-                            <code>git clone https://github.com/istarwyh/claude-code-router && cd claude-code-router && npm install</code>
-                            <button class="copy-btn" onclick="copyToClipboard('git clone https://github.com/istarwyh/claude-code-router && cd claude-code-router && npm install')">📋</button>
+                            <code>git clone https://github.com/istarwyh/claude-code-router && cd claude-code-router && pnpm install</code>
+                            <button class="copy-btn" onclick="copyToClipboard('git clone https://github.com/istarwyh/claude-code-router && cd claude-code-router && pnpm install')">📋</button>
                         </div>
                     </div>
                 </div>
@@ -35,18 +35,8 @@ export const deploymentComponent = `
                     <div class="step-content">
                         <div class="step-title">Configure Secrets</div>
                         <div class="provider-configs">
-                            <div class="config-option" onclick="toggleConfigDetails('deepseek')">
-                                <span class="provider-icon deepseek">DS</span>
-                                <span>DeepSeek</span>
-                                <span class="expand-icon">▶</span>
-                            </div>
-                            <div class="config-details" id="deepseek-config">
-                                <div class="code-snippet">
-                                    <code>wrangler secret put OPENAI_COMPATIBLE_BASE_URL</code>
-                                    <button class="copy-btn" onclick="copyToClipboard('wrangler secret put OPENAI_COMPATIBLE_BASE_URL')">📋</button>
-                                </div>
-                                <div class="config-note">Enter: https://api.deepseek.com</div>
-                            </div>
+        
+
                             <div class="config-option" onclick="toggleConfigDetails('openai')">
                                 <span class="provider-icon openai">AI</span>
                                 <span>OpenAI</span>
@@ -59,6 +49,7 @@ export const deploymentComponent = `
                                 </div>
                                 <div class="config-note">Enter: https://api.openai.com/v1</div>
                             </div>
+
                             <div class="config-option" onclick="toggleConfigDetails('openrouter')">
                                 <span class="provider-icon openrouter">OR</span>
                                 <span>OpenRouter</span>
