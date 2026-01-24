@@ -97,12 +97,14 @@ export const navigationComponent = `
 <style>
   /* Enhanced Navigation Styles */
   .enhanced-nav {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    bottom: 0;
     z-index: 1000;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid #e5e7eb;
+    border-right: 1px solid #e5e7eb;
     transition: all 0.3s ease;
   }
 
