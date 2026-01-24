@@ -4,17 +4,35 @@ import { UI_TEXTS } from '../../../config/ui-texts';
 export const navigationScript = `
 // Navigation tab switching
 function initNavigation() {
-  const navTabs = document.querySelectorAll('.nav-tab');
+  const navTabs = document.querySelectorAll('.nav-tab, .nav-item');
   const contentSections = document.querySelectorAll('.content-section, .practices-page');
+
+  function animateTabTransition(tab) {
+    if (!tab) return;
+
+    // Add transition class
+    tab.classList.add('nav-transitioning');
+
+    // Remove class after animation
+    setTimeout(() => {
+      tab.classList.remove('nav-transitioning');
+    }, 300);
+  }
 
   function showSection(sectionId) {
     // Remove active class from all tabs
-    navTabs.forEach(t => t.classList.remove('active'));
+    navTabs.forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('data-active', 'false');
+      t.setAttribute('aria-selected', 'false');
+    });
 
     // Add active class to corresponding tab
     const activeTab = document.querySelector('[data-section="' + sectionId + '"]');
     if (activeTab) {
       activeTab.classList.add('active');
+      activeTab.setAttribute('data-active', 'true');
+      activeTab.setAttribute('aria-selected', 'true');
     }
 
     // Hide all content sections
@@ -47,16 +65,142 @@ function initNavigation() {
         }, 100);
       }
     }
+
+    // Animate transition
+    if (activeTab) {
+      animateTabTransition(activeTab);
+    }
   }
 
+  // Navigation event handlers
   navTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
+    tab.addEventListener('click', (e) => {
       const targetSection = tab.dataset.section;
-      showSection(targetSection);
-      // Update URL hash
-      window.location.hash = targetSection;
+      const isLink = tab.tagName === 'A' || tab.hasAttribute('onclick');
+
+      if (!isLink) {
+        e.preventDefault();
+
+        // Animate icon hover effect
+        const navIcon = tab.querySelector('.nav-icon');
+        if (navIcon) {
+          navIcon.style.transform = 'scale(1.1) rotate(5deg)';
+          setTimeout(() => {
+            navIcon.style.transform = '';
+          }, 150);
+        }
+
+        showSection(targetSection);
+        // Update URL hash
+        window.location.hash = targetSection;
+      }
+    });
+
+    // Keyboard navigation support
+    tab.addEventListener('keydown', (e) => {
+      const tabs = Array.from(navTabs);
+      const currentIndex = tabs.indexOf(tab);
+
+      switch (e.key) {
+        case 'ArrowUp':
+        case 'ArrowLeft':
+          e.preventDefault();
+          const prevIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
+          tabs[prevIndex]?.focus();
+          break;
+        case 'ArrowDown':
+        case 'ArrowRight':
+          e.preventDefault();
+          const nextIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
+          tabs[nextIndex]?.focus();
+          break;
+        case 'Enter':
+        case ' ': // Space
+          e.preventDefault();
+          tab.click();
+          break;
+        case 'Home':
+          e.preventDefault();
+          tabs[0]?.focus();
+          break;
+        case 'End':
+          e.preventDefault();
+          tabs[tabs.length - 1]?.focus();
+          break;
+      }
     });
   });
+
+  // Mobile menu toggle
+  const menuToggle = document.querySelector('.nav-menu-toggle');
+  const navOverlay = document.querySelector('.nav-overlay');
+  const closeButton = document.querySelector('.nav-overlay-close');
+  const overlayContent = document.querySelector('.nav-overlay-content');
+
+  if (menuToggle) {
+    menuToggle.addEventListener('click', () => {
+      navOverlay?.classList.add('active');
+      navOverlay?.setAttribute('aria-hidden', 'false');
+      menuToggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+
+      // Focus first item in overlay
+      const firstButton = document.querySelector('.nav-overlay-tabs .nav-item');
+      if (firstButton) {
+        setTimeout(() => firstButton.focus(), 100);
+      }
+    });
+  }
+
+  if (closeButton) {
+    closeButton.addEventListener('click', () => {
+      navOverlay?.classList.remove('active');
+      navOverlay?.setAttribute('aria-hidden', 'true');
+      menuToggle?.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      menuToggle?.focus();
+    });
+  }
+
+  // Close overlay when clicking outside (not on content)
+  navOverlay?.addEventListener('click', (e) => {
+    if (e.target === navOverlay) {
+      closeButton?.click();
+    }
+  });
+
+  // Prevent overlay close when clicking inside content
+  overlayContent?.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+
+  // Close overlay on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navOverlay?.classList.contains('active')) {
+      closeButton?.click();
+    }
+  });
+
+  // Focus management for overlay
+  if (navOverlay) {
+    const focusableElements = navOverlay.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstFocusable = focusableElements[0];
+    const lastFocusable = focusableElements[focusableElements.length - 1];
+
+    navOverlay.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        if (e.shiftKey && document.activeElement === firstFocusable) {
+          e.preventDefault();
+          lastFocusable?.focus();
+        } else if (!e.shiftKey && document.activeElement === lastFocusable) {
+          e.preventDefault();
+          firstFocusable?.focus();
+        }
+      }
+    });
+  }
 
   // Handle initial hash or default to configured section
   const hash = window.location.hash.slice(1); // Remove # from hash
@@ -68,9 +212,67 @@ function initNavigation() {
     const newHash = window.location.hash.slice(1) || '${DEFAULT_SECTION_ID}';
     showSection(newHash);
   });
+
+  // Add scroll behavior
+  let lastScrollY = window.scrollY || 0;
+  function handleScroll() {
+    const currentScrollY = window.scrollY || 0;
+    const nav = document.querySelector('.enhanced-nav');
+
+    if (nav) {
+      if (currentScrollY > 50 && currentScrollY > lastScrollY) {
+        // Scrolling down
+        nav.classList.add('scrolled');
+      } else if (currentScrollY < lastScrollY || currentScrollY < 50) {
+        // Scrolling up or at top
+        nav.classList.remove('scrolled');
+      }
+      lastScrollY = currentScrollY;
+    }
+  }
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+
+  // Auto-focus active tab
+  const activeTab = document.querySelector('.nav-item[data-active="true"]');
+  if (activeTab) {
+    setTimeout(() => activeTab.focus(), 100);
+  }
+
+  // Add fade-in animation
+  const nav = document.querySelector('.enhanced-nav');
+  if (nav) {
+    nav.style.opacity = '0';
+    nav.style.transform = 'translateY(-10px)';
+    setTimeout(() => {
+      nav.style.transition = 'all 0.3s ease';
+      nav.style.opacity = '1';
+      nav.style.transform = 'translateY(0)';
+    }, 100);
+  }
+
+  // Update navigation state on tab changes
+  function updateNavigationState() {
+    const tabs = document.querySelectorAll('.nav-tab, .nav-item');
+    const sections = document.querySelectorAll('.content-section, .practices-page');
+
+    // Show/hide sections based on active state
+    tabs.forEach(tab => {
+      const sectionId = tab.dataset.section;
+      const targetSection = document.getElementById(sectionId);
+      const isActive = tab.classList.contains('active') || tab.getAttribute('data-active') === 'true';
+
+      if (targetSection) {
+        targetSection.style.display = isActive ? 'block' : 'none';
+      }
+    });
+  }
+
+  // Call once to set initial state
+  updateNavigationState();
 }
 
-// Copy command function
+// Copy command function (unchanged)
 function copyCommand(button) {
   const commandBlock = button.closest('.command-block');
   const command = commandBlock.dataset.command;
@@ -243,6 +445,13 @@ function initMobileHeaderAutoHide() {
     else if (mq.addListener) mq.addListener(onMQChange);
   }
 
+  // Attach to enhanced navigation if available
+  const enhancedNav = document.querySelector('.enhanced-nav');
+  if (enhancedNav) {
+    // Enhanced nav handles its own mobile behavior
+    return;
+  }
+
   // Ensure initialization happens after DOM is fully ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initialize);
@@ -255,9 +464,14 @@ function initMobileHeaderAutoHide() {
 window.copyCommand = copyCommand;
 window.toggleFooterVisibility = toggleFooterVisibility;
 window.updateBreadcrumb = updateBreadcrumb;
+window.initNavigation = initNavigation;
+window.initMobileHeaderAutoHide = initMobileHeaderAutoHide;
 
 // Initialize navigation when DOM is loaded
 document.addEventListener('DOMContentLoaded', initNavigation);
+
 // Initialize mobile header auto-hide
-initMobileHeaderAutoHide();
+if (typeof window !== 'undefined') {
+  initMobileHeaderAutoHide();
+}
 `;
