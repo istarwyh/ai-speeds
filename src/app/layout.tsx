@@ -26,11 +26,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {process.env.NODE_ENV !== 'production' && (
           <>
             <Script id='wuunu-ws' strategy='afterInteractive'>
-              {'window.__WUUNU_WS__ = "http://127.0.0.1:50587/";'}
+              {
+                'window.__WUUNU_WS__ = "http://127.0.0.1:50587/?token=00d31b4f76e3e558f349116515e961b1f3d2e45f226b6fe0";'
+              }
             </Script>
             <Script
               id='wuunu-widget'
-              src='https://cdn.jsdelivr.net/npm/@wuunu/widget@0.1?cacheParam=56'
+              src='https://cdn.jsdelivr.net/npm/@wuunu/widget@0.1.21'
               strategy='afterInteractive'
               crossOrigin='anonymous'
             />

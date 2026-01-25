@@ -323,45 +323,55 @@ export default function StyleGuidePage() {
 
             {/* Design concept */}
             <div className='pt-6 border-t border-border-light'>
-              <h3 className='text-sm font-semibold text-text-primary mb-3'>Design Concept</h3>
+              <h3 className='text-sm font-semibold text-text-primary mb-3'>Design Concept - Human Spiral Growth</h3>
               <ul className='space-y-2 text-sm text-text-secondary'>
                 <li className='flex items-start gap-2'>
                   <span className='text-accent'>🌀</span>
                   <span>
-                    <strong className='text-text-primary'>Spiral path:</strong> Represents continuous learning and
-                    iterative growth journey
+                    <strong className='text-text-primary'>Fibonacci spiral:</strong> Organic growth pattern inspired by
+                    nature, representing continuous learning and iterative development
                   </span>
                 </li>
                 <li className='flex items-start gap-2'>
-                  <span className='text-accent'>⬆️</span>
+                  <span className='text-accent'>👤</span>
                   <span>
-                    <strong className='text-text-primary'>Upward arrow:</strong> Shows direction and acceleration toward
-                    goals
+                    <strong className='text-text-primary'>Human reaching upward:</strong> Arrow symbolizes human
+                    aspiration and the gesture of reaching toward goals
                   </span>
                 </li>
                 <li className='flex items-start gap-2'>
-                  <span className='text-accent'>🎯</span>
+                  <span className='text-accent'>💫</span>
                   <span>
-                    <strong className='text-text-primary'>Peak highlight:</strong> Achievement and growth destination
+                    <strong className='text-text-primary'>Achievement glow:</strong> Radiant peak with inner highlight
+                    showing the moment of breakthrough
                   </span>
                 </li>
                 <li className='flex items-start gap-2'>
-                  <span className='text-accent'>🔗</span>
+                  <span className='text-accent'>�</span>
                   <span>
-                    <strong className='text-text-primary'>AI nodes:</strong> Milestones along the growth path powered by
-                    AI
+                    <strong className='text-text-primary'>Progressive milestones:</strong> Growing nodes
+                    (0.9→1.3→1.8→2.3px) show accelerating momentum
                   </span>
                 </li>
                 <li className='flex items-start gap-2'>
-                  <span className='text-accent'>🎨</span>
+                  <span className='text-accent'>⭕</span>
                   <span>
-                    <strong className='text-text-primary'>Teal accent (#4ECDC4):</strong> Modern, tech-forward feel
+                    <strong className='text-text-primary'>Growth rings:</strong> Subtle concentric circles at the base
+                    represent expanding influence and capability
                   </span>
                 </li>
                 <li className='flex items-start gap-2'>
                   <span className='text-accent'>✨</span>
                   <span>
-                    <strong className='text-text-primary'>Minimal design:</strong> Works at all sizes from 16px to large
+                    <strong className='text-text-primary'>Energy particles:</strong> Floating accent dots convey upward
+                    momentum and dynamic progress
+                  </span>
+                </li>
+                <li className='flex items-start gap-2'>
+                  <span className='text-accent'>🎨</span>
+                  <span>
+                    <strong className='text-text-primary'>Gradient flow:</strong> Teal→Blue transition (#4ECDC4→#2563eb)
+                    represents journey from learning to mastery
                   </span>
                 </li>
               </ul>

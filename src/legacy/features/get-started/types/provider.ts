@@ -19,6 +19,28 @@ export interface Provider {
 
 export const providers: Provider[] = [
   {
+    id: 'nvidia-nim',
+    name: 'NVIDIA NIM',
+    displayName: 'NVIDIA NIM (默认)',
+    icon: 'NV',
+    color: 'linear-gradient(45deg, #76B900, #1A1A1A)',
+    description: '项目默认 Provider。基于 NVIDIA NIM 平台，提供高性能 AI 推理服务。使用 MiniMax M2.1 模型。',
+    isDirectlyUsable: true,
+    proxyUrl: 'https://aispeeds.me',
+    originalUrl: 'https://integrate.api.nvidia.com/v1',
+    aliasCommand: 'alias claude="ANTHROPIC_API_KEY=nvapi-xxxxxx ANTHROPIC_BASE_URL=https://aispeeds.me claude"',
+    apiKeyUrl: 'https://build.nvidia.com/',
+    features: ['默认 Provider', '无需额外部署', 'NVIDIA 高性能推理', 'MiniMax M2.1 模型'],
+    specialConfig: {
+      envVars: {
+        ANTHROPIC_API_KEY: 'nvapi-xxxxxx',
+        ANTHROPIC_BASE_URL: 'https://aispeeds.me',
+      },
+      notes:
+        '🚀 这是项目的默认 Provider，部署后即可直接使用。只需将 ANTHROPIC_API_KEY 替换为你的 NVIDIA NIM API Key (格式: nvapi-xxx) 即可。',
+    },
+  },
+  {
     id: 'anthropic',
     name: 'Anthropic',
     displayName: 'Anthropic (官方)',
@@ -42,9 +64,9 @@ export const providers: Provider[] = [
     icon: 'DS',
     description: 'High-performance reasoning models with excellent cost efficiency. Perfect for complex coding tasks.',
     isDirectlyUsable: true,
-    proxyUrl: 'https://cc.xiaohui.cool',
+    proxyUrl: 'https://aispeeds.me',
     originalUrl: 'https://api.deepseek.com',
-    aliasCommand: 'alias deepseek="ANTHROPIC_AUTH_TOKEN=sk-xxxxxx ANTHROPIC_BASE_URL=https://cc.xiaohui.cool claude"',
+    aliasCommand: 'alias deepseek="ANTHROPIC_AUTH_TOKEN=sk-xxxxxx ANTHROPIC_BASE_URL=https://aispeeds.me claude"',
     apiKeyUrl: 'https://platform.deepseek.com',
     features: ['High reasoning capability', 'Cost efficient', 'Fast response'],
   },

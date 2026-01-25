@@ -58,7 +58,7 @@ src/app/
 vs
 
 ```typescript
-// claude-code-router 使用传统 Cloudflare Workers
+// ai-speeds 使用传统 Cloudflare Workers
 src/server/index.ts         # 单一入口文件
   - 手动路由匹配
   - 字符串模板 HTML
@@ -175,7 +175,7 @@ experimental: { mdxRs: true },  // Rust MDX 编译器
 
 ---
 
-### claude-code-router 的局限性
+### ai-speeds 的局限性
 
 #### 1. **手动路由管理**
 
@@ -228,8 +228,8 @@ export const indexHtml = `<!DOCTYPE html>...`; // 难以维护
 
 ```bash
 cd ~/Desktop/code-open
-npx create-next-app@latest claude-code-router-next --typescript --tailwind --app --no-src-dir
-cd claude-code-router-next
+npx create-next-app@latest ai-speeds-next --typescript --tailwind --app --no-src-dir
+cd ai-speeds-next
 ```
 
 #### 1.2 安装核心依赖
@@ -275,7 +275,7 @@ export default defineCloudflareConfig({
 
 ```toml
 # wrangler.toml
-name = "claude-code-router-next"
+name = "ai-speeds-next"
 main = ".open-next/worker.js"
 compatibility_date = "2025-03-01"
 compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
@@ -311,7 +311,7 @@ enabled = true
 
 #### 2.1 迁移 API 路由
 
-**旧架构 (claude-code-router):**
+**旧架构 (ai-speeds):**
 
 ```typescript
 // src/server/index.ts
@@ -774,7 +774,7 @@ AUTH_GITHUB_SECRET="..."
 
 # API 提供商
 OPENAI_BASE_URL="https://api.openai.com/v1"
-DEEPSEEK_BASE_URL="https://api.deepseek.com/v1"
+DEEPSEEK_BASE_URL="https://api.deepseek.com/anthropic"
 OPENROUTER_BASE_URL="https://openrouter.ai/api/v1"
 
 # 图片代理
@@ -937,7 +937,7 @@ wrangler --version  # >= 4.0.0
 
 # 备份当前项目
 cd ~/Desktop/code-open
-cp -r claude-code-router claude-code-router-backup
+cp -r ai-speeds ai-speeds-backup
 ```
 
 #### 0.2 学习 shipany 架构
@@ -950,7 +950,7 @@ cp -r claude-code-router claude-code-router-backup
 #### 0.3 创建迁移分支
 
 ```bash
-cd claude-code-router
+cd ai-speeds
 git checkout -b feat/migrate-to-nextjs
 git push -u origin feat/migrate-to-nextjs
 ```
@@ -1032,7 +1032,7 @@ export default defineCloudflareConfig({
 **wrangler.toml:**
 
 ```toml
-name = "claude-code-router"
+name = "ai-speeds"
 main = ".open-next/worker.js"
 compatibility_date = "2025-03-01"
 compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
@@ -1166,7 +1166,7 @@ export function streamOpenAIToAnthropic(
 // 从 src/services/llm-provider/providers/index.ts 迁移
 export const PROVIDER_CONFIGS = {
   deepseek: {
-    defaultBaseUrl: 'https://api.deepseek.com',
+    defaultBaseUrl: 'https://api.deepseek.com/anthropic',
     // ...
   },
   // ... 其他配置
@@ -1638,7 +1638,7 @@ images: {
 
 ```bash
 # .env.production
-NEXT_PUBLIC_WEB_URL="https://cc.xiaohui.cool"
+NEXT_PUBLIC_WEB_URL="https://aispeeds.me"
 
 # API 提供商
 DEEPSEEK_BASE_URL="https://api.deepseek.com"
@@ -1660,7 +1660,7 @@ pnpm build
 pnpm cf:deploy
 
 # 验证部署
-curl https://cc.xiaohui.cool/api/v1/messages
+curl https://aispeeds.me/api/v1/messages
 ```
 
 #### 6.3 DNS 配置

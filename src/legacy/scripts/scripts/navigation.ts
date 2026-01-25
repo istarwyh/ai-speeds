@@ -20,8 +20,12 @@ function initNavigation() {
   }
 
   function showSection(sectionId) {
+    // Re-query DOM elements to ensure we have the latest state
+    const currentNavTabs = document.querySelectorAll('.nav-tab, .nav-item');
+    const currentSections = document.querySelectorAll('.content-section, .practices-page');
+
     // Remove active class from all tabs
-    navTabs.forEach(t => {
+    currentNavTabs.forEach(t => {
       t.classList.remove('active');
       t.setAttribute('data-active', 'false');
       t.setAttribute('aria-selected', 'false');
@@ -36,7 +40,7 @@ function initNavigation() {
     }
 
     // Hide all content sections
-    contentSections.forEach(section => {
+    currentSections.forEach(section => {
       section.style.display = 'none';
     });
 
@@ -49,21 +53,29 @@ function initNavigation() {
     // Special handling for best-practices section
     if (sectionId === 'best-practices') {
       // Ensure we show the overview when navigating to best-practices
-      if (window.showBestPracticesOverview) {
-        setTimeout(() => {
+      // Use retry mechanism to handle async module initialization
+      function tryShowBestPractices(retries) {
+        if (window.showBestPracticesOverview) {
           window.showBestPracticesOverview();
-        }, 100);
+        } else if (retries > 0) {
+          setTimeout(() => tryShowBestPractices(retries - 1), 100);
+        }
       }
+      tryShowBestPractices(10);
     }
 
     // Special handling for how-to-apply-cc section
     if (sectionId === 'how-to-apply-cc') {
       // Ensure we show the overview when navigating to how-to-apply-cc
-      if (window.showHowToApplyCCOverview) {
-        setTimeout(() => {
+      // Use retry mechanism to handle async module initialization
+      function tryShowHowToApplyCC(retries) {
+        if (window.showHowToApplyCCOverview) {
           window.showHowToApplyCCOverview();
-        }, 100);
+        } else if (retries > 0) {
+          setTimeout(() => tryShowHowToApplyCC(retries - 1), 100);
+        }
       }
+      tryShowHowToApplyCC(10);
     }
 
     // Animate transition
@@ -252,24 +264,29 @@ function initNavigation() {
   }
 
   // Update navigation state on tab changes
+  // Note: This function is no longer needed as showSection handles all state updates
+  // Keeping it for potential future use but not calling it on init to avoid conflicts
   function updateNavigationState() {
-    const tabs = document.querySelectorAll('.nav-tab, .nav-item');
     const sections = document.querySelectorAll('.content-section, .practices-page');
-
-    // Show/hide sections based on active state
+    
+    // Find the active section by checking which tab is active
+    let activeSectionId = null;
+    const tabs = document.querySelectorAll('.nav-tab, .nav-item');
     tabs.forEach(tab => {
-      const sectionId = tab.dataset.section;
-      const targetSection = document.getElementById(sectionId);
-      const isActive = tab.classList.contains('active') || tab.getAttribute('data-active') === 'true';
-
-      if (targetSection) {
-        targetSection.style.display = isActive ? 'block' : 'none';
+      if (tab.classList.contains('active') || tab.getAttribute('data-active') === 'true') {
+        activeSectionId = tab.dataset.section;
       }
     });
+
+    // Show/hide sections based on active section
+    if (activeSectionId) {
+      sections.forEach(section => {
+        section.style.display = section.id === activeSectionId ? 'block' : 'none';
+      });
+    }
   }
 
-  // Call once to set initial state
-  updateNavigationState();
+  // Don't call updateNavigationState on init - showSection already handles this
 }
 
 // Copy command function (unchanged)

@@ -2,7 +2,8 @@
 
 ## 概述
 
-本文档融合了客户端-服务端架构、构建系统设计和模块化开发的精华内容，为 Claude Code Router 项目提供全面的开发指导原则和最佳实践。
+本文档融合了客户端-服务端架构、构建系统设计和模块化开发的精华内容，为 Claude
+Code Router 项目提供全面的开发指导原则和最佳实践。
 
 ## 核心架构原则
 
@@ -11,6 +12,7 @@
 **问题背景**: Cloudflare Workers 环境缺少 DOM API，传统客户端代码无法直接执行。
 
 **解决方案**: 职责分离架构
+
 ```
 ┌─────────────────┐    ┌─────────────────┐
 │   Worker 端     │    │    客户端       │
@@ -25,6 +27,7 @@
 ### 2. 模块化设计原则
 
 #### 单一职责原则
+
 ```typescript
 // ✅ 职责明确的模块
 export const getStartedModule = `
@@ -41,6 +44,7 @@ export const mixedModule = `
 ```
 
 #### 高内聚低耦合
+
 ```typescript
 // ✅ 高内聚：相关组件组织在一起
 modules/get-started/components/
@@ -66,9 +70,11 @@ export interface Provider extends BaseEntity {
 
 // 使用类型守卫验证数据
 export function isProvider(obj: any): obj is Provider {
-  return typeof obj === 'object' && 
-         typeof obj.id === 'string' &&
-         typeof obj.isDirectlyUsable === 'boolean';
+  return (
+    typeof obj === 'object' &&
+    typeof obj.id === 'string' &&
+    typeof obj.isDirectlyUsable === 'boolean'
+  );
 }
 ```
 
@@ -94,11 +100,11 @@ const commonConfig = {
   format: 'iife',
   target: 'es2020',
   platform: 'browser',
-  minify: false,  // 开发时便于调试
-  write: false,   // 需要后处理
+  minify: false, // 开发时便于调试
+  write: false, // 需要后处理
   loader: {
-    '.md': 'text'  // Markdown 文件支持
-  }
+    '.md': 'text', // Markdown 文件支持
+  },
 };
 
 // 主构建控制器
@@ -123,13 +129,10 @@ async function injectClientScripts() {
   const bundleContent = fs.readFileSync(bundleFile, 'utf8');
   const scriptMatch = bundleContent.match(/export const \w+ = \"(.+)\";/);
   const scriptContent = JSON.parse(`\"${scriptMatch[1]}\"`);
-  
+
   let moduleContent = fs.readFileSync(targetFile, 'utf8');
-  moduleContent = moduleContent.replace(
-    '// SCRIPT_PLACEHOLDER', 
-    scriptContent
-  );
-  
+  moduleContent = moduleContent.replace('// SCRIPT_PLACEHOLDER', scriptContent);
+
   fs.writeFileSync(targetFile, moduleContent, 'utf8');
 }
 ```
@@ -143,7 +146,7 @@ async function injectClientScripts() {
 function generateProviderCard(provider: Provider): string {
   const statusBadges = getStatusBadge(provider.isDirectlyUsable);
   const iconStyle = getProviderColor(provider);
-  
+
   return `
     <div class="provider-card" 
          data-provider="${escapeHtml(provider.id)}"
@@ -170,20 +173,20 @@ export function showProviderDetails(providerId: string): void {
     console.warn(`Provider ${providerId} not found`);
     return;
   }
-  
+
   const detailsElement = document.getElementById('provider-details');
   const contentElement = document.getElementById('details-content');
-  
+
   if (!detailsElement || !contentElement) {
     console.error('Required DOM elements not found');
     return;
   }
-  
+
   // 安全的 DOM 操作
   contentElement.innerHTML = '';
   const detailsContent = generateProviderDetailsContent(provider);
   contentElement.appendChild(detailsContent);
-  
+
   detailsElement.style.display = 'block';
   detailsElement.scrollIntoView({ behavior: 'smooth' });
 }
@@ -194,7 +197,7 @@ export function showProviderDetails(providerId: string): void {
 ### 文件结构规范
 
 ```
-claude-code-router/
+ai-speeds/
 ├── modules/                    # 功能模块
 │   ├── get-started/           # 快速开始
 │   │   ├── components/        # 组件
@@ -284,9 +287,9 @@ export function validateProviders(providers: any[]): Provider[] {
 
 // 错误边界处理
 export function safeExecute<T>(
-  fn: () => T, 
-  fallback: T, 
-  errorMessage?: string
+  fn: () => T,
+  fallback: T,
+  errorMessage?: string,
 ): T {
   try {
     return fn();
@@ -308,14 +311,14 @@ const optimizedConfig = {
   treeShaking: true,
   sideEffects: false,
   define: {
-    'process.env.NODE_ENV': '"production"'
-  }
+    'process.env.NODE_ENV': '"production"',
+  },
 };
 
 // 代码分割
 const moduleMap = {
   'get-started': () => import('./modules/get-started'),
-  'best-practices': () => import('./modules/best-practices')
+  'best-practices': () => import('./modules/best-practices'),
 };
 ```
 
@@ -324,11 +327,11 @@ const moduleMap = {
 ```typescript
 class ModuleCache {
   private cache = new Map<string, any>();
-  
+
   get<T>(key: string): T | undefined {
     return this.cache.get(key);
   }
-  
+
   set<T>(key: string, value: T): void {
     this.cache.set(key, value);
   }
@@ -340,19 +343,19 @@ function getCachedComponent(id: string): string {
   if (moduleCache.has(id)) {
     return moduleCache.get(id);
   }
-  
+
   const component = generateComponent(id);
   moduleCache.set(id, component);
   return component;
 }
 ```
 
-
 ## 扩展指南
 
 ### 添加新模块
 
 1. **创建模块结构**
+
 ```
 modules/new-module/
 ├── components/
@@ -361,24 +364,26 @@ modules/new-module/
 ```
 
 2. **更新构建脚本**
+
 ```javascript
 async function buildNewModule() {
   const config = {
     ...commonConfig,
-    entryPoints: ['src/client/newModule/index.ts']
+    entryPoints: ['src/client/newModule/index.ts'],
   };
-  
+
   const result = await esbuild.build(config);
   // 处理构建结果...
 }
 ```
 
 3. **添加到主构建流程**
+
 ```javascript
 async function buildClientScripts() {
   await buildBestPracticesModule();
   await buildProviderDetailsModule();
-  await buildNewModule();  // 新模块
+  await buildNewModule(); // 新模块
   await injectClientScripts();
 }
 ```
@@ -386,11 +391,13 @@ async function buildClientScripts() {
 ## 关键成功因素
 
 ### 1. 架构设计
+
 - ✅ 环境适配：解决 Workers DOM 限制
 - ✅ 职责分离：Worker 静态内容 + 客户端交互
 - ✅ 模块化：清晰的组件边界和接口
 
 ### 2. 构建系统
+
 - ✅ 自动化：完整的构建和注入流程
 - ✅ 类型安全：TypeScript 全程支持
 - ✅ 性能优化：Tree Shaking 和代码压缩

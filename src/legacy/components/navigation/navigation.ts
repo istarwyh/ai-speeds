@@ -16,7 +16,7 @@ const getIcon = (id?: string): string => {
 export const navigationComponent = `
 <nav class="main-nav enhanced-nav" role="navigation" aria-label="Main navigation">
   <div class="nav-container">
-    <div class="nav-brand" aria-label="AI Speeds">
+<div class="nav-brand" aria-label="AI Speeds">
       <span class="brand-icon">${heroicons.rocket}</span>
       <span class="brand-text">AI Speeds</span>
     </div>

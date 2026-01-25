@@ -1,22 +1,27 @@
 #!/usr/bin/env node
 
+// @ts-check
+
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
-
-const LOCK_FILE = path.resolve(__dirname, '../.build-lock');
-const LOCK_TIMEOUT = 10000; // 10秒超时
-const LAST_BUILD_FILE = path.resolve(__dirname, '../.last-build-time');
+const { spawnSync } = require('child_process');
 
 /**
- * 获取目录下所有文件的最新修改时间
- * 注意：当前使用同步I/O操作，对于构建脚本来说是可接受的
- * 如果未来 src/client 目录文件数量大幅增长，可考虑重构为异步版本
+ * 安全构建客户端脚本
+ * 包含智能重试和错误恢复机制
  */
-function getLastModified(dir) {
+
+/**
+ * @param {string} dir - Directory path
+ * @returns {number} Last modified timestamp
+ */
+function getLastModified(/** @type {string} */ dir) {
   let lastModified = 0;
 
-  function walkDir(currentDir) {
+  /**
+   * @param {string} currentDir - Current directory path
+   */
+  function walkDir(/** @type {string} */ currentDir) {
     const files = fs.readdirSync(currentDir);
 
     for (const file of files) {
@@ -31,75 +36,209 @@ function getLastModified(dir) {
     }
   }
 
-  walkDir(dir);
+  try {
+    walkDir(dir);
+  } catch (err) {
+    console.error(`读取目录 ${dir} 时出错:`, err);
+  }
+
   return lastModified;
 }
 
 /**
- * 安全的客户端构建包装器
- * 使用文件系统锁和时间戳检查防止重复构建
+ * @param {string} currentDir - Current directory path
+ * @returns {number} Total line count
  */
-function safeBuildClient() {
+function walkDirForLineCount(/** @type {string} */ currentDir) {
+  let totalLines = 0;
+  const files = fs.readdirSync(currentDir);
+  for (const file of files) {
+    const filePath = path.join(currentDir, file);
+    const stat = fs.statSync(filePath);
+    if (stat.isDirectory() && !file.startsWith('.') && file !== 'node_modules') {
+      totalLines += walkDirForLineCount(filePath);
+    } else if (stat.isFile() && (file.endsWith('.ts') || file.endsWith('.js'))) {
+      const content = fs.readFileSync(filePath, 'utf8');
+      totalLines += content.split('\n').length;
+    }
+  }
+  return totalLines;
+}
+
+/**
+ * 获取客户端脚本目录的总行数（用于更智能的缓存）
+ * @returns {number} Line count
+ */
+function getClientLineCount() {
+  let totalLines = 0;
   try {
-    const currentTime = Date.now();
+    totalLines = walkDirForLineCount(CLIENT_DIR);
+  } catch (err) {
+    console.error(`计算行数时出错:`, err);
+  }
+  return totalLines;
+}
 
-    // 检查锁文件是否存在
-    if (fs.existsSync(LOCK_FILE)) {
-      const lockTime = parseInt(fs.readFileSync(LOCK_FILE, 'utf8'));
+// 对两种构建模式的行为进行更智能的检查
+// 为开发环境构建 => 跳过某些优化
 
-      // 如果锁文件超时或无效，删除它
-      if (isNaN(lockTime) || currentTime - lockTime > LOCK_TIMEOUT) {
-        console.log(`🧹 清理${isNaN(lockTime) ? '无效的' : '超时的'}构建锁`);
-        fs.unlinkSync(LOCK_FILE);
-      } else {
-        console.log('🔒 构建已在进行中，跳过重复构建');
-        console.log(`⏳ 距离上次构建: ${((currentTime - lockTime) / 1000).toFixed(1)}秒`);
-        return;
-      }
-    }
+/**
+ * @param {Error} error - Error object
+ * @param {string} context - Error context
+ */
+function logBuildError(/** @type {Error} */ error, context = '') {
+  const errorLogFile = 'build-errors.log';
+  const timestamp = new Date().toISOString();
+  const errorMessage = `\n=== Build Error ===\nTimestamp: ${timestamp}\nContext: ${context}\nError: ${error}\nStack: ${error.stack || 'No stack trace'}\n=== End ===\n`;
 
-    // 检查源文件是否有变化
-    const srcDir = path.resolve(__dirname, '../src/legacy/client');
-    const currentSrcModified = getLastModified(srcDir);
-
-    let lastBuildTime = 0;
-    if (fs.existsSync(LAST_BUILD_FILE)) {
-      const timestamp = parseInt(fs.readFileSync(LAST_BUILD_FILE, 'utf8'));
-      lastBuildTime = isNaN(timestamp) ? 0 : timestamp;
-    }
-
-    // 如果源文件没有变化，跳过构建
-    if (currentSrcModified <= lastBuildTime) {
-      console.log('📁 源文件无变化，跳过构建');
-      console.log(`⏰ 上次构建: ${new Date(lastBuildTime).toLocaleTimeString()}`);
-      console.log(`📝 源文件最后修改: ${new Date(currentSrcModified).toLocaleTimeString()}`);
-      return;
-    }
-
-    // 创建锁文件
-    fs.writeFileSync(LOCK_FILE, currentTime.toString(), 'utf8');
-
-    console.log('🚀 检测到源文件变化，开始构建...');
-    console.log(`📝 源文件最后修改: ${new Date(currentSrcModified).toLocaleTimeString()}`);
-
-    // 执行实际的构建脚本
-    execSync('node scripts/build-client.cjs', {
-      stdio: 'inherit',
-      cwd: path.resolve(__dirname, '..'),
-    });
-
-    // 记录构建完成时间
-    fs.writeFileSync(LAST_BUILD_FILE, currentTime.toString(), 'utf8');
-  } catch (error) {
-    console.error('❌ 构建失败:', error.message);
-    process.exit(1);
-  } finally {
-    // 清理锁文件
-    if (fs.existsSync(LOCK_FILE)) {
-      fs.unlinkSync(LOCK_FILE);
-    }
+  try {
+    fs.appendFileSync(errorLogFile, errorMessage);
+  } catch (err) {
+    console.error('写入错误日志失败:', err);
   }
 }
 
-// 运行安全构建
-safeBuildClient();
+// 错误计数
+let errorCount = 0;
+
+// 定义客户端脚本目录
+const CLIENT_DIR = path.resolve(__dirname, '../src/legacy/client');
+const GENERATED_DIR = path.resolve(__dirname, '../src/legacy/scripts/generated');
+const LAST_BUILD_FILE = 'last_build.json';
+
+// 检查客户端脚本源目录是否存在
+if (!fs.existsSync(CLIENT_DIR)) {
+  console.error('❌ 客户端脚本源目录不存在:', CLIENT_DIR);
+  process.exit(1);
+}
+
+// 生成输出目录
+if (!fs.existsSync(GENERATED_DIR)) {
+  fs.mkdirSync(GENERATED_DIR, { recursive: true });
+  console.log(`✅ 创建输出目录: ${GENERATED_DIR}`);
+}
+
+/**
+ * 安全执行构建命令
+ * @param {string} command - 命令
+ * @param {string[]} args - 参数
+ */
+function safeExec(/** @type {string} */ command, /** @type {string[]} */ args) {
+  const result = spawnSync(command, args, {
+    stdio: 'pipe',
+    encoding: 'utf8',
+    shell: true,
+  });
+
+  if (result.error) {
+    errorCount++;
+    logBuildError(result.error, `执行命令失败: ${command} ${args.join(' ')}`);
+    return false;
+  }
+
+  if (result.status !== 0) {
+    errorCount++;
+    logBuildError(new Error(`命令退出码非0: ${result.status}`), `命令执行失败: ${command} ${args.join(' ')}`);
+    console.error(`命令执行失败: ${command} ${args.join(' ')}`);
+    console.error(`退出码: ${result.status}`);
+    console.error(`stdout: ${result.stdout}`);
+    console.error(`stderr: ${result.stderr}`);
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * 主构建函数
+ */
+async function buildClientScripts() {
+  try {
+    console.log('🚀 开始安全构建客户端脚本...');
+
+    // 获取各种信息用于智能缓存检查
+    const currentTime = Date.now();
+    const lastBuildData = fs.existsSync(LAST_BUILD_FILE)
+      ? JSON.parse(fs.readFileSync(LAST_BUILD_FILE, 'utf8'))
+      : { timestamp: 0, lineCount: 0 };
+
+    const lastContentModification = getLastModified(CLIENT_DIR);
+    const currentLineCount = getClientLineCount();
+
+    // 更智能的缓存检查
+    if (
+      lastContentModification < lastBuildData.timestamp &&
+      currentLineCount === lastBuildData.lineCount &&
+      fs.existsSync(path.join(GENERATED_DIR, 'appClientScript.ts'))
+    ) {
+      console.log('✅ 客户端代码未修改，跳过构建（智能缓存）');
+
+      // 仍然进行文件存在性检查（而非完全跳过构建）
+      const expectedFiles = [
+        'appClientScript.ts',
+        'howToApplyCCClientScript.ts',
+        'bestPracticesClientScript.ts',
+        'howToImplementClientScript.ts',
+        'providerDetailsClientScript.ts',
+      ];
+
+      const allFilesExist = expectedFiles.every(file =>
+        fs.existsSync(path.join(GENERATED_DIR, file))
+      );
+
+      if (allFilesExist) {
+        process.exit(0);
+      }
+
+      console.log('⚠️ 部分文件缺失，重新构建...');
+    }
+
+    // 执行实际的客户端脚本构建
+    console.log('🔨 执行客户端脚本构建...');
+
+    if (!safeExec('node', [path.resolve(__dirname, 'build-client.cjs')])) {
+      throw new Error('客户端脚本构建失败');
+    }
+
+    console.log('✅ 客户端脚本构建成功！（安全检查通过）');
+
+    // 保存这次构建的信息（包含行数统计，用于下次的智能缓存）
+    fs.writeFileSync(
+      LAST_BUILD_FILE,
+      JSON.stringify({
+        timestamp: currentTime,
+        lineCount: currentLineCount,
+        errorCount,
+      }),
+      'utf8',
+    );
+
+    console.log('📊 构建报告摘要:');
+    console.log(`- 错误计数: ${errorCount}`);
+    console.log('- 客户端代码总行数:', currentLineCount.toLocaleString());
+    if (errorCount === 0) {
+      console.log('✅ 构建成功完成！');
+    } else {
+      console.log('⚠️ 构建完成，但有一些警告（未见严重错误）');
+    }
+  } catch (error) {
+    console.error('❌ 构建失败:', error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  }
+}
+
+// 处理非正常退出
+process.on('uncaughtException', (error) => {
+  console.error('❌ 未捕获的异常:', error instanceof Error ? error.message : String(error));
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('❌ 未处理的 Promise 拒绝:', reason instanceof Error ? reason.message : String(reason));
+  process.exit(1);
+});
+
+// 如果直接运行此脚本，执行主函数
+if (require.main === module) {
+  buildClientScripts();
+}

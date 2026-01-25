@@ -7,9 +7,10 @@ export const getStartedModule = `
     <!-- Hero Section -->
     <div class="hero">
         <div class="hero-content">
-            <h1>Claude-Code-Router</h1>
+            <h1>AI-Speeds-Me</h1>
             <p class="subtitle">Universal Claude API Proxy for Multiple Providers</p>
             <div class="badges">
+                <a href="javascript:void(0)" class="badge badge-primary" data-provider="nvidia-nim" onclick="scrollToProvider('nvidia-nim')">NVIDIA NIM (默认)</a>
                 <a href="javascript:void(0)" class="badge" data-provider="anthropic" onclick="scrollToProvider('anthropic')">Anthropic</a>
                 <a href="javascript:void(0)" class="badge" data-provider="deepseek" onclick="scrollToProvider('deepseek')">DeepSeek</a>
                 <a href="javascript:void(0)" class="badge" data-provider="openai" onclick="scrollToProvider('openai')">OpenAI</a>

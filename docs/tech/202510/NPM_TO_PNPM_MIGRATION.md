@@ -2,7 +2,7 @@
 
 ## 📋 迁移概览
 
-成功将 Claude-Code-Router 项目从 npm 迁移到 pnpm，提升了依赖管理效率和磁盘空间利用率。
+成功将 AI-Speeds-Me 项目从 npm 迁移到 pnpm，提升了依赖管理效率和磁盘空间利用率。
 
 ## ✅ 完成的工作
 
