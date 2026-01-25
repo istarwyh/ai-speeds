@@ -268,14 +268,6 @@ IMAGE_PROXY_WHITELIST="*"
 IMAGE_PROXY_CACHE_TTL="86400"
 ```
 
-### 模型映射
-
-| Claude 模型       | OpenRouter                  | DeepSeek          | OpenAI      |
-| ----------------- | --------------------------- | ----------------- | ----------- |
-| claude-3.5-haiku  | anthropic/claude-3.5-haiku  | deepseek-chat     | gpt-4o-mini |
-| claude-3.5-sonnet | anthropic/claude-3.5-sonnet | deepseek-chat     | gpt-4o      |
-| claude-3-opus     | anthropic/claude-3-opus     | deepseek-reasoner | gpt-4o      |
-
 ## 部署配置
 
 ### Cloudflare Workers (推荐)

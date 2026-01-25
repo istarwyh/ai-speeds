@@ -29,7 +29,14 @@ interface AnthropicImageContent {
   };
 }
 
-type AnthropicContent = AnthropicTextContent | AnthropicToolUse | AnthropicImageContent;
+interface AnthropicToolResultContent {
+  type: 'tool_result';
+  tool_use_id: string;
+  content: string | Array<{ type: 'text'; text: string }>;
+  is_error?: boolean;
+}
+
+type AnthropicContent = AnthropicTextContent | AnthropicToolUse | AnthropicImageContent | AnthropicToolResultContent;
 
 interface AnthropicMessage {
   role: 'user' | 'assistant';
@@ -105,7 +112,7 @@ function isAnthropicContent(item: unknown): item is AnthropicContent {
     typeof item === 'object' &&
     item !== null &&
     'type' in item &&
-    ['text', 'tool_use', 'image'].includes((item as { type: string }).type)
+    ['text', 'tool_use', 'image', 'tool_result'].includes((item as { type: string }).type)
   );
 }
 
@@ -119,6 +126,16 @@ function isImageContent(item: unknown): item is AnthropicImageContent {
 
 function isToolContent(item: unknown): item is AnthropicToolUse {
   return isAnthropicContent(item) && item.type === 'tool_use';
+}
+
+function isToolResultContent(item: unknown): item is AnthropicToolResultContent {
+  return (
+    typeof item === 'object' &&
+    item !== null &&
+    'type' in item &&
+    (item as { type: string }).type === 'tool_result' &&
+    'tool_use_id' in item
+  );
 }
 
 // === MAIN EXPORT FUNCTIONS ===
@@ -258,6 +275,7 @@ export function formatAnthropicToOpenAI(
       } else if (Array.isArray(message.content)) {
         let textContent = '';
         const toolCalls: OpenAIToolCall[] = [];
+        const toolResults: Array<{ tool_call_id: string; content: string }> = [];
 
         message.content.forEach(item => {
           if (isTextContent(item)) {
@@ -273,18 +291,60 @@ export function formatAnthropicToOpenAI(
                 arguments: JSON.stringify(item.input),
               },
             });
+          } else if (isToolResultContent(item)) {
+            // Extract content from tool_result
+            let resultContent = '';
+            if (typeof item.content === 'string') {
+              resultContent = item.content;
+            } else if (Array.isArray(item.content)) {
+              resultContent = item.content
+                .filter((c): c is { type: 'text'; text: string } => c.type === 'text')
+                .map(c => c.text)
+                .join('\n');
+            }
+            toolResults.push({
+              tool_call_id: item.tool_use_id,
+              content: resultContent,
+            });
           }
         });
 
+        // Trim trailing newline from textContent
+        textContent = textContent.trim();
+
         const role = message.role as 'user' | 'assistant';
-        const openAiMessage: OpenAIMessage = {
-          role,
-          content: textContent || null,
-        };
-        if (toolCalls.length > 0) {
-          openAiMessage.tool_calls = toolCalls;
+
+        // Handle tool results - convert to OpenAI tool messages
+        if (toolResults.length > 0) {
+          for (const result of toolResults) {
+            messages.push({
+              role: 'tool',
+              content: result.content,
+              tool_call_id: result.tool_call_id,
+            });
+          }
+          // If there's also text content in this message, add it as a separate user message
+          if (textContent) {
+            messages.push({
+              role: role,
+              content: textContent,
+            });
+          }
+        } else {
+          // No tool results - normal message handling
+          const openAiMessage: OpenAIMessage = {
+            role,
+            // Ensure content is never null for user messages
+            content: textContent || (role === 'user' ? '' : null),
+          };
+          if (toolCalls.length > 0) {
+            openAiMessage.tool_calls = toolCalls;
+          }
+          // Only push the message if it has content or tool_calls
+          if (openAiMessage.content || toolCalls.length > 0) {
+            messages.push(openAiMessage);
+          }
         }
-        messages.push(openAiMessage);
       }
     }
   }
