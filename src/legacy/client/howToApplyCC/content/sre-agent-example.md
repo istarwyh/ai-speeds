@@ -282,7 +282,7 @@ const dashboardIntegration = {
 ```
 
 SRE
-Agent 应该遵循"观察-分析-行动"的标准运维流程，避免盲目操作。结合现有的监控和告警系统，让 Agent 成为运维工具链的智能中枢。通过自动化和智能化，显著提升系统可靠性和运维效率。"}```<invoke name=Write><parameter name=file_path>/Users/mac/Desktop/code-open/ai-speeds/src/client/howToApplyCC/content/sre-agent-example.md</parameter><parameter name=content>#
+Agent 应该遵循"观察-分析-行动"的标准运维流程，避免盲目操作。结合现有的监控和告警系统，让 Agent 成为运维工具链的智能中枢。通过自动化和智能化，显著提升系统可靠性和运维效率。"}```<invoke name=Write><parameter name=file_path>~/your-project-path/ai-speeds/src/client/howToApplyCC/content/sre-agent-example.md</parameter><parameter name=content>#
 SRE智能运维Agent
 
 构建专业的SRE事件响应Agent，集成监控工具，实现自动化故障诊断和处理。

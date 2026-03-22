@@ -134,7 +134,8 @@ function isToolResultContent(item: unknown): item is AnthropicToolResultContent 
     item !== null &&
     'type' in item &&
     (item as { type: string }).type === 'tool_result' &&
-    'tool_use_id' in item
+    'tool_use_id' in item &&
+    'content' in item
   );
 }
 
