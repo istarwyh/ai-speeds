@@ -8,19 +8,19 @@ export const PROVIDER_CONFIGS = {
     defaultBaseUrl: 'https://integrate.api.nvidia.com/v1',
     modelMappings: {
       // Claude 4.5 系列模型映射
-      'claude-haiku-4-5-20251001': 'minimaxai/minimax-m2.1',
-      'claude-sonnet-4-5-20250929': 'minimaxai/minimax-m2.1',
-      'claude-opus-4-5-20251101': 'minimaxai/minimax-m2.1',
+      'claude-haiku-4-5-20251001': 'moonshotai/kimi-k2.5',
+      'claude-sonnet-4-5-20250929': 'moonshotai/kimi-k2.5',
+      'claude-opus-4-5-20251101': 'moonshotai/kimi-k2.5',
       // 旧版本模型兼容
-      'claude-3-5-haiku-20241022': 'minimaxai/minimax-m2.1',
-      'claude-3-5-sonnet-20241022': 'minimaxai/minimax-m2.1',
-      'claude-3-opus-20240229': 'minimaxai/minimax-m2.1',
+      'claude-3-5-haiku-20241022': 'moonshotai/kimi-k2.5',
+      'claude-3-5-sonnet-20241022': 'moonshotai/kimi-k2.5',
+      'claude-3-opus-20240229': 'moonshotai/kimi-k2.5',
       // 别名映射
-      haiku: 'minimaxai/minimax-m2.1',
-      sonnet: 'minimaxai/minimax-m2.1',
-      opus: 'minimaxai/minimax-m2.1',
+      haiku: 'moonshotai/kimi-k2.5',
+      sonnet: 'moonshotai/kimi-k2.5',
+      opus: 'moonshotai/kimi-k2.5',
     } as ModelMapping,
-    commonModels: ['minimaxai/minimax-m2.1'],
+    commonModels: ['moonshotai/kimi-k2.5'],
   },
   openrouter: {
     defaultBaseUrl: 'https://openrouter.ai/api/v1',

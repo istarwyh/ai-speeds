@@ -245,6 +245,7 @@ export function formatAnthropicToOpenAI(
     };
   }>;
   stream?: boolean;
+  chat_template_kwargs?: { thinking?: boolean };
 } {
   const model = mapModel(body.model, provider, providerConfigs);
   const messages: OpenAIMessage[] = [];
@@ -379,9 +380,11 @@ export function formatAnthropicToOpenAI(
       };
     }>;
     tool_choice?: ToolChoice;
+    chat_template_kwargs?: { thinking?: boolean };
   } = {
     model,
     messages: tools ? validateOpenAIToolCalls(messages) : messages,
+    chat_template_kwargs: { thinking: false },
   };
 
   if (body.temperature !== null && body.temperature !== undefined) {
