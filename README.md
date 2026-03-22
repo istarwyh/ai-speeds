@@ -185,14 +185,6 @@ curl -X POST https://aispeeds/v1/messages \
   }'
 ```
 
-### Model Mapping
-
-| Claude Model                 | OpenRouter                    | DeepSeek            | OpenAI        |
-| ---------------------------- | ----------------------------- | ------------------- | ------------- |
-| `claude-3-5-haiku-20241022`  | `anthropic/claude-3.5-haiku`  | `deepseek-chat`     | `gpt-4o-mini` |
-| `claude-3-5-sonnet-20241022` | `anthropic/claude-3.5-sonnet` | `deepseek-chat`     | `gpt-4o`      |
-| `claude-3-opus-20240229`     | `anthropic/claude-3-opus`     | `deepseek-reasoner` | `gpt-4o`      |
-
 ## 📁 Architecture & Structure
 
 ### Worker Runtime Architecture
