@@ -128,6 +128,5 @@ export const navigationIconMap: Record<string, keyof typeof heroicons> = {
   'best-practices': 'bolt',
   'how-to-implement': 'wrench',
   'how-to-apply-cc': 'target',
-  'ai-trends': 'chartBar',
   'whiteboard': 'pencil',
 };

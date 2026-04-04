@@ -8,7 +8,6 @@ export const UI_TEXTS = {
     BEST_PRACTICES: '如何用好 AI',
     HOW_TO_IMPLEMENT: '如何实现 Agent',
     HOW_TO_APPLY_CC: '使用 Agent SDK',
-    AI_TRENDS: 'AI 趋势',
     WHITEBOARD: '白板',
   },
 

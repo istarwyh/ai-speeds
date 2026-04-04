@@ -48,10 +48,6 @@ export const navigationComponent = `
         <span class="nav-icon" aria-hidden="true">${getIcon('how-to-apply-cc')}</span>
         <span class="nav-text">${UI_TEXTS.NAVIGATION.HOW_TO_APPLY_CC}</span>
       </button>
-      <a href="/trends/20251007" class="nav-item nav-tab" data-section="ai-trends" aria-selected="false" role="tab" aria-label="${UI_TEXTS.NAVIGATION.AI_TRENDS}: Latest trends and insights in AI technology" data-tooltip="${UI_TEXTS.NAVIGATION.AI_TRENDS}: Latest AI trends">
-        <span class="nav-icon" aria-hidden="true">${getIcon('ai-trends')}</span>
-        <span class="nav-text">${UI_TEXTS.NAVIGATION.AI_TRENDS}</span>
-      </a>
       <a href="/whiteboard" class="nav-item nav-tab" data-section="whiteboard" aria-selected="false" role="tab" aria-label="${UI_TEXTS.NAVIGATION.WHITEBOARD}: 自由绘制和书写的白板工具" data-tooltip="${UI_TEXTS.NAVIGATION.WHITEBOARD}: 自由绘制">
         <span class="nav-icon" aria-hidden="true">${getIcon('whiteboard')}</span>
         <span class="nav-text">${UI_TEXTS.NAVIGATION.WHITEBOARD}</span>
@@ -96,10 +92,6 @@ export const navigationComponent = `
           <span class="nav-icon" aria-hidden="true">${getIcon('how-to-apply-cc')}</span>
           <span class="nav-text">${UI_TEXTS.NAVIGATION.HOW_TO_APPLY_CC}</span>
         </button>
-        <a href="/trends/20251007" class="nav-item" aria-label="${UI_TEXTS.NAVIGATION.AI_TRENDS}: Latest AI trends">
-          <span class="nav-icon" aria-hidden="true">${getIcon('ai-trends')}</span>
-          <span class="nav-text">${UI_TEXTS.NAVIGATION.AI_TRENDS}</span>
-        </a>
         <a href="/whiteboard" class="nav-item" aria-label="${UI_TEXTS.NAVIGATION.WHITEBOARD}: 自由绘制">
           <span class="nav-icon" aria-hidden="true">${getIcon('whiteboard')}</span>
           <span class="nav-text">${UI_TEXTS.NAVIGATION.WHITEBOARD}</span>
