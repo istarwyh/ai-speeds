@@ -335,7 +335,7 @@ export default function StyleGuidePage() {
                   </span>
                 </li>
                 <li className='flex items-start gap-2'>
-                  <span className='text-accent'>�️</span>
+                  <span className='text-accent'>🛤️</span>
                   <span>
                     <strong className='text-text-primary'>Letter S - Climbing Path:</strong> The winding S-shaped curves
                     inside the triangle represent the climbing route, forming the letter "S" for Speeds
