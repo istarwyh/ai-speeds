@@ -9,6 +9,7 @@ export const UI_TEXTS = {
     HOW_TO_IMPLEMENT: '如何实现 Agent',
     HOW_TO_APPLY_CC: '使用 Agent SDK',
     AI_TRENDS: 'AI 趋势',
+    WHITEBOARD: '白板',
   },
 
   // 模块标题和描述

@@ -64,6 +64,20 @@ function initNavigation() {
       tryShowBestPractices(10);
     }
 
+    // Special handling for how-to-implement section
+    if (sectionId === 'how-to-implement') {
+      // Ensure we show the overview when navigating to how-to-implement
+      // Use retry mechanism to handle async module initialization
+      function tryShowHowToImplement(retries) {
+        if (window.initializeHowToImplement) {
+          window.initializeHowToImplement();
+        } else if (retries > 0) {
+          setTimeout(() => tryShowHowToImplement(retries - 1), 100);
+        }
+      }
+      tryShowHowToImplement(10);
+    }
+
     // Special handling for how-to-apply-cc section
     if (sectionId === 'how-to-apply-cc') {
       // Ensure we show the overview when navigating to how-to-apply-cc

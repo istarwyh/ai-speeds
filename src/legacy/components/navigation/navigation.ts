@@ -18,15 +18,14 @@ export const navigationComponent = `
   <div class="nav-container">
 <div class="nav-brand" aria-label="AI Speeds">
       <span class="brand-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="AI Speeds - Human Spiral Growth">
-          <path d="M 16 29 C 11 29, 8.5 26.5, 8.5 23 C 8.5 19.5, 11 17, 14.5 17 C 18 17, 20.5 19.5, 20.5 22.5 C 20.5 24.5, 19.2 25.8, 17.3 25.8 C 15.8 25.8, 15 24.8, 15 23.5 C 15 22.5, 15.5 22, 16 22 L 16 13 C 16 9.5, 17.5 7, 19.5 5.5 C 20.5 4.8, 21.2 4, 22 3" stroke="#4ECDC4" stroke-width="2.8" stroke-linecap="round" fill="none"/>
-          <path d="M 18 7 C 20 5.5, 21 4, 22 3 C 23 4, 24 5.5, 26 7" stroke="#2563eb" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          <circle cx="22" cy="3" r="2.5" fill="#7EDDD6"/>
-          <circle cx="22" cy="3" r="1.2" fill="white" opacity="0.6"/>
-          <circle cx="16" cy="29" r="2.3" fill="#2563eb" opacity="0.5"/>
-          <circle cx="14.5" cy="17" r="1.8" fill="#2563eb" opacity="0.6"/>
-          <circle cx="16" cy="13" r="1.3" fill="#2563eb" opacity="0.7"/>
-          <circle cx="19.5" cy="5.5" r="0.9" fill="#7EDDD6" opacity="0.8"/>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="AI Speeds - Mountain Climbing Path">
+          <!-- Letter A - Mountain Triangle (no horizontal bar) -->
+          <path d="M 16 4 L 6 28 M 16 4 L 26 28" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <!-- Letter S - One continuous winding climbing path -->
+          <path d="M 7 27 C 9 25, 11 22, 14 19 C 17 16, 22 16, 23 19 C 24 22, 19 23, 16 20 C 13 17, 12 12, 16 8" stroke="#4ECDC4" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <!-- Peak achievement -->
+          <circle cx="16" cy="4" r="2" fill="#7EDDD6"/>
+          <circle cx="16" cy="4" r="0.8" fill="white" opacity="0.7"/>
         </svg>
       </span>
       <span class="brand-text">AI Speeds</span>
@@ -52,6 +51,10 @@ export const navigationComponent = `
       <a href="/trends/20251007" class="nav-item nav-tab" data-section="ai-trends" aria-selected="false" role="tab" aria-label="${UI_TEXTS.NAVIGATION.AI_TRENDS}: Latest trends and insights in AI technology" data-tooltip="${UI_TEXTS.NAVIGATION.AI_TRENDS}: Latest AI trends">
         <span class="nav-icon" aria-hidden="true">${getIcon('ai-trends')}</span>
         <span class="nav-text">${UI_TEXTS.NAVIGATION.AI_TRENDS}</span>
+      </a>
+      <a href="/whiteboard" class="nav-item nav-tab" data-section="whiteboard" aria-selected="false" role="tab" aria-label="${UI_TEXTS.NAVIGATION.WHITEBOARD}: 自由绘制和书写的白板工具" data-tooltip="${UI_TEXTS.NAVIGATION.WHITEBOARD}: 自由绘制">
+        <span class="nav-icon" aria-hidden="true">${getIcon('whiteboard')}</span>
+        <span class="nav-text">${UI_TEXTS.NAVIGATION.WHITEBOARD}</span>
       </a>
     </div>
 
@@ -96,6 +99,10 @@ export const navigationComponent = `
         <a href="/trends/20251007" class="nav-item" aria-label="${UI_TEXTS.NAVIGATION.AI_TRENDS}: Latest AI trends">
           <span class="nav-icon" aria-hidden="true">${getIcon('ai-trends')}</span>
           <span class="nav-text">${UI_TEXTS.NAVIGATION.AI_TRENDS}</span>
+        </a>
+        <a href="/whiteboard" class="nav-item" aria-label="${UI_TEXTS.NAVIGATION.WHITEBOARD}: 自由绘制">
+          <span class="nav-icon" aria-hidden="true">${getIcon('whiteboard')}</span>
+          <span class="nav-text">${UI_TEXTS.NAVIGATION.WHITEBOARD}</span>
         </a>
       </div>
     </div>
