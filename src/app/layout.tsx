@@ -38,7 +38,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </Script>
             <Script
               id='wuunu-widget'
-              src='https://cdn.jsdelivr.net/npm/@wuunu/widget@0.1.21'
+              src='https://cdn.jsdelivr.net/npm/@wuunu/widget@0.1.22'
               strategy='afterInteractive'
               crossOrigin='anonymous'
             />
