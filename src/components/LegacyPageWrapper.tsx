@@ -86,6 +86,12 @@ export function LegacyPageWrapper() {
 
       {/* 主内容区 - 复用所有功能模块 */}
       <div className='content-wrapper'>
+        {/* Home section - CC4PM iframe */}
+        <div id='home' className='content-section'>
+          <div className='home-iframe-container'>
+            <iframe src='https://istarwyh.github.io/cc4pm/' title='CC4PM' allowFullScreen loading='lazy' />
+          </div>
+        </div>
         <div dangerouslySetInnerHTML={{ __html: getStartedModule }} />
         <div dangerouslySetInnerHTML={{ __html: bestPracticesModule }} />
         <div dangerouslySetInnerHTML={{ __html: implementationModule }} />

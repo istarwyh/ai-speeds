@@ -4,7 +4,8 @@
 export const UI_TEXTS = {
   // 导航标签文字
   NAVIGATION: {
-    GET_STARTED: 'Claude Code Proxy',
+    HOME: '献给产品主理人',
+    GET_STARTED: '如何用上CC',
     BEST_PRACTICES: '如何用好 AI',
     HOW_TO_IMPLEMENT: '如何实现 Agent',
     HOW_TO_APPLY_CC: '使用 Agent SDK',
@@ -13,7 +14,7 @@ export const UI_TEXTS = {
 
   // 模块标题和描述
   MODULE_TITLES: {
-    'get-started': 'Claude Code Proxy',
+    'get-started': '如何用上CC',
     'best-practices': '如何用好 AI',
     'how-to-implement': '如何实现 Agent',
     'how-to-apply-cc': '使用 Agent SDK',

@@ -124,6 +124,7 @@ export const categoryIconMap: Record<string, keyof typeof heroicons> = {
 
 // 导航图标映射
 export const navigationIconMap: Record<string, keyof typeof heroicons> = {
+  'home': 'bookOpen',
   'get-started': 'rocket',
   'best-practices': 'bolt',
   'how-to-implement': 'wrench',

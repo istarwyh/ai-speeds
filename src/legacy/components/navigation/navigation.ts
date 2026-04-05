@@ -32,6 +32,10 @@ export const navigationComponent = `
     </div>
 
     <div class="nav-tabs" role="tablist" aria-orientation="vertical">
+      <button class="nav-item ${cls('home')}" data-section="home" data-active="${DEFAULT_SECTION_ID === 'home'}" aria-selected="${DEFAULT_SECTION_ID === 'home'}" role="tab" aria-label="${UI_TEXTS.NAVIGATION.HOME}: CC4PM 首页" data-tooltip="${UI_TEXTS.NAVIGATION.HOME}">
+        <span class="nav-icon" aria-hidden="true">${getIcon('home')}</span>
+        <span class="nav-text">${UI_TEXTS.NAVIGATION.HOME}</span>
+      </button>
       <button class="nav-item ${cls('get-started')}" data-section="get-started" data-active="${DEFAULT_SECTION_ID === 'get-started'}" aria-selected="${DEFAULT_SECTION_ID === 'get-started'}" role="tab" aria-label="${UI_TEXTS.NAVIGATION.GET_STARTED}: Quick start guides and initial setup instructions for new users" data-tooltip="${UI_TEXTS.NAVIGATION.GET_STARTED}: Get up and running quickly!">
         <span class="nav-icon" aria-hidden="true">${getIcon('get-started')}</span>
         <span class="nav-text">${UI_TEXTS.NAVIGATION.GET_STARTED}</span>
@@ -64,6 +68,12 @@ export const navigationComponent = `
         <span class="nav-menu-icon">${heroicons.adjustments}</span>
       </button>
     </div>
+
+    <button class="nav-collapse-toggle" aria-label="Toggle sidebar" title="Toggle sidebar">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+      </svg>
+    </button>
   </div>
 
   <!-- Mobile navigation overlay -->
@@ -76,6 +86,10 @@ export const navigationComponent = `
         </button>
       </div>
       <div class="nav-overlay-tabs">
+        <button class="nav-item ${cls('home')}" data-section="home" aria-selected="${DEFAULT_SECTION_ID === 'home'}" role="tab" data-tooltip="${UI_TEXTS.NAVIGATION.HOME}">
+          <span class="nav-icon" aria-hidden="true">${getIcon('home')}</span>
+          <span class="nav-text">${UI_TEXTS.NAVIGATION.HOME}</span>
+        </button>
         <button class="nav-item ${cls('get-started')}" data-section="get-started" aria-selected="${DEFAULT_SECTION_ID === 'get-started'}" role="tab" data-tooltip="${UI_TEXTS.NAVIGATION.GET_STARTED}: Get up and running quickly!">
           <span class="nav-icon" aria-hidden="true">${getIcon('get-started')}</span>
           <span class="nav-text">${UI_TEXTS.NAVIGATION.GET_STARTED}</span>
@@ -133,7 +147,7 @@ export const navigationComponent = `
   .brand-icon {
     width: 2rem;
     height: 2rem;
-    color: #6366f1;
+    color: #E57A5A;
   }
 
   .brand-icon svg {
@@ -181,20 +195,20 @@ export const navigationComponent = `
   }
 
   .nav-item:hover {
-    color: #6366f1;
-    background: rgba(99, 102, 241, 0.1);
+    color: #E57A5A;
+    background: rgba(229, 122, 90, 0.1);
     transform: translateY(-1px);
   }
 
   .nav-item:focus-visible {
-    outline: 2px solid #6366f1;
+    outline: 2px solid #E57A5A;
     outline-offset: 2px;
   }
 
   .nav-item[data-active="true"] {
-    color: #6366f1;
-    background: rgba(99, 102, 241, 0.12);
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+    color: #E57A5A;
+    background: rgba(229, 122, 90, 0.12);
+    box-shadow: 0 2px 8px rgba(229, 122, 90, 0.25);
   }
 
   .nav-item[data-active="true"]::after {
@@ -204,7 +218,7 @@ export const navigationComponent = `
     left: 0;
     right: 0;
     height: 2px;
-    background: #6366f1;
+    background: #E57A5A;
     border-radius: 1px;
   }
 
@@ -330,19 +344,25 @@ export const navigationComponent = `
 
   .skip-navigation {
     position: absolute;
-    top: -40px;
+    top: -100px;
     left: 6px;
-    background: #6366f1;
+    background: #E57A5A;
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 0.375rem;
     text-decoration: none;
     font-weight: 500;
     transition: top 0.3s ease;
+    clip: rect(0, 0, 0, 0);
+    overflow: hidden;
+    white-space: nowrap;
+    z-index: 9999;
   }
 
   .skip-navigation:focus {
     top: 6px;
+    clip: auto;
+    overflow: visible;
   }
 
   /* Interactive enhancements */
@@ -424,7 +444,7 @@ export const navigationComponent = `
       left: 0;
       right: 0;
       height: 3px;
-      background: #6366f1;
+      background: #E57A5A;
       border-radius: 2px;
     }
 

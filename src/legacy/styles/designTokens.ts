@@ -1,9 +1,9 @@
 export const designTokens = `
 :root {
     /* Design Tokens - Colors */
-    --color-primary: #2563eb;
-    --color-primary-dark: #1d4ed8;
-    --color-primary-light: #3b82f6;
+    --color-primary: #E57A5A;
+    --color-primary-dark: #D4614A;
+    --color-primary-light: #F08B6D;
     --color-secondary: #7c3aed;
     --color-accent: #06b6d4;
     --color-success: #10b981;
@@ -47,8 +47,8 @@ export const designTokens = `
     --color-practices-border-color: #e2e8f0;
     --color-practices-border-hover: #cbd5e1;
     --color-practices-accent: #06b6d4;
-    --color-practices-primary: #2563eb;
-    --color-practices-secondary: #6366f1;
+    --color-practices-primary: #E57A5A;
+    --color-practices-secondary: #F08B6D;
     
     /* 简化的CSS变量别名，用于最佳实践卡片 */
     --bp-bg-primary: var(--color-practices-bg-primary);
