@@ -33,26 +33,26 @@ const ASSET_FILES = [
 const CODE_SNIPPETS = {
   imgTag: `<!-- 直接引用 SVG 文件 -->
 <img
-  src="https://your-domain.com/brand/ai-speeds-logo.svg"
+  src="https://aispeeds.me/brand/ai-speeds-logo.svg"
   alt="AI Speeds"
   width="200"
 />
 
 <!-- 横向 Logo -->
 <img
-  src="https://your-domain.com/brand/ai-speeds-logo-horizontal.svg"
+  src="https://aispeeds.me/brand/ai-speeds-logo-horizontal.svg"
   alt="AI Speeds"
   width="240"
 />
 
 <!-- 小图标 -->
 <img
-  src="https://your-domain.com/brand/ai-speeds-icon.svg"
+  src="https://aispeeds.me/brand/ai-speeds-icon.svg"
   alt="AI Speeds"
   width="32"
 />`,
   brandKit: `<!-- 1. 引入 Brand Kit -->
-<script src="https://your-domain.com/brand/brand-kit.js"></script>
+<script src="https://aispeeds.me/brand/brand-kit.js"></script>
 
 <!-- 2. 放置容器 -->
 <div id="ai-speeds-logo"></div>
@@ -63,7 +63,7 @@ const CODE_SNIPPETS = {
   AISpeedsBrand.insertLogo('#ai-speeds-logo', 'square', {
     size: 120,
     link: true,
-    linkUrl: 'https://aispeeds.com'
+    linkUrl: 'https://aispeeds.me'
   });
 
   // 横向 Logo
@@ -84,7 +84,7 @@ const CODE_SNIPPETS = {
   });
 </script>`,
   inlineSvg: `<!-- 获取 SVG 代码后内联使用 -->
-<script src="https://your-domain.com/brand/brand-kit.js"></script>
+<script src="https://aispeeds.me/brand/brand-kit.js"></script>
 <script>
   const svg = AISpeedsBrand.getLogo('square', { size: 100 });
   document.getElementById('logo').innerHTML = svg;

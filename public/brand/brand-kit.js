@@ -94,7 +94,7 @@
         height: 60,
         className: '',
         link: true,
-        linkUrl: 'https://aispeeds.com',
+        linkUrl: 'https://aispeeds.me',
       };
 
       const config = Object.assign(defaults, options);

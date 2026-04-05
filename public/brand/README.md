@@ -22,21 +22,21 @@
 ```html
 <!-- 方形logo -->
 <img
-  src="https://yoursite.com/brand/ai-speeds-logo.svg"
+  src="https://aispeeds.me/brand/ai-speeds-logo.svg"
   alt="AI Speeds"
   width="200"
 />
 
 <!-- 横向logo -->
 <img
-  src="https://yoursite.com/brand/ai-speeds-logo-horizontal.svg"
+  src="https://aispeeds.me/brand/ai-speeds-logo-horizontal.svg"
   alt="AI Speeds"
   width="240"
 />
 
 <!-- 小图标 -->
 <img
-  src="https://yoursite.com/brand/ai-speeds-icon.svg"
+  src="https://aispeeds.me/brand/ai-speeds-icon.svg"
   alt="AI Speeds"
   width="32"
 />
@@ -46,7 +46,7 @@
 
 ```html
 <!-- 1. 引入brand-kit.js -->
-<script src="https://yoursite.com/brand/brand-kit.js"></script>
+<script src="https://aispeeds.me/brand/brand-kit.js"></script>
 
 <!-- 2. 在HTML中插入logo -->
 <div id="logo-container"></div>
@@ -56,7 +56,7 @@
   AISpeedsBrand.insertLogo('#logo-container', 'square', {
     size: 200,
     link: true,
-    linkUrl: 'https://aispeeds.com',
+    linkUrl: 'https://aispeeds.me',
   });
 
   // 其他样式
@@ -71,7 +71,7 @@
 
 ```html
 <!-- 获取SVG代码 -->
-<script src="https://yoursite.com/brand/brand-kit.js"></script>
+<script src="https://aispeeds.me/brand/brand-kit.js"></script>
 
 <div id="my-logo"></div>
 
@@ -103,7 +103,7 @@
   height: 60,       // 横向logo高度
   className: '',    // 自定义CSS类
   link: true,       // 是否包装为链接
-  linkUrl: 'https://aispeeds.com'  // 链接地址
+  linkUrl: 'https://aispeeds.me'  // 链接地址
 }
 ```
 
@@ -112,7 +112,7 @@
 ### 基础使用
 
 ```html
-<script src="https://yoursite.com/brand/brand-kit.js"></script>
+<script src="https://aispeeds.me/brand/brand-kit.js"></script>
 <div id="brand-logo"></div>
 
 <script>
@@ -123,7 +123,7 @@
 ### 多种样式
 
 ```html
-<script src="https://yoursite.com/brand/brand-kit.js"></script>
+<script src="https://aispeeds.me/brand/brand-kit.js"></script>
 
 <div id="square-logo"></div>
 <div id="horizontal-logo"></div>
@@ -142,7 +142,7 @@
 ### 自定义样式
 
 ```html
-<script src="https://yoursite.com/brand/brand-kit.js"></script>
+<script src="https://aispeeds.me/brand/brand-kit.js"></script>
 
 <div id="custom-logo"></div>
 
@@ -209,8 +209,8 @@ AI Speeds 品牌标识遵循 MIT 许可证，可自由使用但请：
 
 1. 不要修改logo设计
 2. 保持品牌识别性
-3. 链接回 https://aispeeds.com (如可能)
+3. 链接回 https://aispeeds.me (如可能)
 
 ## 🆘 问题反馈
 
-如有问题或建议，请联系：[your-contact@aispeeds.com]
+如有问题或建议，请联系：[your-contact@aispeeds.me]
