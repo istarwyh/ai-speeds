@@ -1,0 +1,49 @@
+<svg width="240" height="60" viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- AI Speeds Horizontal Logo -->
+  <defs>
+    <linearGradient id="aiSpeedsGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#4ECDC4" />
+      <stop offset="50%" stopColor="#3b82f6" />
+      <stop offset="100%" stopColor="#2563eb" />
+    </linearGradient>
+  </defs>
+  
+  <!-- A+S Mountain Climbing Icon -->
+  <g transform="translate(2, 4)">
+    <!-- Letter A - Mountain Triangle (no horizontal bar) -->
+    <path
+      d="M 16 4 L 6 28 M 16 4 L 26 28"
+      stroke="url(#aiSpeedsGradient)"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    />
+
+    <!-- Letter S - One continuous winding climbing path -->
+    <path
+      d="M 7 27 C 9 25, 11 22, 14 19 C 17 16, 22 16, 23 19 C 24 22, 19 23, 16 20 C 13 17, 12 12, 16 8"
+      stroke="url(#aiSpeedsGradient)"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      fill="none"
+    />
+
+    <!-- Peak achievement -->
+    <circle cx="16" cy="4" r="2" fill="#7EDDD6" />
+    <circle cx="16" cy="4" r="0.8" fill="white" opacity="0.7" />
+  </g>
+
+  <!-- Text: AI Speeds -->
+  <text
+    x="48"
+    y="26"
+    fontFamily="system-ui, -apple-system, sans-serif"
+    fontSize="18"
+    fontWeight="600"
+    fontStyle="italic"
+    fill="#0f172a"
+  >
+    AI Speeds
+  </text>
+</svg>

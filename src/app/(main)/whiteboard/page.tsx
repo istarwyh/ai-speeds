@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { BrandIcon } from '@/components/BrandIcon';
+import { BrandIcon } from '@/components/brand';
 import { WhiteboardLoader } from '@/components/features/whiteboard/WhiteboardLoader';
 import { UI_TEXTS } from '@/config/ui-texts';
 

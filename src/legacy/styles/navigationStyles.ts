@@ -179,7 +179,13 @@ body.sidebar-collapsed .content-wrapper {
 
 /* Fullscreen mode for home section */
 .content-wrapper.home-active {
-  padding: 0;
+  padding: 0 !important;
+  margin-left: 0 !important;
+}
+
+.content-wrapper.home-active #home.content-section {
+  padding: 0 !important;
+  min-height: 100vh;
 }
 
 body.sidebar-collapsed .content-wrapper.home-active .home-iframe-container {

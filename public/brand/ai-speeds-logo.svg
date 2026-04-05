@@ -1,0 +1,43 @@
+<svg width="200" height="200" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- AI Speeds Brand Logo - A+S Mountain Climbing Design -->
+  <defs>
+    <!-- Gradient for modern look -->
+    <linearGradient id="aiSpeedsGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#4ECDC4" />
+      <stop offset="50%" stopColor="#3b82f6" />
+      <stop offset="100%" stopColor="#2563eb" />
+    </linearGradient>
+    
+    <!-- Shadow filter -->
+    <filter id="brandShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <!-- Background circle (optional) -->
+  <circle cx="16" cy="16" r="15" fill="white" stroke="#f1f5f9" stroke-width="1"/>
+  
+  <!-- Letter A - Mountain Triangle (no horizontal bar) -->
+  <path
+    d="M 16 4 L 6 28 M 16 4 L 26 28"
+    stroke="url(#aiSpeedsGradient)"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    fill="none"
+    filter="url(#brandShadow)"
+  />
+
+  <!-- Letter S - One continuous winding climbing path -->
+  <path
+    d="M 7 27 C 9 25, 11 22, 14 19 C 17 16, 22 16, 23 19 C 24 22, 19 23, 16 20 C 13 17, 12 12, 16 8"
+    stroke="url(#aiSpeedsGradient)"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    fill="none"
+  />
+
+  <!-- Peak achievement point -->
+  <circle cx="16" cy="4" r="2" fill="#7EDDD6" />
+  <circle cx="16" cy="4" r="0.8" fill="white" opacity="0.7" />
+</svg>

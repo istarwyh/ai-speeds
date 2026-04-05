@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { BrandIcon, BrandIconSimple, BrandWordmark } from '@/components/BrandIcon';
+import { BrandIcon, BrandIconSimple, BrandWordmark } from '@/components/brand';
 
 export default function StyleGuidePage() {
   const [copiedToken, setCopiedToken] = useState<string | null>(null);

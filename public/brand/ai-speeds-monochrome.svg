@@ -1,0 +1,26 @@
+<svg width="200" height="200" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- AI Speeds Monochrome Logo -->
+  
+  <!-- Letter A - Mountain Triangle (no horizontal bar) -->
+  <path
+    d="M 16 4 L 6 28 M 16 4 L 26 28"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    fill="none"
+  />
+
+  <!-- Letter S - One continuous winding climbing path -->
+  <path
+    d="M 7 27 C 9 25, 11 22, 14 19 C 17 16, 22 16, 23 19 C 24 22, 19 23, 16 20 C 13 17, 12 12, 16 8"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    fill="none"
+  />
+
+  <!-- Peak achievement point -->
+  <circle cx="16" cy="4" r="2" fill="currentColor" />
+  <circle cx="16" cy="4" r="0.8" fill="white" opacity="0.7" />
+</svg>

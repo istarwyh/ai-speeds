@@ -54,9 +54,10 @@ function initNavigation() {
     }
   }
 
-  // Collapse toggle button
+  // Collapse toggle button (guard against double-bind from repeated initNavigation calls)
   const collapseToggle = document.querySelector('.nav-collapse-toggle');
-  if (collapseToggle) {
+  if (collapseToggle && !collapseToggle.dataset.listenerBound) {
+    collapseToggle.dataset.listenerBound = 'true';
     collapseToggle.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
