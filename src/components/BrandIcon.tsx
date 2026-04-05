@@ -37,7 +37,7 @@ export function BrandIcon({ size = 32, className = '', variant = 'default', desi
   // Avoid dynamic object indexing to satisfy security/detect-object-injection
   const c = variant === 'default' ? colors.default : variant === 'monochrome' ? colors.monochrome : colors.gradient;
 
-  // Spiral Ascent Design - Optimized for Human Growth Metaphor
+  // A+S Mountain Climbing Path Design - AI Speeds Brand
   if (design === 'spiral') {
     return (
       <svg
@@ -47,7 +47,7 @@ export function BrandIcon({ size = 32, className = '', variant = 'default', desi
         fill='none'
         xmlns='http://www.w3.org/2000/svg'
         className={className}
-        aria-label='AI Speeds - Human Spiral Growth'
+        aria-label='AI Speeds - Mountain Climbing Path'
       >
         {variant === 'gradient' && (
           <defs>
@@ -56,52 +56,32 @@ export function BrandIcon({ size = 32, className = '', variant = 'default', desi
               <stop offset='50%' stopColor='#3b82f6' />
               <stop offset='100%' stopColor='#2563eb' />
             </linearGradient>
-            <radialGradient id='glowGradient' cx='50%' cy='50%'>
-              <stop offset='0%' stopColor='#7EDDD6' stopOpacity='0.8' />
-              <stop offset='100%' stopColor='#4ECDC4' stopOpacity='0' />
-            </radialGradient>
           </defs>
         )}
 
-        {/* Growth rings - subtle expansion metaphor */}
-        <circle cx='16' cy='28' r='3' stroke={c.primary} strokeWidth='0.5' opacity='0.15' fill='none' />
-        <circle cx='16' cy='28' r='5' stroke={c.primary} strokeWidth='0.5' opacity='0.1' fill='none' />
-
-        {/* Fibonacci-inspired spiral path - more organic growth curve */}
+        {/* Letter A - Mountain Triangle Outline (no horizontal bar) */}
         <path
-          d='M 16 29 C 11 29, 8.5 26.5, 8.5 23 C 8.5 19.5, 11 17, 14.5 17 C 18 17, 20.5 19.5, 20.5 22.5 C 20.5 24.5, 19.2 25.8, 17.3 25.8 C 15.8 25.8, 15 24.8, 15 23.5 C 15 22.5, 15.5 22, 16 22 L 16 13 C 16 9.5, 17.5 7, 19.5 5.5 C 20.5 4.8, 21.2 4, 22 3'
-          stroke={c.primary}
-          strokeWidth='2.8'
-          strokeLinecap='round'
-          fill='none'
-          style={{ filter: variant === 'gradient' ? 'drop-shadow(0 0 2px rgba(78, 205, 196, 0.3))' : 'none' }}
-        />
-
-        {/* Upward arrow - human reaching gesture, perfectly symmetrical */}
-        <path
-          d='M 18 7 C 20 5.5, 21 4, 22 3 C 23 4, 24 5.5, 26 7'
+          d='M 16 4 L 6 28 M 16 4 L 26 28'
           stroke={c.secondary}
-          strokeWidth='3.2'
+          strokeWidth='2.5'
           strokeLinecap='round'
           strokeLinejoin='round'
           fill='none'
         />
 
-        {/* Peak achievement glow */}
-        {variant === 'gradient' && <circle cx='22' cy='3' r='4' fill='url(#glowGradient)' />}
-        <circle cx='22' cy='3' r='2.5' fill={c.accent} />
-        <circle cx='22' cy='3' r='1.2' fill='white' opacity='0.6' />
+        {/* Letter S - One continuous winding climbing path inside A */}
+        <path
+          d='M 7 27 C 9 25, 11 22, 14 19 C 17 16, 22 16, 23 19 C 24 22, 19 23, 16 20 C 13 17, 12 12, 16 8'
+          stroke={c.primary}
+          strokeWidth='2.5'
+          strokeLinecap='round'
+          fill='none'
+          style={{ filter: variant === 'gradient' ? 'drop-shadow(0 0 2px rgba(78, 205, 196, 0.3))' : 'none' }}
+        />
 
-        {/* Growth milestones - progressive sizing and opacity showing momentum */}
-        <circle cx='16' cy='29' r='2.3' fill={c.secondary} opacity='0.5' />
-        <circle cx='14.5' cy='17' r='1.8' fill={c.secondary} opacity='0.6' />
-        <circle cx='16' cy='13' r='1.3' fill={c.secondary} opacity='0.7' />
-        <circle cx='19.5' cy='5.5' r='0.9' fill={c.accent} opacity='0.8' />
-
-        {/* Energy particles - showing upward momentum */}
-        <circle cx='13' cy='25' r='0.6' fill={c.accent} opacity='0.4' />
-        <circle cx='18' cy='20' r='0.5' fill={c.accent} opacity='0.35' />
-        <circle cx='17' cy='10' r='0.6' fill={c.accent} opacity='0.45' />
+        {/* Peak achievement point */}
+        <circle cx='16' cy='4' r='2' fill={c.accent} />
+        <circle cx='16' cy='4' r='0.8' fill='white' opacity='0.7' />
       </svg>
     );
   }
@@ -199,7 +179,7 @@ export function BrandIcon({ size = 32, className = '', variant = 'default', desi
 
 /**
  * Simplified version for favicon (16x16)
- * Uses a more minimal spiral design for better recognition at small sizes
+ * Uses bold A+S mountain climbing design for better recognition at small sizes
  */
 export function BrandIconSimple({ size = 16, className = '' }: { size?: number; className?: string }) {
   return (
@@ -210,35 +190,37 @@ export function BrandIconSimple({ size = 16, className = '' }: { size?: number; 
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
       className={className}
-      aria-label='AI Speeds - Human Spiral Growth'
+      aria-label='AI Speeds - Mountain Climbing Path'
     >
-      {/* Optimized spiral path - bold and clear for small sizes */}
+      {/* Letter A - Mountain Triangle (no horizontal bar) */}
       <path
-        d='M 16 29 C 11 29, 8.5 26.5, 8.5 23 C 8.5 19.5, 11 17, 14.5 17 C 18 17, 20.5 19.5, 20.5 22.5 C 20.5 24.5, 19.2 25.8, 17.3 25.8 C 15.8 25.8, 15 24.8, 15 23.5 C 15 22.5, 15.5 22, 16 22 L 16 13 C 16 9.5, 17.5 7, 19.5 5.5 C 20.5 4.8, 21.2 4, 22 3'
-        stroke='#4ECDC4'
-        strokeWidth='3.5'
-        strokeLinecap='round'
-        fill='none'
-      />
-      {/* Bold upward arrow for clarity, perfectly symmetrical */}
-      <path
-        d='M 18 7 C 20 5.5, 21 4, 22 3 C 23 4, 24 5.5, 26 7'
+        d='M 16 4 L 6 28 M 16 4 L 26 28'
         stroke='#2563eb'
-        strokeWidth='4'
+        strokeWidth='3'
         strokeLinecap='round'
         strokeLinejoin='round'
         fill='none'
       />
-      {/* Prominent peak highlight */}
-      <circle cx='22' cy='3' r='3' fill='#7EDDD6' />
-      <circle cx='22' cy='3' r='1.3' fill='white' opacity='0.7' />
+
+      {/* Letter S - One continuous winding climbing path */}
+      <path
+        d='M 7 27 C 9 25, 11 22, 14 19 C 17 16, 22 16, 23 19 C 24 22, 19 23, 16 20 C 13 17, 12 12, 16 8'
+        stroke='#4ECDC4'
+        strokeWidth='3'
+        strokeLinecap='round'
+        fill='none'
+      />
+
+      {/* Peak point */}
+      <circle cx='16' cy='4' r='2.5' fill='#7EDDD6' />
+      <circle cx='16' cy='4' r='1' fill='white' opacity='0.8' />
     </svg>
   );
 }
 
 /**
  * Wordmark version with icon and text
- * Uses the spiral design for consistency
+ * Uses the A+S mountain climbing design for consistency
  */
 export function BrandWordmark({ size = 120, className = '' }: { size?: number; className?: string }) {
   return (
@@ -251,32 +233,30 @@ export function BrandWordmark({ size = 120, className = '' }: { size?: number; c
       className={className}
       aria-label='AI Speeds'
     >
-      {/* Optimized Spiral Icon */}
+      {/* A+S Mountain Climbing Icon */}
       <g transform='translate(2, 4)'>
-        {/* Fibonacci-inspired spiral path */}
+        {/* Letter A - Mountain Triangle (no horizontal bar) */}
         <path
-          d='M 16 29 C 11 29, 8.5 26.5, 8.5 23 C 8.5 19.5, 11 17, 14.5 17 C 18 17, 20.5 19.5, 20.5 22.5 C 20.5 24.5, 19.2 25.8, 17.3 25.8 C 15.8 25.8, 15 24.8, 15 23.5 C 15 22.5, 15.5 22, 16 22 L 16 13 C 16 9.5, 17.5 7, 19.5 5.5 C 20.5 4.8, 21.2 4, 22 3'
-          stroke='#4ECDC4'
-          strokeWidth='2.5'
-          strokeLinecap='round'
-          fill='none'
-        />
-        {/* Human reaching upward, perfectly symmetrical */}
-        <path
-          d='M 18 7 C 20 5.5, 21 4, 22 3 C 23 4, 24 5.5, 26 7'
+          d='M 16 4 L 6 28 M 16 4 L 26 28'
           stroke='#2563eb'
-          strokeWidth='3'
+          strokeWidth='2.5'
           strokeLinecap='round'
           strokeLinejoin='round'
           fill='none'
         />
-        {/* Achievement glow */}
-        <circle cx='22' cy='3' r='2.5' fill='#7EDDD6' />
-        <circle cx='22' cy='3' r='1.2' fill='white' opacity='0.6' />
-        {/* Growth milestones - progressive momentum */}
-        <circle cx='16' cy='29' r='2' fill='#2563eb' opacity='0.5' />
-        <circle cx='14.5' cy='17' r='1.5' fill='#2563eb' opacity='0.6' />
-        <circle cx='16' cy='13' r='1.1' fill='#2563eb' opacity='0.7' />
+
+        {/* Letter S - One continuous winding climbing path */}
+        <path
+          d='M 7 27 C 9 25, 11 22, 14 19 C 17 16, 22 16, 23 19 C 24 22, 19 23, 16 20 C 13 17, 12 12, 16 8'
+          stroke='#4ECDC4'
+          strokeWidth='2.2'
+          strokeLinecap='round'
+          fill='none'
+        />
+
+        {/* Peak achievement */}
+        <circle cx='16' cy='4' r='2' fill='#7EDDD6' />
+        <circle cx='16' cy='4' r='0.8' fill='white' opacity='0.7' />
       </g>
 
       {/* Text: AI Speeds - italic for speed/dynamism */}

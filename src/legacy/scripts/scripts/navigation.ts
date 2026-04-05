@@ -19,6 +19,51 @@ function initNavigation() {
     }, 300);
   }
 
+  // Sidebar collapse/expand helpers
+  function collapseSidebar() {
+    const nav = document.querySelector('.main-nav');
+    if (nav) nav.classList.add('nav-collapsed');
+    document.body.classList.add('sidebar-collapsed');
+  }
+
+  function expandSidebar() {
+    const nav = document.querySelector('.main-nav');
+    if (nav) nav.classList.remove('nav-collapsed');
+    document.body.classList.remove('sidebar-collapsed');
+  }
+
+  function toggleSidebarCollapse() {
+    const nav = document.querySelector('.main-nav');
+    if (!nav) return;
+    if (nav.classList.contains('nav-collapsed')) {
+      expandSidebar();
+    } else {
+      collapseSidebar();
+    }
+  }
+
+  function updateHomeActiveState(sectionId) {
+    const contentWrapper = document.querySelector('.content-wrapper');
+    if (!contentWrapper) return;
+    if (sectionId === 'home') {
+      contentWrapper.classList.add('home-active');
+      collapseSidebar();
+    } else {
+      contentWrapper.classList.remove('home-active');
+      expandSidebar();
+    }
+  }
+
+  // Collapse toggle button
+  const collapseToggle = document.querySelector('.nav-collapse-toggle');
+  if (collapseToggle) {
+    collapseToggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleSidebarCollapse();
+    }, true);
+  }
+
   function showSection(sectionId) {
     // Re-query DOM elements to ensure we have the latest state
     const currentNavTabs = document.querySelectorAll('.nav-tab, .nav-item');
@@ -32,7 +77,7 @@ function initNavigation() {
     });
 
     // Add active class to corresponding tab
-    const activeTab = document.querySelector('[data-section="' + sectionId + '"]');
+    const activeTab = document.querySelector('[data-section="' + sectionId + '"');
     if (activeTab) {
       activeTab.classList.add('active');
       activeTab.setAttribute('data-active', 'true');
@@ -50,6 +95,9 @@ function initNavigation() {
       targetElement.style.display = 'block';
     }
 
+    // Update sidebar collapse state based on section
+    updateHomeActiveState(sectionId);
+
     // Special handling for best-practices section
     if (sectionId === 'best-practices') {
       // Ensure we show the overview when navigating to best-practices
@@ -62,6 +110,20 @@ function initNavigation() {
         }
       }
       tryShowBestPractices(10);
+    }
+
+    // Special handling for how-to-implement section
+    if (sectionId === 'how-to-implement') {
+      // Ensure we show the overview when navigating to how-to-implement
+      // Use retry mechanism to handle async module initialization
+      function tryShowHowToImplement(retries) {
+        if (window.initializeHowToImplement) {
+          window.initializeHowToImplement();
+        } else if (retries > 0) {
+          setTimeout(() => tryShowHowToImplement(retries - 1), 100);
+        }
+      }
+      tryShowHowToImplement(10);
     }
 
     // Special handling for how-to-apply-cc section

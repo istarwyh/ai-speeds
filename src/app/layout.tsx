@@ -5,14 +5,20 @@ import type { ReactNode } from 'react';
 import Script from 'next/script';
 
 export const metadata: Metadata = {
-  title: 'AI Speeds Me',
+  title: 'AI Speeds - Make AI Speeds Us',
   description: 'Make AI Speeds Us',
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang='en' suppressHydrationWarning>
-      <head>{/* Font Awesome icons will be imported as React components */}</head>
+      <head>
+        {/* Font Awesome icons will be imported as React components */}
+        <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
+      </head>
       <body>
         {/* Inject global CSS variables (design tokens) at runtime */}
         <style
@@ -32,7 +38,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </Script>
             <Script
               id='wuunu-widget'
-              src='https://cdn.jsdelivr.net/npm/@wuunu/widget@0.1.21'
+              src='https://cdn.jsdelivr.net/npm/@wuunu/widget@0.1.22'
               strategy='afterInteractive'
               crossOrigin='anonymous'
             />

@@ -40,7 +40,7 @@ export const PROVIDER_CONFIGS = {
     } as ModelMapping,
   },
   deepseek: {
-    defaultBaseUrl: 'https://api.deepseek.com',
+    defaultBaseUrl: 'https://aispeeds.me',
     modelMappings: {
       // Claude 4.5 系列
       'claude-haiku-4-5-20251001': 'deepseek-chat',

@@ -66,7 +66,7 @@ export const providers: Provider[] = [
     isDirectlyUsable: true,
     proxyUrl: 'https://aispeeds.me',
     originalUrl: 'https://api.deepseek.com',
-    aliasCommand: 'alias deepseek="ANTHROPIC_AUTH_TOKEN=sk-xxxxxx ANTHROPIC_BASE_URL=https://aispeeds.me claude"',
+    aliasCommand: 'alias deepseek="ANTHROPIC_BASE_URL=https://api.deepseek.com/anthropic ANTHROPIC_MODEL=deepseek-chat claude"',
     apiKeyUrl: 'https://platform.deepseek.com',
     features: ['High reasoning capability', 'Cost efficient', 'Fast response'],
   },

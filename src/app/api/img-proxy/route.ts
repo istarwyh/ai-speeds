@@ -80,7 +80,8 @@ export async function GET(request: NextRequest) {
 export const runtime = 'nodejs';
 
 // Transparent 1x1 PNG (base64)
-const TRANSPARENT_PNG_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAoMBgBY9J8wAAAAASUVORK5CYII=';
+const TRANSPARENT_PNG_BASE64 =
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAoMBgBY9J8wAAAAASUVORK5CYII=';
 const TRANSPARENT_PNG_BUFFER = Buffer.from(TRANSPARENT_PNG_BASE64, 'base64');
 function fallbackTransparentPng(status: number) {
   return new NextResponse(TRANSPARENT_PNG_BUFFER, {
