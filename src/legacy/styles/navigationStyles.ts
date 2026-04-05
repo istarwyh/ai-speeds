@@ -165,9 +165,9 @@ body.sidebar-collapsed .content-wrapper {
 /* Home iframe section - fullscreen */
 .home-iframe-container {
   width: 100%;
-  height: calc(100vh - 2 * var(--space-6, 1.5rem));
+  height: 100vh;
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -178,7 +178,7 @@ body.sidebar-collapsed .content-wrapper {
 }
 
 /* Fullscreen mode for home section */
-body.sidebar-collapsed .content-wrapper.home-active {
+.content-wrapper.home-active {
   padding: 0;
 }
 
