@@ -7,6 +7,7 @@ import { bestPracticesModule } from '@/legacy/features/best-practices';
 import { implementationModule } from '@/legacy/features/how-to-implement';
 import { howToApplyCCModule } from '@/legacy/features/how-to-apply-cc';
 import { DEFAULT_SECTION_ID } from '@/config/navigation';
+import homepage from '@cc4pm/homepage';
 
 declare global {
   interface Window {
@@ -86,12 +87,8 @@ export function LegacyPageWrapper() {
 
       {/* 主内容区 - 复用所有功能模块 */}
       <div className='content-wrapper'>
-        {/* Home section - CC4PM iframe */}
-        <div id='home' className='content-section'>
-          <div className='home-iframe-container'>
-            <iframe src='https://istarwyh.github.io/cc4pm/' title='CC4PM' allowFullScreen loading='lazy' />
-          </div>
-        </div>
+        {/* Home section - CC4PM 首页 */}
+        <div id='home' className='content-section' dangerouslySetInnerHTML={{ __html: homepage.html() }} />
         <div dangerouslySetInnerHTML={{ __html: getStartedModule }} />
         <div dangerouslySetInnerHTML={{ __html: bestPracticesModule }} />
         <div dangerouslySetInnerHTML={{ __html: implementationModule }} />

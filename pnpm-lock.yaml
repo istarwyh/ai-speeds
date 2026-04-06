@@ -7,6 +7,9 @@ settings:
 importers:
   .:
     dependencies:
+      "@cc4pm/homepage":
+        specifier: ^1.0.0
+        version: 1.0.0
       "@excalidraw/excalidraw":
         specifier: ^0.18.0
         version: 0.18.0(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(immer@10.2.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -639,6 +642,10 @@ packages:
   "@braintree/sanitize-url@6.0.2":
     resolution:
       { integrity: sha512-Tbsj02wXCbqGmzdnXNk0SOF19ChhRU70BsroIi4Pm6Ehp56in6vch94mfbdQ17DozxkL3BAVjbZ4Qc1a0HFRAg== }
+
+  "@cc4pm/homepage@1.0.0":
+    resolution:
+      { integrity: sha512-TTy3iZue6GXxmZS3sEHEtrTWc7JzyPHzKRxQrVQ1cAtYSqjXWeMBWMlByxxvECq2M/FlpPdcq2YUrWpXVIvA5A== }
 
   "@cloudflare/kv-asset-handler@0.4.0":
     resolution:
@@ -8280,6 +8287,8 @@ snapshots:
   "@babel/runtime@7.29.2": {}
 
   "@braintree/sanitize-url@6.0.2": {}
+
+  "@cc4pm/homepage@1.0.0": {}
 
   "@cloudflare/kv-asset-handler@0.4.0":
     dependencies:

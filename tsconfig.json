@@ -63,7 +63,7 @@
       }
     ]
   },
-  "include": ["*.js", "*.ts", "scripts/**/*", "src/**/*", ".next/types/**/*.ts"],
+  "include": ["*.js", "*.ts", "scripts/**/*", "src/**/*", "types/**/*.d.ts", ".next/types/**/*.ts"],
   "exclude": ["node_modules", "dist", ".wrangler", "**/*.min.js", "src/legacy"],
   "ts-node": {
     "esm": true,
