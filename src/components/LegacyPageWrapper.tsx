@@ -91,11 +91,16 @@ export function LegacyPageWrapper({ homepageHtml }: LegacyPageWrapperProps) {
       {/* 主内容区 - 复用所有功能模块 */}
       <div className='content-wrapper'>
         {/* Home section - CC4PM 首页 */}
-        <div id='home' className='content-section' dangerouslySetInnerHTML={{ __html: homepageHtml }} />
-        <div dangerouslySetInnerHTML={{ __html: getStartedModule }} />
-        <div dangerouslySetInnerHTML={{ __html: bestPracticesModule }} />
-        <div dangerouslySetInnerHTML={{ __html: implementationModule }} />
-        <div dangerouslySetInnerHTML={{ __html: howToApplyCCModule }} />
+        <div
+          id='home'
+          className='content-section'
+          dangerouslySetInnerHTML={{ __html: homepageHtml }}
+          suppressHydrationWarning
+        />
+        <div dangerouslySetInnerHTML={{ __html: getStartedModule }} suppressHydrationWarning />
+        <div dangerouslySetInnerHTML={{ __html: bestPracticesModule }} suppressHydrationWarning />
+        <div dangerouslySetInnerHTML={{ __html: implementationModule }} suppressHydrationWarning />
+        <div dangerouslySetInnerHTML={{ __html: howToApplyCCModule }} suppressHydrationWarning />
       </div>
     </>
   );
