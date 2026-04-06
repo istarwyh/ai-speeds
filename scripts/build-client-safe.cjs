@@ -180,6 +180,7 @@ async function buildClientScripts() {
         'bestPracticesClientScript.ts',
         'howToImplementClientScript.ts',
         'providerDetailsClientScript.ts',
+        'homepageHtml.ts',
       ];
 
       const allFilesExist = expectedFiles.every(file =>

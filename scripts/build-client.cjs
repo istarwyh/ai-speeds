@@ -30,6 +30,9 @@ async function buildClientScripts() {
     // 构建供应商详情模块
     await buildProviderDetailsModule();
 
+    // 生成首页 HTML 字符串（用于 API 路由，避免运行时 fs.readFileSync）
+    await generateHomepageHtml();
+
     console.log('✅ 客户端脚本构建完成！');
     console.log('📝 客户端脚本已生成到 src/legacy/scripts/generated/ 目录');
     console.log('🎯 模块文件保持简洁，无需注入代码');
@@ -308,6 +311,45 @@ async function buildProviderDetailsModule() {
     hasMarkdownLoader: false, // 不需要 markdown 加载器
     needsPostProcessing: false,
   });
+}
+
+/**
+ * 生成首页 HTML 字符串文件
+ * 在构建时读取 @cc4pm/homepage/index.html，生成可直接 import 的 TS 常量
+ * 解决 Cloudflare Workers 无法在运行时使用 fs.readFileSync 的问题
+ */
+async function generateHomepageHtml() {
+  const htmlPath = path.resolve(
+    __dirname,
+    '../node_modules/@cc4pm/homepage/index.html',
+  );
+  const outputFile = path.resolve(
+    __dirname,
+    '../src/legacy/scripts/generated/homepageHtml.ts',
+  );
+
+  if (!fs.existsSync(htmlPath)) {
+    console.warn('⚠️ 未找到 @cc4pm/homepage/index.html，跳过首页 HTML 生成');
+    return;
+  }
+
+  const html = fs.readFileSync(htmlPath, 'utf-8');
+
+  const wrappedCode = `// 自动生成的首页 HTML 字符串
+// 构建时间: ${new Date().toISOString()}
+// 请勿手动修改此文件
+
+export const homepageHtml = ${JSON.stringify(html)};
+`;
+
+  const outputDir = path.dirname(outputFile);
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  fs.writeFileSync(outputFile, wrappedCode, 'utf8');
+  console.log(`📝 首页 HTML 已生成到: ${outputFile}`);
+  console.log(`📊 HTML 大小: ${(html.length / 1024).toFixed(2)} KB`);
 }
 
 // 运行构建

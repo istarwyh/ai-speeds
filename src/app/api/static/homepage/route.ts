@@ -1,16 +1,12 @@
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import { NextResponse } from 'next/server';
+import { homepageHtml } from '@/legacy/scripts/generated/homepageHtml';
+
+// 移除导航栏（构建时已确定，缓存结果避免每次请求重复计算）
+const NAV_PATTERN = /<!-- NAV -->[\s\S]*?<\/header>/i;
+const processedHtml = homepageHtml.replace(NAV_PATTERN, '');
 
 export async function GET() {
-  const htmlPath = join(process.cwd(), 'node_modules', '@cc4pm', 'homepage', 'index.html');
-  let html = readFileSync(htmlPath, 'utf-8');
-
-  // 移除导航栏，避免与外部侧边栏重复
-  // 匹配 <!-- NAV --> 到 </header> 之间的内容
-  html = html.replace(/<!-- NAV -->[\s\S]*?<\/header>/i, '');
-
-  return new NextResponse(html, {
+  return new NextResponse(processedHtml, {
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
     },
