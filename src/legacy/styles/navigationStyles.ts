@@ -1,7 +1,7 @@
 export const navigationStyles = `
 /* Navigation Styles */
 :root {
-  --sidebar-width: 250px;
+  --sidebar-width: 180px;
   --sidebar-collapsed-width: 60px;
   --active-border-width: 3px;
 }

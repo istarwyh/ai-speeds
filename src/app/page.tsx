@@ -21,27 +21,65 @@ export default function RootPage() {
       ${designTokens}
       ${baseStyles}
       ${navigationStyles}
+      /* 首页 iframe 容器的侧边栏响应式边距 */
+      .homepage-main {
+        margin-left: var(--sidebar-width, 180px);
+        transition: margin-left 0.3s ease;
+      }
+      body.sidebar-collapsed .homepage-main {
+        margin-left: var(--sidebar-collapsed-width, 60px);
+      }
     `;
     document.head.appendChild(style);
 
-    // 直接绑定折叠按钮事件
-    const initCollapseToggle = () => {
+    // 绑定折叠按钮和导航事件
+    const initNav = () => {
       const collapseToggle = document.querySelector('.nav-collapse-toggle');
       const nav = document.querySelector('.main-nav');
       if (!collapseToggle || !nav) {
         return;
       }
 
-      collapseToggle.addEventListener('click', e => {
-        e.preventDefault();
-        e.stopPropagation();
-        nav.classList.toggle('nav-collapsed');
-        document.body.classList.toggle('sidebar-collapsed');
+      // 折叠按钮
+      const collapseToggleEl = collapseToggle as HTMLElement;
+      if (!collapseToggleEl.dataset['listenerBound']) {
+        collapseToggleEl.dataset['listenerBound'] = 'true';
+        collapseToggleEl.addEventListener('click', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          nav.classList.toggle('nav-collapsed');
+          document.body.classList.toggle('sidebar-collapsed');
+        });
+      }
+
+      // 导航按钮 - 跳转到对应页面
+      document.querySelectorAll('.nav-tab, .nav-item').forEach(tabEl => {
+        const tab = tabEl as HTMLElement;
+        if (tab.dataset['listenerBound']) {
+          return;
+        }
+        tab.dataset['listenerBound'] = 'true';
+        tab.addEventListener('click', e => {
+          const section = tab.dataset['section'];
+          if (!section) {
+            return;
+          }
+          // 外部链接由浏览器处理
+          if (tab.tagName === 'A') {
+            return;
+          }
+          e.preventDefault();
+          if (section === 'home') {
+            window.location.hash = '';
+          } else {
+            // 跳转到 /home#section
+            window.location.href = '/home#' + section;
+          }
+        });
       });
     };
 
-    // 延迟执行确保 DOM 已渲染
-    setTimeout(initCollapseToggle, 100);
+    setTimeout(initNav, 100);
 
     return () => {
       const styleElement = document.getElementById(styleId);
@@ -57,7 +95,7 @@ export default function RootPage() {
       <div dangerouslySetInnerHTML={{ __html: navigationComponent }} suppressHydrationWarning />
 
       {/* 主内容区 - iframe 嵌入 cc4pm 首页 */}
-      <main className='content-wrapper' style={{ padding: 0 }}>
+      <main className='homepage-main' style={{ flex: 1 }}>
         <iframe
           src='/api/static/homepage?t=1'
           style={{
