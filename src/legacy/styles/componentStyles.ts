@@ -2068,6 +2068,50 @@ export const componentStyles = `
         word-break: break-all;
         text-align: center;
     }
+
+    /* 修复 CSS grid 中内容溢出：step 步骤列表 */
+    .step {
+        grid-template-columns: auto 1fr;
+        gap: var(--space-3);
+    }
+
+    .step-content {
+        min-width: 0;
+        overflow-x: hidden;
+    }
+
+    .step-content .code-block {
+        overflow-x: auto;
+        max-width: 100%;
+    }
+
+    .step-content pre,
+    .step-content code {
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+
+    /* compact-provider-grid 单列 */
+    .compact-provider-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* contact-item 全宽 */
+    .contact-item {
+        min-width: auto;
+        width: 100%;
+    }
+
+    /* note: 改为 block 布局避免 flex 把文本节点和链接拆成两个 flex 条目 */
+    .note {
+        display: block;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+
+    .note a {
+        word-break: break-all;
+    }
 }
 
 /* Practice Item Enhanced Styles */

@@ -229,6 +229,19 @@ body.sidebar-collapsed .content-wrapper.home-active .home-iframe-container {
     gap: 0.25rem;
   }
 
+  /* 移动端隐藏品牌区域 */
+  .nav-brand {
+    display: none !important;
+  }
+
+  /* 移动端内容区：固定导航不占流式布局，重置左边距 */
+  .content-wrapper {
+    margin-left: 0 !important;
+    margin-top: var(--mobile-nav-height, 70px);
+    width: 100%;
+    overflow-x: hidden;
+  }
+
   .nav-container {
     padding: 0 var(--mobile-padding);
   }
