@@ -9,7 +9,7 @@ import { howToApplyCCModule } from '@/legacy/features/how-to-apply-cc';
 import { DEFAULT_SECTION_ID } from '@/config/navigation';
 
 interface LegacyPageWrapperProps {
-  homepageHtml: string;
+  // Component no longer uses homepageHtml - now loads via iframe
 }
 
 declare global {
@@ -25,7 +25,7 @@ declare global {
  * 这是一个适配器组件，将现有的 HTML 字符串模板系统
  * 适配到 Next.js React 架构中
  */
-export function LegacyPageWrapper({ homepageHtml }: LegacyPageWrapperProps) {
+export function LegacyPageWrapper(_props: LegacyPageWrapperProps) {
   useEffect(() => {
     // 注入样式
     const styleId = 'legacy-styles';
@@ -91,11 +91,7 @@ export function LegacyPageWrapper({ homepageHtml }: LegacyPageWrapperProps) {
       {/* 主内容区 - 复用所有功能模块 */}
       <div className='content-wrapper'>
         {/* Home section - 使用 iframe 嵌入首页 */}
-        <div
-          id='home'
-          className='content-section'
-          style={{ height: '100vh', width: '100%' }}
-        >
+        <div id='home' className='content-section' style={{ height: '100vh', width: '100%' }}>
           <iframe
             src='/api/static/homepage?t=1'
             style={{

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { LegacyPageWrapper } from '@/components/LegacyPageWrapper';
-import { homepageHtml } from '@/legacy/scripts/generated/homepageHtml';
 import { HomePageWithNav } from '@/components/HomePageWithNav';
 
 /**
@@ -25,7 +24,7 @@ export default function HomePage() {
 
   // 有 hash 时渲染 LegacyPageWrapper
   if (hasHash) {
-    return <LegacyPageWrapper homepageHtml={homepageHtml} />;
+    return <LegacyPageWrapper />;
   }
 
   // 无 hash 时渲染 iframe 首页
