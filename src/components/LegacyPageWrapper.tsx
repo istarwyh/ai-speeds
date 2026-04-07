@@ -90,13 +90,23 @@ export function LegacyPageWrapper({ homepageHtml }: LegacyPageWrapperProps) {
 
       {/* 主内容区 - 复用所有功能模块 */}
       <div className='content-wrapper'>
-        {/* Home section - CC4PM 首页 */}
+        {/* Home section - 使用 iframe 嵌入首页 */}
         <div
           id='home'
           className='content-section'
-          dangerouslySetInnerHTML={{ __html: homepageHtml }}
-          suppressHydrationWarning
-        />
+          style={{ height: '100vh', width: '100%' }}
+        >
+          <iframe
+            src='/api/static/homepage?t=1'
+            style={{
+              width: '100%',
+              height: '100%',
+              border: 'none',
+              display: 'block',
+            }}
+            title='cc4pm homepage'
+          />
+        </div>
         <div dangerouslySetInnerHTML={{ __html: getStartedModule }} suppressHydrationWarning />
         <div dangerouslySetInnerHTML={{ __html: bestPracticesModule }} suppressHydrationWarning />
         <div dangerouslySetInnerHTML={{ __html: implementationModule }} suppressHydrationWarning />

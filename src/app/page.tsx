@@ -112,7 +112,8 @@ export default function RootPage() {
             (document.querySelector('.nav-overlay-close') as HTMLElement)?.click();
           }
           if (section === 'home') {
-            window.location.hash = '';
+            // 导航到根路径，并清空 hash
+            window.location.href = '/';
           } else {
             // 跳转到 /home#section
             window.location.href = '/home#' + section;
