@@ -29,6 +29,16 @@ export default function RootPage() {
       body.sidebar-collapsed .homepage-main {
         margin-left: var(--sidebar-collapsed-width, 60px);
       }
+      /* 移动端：导航栏变为顶部水平栏，取消左边距 */
+      @media (max-width: 768px) {
+        .homepage-root {
+          flex-direction: column;
+        }
+        .homepage-main {
+          margin-left: 0;
+          margin-top: 0;
+        }
+      }
     `;
     document.head.appendChild(style);
 
@@ -36,19 +46,46 @@ export default function RootPage() {
     const initNav = () => {
       const collapseToggle = document.querySelector('.nav-collapse-toggle');
       const nav = document.querySelector('.main-nav');
-      if (!collapseToggle || !nav) {
+      if (!nav) {
         return;
       }
 
       // 折叠按钮
-      const collapseToggleEl = collapseToggle as HTMLElement;
-      if (!collapseToggleEl.dataset['listenerBound']) {
-        collapseToggleEl.dataset['listenerBound'] = 'true';
-        collapseToggleEl.addEventListener('click', e => {
-          e.preventDefault();
-          e.stopPropagation();
-          nav.classList.toggle('nav-collapsed');
-          document.body.classList.toggle('sidebar-collapsed');
+      if (collapseToggle) {
+        const collapseToggleEl = collapseToggle as HTMLElement;
+        if (!collapseToggleEl.dataset['listenerBound']) {
+          collapseToggleEl.dataset['listenerBound'] = 'true';
+          collapseToggleEl.addEventListener('click', e => {
+            e.preventDefault();
+            e.stopPropagation();
+            nav.classList.toggle('nav-collapsed');
+            document.body.classList.toggle('sidebar-collapsed');
+          });
+        }
+      }
+
+      // 移动端菜单按钮
+      const menuToggle = document.querySelector('.nav-menu-toggle') as HTMLElement | null;
+      const navOverlay = document.querySelector('.nav-overlay');
+      const closeButton = document.querySelector('.nav-overlay-close');
+      if (menuToggle && navOverlay && !menuToggle.dataset['listenerBound']) {
+        menuToggle.dataset['listenerBound'] = 'true';
+        menuToggle.addEventListener('click', () => {
+          navOverlay.classList.add('active');
+          navOverlay.setAttribute('aria-hidden', 'false');
+          menuToggle.setAttribute('aria-expanded', 'true');
+          document.body.style.overflow = 'hidden';
+        });
+        closeButton?.addEventListener('click', () => {
+          navOverlay.classList.remove('active');
+          navOverlay.setAttribute('aria-hidden', 'true');
+          menuToggle.setAttribute('aria-expanded', 'false');
+          document.body.style.overflow = '';
+        });
+        navOverlay.addEventListener('click', (e: Event) => {
+          if (e.target === navOverlay) {
+            (closeButton as HTMLElement)?.click();
+          }
         });
       }
 
@@ -69,6 +106,11 @@ export default function RootPage() {
             return;
           }
           e.preventDefault();
+          // 关闭移动端菜单
+          const overlay = document.querySelector('.nav-overlay');
+          if (overlay?.classList.contains('active')) {
+            (document.querySelector('.nav-overlay-close') as HTMLElement)?.click();
+          }
           if (section === 'home') {
             window.location.hash = '';
           } else {
@@ -90,7 +132,7 @@ export default function RootPage() {
   }, []);
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <div className='homepage-root' style={{ display: 'flex', minHeight: '100vh' }}>
       {/* 侧边导航栏 */}
       <div dangerouslySetInnerHTML={{ __html: navigationComponent }} suppressHydrationWarning />
 

@@ -195,22 +195,38 @@ body.sidebar-collapsed .content-wrapper.home-active .home-iframe-container {
 
 /* Mobile: make header fixed and allow hide/show via transform */
 @media (max-width: 768px) {
-  .main-nav {
+  .main-nav,
+  .main-nav.nav-collapsed {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: auto;
-    width: 100%;
+    width: 100% !important;
     height: auto;
     border-right: none;
     border-bottom: 1px solid var(--color-surface-glass-2);
     transform: translateY(0);
     transition: transform 0.2s ease-in-out;
+    flex-direction: column;
+    overflow-x: hidden;
   }
 
   .main-nav.nav--hidden {
     transform: translateY(-100%);
+  }
+
+  /* 移动端始终显示导航文本和品牌 */
+  .main-nav.nav-collapsed .nav-text,
+  .main-nav.nav-collapsed .brand-text {
+    display: inline;
+  }
+
+  .main-nav.nav-collapsed .nav-tab,
+  .main-nav.nav-collapsed .nav-item {
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 
   .nav-container {
@@ -255,6 +271,11 @@ body.sidebar-collapsed .content-wrapper.home-active .home-iframe-container {
 
   body.mobile-nav-space.nav-hidden .content-wrapper {
     margin-top: 0;
+  }
+
+  /* 移动端隐藏侧边栏折叠按钮 */
+  .nav-collapse-toggle {
+    display: none;
   }
 }
 

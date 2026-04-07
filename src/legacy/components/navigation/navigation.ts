@@ -258,6 +258,9 @@ export const navigationComponent = `
   }
 
   .nav-menu-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 1.5rem;
     height: 1.5rem;
   }
@@ -417,7 +420,7 @@ export const navigationComponent = `
       flex-direction: row;
       gap: 0.5rem;
       overflow-x: auto;
-      padding: 0.5rem 0;
+      padding: 0.5rem 3rem 0.5rem 0;
       -webkit-overflow-scrolling: touch;
     }
 
