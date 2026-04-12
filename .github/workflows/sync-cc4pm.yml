@@ -1,0 +1,74 @@
+name: Sync @cc4pm/homepage Upgrade
+
+on:
+  repository_dispatch:
+    types: [cc4pm-homepage-released]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '@cc4pm/homepage target version (e.g. 1.0.2), empty = latest'
+        type: string
+        default: ''
+
+jobs:
+  upgrade-and-deploy:
+    name: Upgrade @cc4pm/homepage & push
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Resolve target version
+        id: resolve
+        run: |
+          # Prefer dispatch payload → manual input → latest
+          VERSION="${{ github.event.client_payload.version }}"
+          if [ -z "$VERSION" ]; then
+            VERSION="${{ inputs.version }}"
+          fi
+          if [ -z "$VERSION" ]; then
+            VERSION=$(npm view @cc4pm/homepage version)
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Resolved target version: $VERSION"
+
+      - name: Check current version
+        id: current
+        run: |
+          CURRENT=$(node -p "require('./package.json').dependencies['@cc4pm/homepage']" | tr -d '^~')
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          echo "Current pinned version: $CURRENT"
+
+      - name: Upgrade dependency
+        if: steps.current.outputs.current != steps.resolve.outputs.version
+        run: |
+          pnpm add @cc4pm/homepage@${{ steps.resolve.outputs.version }}
+          echo "Upgraded to ${{ steps.resolve.outputs.version }}"
+
+      - name: No-op if already up to date
+        if: steps.current.outputs.current == steps.resolve.outputs.version
+        run: |
+          echo "::notice::@cc4pm/homepage is already at ${{ steps.resolve.outputs.version }}, nothing to do."
+
+      - name: Commit & push
+        if: steps.current.outputs.current != steps.resolve.outputs.version
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json pnpm-lock.yaml
+          git commit -m "chore(deps): upgrade @cc4pm/homepage to ${{ steps.resolve.outputs.version }}"
+          git push
