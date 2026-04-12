@@ -12,7 +12,7 @@ on:
 
 jobs:
   upgrade-and-deploy:
-    name: Upgrade @cc4pm/homepage & push
+    name: Upgrade @cc4pm/homepage & push & deploy
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -71,3 +71,15 @@ jobs:
           git add package.json pnpm-lock.yaml
           git commit -m "chore(deps): upgrade @cc4pm/homepage to ${{ steps.resolve.outputs.version }}"
           git push
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build for Cloudflare Workers
+        run: pnpm cf:build
+
+      - name: Deploy to Cloudflare Workers
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: pnpm dlx wrangler deploy

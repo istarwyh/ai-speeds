@@ -14,7 +14,7 @@ cc4pm/main push
                                         └─► sync-cc4pm.yml
                                               ├─► pnpm add @cc4pm/homepage@x.y.z
                                               ├─► git commit & push
-                                              └─► Netlify 自动部署触发
+                                              └─► Cloudflare Workers 自动部署
 ```
 
 ## 两个核心 Workflow
@@ -70,10 +70,12 @@ cc4pm/main push
 
 ## 所需 Secrets
 
-| Secret             | 配置在仓库       | 说明                                               |
-| ------------------ | ---------------- | -------------------------------------------------- |
-| `NPM_TOKEN`        | `istarwyh/cc4pm` | npm Automation token，用于 CI 发包                 |
-| `CROSS_REPO_TOKEN` | `istarwyh/cc4pm` | GitHub PAT，需要 `repo` scope，用于跨仓库 dispatch |
+| Secret                  | 配置在仓库           | 说明                                                 |
+| ----------------------- | -------------------- | ---------------------------------------------------- |
+| `NPM_TOKEN`             | `istarwyh/cc4pm`     | npm Automation token，用于 CI 发包                   |
+| `CROSS_REPO_TOKEN`      | `istarwyh/cc4pm`     | GitHub PAT，需要 `repo` scope，用于跨仓库 dispatch   |
+| `CLOUDFLARE_API_TOKEN`  | `istarwyh/ai-speeds` | Cloudflare API Token，需要 Workers Scripts:Edit 权限 |
+| `CLOUDFLARE_ACCOUNT_ID` | `istarwyh/ai-speeds` | Cloudflare 账号 ID，在 Workers 控制台右侧可见        |
 
 ### 配置命令
 
@@ -86,7 +88,15 @@ grep '_authToken' ~/.npmrc | cut -d= -f2 | gh secret set NPM_TOKEN --repo istarw
 
 # 设置 CROSS_REPO_TOKEN（从 https://github.com/settings/tokens 生成后用 -b 传入）
 gh secret set CROSS_REPO_TOKEN -b "ghp_xxxx" --repo istarwyh/cc4pm
+
+# 设置 Cloudflare Secrets（在 https://dash.cloudflare.com/profile/api-tokens 生成 token）
+gh secret set CLOUDFLARE_API_TOKEN -b "cf_xxxx" --repo istarwyh/ai-speeds
+gh secret set CLOUDFLARE_ACCOUNT_ID -b "your_account_id" --repo istarwyh/ai-speeds
 ```
+
+> **Cloudflare API Token 权限**：创建时选择 `Workers Scripts:Edit` +
+> `Workers Routes:Edit`（或使用 `Edit Cloudflare Workers` 模板）。Account
+> ID 在 Cloudflare Dashboard → Workers & Pages 右侧栏可找到。
 
 > **注意**：npm token 有效期到期后需重新 `npm login` 并更新 GitHub
 > Secret，否则 CI 发包会报 `404 Not found`（与包不存在的 404 相同，容易混淆）。
@@ -123,14 +133,16 @@ git push origin main
 #    ✓ 发包到 npm
 #    ✓ dispatch 到 ai-speeds
 #    ✓ pnpm upgrade + commit + push
-#    ✓ Netlify 触发重新部署
+#    ✓ Cloudflare Workers 自动部署
 ```
 
 ## 已知坑
 
-| 问题                                                | 原因                                          | 解决                                              |
-| --------------------------------------------------- | --------------------------------------------- | ------------------------------------------------- |
-| CI publish 报 `404 Not found`                       | npm token 过期，非包不存在                    | 重新 `npm login` 更新 Secret                      |
-| `gh secret set` 交互 prompt 报 escape sequence 错误 | 终端 escape 干扰                              | 改用 `echo "token" \| gh secret set` 或 `-b` 参数 |
-| `Post Setup Node.js` 步骤报 cache 路径不存在        | pnpm store 首次为空，`cache: pnpm` 找不到路径 | 移除 `setup-node` 的 `cache: pnpm` 配置           |
-| bot push 被远端拒绝（non-fast-forward）             | workflow 并发写同一分支                       | 本地 `git pull --rebase` 再 push                  |
+| 问题                                                | 原因                                          | 解决                                                     |
+| --------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------- |
+| CI publish 报 `404 Not found`                       | npm token 过期，非包不存在                    | 重新 `npm login` 更新 Secret                             |
+| `gh secret set` 交互 prompt 报 escape sequence 错误 | 终端 escape 干扰                              | 改用 `echo "token" \| gh secret set` 或 `-b` 参数        |
+| `Post Setup Node.js` 步骤报 cache 路径不存在        | pnpm store 首次为空，`cache: pnpm` 找不到路径 | 移除 `setup-node` 的 `cache: pnpm` 配置                  |
+| bot push 被远端拒绝（non-fast-forward）             | workflow 并发写同一分支                       | 本地 `git pull --rebase` 再 push                         |
+| `wrangler deploy` 报 `Authentication error`         | `CLOUDFLARE_API_TOKEN` 未设置或权限不足       | 确认 token 有 `Workers Scripts:Edit` 权限                |
+| `cf:build` 报错找不到 `.open-next`                  | opennextjs-cloudflare build 未完成            | 检查 `pnpm cf:build` 是否依赖本地文件，CI 环境需完整依赖 |
