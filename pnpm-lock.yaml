@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@cc4pm/homepage':
-        specifier: 1.0.1
-        version: 1.0.1
+        specifier: 1.0.2
+        version: 1.0.2
       '@fortawesome/fontawesome-svg-core':
         specifier: ^7.1.0
         version: 7.1.0
@@ -544,8 +544,8 @@ packages:
     resolution: {integrity: sha512-qSs4ifwzKJSV39ucNjsvc6WVHs6b7S03sOh2OcHF9UHfVPqWWALUsNUVzhSBiItjRZoLHx7nIarVjqKVusUZ1Q==}
     engines: {node: '>=6.9.0'}
 
-  '@cc4pm/homepage@1.0.1':
-    resolution: {integrity: sha512-NEZVSUFZtHGQ/o0JMAk1ZlZ+Yl0c7iR6ZzT3c2bXOQ70/A8ng7BmivLK0ZvpBkBTy09gmIMCiJ3crZSDr/Vhcw==}
+  '@cc4pm/homepage@1.0.2':
+    resolution: {integrity: sha512-ir9Tf+D8X/ZkLWOIjRHsrYAr4qmFvZDul0nhgvvPzwbcDxuJiUmLmNfkZ55kAi5fe89yvrCf7pY/UvQv82J1vA==}
 
   '@cloudflare/kv-asset-handler@0.4.0':
     resolution: {integrity: sha512-+tv3z+SPp+gqTIcImN9o0hqE9xyfQjI1XD9pL6NuKjua9B1y7mNYv0S9cP+QEbA4ppVgGZEmKOvHX5G5Ei1CVA==}
@@ -6255,7 +6255,7 @@ snapshots:
 
   '@babel/helper-validator-identifier@7.28.5': {}
 
-  '@cc4pm/homepage@1.0.1': {}
+  '@cc4pm/homepage@1.0.2': {}
 
   '@cloudflare/kv-asset-handler@0.4.0':
     dependencies:
