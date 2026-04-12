@@ -1,7 +1,8 @@
 export const navigationStyles = `
 /* Navigation Styles */
 :root {
-  --sidebar-width: 250px;
+  --sidebar-width: 180px;
+  --sidebar-collapsed-width: 60px;
   --active-border-width: 3px;
 }
 
@@ -17,6 +18,75 @@ export const navigationStyles = `
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  transition: width 0.3s ease;
+}
+
+/* Collapsed sidebar - icon only mode */
+.main-nav.nav-collapsed {
+  width: var(--sidebar-collapsed-width);
+  overflow-x: hidden;
+}
+
+.main-nav.nav-collapsed .nav-text,
+.main-nav.nav-collapsed .brand-text {
+  display: none;
+}
+
+.main-nav.nav-collapsed .nav-brand {
+  justify-content: center;
+  padding: 0.5rem 0;
+}
+
+.main-nav.nav-collapsed .nav-tab,
+.main-nav.nav-collapsed .nav-item {
+  justify-content: center;
+  padding: 0.75rem;
+  gap: 0;
+}
+
+.main-nav.nav-collapsed .nav-tab.active {
+  border-left: none;
+  padding-left: 0.75rem;
+  background: var(--color-surface-glass-2);
+  border-bottom: var(--active-border-width) solid var(--color-primary);
+}
+
+.main-nav.nav-collapsed .nav-container {
+  padding: var(--space-6) 0.25rem;
+}
+
+/* Collapse toggle button */
+.nav-collapse-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  margin: auto 0.5rem 1rem 0.5rem;
+  border: 1px solid var(--color-surface-glass-2, #e5e7eb);
+  background: transparent;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.nav-collapse-toggle:hover {
+  background: rgba(229, 122, 90, 0.1);
+  color: #E57A5A;
+}
+
+.nav-collapse-toggle svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+  pointer-events: none;
+}
+
+.main-nav.nav-collapsed .nav-collapse-toggle svg {
+  transform: rotate(180deg);
 }
 
 .nav-container {
@@ -84,26 +154,92 @@ export const navigationStyles = `
   margin-left: var(--sidebar-width);
   flex: 1;
   padding: var(--space-6);
+  transition: margin-left 0.3s ease;
+}
+
+/* Collapsed sidebar content adjustment */
+body.sidebar-collapsed .content-wrapper {
+  margin-left: var(--sidebar-collapsed-width);
+}
+
+/* Home iframe section - fullscreen */
+.home-iframe-container {
+  width: 100%;
+  height: 100vh;
+  border: none;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.home-iframe-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Fullscreen mode for home section */
+.content-wrapper.home-active {
+  padding: 0 !important;
+  margin-left: 0 !important;
+}
+
+.content-wrapper.home-active #home.content-section {
+  padding: 0 !important;
+  min-height: 100vh;
+}
+
+body.sidebar-collapsed .content-wrapper.home-active .home-iframe-container {
+  height: 100vh;
+  border-radius: 0;
 }
 
 /* Mobile: make header fixed and allow hide/show via transform */
 @media (max-width: 768px) {
-  .main-nav {
+  .main-nav,
+  .main-nav.nav-collapsed {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: auto;
-    width: 100%;
+    width: 100% !important;
     height: auto;
     border-right: none;
     border-bottom: 1px solid var(--color-surface-glass-2);
     transform: translateY(0);
     transition: transform 0.2s ease-in-out;
+    flex-direction: column;
+    overflow-x: hidden;
   }
 
   .main-nav.nav--hidden {
     transform: translateY(-100%);
+  }
+
+  /* 移动端始终显示导航文本和品牌 */
+  .main-nav.nav-collapsed .nav-text,
+  .main-nav.nav-collapsed .brand-text {
+    display: inline;
+  }
+
+  .main-nav.nav-collapsed .nav-tab,
+  .main-nav.nav-collapsed .nav-item {
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  /* 移动端隐藏品牌区域 */
+  .nav-brand {
+    display: none !important;
+  }
+
+  /* 移动端内容区：固定导航不占流式布局，重置左边距 */
+  .content-wrapper {
+    margin-left: 0 !important;
+    margin-top: var(--mobile-nav-height, 70px);
+    width: 100%;
+    overflow-x: hidden;
   }
 
   .nav-container {
@@ -148,6 +284,11 @@ export const navigationStyles = `
 
   body.mobile-nav-space.nav-hidden .content-wrapper {
     margin-top: 0;
+  }
+
+  /* 移动端隐藏侧边栏折叠按钮 */
+  .nav-collapse-toggle {
+    display: none;
   }
 }
 

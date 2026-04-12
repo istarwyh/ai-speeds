@@ -17,11 +17,25 @@ export const navigationComponent = `
 <nav class="main-nav enhanced-nav" role="navigation" aria-label="Main navigation">
   <div class="nav-container">
 <div class="nav-brand" aria-label="AI Speeds">
-      <span class="brand-icon">${heroicons.rocket}</span>
+      <span class="brand-icon">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="AI Speeds - Mountain Climbing Path">
+          <!-- Letter A - Mountain Triangle (no horizontal bar) -->
+          <path d="M 16 4 L 6 28 M 16 4 L 26 28" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <!-- Letter S - One continuous winding climbing path -->
+          <path d="M 7 27 C 9 25, 11 22, 14 19 C 17 16, 22 16, 23 19 C 24 22, 19 23, 16 20 C 13 17, 12 12, 16 8" stroke="#4ECDC4" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <!-- Peak achievement -->
+          <circle cx="16" cy="4" r="2" fill="#7EDDD6"/>
+          <circle cx="16" cy="4" r="0.8" fill="white" opacity="0.7"/>
+        </svg>
+      </span>
       <span class="brand-text">AI Speeds</span>
     </div>
 
     <div class="nav-tabs" role="tablist" aria-orientation="vertical">
+      <button class="nav-item ${cls('home')}" data-section="home" data-active="${DEFAULT_SECTION_ID === 'home'}" aria-selected="${DEFAULT_SECTION_ID === 'home'}" role="tab" aria-label="${UI_TEXTS.NAVIGATION.HOME}: CC4PM 首页" data-tooltip="${UI_TEXTS.NAVIGATION.HOME}">
+        <span class="nav-icon" aria-hidden="true">${getIcon('home')}</span>
+        <span class="nav-text">${UI_TEXTS.NAVIGATION.HOME}</span>
+      </button>
       <button class="nav-item ${cls('get-started')}" data-section="get-started" data-active="${DEFAULT_SECTION_ID === 'get-started'}" aria-selected="${DEFAULT_SECTION_ID === 'get-started'}" role="tab" aria-label="${UI_TEXTS.NAVIGATION.GET_STARTED}: Quick start guides and initial setup instructions for new users" data-tooltip="${UI_TEXTS.NAVIGATION.GET_STARTED}: Get up and running quickly!">
         <span class="nav-icon" aria-hidden="true">${getIcon('get-started')}</span>
         <span class="nav-text">${UI_TEXTS.NAVIGATION.GET_STARTED}</span>
@@ -38,9 +52,9 @@ export const navigationComponent = `
         <span class="nav-icon" aria-hidden="true">${getIcon('how-to-apply-cc')}</span>
         <span class="nav-text">${UI_TEXTS.NAVIGATION.HOW_TO_APPLY_CC}</span>
       </button>
-      <a href="/trends/20251007" class="nav-item nav-tab" data-section="ai-trends" aria-selected="false" role="tab" aria-label="${UI_TEXTS.NAVIGATION.AI_TRENDS}: Latest trends and insights in AI technology" data-tooltip="${UI_TEXTS.NAVIGATION.AI_TRENDS}: Latest AI trends">
-        <span class="nav-icon" aria-hidden="true">${getIcon('ai-trends')}</span>
-        <span class="nav-text">${UI_TEXTS.NAVIGATION.AI_TRENDS}</span>
+      <a href="/whiteboard" class="nav-item nav-tab" data-section="whiteboard" aria-selected="false" role="tab" aria-label="${UI_TEXTS.NAVIGATION.WHITEBOARD}: 自由绘制和书写的白板工具" data-tooltip="${UI_TEXTS.NAVIGATION.WHITEBOARD}: 自由绘制">
+        <span class="nav-icon" aria-hidden="true">${getIcon('whiteboard')}</span>
+        <span class="nav-text">${UI_TEXTS.NAVIGATION.WHITEBOARD}</span>
       </a>
     </div>
 
@@ -54,6 +68,12 @@ export const navigationComponent = `
         <span class="nav-menu-icon">${heroicons.adjustments}</span>
       </button>
     </div>
+
+    <button class="nav-collapse-toggle" aria-label="Toggle sidebar" title="Toggle sidebar">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="pointer-events:none">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+      </svg>
+    </button>
   </div>
 
   <!-- Mobile navigation overlay -->
@@ -66,6 +86,10 @@ export const navigationComponent = `
         </button>
       </div>
       <div class="nav-overlay-tabs">
+        <button class="nav-item ${cls('home')}" data-section="home" aria-selected="${DEFAULT_SECTION_ID === 'home'}" role="tab" data-tooltip="${UI_TEXTS.NAVIGATION.HOME}">
+          <span class="nav-icon" aria-hidden="true">${getIcon('home')}</span>
+          <span class="nav-text">${UI_TEXTS.NAVIGATION.HOME}</span>
+        </button>
         <button class="nav-item ${cls('get-started')}" data-section="get-started" aria-selected="${DEFAULT_SECTION_ID === 'get-started'}" role="tab" data-tooltip="${UI_TEXTS.NAVIGATION.GET_STARTED}: Get up and running quickly!">
           <span class="nav-icon" aria-hidden="true">${getIcon('get-started')}</span>
           <span class="nav-text">${UI_TEXTS.NAVIGATION.GET_STARTED}</span>
@@ -82,9 +106,9 @@ export const navigationComponent = `
           <span class="nav-icon" aria-hidden="true">${getIcon('how-to-apply-cc')}</span>
           <span class="nav-text">${UI_TEXTS.NAVIGATION.HOW_TO_APPLY_CC}</span>
         </button>
-        <a href="/trends/20251007" class="nav-item" aria-label="${UI_TEXTS.NAVIGATION.AI_TRENDS}: Latest AI trends">
-          <span class="nav-icon" aria-hidden="true">${getIcon('ai-trends')}</span>
-          <span class="nav-text">${UI_TEXTS.NAVIGATION.AI_TRENDS}</span>
+        <a href="/whiteboard" class="nav-item" aria-label="${UI_TEXTS.NAVIGATION.WHITEBOARD}: 自由绘制">
+          <span class="nav-icon" aria-hidden="true">${getIcon('whiteboard')}</span>
+          <span class="nav-text">${UI_TEXTS.NAVIGATION.WHITEBOARD}</span>
         </a>
       </div>
     </div>
@@ -123,7 +147,7 @@ export const navigationComponent = `
   .brand-icon {
     width: 2rem;
     height: 2rem;
-    color: #6366f1;
+    color: #E57A5A;
   }
 
   .brand-icon svg {
@@ -171,20 +195,20 @@ export const navigationComponent = `
   }
 
   .nav-item:hover {
-    color: #6366f1;
-    background: rgba(99, 102, 241, 0.1);
+    color: #E57A5A;
+    background: rgba(229, 122, 90, 0.1);
     transform: translateY(-1px);
   }
 
   .nav-item:focus-visible {
-    outline: 2px solid #6366f1;
+    outline: 2px solid #E57A5A;
     outline-offset: 2px;
   }
 
   .nav-item[data-active="true"] {
-    color: #6366f1;
-    background: rgba(99, 102, 241, 0.12);
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+    color: #E57A5A;
+    background: rgba(229, 122, 90, 0.12);
+    box-shadow: 0 2px 8px rgba(229, 122, 90, 0.25);
   }
 
   .nav-item[data-active="true"]::after {
@@ -194,7 +218,7 @@ export const navigationComponent = `
     left: 0;
     right: 0;
     height: 2px;
-    background: #6366f1;
+    background: #E57A5A;
     border-radius: 1px;
   }
 
@@ -234,6 +258,9 @@ export const navigationComponent = `
   }
 
   .nav-menu-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 1.5rem;
     height: 1.5rem;
   }
@@ -320,19 +347,25 @@ export const navigationComponent = `
 
   .skip-navigation {
     position: absolute;
-    top: -40px;
+    top: -100px;
     left: 6px;
-    background: #6366f1;
+    background: #E57A5A;
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 0.375rem;
     text-decoration: none;
     font-weight: 500;
     transition: top 0.3s ease;
+    clip: rect(0, 0, 0, 0);
+    overflow: hidden;
+    white-space: nowrap;
+    z-index: 9999;
   }
 
   .skip-navigation:focus {
     top: 6px;
+    clip: auto;
+    overflow: visible;
   }
 
   /* Interactive enhancements */
@@ -387,7 +420,7 @@ export const navigationComponent = `
       flex-direction: row;
       gap: 0.5rem;
       overflow-x: auto;
-      padding: 0.5rem 0;
+      padding: 0.5rem 3rem 0.5rem 0;
       -webkit-overflow-scrolling: touch;
     }
 
@@ -414,7 +447,7 @@ export const navigationComponent = `
       left: 0;
       right: 0;
       height: 3px;
-      background: #6366f1;
+      background: #E57A5A;
       border-radius: 2px;
     }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { BrandIcon, BrandIconSimple, BrandWordmark } from '@/components/BrandIcon';
+import { BrandIcon, BrandIconSimple, BrandWordmark } from '@/components/brand';
 
 export default function StyleGuidePage() {
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
@@ -233,9 +233,9 @@ export default function StyleGuidePage() {
         <section className='mb-10'>
           <h2 className='text-xl font-semibold mb-4'>Brand Icon - AI Speeds</h2>
           <div className='bg-bg-primary rounded-xl border border-border-light p-8'>
-            {/* Spiral Ascent Design */}
+            {/* A+S Mountain Climbing Design */}
             <div className='mb-8'>
-              <h3 className='text-lg font-medium text-text-primary mb-4'>Spiral Ascent 🌀</h3>
+              <h3 className='text-lg font-medium text-text-primary mb-4'>A+S Mountain Climbing Path ⛰️</h3>
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
                 {/* Default variant */}
                 <div className='flex flex-col items-center gap-4'>
@@ -323,55 +323,58 @@ export default function StyleGuidePage() {
 
             {/* Design concept */}
             <div className='pt-6 border-t border-border-light'>
-              <h3 className='text-sm font-semibold text-text-primary mb-3'>Design Concept - Human Spiral Growth</h3>
+              <h3 className='text-sm font-semibold text-text-primary mb-3'>
+                Design Concept - A+S Mountain Climbing Path
+              </h3>
               <ul className='space-y-2 text-sm text-text-secondary'>
                 <li className='flex items-start gap-2'>
-                  <span className='text-accent'>🌀</span>
+                  <span className='text-accent'>🔤</span>
                   <span>
-                    <strong className='text-text-primary'>Fibonacci spiral:</strong> Organic growth pattern inspired by
-                    nature, representing continuous learning and iterative development
+                    <strong className='text-text-primary'>Letter A - Mountain Triangle:</strong> The outer triangle
+                    forms the letter "A" representing AI, while symbolizing a mountain peak to conquer
                   </span>
                 </li>
                 <li className='flex items-start gap-2'>
-                  <span className='text-accent'>👤</span>
+                  <span className='text-accent'>🛤️</span>
                   <span>
-                    <strong className='text-text-primary'>Human reaching upward:</strong> Arrow symbolizes human
-                    aspiration and the gesture of reaching toward goals
+                    <strong className='text-text-primary'>Letter S - Climbing Path:</strong> The winding S-shaped curves
+                    inside the triangle represent the climbing route, forming the letter "S" for Speeds
+                  </span>
+                </li>
+                <li className='flex items-start gap-2'>
+                  <span className='text-accent'>⛰️</span>
+                  <span>
+                    <strong className='text-text-primary'>Mountain Climbing Metaphor:</strong> The path symbolizes the
+                    journey of continuous improvement, with each curve representing a stage of growth and learning
                   </span>
                 </li>
                 <li className='flex items-start gap-2'>
                   <span className='text-accent'>💫</span>
                   <span>
-                    <strong className='text-text-primary'>Achievement glow:</strong> Radiant peak with inner highlight
-                    showing the moment of breakthrough
+                    <strong className='text-text-primary'>Peak Achievement:</strong> The glowing point at the summit
+                    represents reaching goals and breakthrough moments
                   </span>
                 </li>
                 <li className='flex items-start gap-2'>
-                  <span className='text-accent'>�</span>
+                  <span className='text-accent'>🎯</span>
                   <span>
-                    <strong className='text-text-primary'>Progressive milestones:</strong> Growing nodes
-                    (0.9→1.3→1.8→2.3px) show accelerating momentum
-                  </span>
-                </li>
-                <li className='flex items-start gap-2'>
-                  <span className='text-accent'>⭕</span>
-                  <span>
-                    <strong className='text-text-primary'>Growth rings:</strong> Subtle concentric circles at the base
-                    represent expanding influence and capability
-                  </span>
-                </li>
-                <li className='flex items-start gap-2'>
-                  <span className='text-accent'>✨</span>
-                  <span>
-                    <strong className='text-text-primary'>Energy particles:</strong> Floating accent dots convey upward
-                    momentum and dynamic progress
+                    <strong className='text-text-primary'>Milestone Markers:</strong> Dots along the path mark progress
+                    checkpoints, showing incremental achievements on the journey upward
                   </span>
                 </li>
                 <li className='flex items-start gap-2'>
                   <span className='text-accent'>🎨</span>
                   <span>
-                    <strong className='text-text-primary'>Gradient flow:</strong> Teal→Blue transition (#4ECDC4→#2563eb)
-                    represents journey from learning to mastery
+                    <strong className='text-text-primary'>Color Symbolism:</strong> Blue (#2563eb) for the mountain
+                    structure represents stability and trust, while Teal (#4ECDC4) for the path represents innovation
+                    and forward momentum
+                  </span>
+                </li>
+                <li className='flex items-start gap-2'>
+                  <span className='text-accent'>✨</span>
+                  <span>
+                    <strong className='text-text-primary'>Brand Integration:</strong> The A+S combination perfectly
+                    encapsulates "AI Speeds" while conveying the core message of accelerated growth through AI
                   </span>
                 </li>
               </ul>

@@ -8,6 +8,10 @@ import { implementationModule } from '@/legacy/features/how-to-implement';
 import { howToApplyCCModule } from '@/legacy/features/how-to-apply-cc';
 import { DEFAULT_SECTION_ID } from '@/config/navigation';
 
+interface LegacyPageWrapperProps {
+  // Component no longer uses homepageHtml - now loads via iframe
+}
+
 declare global {
   interface Window {
     initNavigation?: () => void;
@@ -21,7 +25,7 @@ declare global {
  * 这是一个适配器组件，将现有的 HTML 字符串模板系统
  * 适配到 Next.js React 架构中
  */
-export function LegacyPageWrapper() {
+export function LegacyPageWrapper(_props: LegacyPageWrapperProps) {
   useEffect(() => {
     // 注入样式
     const styleId = 'legacy-styles';
@@ -86,10 +90,23 @@ export function LegacyPageWrapper() {
 
       {/* 主内容区 - 复用所有功能模块 */}
       <div className='content-wrapper'>
-        <div dangerouslySetInnerHTML={{ __html: getStartedModule }} />
-        <div dangerouslySetInnerHTML={{ __html: bestPracticesModule }} />
-        <div dangerouslySetInnerHTML={{ __html: implementationModule }} />
-        <div dangerouslySetInnerHTML={{ __html: howToApplyCCModule }} />
+        {/* Home section - 使用 iframe 嵌入首页 */}
+        <div id='home' className='content-section' style={{ height: '100vh', width: '100%' }}>
+          <iframe
+            src='/api/static/homepage?t=1'
+            style={{
+              width: '100%',
+              height: '100%',
+              border: 'none',
+              display: 'block',
+            }}
+            title='cc4pm homepage'
+          />
+        </div>
+        <div dangerouslySetInnerHTML={{ __html: getStartedModule }} suppressHydrationWarning />
+        <div dangerouslySetInnerHTML={{ __html: bestPracticesModule }} suppressHydrationWarning />
+        <div dangerouslySetInnerHTML={{ __html: implementationModule }} suppressHydrationWarning />
+        <div dangerouslySetInnerHTML={{ __html: howToApplyCCModule }} suppressHydrationWarning />
       </div>
     </>
   );
