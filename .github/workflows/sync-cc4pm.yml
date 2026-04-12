@@ -75,6 +75,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build client bundles
+        run: pnpm build:client:direct
+
       - name: Build for Cloudflare Workers
         run: pnpm cf:build
 
