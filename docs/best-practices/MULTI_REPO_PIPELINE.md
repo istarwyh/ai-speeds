@@ -138,11 +138,11 @@ git push origin main
 
 ## 已知坑
 
-| 问题                                                | 原因                                          | 解决                                                     |
-| --------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------- |
-| CI publish 报 `404 Not found`                       | npm token 过期，非包不存在                    | 重新 `npm login` 更新 Secret                             |
-| `gh secret set` 交互 prompt 报 escape sequence 错误 | 终端 escape 干扰                              | 改用 `echo "token" \| gh secret set` 或 `-b` 参数        |
-| `Post Setup Node.js` 步骤报 cache 路径不存在        | pnpm store 首次为空，`cache: pnpm` 找不到路径 | 移除 `setup-node` 的 `cache: pnpm` 配置                  |
-| bot push 被远端拒绝（non-fast-forward）             | workflow 并发写同一分支                       | 本地 `git pull --rebase` 再 push                         |
-| `wrangler deploy` 报 `Authentication error`         | `CLOUDFLARE_API_TOKEN` 未设置或权限不足       | 确认 token 有 `Workers Scripts:Edit` 权限                |
-| `cf:build` 报错找不到 `.open-next`                  | opennextjs-cloudflare build 未完成            | 检查 `pnpm cf:build` 是否依赖本地文件，CI 环境需完整依赖 |
+| 问题                                                               | 原因                                          | 解决                                                                     |
+| ------------------------------------------------------------------ | --------------------------------------------- | ------------------------------------------------------------------------ |
+| CI publish 报 `404 Not found`                                      | npm token 过期，非包不存在                    | 重新 `npm login` 更新 Secret                                             |
+| `gh secret set` 交互 prompt 报 escape sequence 错误                | 终端 escape 干扰                              | 改用 `echo "token" \| gh secret set` 或 `-b` 参数                        |
+| `Post Setup Node.js` 步骤报 cache 路径不存在                       | pnpm store 首次为空，`cache: pnpm` 找不到路径 | 移除 `setup-node` 的 `cache: pnpm` 配置                                  |
+| bot push 被远端拒绝（non-fast-forward）                            | workflow 并发写同一分支                       | 本地 `git pull --rebase` 再 push                                         |
+| `wrangler deploy` 报 `Authentication error [code: 10000]`          | Token 权限不足（账号可识别但操作被拒）        | 重建 Token，使用 `Edit Cloudflare Workers` 模板，确保包含 Zone:Edit 权限 |
+| `cf:build` 报 `Module not found: ../generated/bestPracticesBundle` | client bundle 未预先生成                      | 在 `cf:build` 前先运行 `pnpm build:client:direct`                        |
