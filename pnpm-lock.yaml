@@ -8,8 +8,8 @@ importers:
   .:
     dependencies:
       "@cc4pm/homepage":
-        specifier: 1.0.2
-        version: 1.0.2
+        specifier: 1.0.3
+        version: 1.0.3
       "@excalidraw/excalidraw":
         specifier: ^0.18.0
         version: 0.18.0(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(immer@10.2.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -643,9 +643,9 @@ packages:
     resolution:
       { integrity: sha512-Tbsj02wXCbqGmzdnXNk0SOF19ChhRU70BsroIi4Pm6Ehp56in6vch94mfbdQ17DozxkL3BAVjbZ4Qc1a0HFRAg== }
 
-  "@cc4pm/homepage@1.0.2":
+  "@cc4pm/homepage@1.0.3":
     resolution:
-      { integrity: sha512-ir9Tf+D8X/ZkLWOIjRHsrYAr4qmFvZDul0nhgvvPzwbcDxuJiUmLmNfkZ55kAi5fe89yvrCf7pY/UvQv82J1vA== }
+      { integrity: sha512-X2eAAywY6Mf1WAV90nBrQ6ZeBIvZMIFUOc05cBCsWxjbB4tA7w4VJYZfr4VqjijJwmtE1munf/RVRNAHUSD/Bw== }
 
   "@cloudflare/kv-asset-handler@0.4.0":
     resolution:
@@ -8288,7 +8288,7 @@ snapshots:
 
   "@braintree/sanitize-url@6.0.2": {}
 
-  "@cc4pm/homepage@1.0.2": {}
+  "@cc4pm/homepage@1.0.3": {}
 
   "@cloudflare/kv-asset-handler@0.4.0":
     dependencies:
