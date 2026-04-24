@@ -165,10 +165,16 @@ async function buildClientScripts() {
     const lastContentModification = getLastModified(CLIENT_DIR);
     const currentLineCount = getClientLineCount();
 
+    const homepageHtmlPath = path.resolve(__dirname, '../node_modules/@cc4pm/homepage/index.html');
+    const homepageMtime = fs.existsSync(homepageHtmlPath)
+      ? fs.statSync(homepageHtmlPath).mtime.getTime()
+      : 0;
+
     // 更智能的缓存检查
     if (
       lastContentModification < lastBuildData.timestamp &&
       currentLineCount === lastBuildData.lineCount &&
+      homepageMtime === lastBuildData.homepageMtime &&
       fs.existsSync(path.join(GENERATED_DIR, 'appClientScript.ts'))
     ) {
       console.log('✅ 客户端代码未修改，跳过构建（智能缓存）');
@@ -209,6 +215,7 @@ async function buildClientScripts() {
       JSON.stringify({
         timestamp: currentTime,
         lineCount: currentLineCount,
+        homepageMtime,
         errorCount,
       }),
       'utf8',
