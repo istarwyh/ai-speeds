@@ -577,7 +577,7 @@ export class ShareService<T extends BaseContentCard = BaseContentCard> {
         return this.options.deepLinkBuilder(card);
       }
       const url = new URL(window.location.href);
-      const moduleName = this.options.moduleName || 'best-practices';
+      const moduleName = this.options.moduleName || 'get-started';
       url.searchParams.set('module', moduleName);
       url.searchParams.set('view', 'article');
       url.searchParams.set('cardId', (card as any).id || '');

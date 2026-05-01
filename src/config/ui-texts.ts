@@ -6,33 +6,21 @@ export const UI_TEXTS = {
   NAVIGATION: {
     HOME: '献给产品主理人',
     GET_STARTED: '如何用上CC',
-    BEST_PRACTICES: '如何用好 AI',
-    HOW_TO_IMPLEMENT: '如何实现 Agent',
-    HOW_TO_APPLY_CC: '使用 Agent SDK',
     WHITEBOARD: '白板',
   },
 
   // 模块标题和描述
   MODULE_TITLES: {
     'get-started': '如何用上CC',
-    'best-practices': '如何用好 AI',
-    'how-to-implement': '如何实现 Agent',
-    'how-to-apply-cc': '使用 Agent SDK',
   },
 
   MODULE_DESCRIPTIONS: {
     'get-started': '快速开始使用 Claude Code Router，连接你喜欢的 AI Provider',
-    'best-practices': '基于 Anthropic 官方最佳实践的深度指南',
-    'how-to-implement': '深入了解 Claude Code Router 的技术架构与实现原理',
-    'how-to-apply-cc': '掌握 Claude Code SDK，构建专业的 AI Agent 应用',
   },
 
   // 导航图标
   MODULE_ICONS: {
     'get-started': '🚀',
-    'best-practices': '⚡',
-    'how-to-implement': '🔧',
-    'how-to-apply-cc': '🎯',
   },
 
   // 通用按钮文字

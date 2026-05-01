@@ -40,18 +40,6 @@ export const navigationComponent = `
         <span class="nav-icon" aria-hidden="true">${getIcon('get-started')}</span>
         <span class="nav-text">${UI_TEXTS.NAVIGATION.GET_STARTED}</span>
       </button>
-      <button class="nav-item ${cls('best-practices')}" data-section="best-practices" data-active="${DEFAULT_SECTION_ID === 'best-practices'}" aria-selected="${DEFAULT_SECTION_ID === 'best-practices'}" role="tab" aria-label="${UI_TEXTS.NAVIGATION.BEST_PRACTICES}: Learn the optimal ways to use AI Speeds effectively" data-tooltip="${UI_TEXTS.NAVIGATION.BEST_PRACTICES}: Discover best practices">
-        <span class="nav-icon" aria-hidden="true">${getIcon('best-practices')}</span>
-        <span class="nav-text">${UI_TEXTS.NAVIGATION.BEST_PRACTICES}</span>
-      </button>
-      <button class="nav-item ${cls('how-to-implement')}" data-section="how-to-implement" data-active="${DEFAULT_SECTION_ID === 'how-to-implement'}" aria-selected="${DEFAULT_SECTION_ID === 'how-to-implement'}" role="tab" aria-label="${UI_TEXTS.NAVIGATION.HOW_TO_IMPLEMENT}: Technical implementation guides for developers" data-tooltip="${UI_TEXTS.NAVIGATION.HOW_TO_IMPLEMENT}: Implementation guides">
-        <span class="nav-icon" aria-hidden="true">${getIcon('how-to-implement')}</span>
-        <span class="nav-text">${UI_TEXTS.NAVIGATION.HOW_TO_IMPLEMENT}</span>
-      </button>
-      <button class="nav-item ${cls('how-to-apply-cc')}" data-section="how-to-apply-cc" data-active="${DEFAULT_SECTION_ID === 'how-to-apply-cc'}" aria-selected="${DEFAULT_SECTION_ID === 'how-to-apply-cc'}" role="tab" aria-label="${UI_TEXTS.NAVIGATION.HOW_TO_APPLY_CC}: Apply Claude Code Router in real-world scenarios" data-tooltip="${UI_TEXTS.NAVIGATION.HOW_TO_APPLY_CC}: Real-world applications">
-        <span class="nav-icon" aria-hidden="true">${getIcon('how-to-apply-cc')}</span>
-        <span class="nav-text">${UI_TEXTS.NAVIGATION.HOW_TO_APPLY_CC}</span>
-      </button>
       <a href="/whiteboard" class="nav-item nav-tab" data-section="whiteboard" aria-selected="false" role="tab" aria-label="${UI_TEXTS.NAVIGATION.WHITEBOARD}: 自由绘制和书写的白板工具" data-tooltip="${UI_TEXTS.NAVIGATION.WHITEBOARD}: 自由绘制">
         <span class="nav-icon" aria-hidden="true">${getIcon('whiteboard')}</span>
         <span class="nav-text">${UI_TEXTS.NAVIGATION.WHITEBOARD}</span>
@@ -93,18 +81,6 @@ export const navigationComponent = `
         <button class="nav-item ${cls('get-started')}" data-section="get-started" aria-selected="${DEFAULT_SECTION_ID === 'get-started'}" role="tab" data-tooltip="${UI_TEXTS.NAVIGATION.GET_STARTED}: Get up and running quickly!">
           <span class="nav-icon" aria-hidden="true">${getIcon('get-started')}</span>
           <span class="nav-text">${UI_TEXTS.NAVIGATION.GET_STARTED}</span>
-        </button>
-        <button class="nav-item ${cls('best-practices')}" data-section="best-practices" aria-selected="${DEFAULT_SECTION_ID === 'best-practices'}" role="tab" data-tooltip="${UI_TEXTS.NAVIGATION.BEST_PRACTICES}: Discover best practices">
-          <span class="nav-icon" aria-hidden="true">${getIcon('best-practices')}</span>
-          <span class="nav-text">${UI_TEXTS.NAVIGATION.BEST_PRACTICES}</span>
-        </button>
-        <button class="nav-item ${cls('how-to-implement')}" data-section="how-to-implement" aria-selected="${DEFAULT_SECTION_ID === 'how-to-implement'}" role="tab" data-tooltip="${UI_TEXTS.NAVIGATION.HOW_TO_IMPLEMENT}: Implementation guides">
-          <span class="nav-icon" aria-hidden="true">${getIcon('how-to-implement')}</span>
-          <span class="nav-text">${UI_TEXTS.NAVIGATION.HOW_TO_IMPLEMENT}</span>
-        </button>
-        <button class="nav-item ${cls('how-to-apply-cc')}" data-section="how-to-apply-cc" aria-selected="${DEFAULT_SECTION_ID === 'how-to-apply-cc'}" role="tab" data-tooltip="${UI_TEXTS.NAVIGATION.HOW_TO_APPLY_CC}: Real-world applications">
-          <span class="nav-icon" aria-hidden="true">${getIcon('how-to-apply-cc')}</span>
-          <span class="nav-text">${UI_TEXTS.NAVIGATION.HOW_TO_APPLY_CC}</span>
         </button>
         <a href="/whiteboard" class="nav-item" aria-label="${UI_TEXTS.NAVIGATION.WHITEBOARD}: 自由绘制">
           <span class="nav-icon" aria-hidden="true">${getIcon('whiteboard')}</span>

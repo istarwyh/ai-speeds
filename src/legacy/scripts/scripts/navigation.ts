@@ -99,48 +99,6 @@ function initNavigation() {
     // Update sidebar collapse state based on section
     updateHomeActiveState(sectionId);
 
-    // Special handling for best-practices section
-    if (sectionId === 'best-practices') {
-      // Ensure we show the overview when navigating to best-practices
-      // Use retry mechanism to handle async module initialization
-      function tryShowBestPractices(retries) {
-        if (window.showBestPracticesOverview) {
-          window.showBestPracticesOverview();
-        } else if (retries > 0) {
-          setTimeout(() => tryShowBestPractices(retries - 1), 100);
-        }
-      }
-      tryShowBestPractices(10);
-    }
-
-    // Special handling for how-to-implement section
-    if (sectionId === 'how-to-implement') {
-      // Ensure we show the overview when navigating to how-to-implement
-      // Use retry mechanism to handle async module initialization
-      function tryShowHowToImplement(retries) {
-        if (window.initializeHowToImplement) {
-          window.initializeHowToImplement();
-        } else if (retries > 0) {
-          setTimeout(() => tryShowHowToImplement(retries - 1), 100);
-        }
-      }
-      tryShowHowToImplement(10);
-    }
-
-    // Special handling for how-to-apply-cc section
-    if (sectionId === 'how-to-apply-cc') {
-      // Ensure we show the overview when navigating to how-to-apply-cc
-      // Use retry mechanism to handle async module initialization
-      function tryShowHowToApplyCC(retries) {
-        if (window.showHowToApplyCCOverview) {
-          window.showHowToApplyCCOverview();
-        } else if (retries > 0) {
-          setTimeout(() => tryShowHowToApplyCC(retries - 1), 100);
-        }
-      }
-      tryShowHowToApplyCC(10);
-    }
-
     // Animate transition
     if (activeTab) {
       animateTabTransition(activeTab);
@@ -419,10 +377,10 @@ function updateBreadcrumb(isArticleView, articleTitle = '') {
     const breadcrumb = document.createElement('div');
     breadcrumb.className = 'practices-page__breadcrumb';
     breadcrumb.innerHTML = \`
-      <button class="breadcrumb-back" onclick="showBestPracticesOverview()">
+      <button class="breadcrumb-back" onclick="window.history.back()">
         ${UI_TEXTS.BUTTONS.BACK_TO_OVERVIEW}
       </button>
-      <span class="breadcrumb-path">${UI_TEXTS.NAVIGATION.BEST_PRACTICES}${UI_TEXTS.BREADCRUMB.SEPARATOR}\${articleTitle}</span>
+      <span class="breadcrumb-path">${UI_TEXTS.NAVIGATION.GET_STARTED}${UI_TEXTS.BREADCRUMB.SEPARATOR}\${articleTitle}</span>
     \`;
 
     // Remove existing breadcrumb if any

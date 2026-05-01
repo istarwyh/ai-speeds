@@ -3,9 +3,6 @@
 import { useEffect } from 'react';
 import { navigationComponent, allStyles, allScripts } from '@/legacy';
 import { getStartedModule } from '@/legacy/features/get-started';
-import { bestPracticesModule } from '@/legacy/features/best-practices';
-import { implementationModule } from '@/legacy/features/how-to-implement';
-import { howToApplyCCModule } from '@/legacy/features/how-to-apply-cc';
 import { DEFAULT_SECTION_ID } from '@/config/navigation';
 
 interface LegacyPageWrapperProps {
@@ -104,9 +101,6 @@ export function LegacyPageWrapper(_props: LegacyPageWrapperProps) {
           />
         </div>
         <div dangerouslySetInnerHTML={{ __html: getStartedModule }} suppressHydrationWarning />
-        <div dangerouslySetInnerHTML={{ __html: bestPracticesModule }} suppressHydrationWarning />
-        <div dangerouslySetInnerHTML={{ __html: implementationModule }} suppressHydrationWarning />
-        <div dangerouslySetInnerHTML={{ __html: howToApplyCCModule }} suppressHydrationWarning />
       </div>
     </>
   );

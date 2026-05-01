@@ -182,9 +182,6 @@ async function buildClientScripts() {
       // 仍然进行文件存在性检查（而非完全跳过构建）
       const expectedFiles = [
         'appClientScript.ts',
-        'howToApplyCCClientScript.ts',
-        'bestPracticesClientScript.ts',
-        'howToImplementClientScript.ts',
         'providerDetailsClientScript.ts',
         'homepageHtml.ts',
       ];

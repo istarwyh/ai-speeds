@@ -25,17 +25,6 @@ export const leftNavCard = () => {
           </a>
         </div>
         
-        <div class="nav-section">
-          <h4>使用指南</h4>
-          <a href="#best-practices" class="nav-link">
-            <span class="nav-icon">⚡</span>
-            <span class="nav-text">最佳实践</span>
-          </a>
-          <a href="#implementation" class="nav-link">
-            <span class="nav-icon">🔧</span>
-            <span class="nav-text">实现原理</span>
-          </a>
-        </div>
       </div>
     </div>
   `;
@@ -58,15 +47,7 @@ export const addPageAnchors = () => {
         // 配置部分
         const configSection = document.querySelector('.step-item:nth-child(3)');
         if (configSection) configSection.id = 'config';
-        
-        // 最佳实践部分
-        const bestPracticesSection = document.getElementById('best-practices-module');
-        if (bestPracticesSection) bestPracticesSection.id = 'best-practices';
-        
-        // 实现原理部分
-        const implementationSection = document.getElementById('implementation-module');
-        if (implementationSection) implementationSection.id = 'implementation';
-        
+
         // 添加平滑滚动
         document.querySelectorAll('.nav-link').forEach(link => {
           link.addEventListener('click', (e) => {

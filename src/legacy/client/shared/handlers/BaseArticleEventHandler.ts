@@ -1,5 +1,5 @@
 /// <reference path="../types/env.d.ts" />
-import { injectMarkdownStyles } from '../../bestPractices/styles/markdownStyles';
+import { injectMarkdownStyles } from '../utils/markdownStyles';
 import { SafeMarkdownRenderer } from '../../../../lib/utils/markdownRenderer';
 import type { BaseContentCard } from '../types/ContentCard';
 import { ShareService as GenericShareService } from '../services/ShareService';

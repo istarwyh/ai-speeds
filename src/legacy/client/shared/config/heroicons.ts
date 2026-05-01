@@ -126,8 +126,5 @@ export const categoryIconMap: Record<string, keyof typeof heroicons> = {
 export const navigationIconMap: Record<string, keyof typeof heroicons> = {
   'home': 'bookOpen',
   'get-started': 'rocket',
-  'best-practices': 'bolt',
-  'how-to-implement': 'wrench',
-  'how-to-apply-cc': 'target',
   'whiteboard': 'pencil',
 };
