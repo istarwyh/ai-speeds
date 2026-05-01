@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     /* Language and Environment */
     "target": "ES2022",
     "module": "esnext",
@@ -35,7 +36,6 @@
     "sourceMap": true,
     "removeComments": false,
     "importHelpers": true,
-    "downlevelIteration": true,
     /* Interop Constraints */
     "allowJs": true,
     "checkJs": true,
