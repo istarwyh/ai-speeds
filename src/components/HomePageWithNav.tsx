@@ -26,7 +26,7 @@ export function HomePageWithNav() {
       ${baseStyles}
       ${navigationStyles}
       .homepage-main {
-        margin-left: var(--sidebar-width, 180px);
+        margin-left: var(--sidebar-width, 130px);
         transition: margin-left 0.3s ease;
       }
       body.sidebar-collapsed .homepage-main {
@@ -51,6 +51,14 @@ export function HomePageWithNav() {
         return;
       }
 
+      // Restore sidebar state from localStorage (default: collapsed)
+      const savedState = window.localStorage.getItem('sidebar-collapsed');
+      const shouldCollapse = savedState === null ? true : savedState === 'true';
+      if (shouldCollapse) {
+        nav.classList.add('nav-collapsed');
+        document.body.classList.add('sidebar-collapsed');
+      }
+
       if (collapseToggle) {
         const collapseToggleEl = collapseToggle as HTMLElement;
         if (!collapseToggleEl.dataset['listenerBound']) {
@@ -60,6 +68,8 @@ export function HomePageWithNav() {
             e.stopPropagation();
             nav.classList.toggle('nav-collapsed');
             document.body.classList.toggle('sidebar-collapsed');
+            // Persist state
+            window.localStorage.setItem('sidebar-collapsed', String(nav.classList.contains('nav-collapsed')));
           });
         }
       }

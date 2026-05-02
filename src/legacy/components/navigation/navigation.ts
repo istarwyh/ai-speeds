@@ -115,8 +115,8 @@ export const navigationComponent = `
   .nav-brand {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0;
+    gap: 0.375rem;
+    padding: 0.375rem 0;
     justify-content: center;
   }
 
@@ -132,7 +132,7 @@ export const navigationComponent = `
   }
 
   .brand-text {
-    font-size: 1.25rem;
+    font-size: 1rem;
     font-weight: 600;
     color: #111827;
   }
@@ -146,20 +146,20 @@ export const navigationComponent = `
   .nav-tabs {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.125rem;
     position: relative;
   }
 
   .nav-item {
     position: relative;
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 0.75rem;
     border: 0;
     background: transparent;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
+    gap: 0.375rem;
+    font-size: 0.8rem;
     font-weight: 500;
     color: #6b7280;
     transition: all 0.2s ease;

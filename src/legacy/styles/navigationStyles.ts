@@ -1,7 +1,7 @@
 export const navigationStyles = `
 /* Navigation Styles */
 :root {
-  --sidebar-width: 180px;
+  --sidebar-width: 130px;
   --sidebar-collapsed-width: 60px;
   --active-border-width: 3px;
 }
@@ -61,7 +61,7 @@ export const navigationStyles = `
   align-items: center;
   justify-content: center;
   padding: 0.5rem;
-  margin: auto 0.5rem 1rem 0.5rem;
+  margin: auto 0.5rem 0.5rem 0.5rem;
   border: 1px solid var(--color-surface-glass-2, #e5e7eb);
   background: transparent;
   cursor: pointer;
@@ -90,24 +90,24 @@ export const navigationStyles = `
 }
 
 .nav-container {
-  padding: var(--space-6) var(--space-2);
+  padding: var(--space-4) var(--space-2);
   flex: 1;
 }
 
 .nav-tabs {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 
 .nav-tab {
   background: transparent;
   border: none;
-  padding: 1rem;
+  padding: 0.5rem 0.75rem;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   color: var(--color-text-secondary);
   font-weight: 500;
   transition: all 0.3s ease;
@@ -145,7 +145,7 @@ export const navigationStyles = `
 }
 
 .nav-text {
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   flex: 1;
 }
 
