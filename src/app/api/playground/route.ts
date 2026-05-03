@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { validateProxyUrl } from '@/lib/url-validation';
 
 export const runtime = 'nodejs';
+
+type ApiType = 'openai' | 'anthropic' | 'openai-responses';
 
 interface PlaygroundRequest {
   url: string;
   model: string;
   key: string;
-  apiType: 'openai' | 'anthropic';
+  apiType: ApiType;
   message?: string;
   timeout?: number;
   stream?: boolean;
@@ -21,16 +24,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'url, model, and key are required' }, { status: 400 });
     }
 
+    const validation = validateProxyUrl(url);
+    if (!validation.ok) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
+    }
+
     const testMessage = message || 'Say hello in one sentence.';
-    const timeoutMs = Math.max((timeout ?? 60) * 1000, 10_000);
+    const timeoutMs = Math.min(Math.max((timeout ?? 60) * 1000, 10_000), 120_000);
     const useStream = stream !== false;
+    const baseUrl = validation.url.href.replace(/\/$/, '');
 
     let targetUrl: string;
     let headers: Record<string, string>;
     let requestBody: string;
 
     if (apiType === 'anthropic') {
-      targetUrl = url.replace(/\/$/, '') + '/v1/messages';
+      targetUrl = `${baseUrl}/v1/messages`;
       headers = {
         'Content-Type': 'application/json',
         'x-api-key': key,
@@ -42,8 +51,19 @@ export async function POST(request: NextRequest) {
         stream: useStream,
         messages: [{ role: 'user', content: testMessage }],
       });
+    } else if (apiType === 'openai-responses') {
+      targetUrl = `${baseUrl}/v1/responses`;
+      headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${key}`,
+      };
+      requestBody = JSON.stringify({
+        model,
+        stream: useStream,
+        input: [{ role: 'user', content: testMessage }],
+      });
     } else {
-      targetUrl = url.replace(/\/$/, '') + '/chat/completions';
+      targetUrl = `${baseUrl}/chat/completions`;
       headers = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${key}`,
@@ -75,7 +95,6 @@ export async function POST(request: NextRequest) {
     }
 
     if (useStream && response.body) {
-      // Forward SSE stream to client
       return new NextResponse(response.body, {
         headers: {
           'Content-Type': 'text/event-stream',
@@ -86,7 +105,6 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Non-streaming fallback
     const data = await response.json().catch(() => null);
     return NextResponse.json({
       status: response.status,

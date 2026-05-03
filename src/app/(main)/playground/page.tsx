@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { BrandIcon } from '@/components/brand';
 import { UI_TEXTS } from '@/config/ui-texts';
 
-type ApiType = 'openai' | 'anthropic';
+type ApiType = 'openai' | 'anthropic' | 'openai-responses';
 
 interface TestResult {
   status: number;
@@ -14,7 +14,18 @@ interface TestResult {
   data: unknown;
 }
 
+interface RawSseLine {
+  event?: string;
+  data: string;
+}
+
 const DEFAULT_URL = 'https://aispeeds.me';
+
+const API_TYPE_OPTIONS: { value: ApiType; label: string }[] = [
+  { value: 'openai', label: 'Chat Completions' },
+  { value: 'openai-responses', label: 'Responses' },
+  { value: 'anthropic', label: 'Anthropic' },
+];
 
 export default function PlaygroundPage() {
   const [apiType, setApiType] = useState<ApiType>('openai');
@@ -26,7 +37,7 @@ export default function PlaygroundPage() {
   const [showKey, setShowKey] = useState(false);
   const [loading, setLoading] = useState(false);
   const [streamText, setStreamText] = useState('');
-  const [rawLines, setRawLines] = useState<string[]>([]);
+  const [rawLines, setRawLines] = useState<RawSseLine[]>([]);
   const [viewMode, setViewMode] = useState<'rendered' | 'raw'>('rendered');
   const [streamDone, setStreamDone] = useState(false);
   const [streamLatency, setStreamLatency] = useState<number | null>(null);
@@ -79,6 +90,7 @@ export default function PlaygroundPage() {
         const decoder = new TextDecoder();
         let buffer = '';
         let text = '';
+        let pendingEvent = '';
 
         try {
           while (true) {
@@ -92,24 +104,30 @@ export default function PlaygroundPage() {
             buffer = lines.pop() ?? '';
 
             for (const line of lines) {
-              if (line.startsWith('event:') || line.startsWith(':')) {
-                // Collect SSE event type lines and comments
-                setRawLines(prev => [...prev, line]);
+              // SSE event type line
+              if (line.startsWith('event:')) {
+                pendingEvent = line.slice(6).trim();
                 continue;
               }
+              // Skip empty lines and comments
               if (!line.startsWith('data:')) {
                 continue;
               }
               const payload = line.slice(5).trim();
-              setRawLines(prev => [...prev, `data: ${payload}`]);
-              if (payload === '[DONE]') {
+
+              // Collect raw line paired with event type
+              const rawLine: RawSseLine = pendingEvent ? { event: pendingEvent, data: payload } : { data: payload };
+              setRawLines(prev => [...prev, rawLine]);
+              pendingEvent = '';
+
+              if (!payload || payload === '[DONE]') {
                 continue;
               }
 
               try {
                 const json = JSON.parse(payload) as Record<string, unknown>;
 
-                // OpenAI format: choices[0].delta.content
+                // ── OpenAI Chat Completions: choices[0].delta.content ──
                 const choices = json['choices'] as Array<{ delta?: { content?: string } }> | undefined;
                 if (choices?.[0]?.delta?.content) {
                   text += choices[0].delta.content;
@@ -117,14 +135,24 @@ export default function PlaygroundPage() {
                   continue;
                 }
 
-                // Anthropic format: delta.text
-                const delta = json['delta'] as { text?: string; type?: string } | undefined;
-                if (delta?.type === 'content_block_delta' && delta.text) {
-                  text += delta.text;
+                // ── OpenAI Responses API: response.output_text.delta ──
+                const eventType = json['type'] as string | undefined;
+                if (eventType === 'response.output_text.delta') {
+                  const delta = json['delta'] as string | undefined;
+                  if (delta) {
+                    text += delta;
+                    setStreamText(text);
+                  }
+                  continue;
+                }
+
+                // ── Anthropic: content_block_delta with delta.text ──
+                const deltaObj = json['delta'] as { text?: string; type?: string } | undefined;
+                if (deltaObj?.type === 'content_block_delta' && deltaObj.text) {
+                  text += deltaObj.text;
                   setStreamText(text);
                   continue;
                 }
-                // Also handle when type is at top level
                 if (json['type'] === 'content_block_delta') {
                   const d = json['delta'] as { text?: string } | undefined;
                   if (d?.text) {
@@ -142,11 +170,11 @@ export default function PlaygroundPage() {
         }
 
         setStreamDone(true);
-        setStreamLatency(serverLatency ? Number(serverLatency) : Date.now() - start);
+        setStreamLatency(Date.now() - start);
         setResult({
           status,
           statusText: status >= 200 && status < 300 ? 'OK' : 'Error',
-          latency: serverLatency ? Number(serverLatency) : Date.now() - start,
+          latency: Date.now() - start,
           data: { content: text },
         });
       } else {
@@ -205,6 +233,13 @@ export default function PlaygroundPage() {
 
   const canSend = url.trim() && model.trim() && key.trim() && !loading;
 
+  const formatRawLine = (line: RawSseLine) => {
+    if (line.event) {
+      return `event: ${line.event}\ndata: ${line.data}`;
+    }
+    return `data: ${line.data}`;
+  };
+
   return (
     <main className='min-h-screen bg-bg-secondary text-text-primary'>
       <header className='flex h-12 shrink-0 items-center gap-3 border-b border-border-light bg-bg-primary px-4'>
@@ -220,17 +255,17 @@ export default function PlaygroundPage() {
         <div className='space-y-6'>
           {/* API Type Toggle */}
           <div className='flex gap-2'>
-            {(['openai', 'anthropic'] as const).map(type => (
+            {API_TYPE_OPTIONS.map(({ value, label }) => (
               <button
-                key={type}
-                onClick={() => setApiType(type)}
+                key={value}
+                onClick={() => setApiType(value)}
                 className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                  apiType === type
+                  apiType === value
                     ? 'bg-teal-500 text-white shadow-sm'
                     : 'bg-bg-primary text-text-secondary hover:bg-bg-tertiary border border-border-light'
                 }`}
               >
-                {type === 'openai' ? 'OpenAI Compatible' : 'Anthropic'}
+                {label}
               </button>
             ))}
           </div>
@@ -264,7 +299,7 @@ export default function PlaygroundPage() {
                 type='text'
                 value={model}
                 onChange={e => setModel(e.target.value)}
-                placeholder={apiType === 'openai' ? 'gpt-4o' : 'claude-sonnet-4-20250514'}
+                placeholder={apiType === 'anthropic' ? 'claude-sonnet-4-20250514' : 'gpt-4o'}
                 className='w-full rounded-lg border border-border-medium px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none'
               />
               {modelsHint && <p className='mt-1.5 text-xs text-text-muted'>{modelsHint}</p>}
@@ -360,8 +395,9 @@ export default function PlaygroundPage() {
                 <input
                   type='number'
                   value={timeout}
-                  onChange={e => setTimeout_(Math.max(10, Number(e.target.value) || 60))}
+                  onChange={e => setTimeout_(Math.min(120, Math.max(10, Number(e.target.value) || 60)))}
                   min={10}
+                  max={120}
                   step={10}
                   className='w-24 rounded-lg border border-border-medium px-3 py-2 text-sm text-text-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none'
                 />
@@ -440,7 +476,7 @@ export default function PlaygroundPage() {
                 </div>
               ) : (
                 <pre className='overflow-auto rounded-lg bg-text-primary text-text-inverse p-4 text-xs leading-relaxed max-h-96'>
-                  {rawLines.join('\n')}
+                  {rawLines.map(formatRawLine).join('\n')}
                   {!streamDone && (
                     <span className='inline-block w-2 h-3 ml-0.5 bg-teal-400 animate-pulse align-text-bottom' />
                   )}

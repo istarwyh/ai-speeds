@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { validateProxyUrl } from '@/lib/url-validation';
 
 export const runtime = 'nodejs';
 
 interface ModelsRequest {
   url: string;
   key: string;
-  apiType: 'openai' | 'anthropic';
+  apiType: 'openai' | 'anthropic' | 'openai-responses';
 }
 
 export async function POST(request: NextRequest) {
@@ -17,6 +18,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'url and key are required' }, { status: 400 });
     }
 
+    const validation = validateProxyUrl(url);
+    if (!validation.ok) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
+    }
+
     if (apiType === 'anthropic') {
       return NextResponse.json({
         models: [],
@@ -24,7 +30,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const targetUrl = url.replace(/\/$/, '') + '/models';
+    const targetUrl = validation.url.href.replace(/\/$/, '') + '/models';
     const response = await fetch(targetUrl, {
       method: 'GET',
       headers: {
