@@ -64,6 +64,9 @@ else
   cat > "$TMP_TSCONFIG" <<EOF
 {
   "extends": "$REPO_ROOT/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "$REPO_ROOT"
+  },
   "include": [],
   "files": [ $FILES_JSON ]
 }
