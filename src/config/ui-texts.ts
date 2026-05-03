@@ -7,6 +7,7 @@ export const UI_TEXTS = {
     HOME: '献给产品主理人',
     GET_STARTED: '如何用上CC',
     WHITEBOARD: '白板',
+    PLAYGROUND: '接口测试',
   },
 
   // 模块标题和描述

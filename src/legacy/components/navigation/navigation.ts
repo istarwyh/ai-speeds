@@ -44,6 +44,10 @@ export const navigationComponent = `
         <span class="nav-icon" aria-hidden="true">${getIcon('whiteboard')}</span>
         <span class="nav-text">${UI_TEXTS.NAVIGATION.WHITEBOARD}</span>
       </a>
+      <a href="/playground" class="nav-item nav-tab" data-section="playground" aria-selected="false" role="tab" aria-label="${UI_TEXTS.NAVIGATION.PLAYGROUND}: 测试 OpenAI Compatible 和 Anthropic 接口" data-tooltip="${UI_TEXTS.NAVIGATION.PLAYGROUND}: 快速测试 API">
+        <span class="nav-icon" aria-hidden="true">${getIcon('playground')}</span>
+        <span class="nav-text">${UI_TEXTS.NAVIGATION.PLAYGROUND}</span>
+      </a>
     </div>
 
     <div class="nav-actions">
@@ -85,6 +89,10 @@ export const navigationComponent = `
         <a href="/whiteboard" class="nav-item" aria-label="${UI_TEXTS.NAVIGATION.WHITEBOARD}: 自由绘制">
           <span class="nav-icon" aria-hidden="true">${getIcon('whiteboard')}</span>
           <span class="nav-text">${UI_TEXTS.NAVIGATION.WHITEBOARD}</span>
+        </a>
+        <a href="/playground" class="nav-item" aria-label="${UI_TEXTS.NAVIGATION.PLAYGROUND}: 快速测试 API">
+          <span class="nav-icon" aria-hidden="true">${getIcon('playground')}</span>
+          <span class="nav-text">${UI_TEXTS.NAVIGATION.PLAYGROUND}</span>
         </a>
       </div>
     </div>

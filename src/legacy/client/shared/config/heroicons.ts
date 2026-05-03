@@ -127,4 +127,5 @@ export const navigationIconMap: Record<string, keyof typeof heroicons> = {
   'home': 'bookOpen',
   'get-started': 'rocket',
   'whiteboard': 'pencil',
+  'playground': 'bolt',
 };
