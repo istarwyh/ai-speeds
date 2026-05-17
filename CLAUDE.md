@@ -137,3 +137,82 @@ Subject: lowercase, 3-100 chars, no period. Header max 120 chars.
   (`eslint.config.js`)
 - CI deploys on push to `main` via `.github/workflows/deploy.yml` (requires
   `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets)
+
+## CCPM Rules
+
+The following rules are defined in `.claude/rules/` and must be followed:
+
+### DateTime
+
+- **Always use real system datetime** — never estimate or use placeholders
+- Get datetime: `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+- All dates in frontmatter use ISO 8601 UTC format: `YYYY-MM-DDTHH:MM:SSZ`
+- Never change `created` field after initial creation; always update `updated`
+  field
+
+### Path Standards
+
+- **Use relative paths** — never expose absolute paths with usernames
+- Project files: `internal/auth/server.go` (not `/Users/username/project/...`)
+- Cross-project: `../project-name/src/file.ts`
+- GitHub issues/comments must never contain absolute paths
+
+### Standard Patterns
+
+- **Fail fast** — check critical prerequisites, then proceed
+- **Trust the system** — don't over-validate things that rarely fail
+- **Clear errors** — when something fails, say exactly what and how to fix it
+- **Minimal output** — show what matters, skip decoration
+- **Smart defaults** — only ask when destructive or ambiguous
+
+### GitHub Operations
+
+- **Check remote origin** before ANY write operation to GitHub
+- **Don't pre-check authentication** — just run the command and handle failure
+- Always specify `--repo` when creating issues
+- Use `--json` for structured output when parsing
+- Keep operations atomic — one gh command per action
+
+### Test Execution
+
+- **Use test-runner agent** from `.claude/agents/test-runner.md`
+- **No mocking** — use real services for accurate results
+- Verbose output — capture everything for debugging
+- Check test structure first — before assuming code bugs
+
+### Frontmatter Operations
+
+- Standard fields: `name`, `status`, `created`, `updated`
+- Status values: `backlog`, `in-progress`, `complete` (PRDs); `open`,
+  `in-progress`, `closed` (tasks)
+- Always update `updated` field with current datetime on modification
+
+### Strip Frontmatter
+
+- Strip YAML frontmatter before sending content to GitHub
+- Command: `sed '1,/^---$/d; 1,/^---$/d' input.md > output.md`
+- Always strip when creating issues, posting comments, or syncing to external
+  systems
+
+### Agent Coordination
+
+- **File-level parallelism** — agents working on different files never conflict
+- **Explicit coordination** — when same file needed, coordinate explicitly
+- **Fail fast** — surface conflicts immediately
+- **Human resolution** — conflicts are resolved by humans, not agents
+- Stay in assigned file patterns; commit early and often
+
+### Branch & Worktree Operations
+
+- Create branches/worktrees from clean, updated main
+- One branch/worktree per epic
+- Commit frequently with small, focused commits
+- Merge conflicts → stop and report for human resolution
+- Delete stale branches/worktrees after merge
+
+### AST-Grep
+
+- Use `ast-grep` for structural code patterns and language-aware refactoring
+- Check if installed: `command -v ast-grep >/dev/null 2>&1`
+- Pattern syntax: `$VAR` (capture), `$$$` (wildcard), literal code (exact match)
+- Supported: JS/TS/TSX, Python, Go, Rust, Ruby, and 20+ languages

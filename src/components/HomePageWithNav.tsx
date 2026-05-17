@@ -36,7 +36,8 @@ export function HomePageWithNav() {
         .homepage-root {
           flex-direction: column;
         }
-        .homepage-main {
+        .homepage-main,
+        body.sidebar-collapsed .homepage-main {
           margin-left: 0;
           margin-top: 0;
         }
