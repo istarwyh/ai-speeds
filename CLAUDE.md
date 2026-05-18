@@ -179,7 +179,8 @@ The following rules are defined in `.claude/rules/` and must be followed:
 ### Strip Frontmatter
 
 - Strip YAML frontmatter before sending content to GitHub
-- Command: `sed '1,/^---$/d; 1,/^---$/d' input.md > output.md`
+- Command:
+  `sed -e '1{/^---$/!b' -e ':a' -e 'N' -e '/\n---$/!ba' -e 'd' -e '}' input.md > output.md`
 - Always strip when creating issues, posting comments, or syncing to external
   systems
 

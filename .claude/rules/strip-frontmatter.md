@@ -18,7 +18,7 @@ Use sed to strip frontmatter from any markdown file:
 
 ```bash
 # Strip frontmatter (everything between first two --- lines)
-sed '1,/^---$/d; 1,/^---$/d' input.md > output.md
+sed -e '1{/^---$/!b' -e ':a' -e 'N' -e '/\n---$/!ba' -e 'd' -e '}' input.md > output.md
 ```
 
 This removes:
@@ -48,7 +48,7 @@ gh issue create --body-file task.md
 remote_url=$(git remote get-url origin 2>/dev/null || echo "")
 REPO=$(echo "$remote_url" | sed 's|.*github.com[:/]||' | sed 's|\.git$||')
 [ -z "$REPO" ] && REPO="user/repo"
-sed '1,/^---$/d; 1,/^---$/d' task.md > /tmp/clean.md
+sed -e '1{/^---$/!b' -e ':a' -e 'N' -e '/\n---$/!ba' -e 'd' -e '}' task.md > /tmp/clean.md
 gh issue create --repo "$REPO" --body-file /tmp/clean.md
 ```
 
@@ -56,7 +56,7 @@ gh issue create --repo "$REPO" --body-file /tmp/clean.md
 
 ```bash
 # Strip frontmatter before posting
-sed '1,/^---$/d; 1,/^---$/d' progress.md > /tmp/comment.md
+sed -e '1{/^---$/!b' -e ':a' -e 'N' -e '/\n---$/!ba' -e 'd' -e '}' progress.md > /tmp/comment.md
 gh issue comment 123 --body-file /tmp/comment.md
 ```
 
@@ -65,7 +65,7 @@ gh issue comment 123 --body-file /tmp/comment.md
 ```bash
 for file in *.md; do
   # Strip frontmatter from each file
-  sed '1,/^---$/d; 1,/^---$/d' "$file" > "/tmp/$(basename $file)"
+  sed -e '1{/^---$/!b' -e ':a' -e 'N' -e '/\n---$/!ba' -e 'd' -e '}' "$file" > "/tmp/$(basename $file)"
   # Use the clean version
 done
 ```

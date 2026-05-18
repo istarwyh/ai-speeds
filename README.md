@@ -128,13 +128,14 @@ POST /api/v1/messages  (Anthropic format)
 ```
 src/
   app/
+    page.tsx                     # Home page shell with hash-based sections
     api/
       v1/messages/route.ts       # Claude API proxy endpoint
       playground/route.ts        # API test proxy
       playground/models/route.ts # Model list fetcher
       img-proxy/route.ts         # CORS image proxy
     (main)/
-      home/page.tsx              # Home page shell with hash-based sections
+      home/page.tsx              # /home route for get-started anchor links
       playground/page.tsx        # API playground UI
       whiteboard/page.tsx        # Whiteboard (Excalidraw)
       brand/page.tsx             # Brand kit
