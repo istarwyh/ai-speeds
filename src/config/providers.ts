@@ -1,9 +1,14 @@
+export interface ProviderConfig {
+  envVars: Record<string, string>;
+  notes?: string;
+}
+
 export interface Provider {
   id: string;
   name: string;
   displayName: string;
   icon: string;
-  color?: string; // 可选的自定义颜色，支持任何CSS颜色值
+  color: string;
   description: string;
   isDirectlyUsable: boolean;
   proxyUrl?: string;
@@ -11,50 +16,49 @@ export interface Provider {
   aliasCommand?: string;
   apiKeyUrl: string;
   features: string[];
-  specialConfig?: {
-    envVars: Record<string, string>;
-    notes?: string;
-  };
+  specialConfig?: ProviderConfig;
 }
+
+export const DEFAULT_PROVIDER_ID = 'nvidia-nim';
 
 export const providers: Provider[] = [
   {
     id: 'nvidia-nim',
     name: 'NVIDIA NIM',
-    displayName: 'NVIDIA NIM (默认)',
+    displayName: 'NVIDIA NIM (default)',
     icon: 'NV',
-    color: 'linear-gradient(45deg, #76B900, #1A1A1A)',
-    description: '项目默认 Provider。基于 NVIDIA NIM 平台，提供高性能 AI 推理服务。使用 MiniMax M2.1 模型。',
+    color: 'from-[#76B900] to-[#1A1A1A]',
+    description: 'Project default provider powered by NVIDIA NIM for high-performance AI inference with MiniMax M2.1.',
     isDirectlyUsable: true,
     proxyUrl: 'https://aispeeds.me',
     originalUrl: 'https://integrate.api.nvidia.com/v1',
     aliasCommand: 'alias claude="ANTHROPIC_API_KEY=nvapi-xxxxxx ANTHROPIC_BASE_URL=https://aispeeds.me claude"',
     apiKeyUrl: 'https://build.nvidia.com/',
-    features: ['默认 Provider', '无需额外部署', 'NVIDIA 高性能推理', 'MiniMax M2.1 模型'],
+    features: ['Default provider', 'No extra deployment', 'NVIDIA inference', 'MiniMax M2.1 model'],
     specialConfig: {
       envVars: {
         ANTHROPIC_API_KEY: 'nvapi-xxxxxx',
         ANTHROPIC_BASE_URL: 'https://aispeeds.me',
       },
-      notes:
-        '🚀 这是项目的默认 Provider，部署后即可直接使用。只需将 ANTHROPIC_API_KEY 替换为你的 NVIDIA NIM API Key (格式: nvapi-xxx) 即可。',
+      notes: 'Replace ANTHROPIC_API_KEY with your NVIDIA NIM API key.',
     },
   },
   {
     id: 'anthropic',
     name: 'Anthropic',
-    displayName: 'Anthropic (官方)',
+    displayName: 'Anthropic official',
     icon: 'AN',
-    color: 'linear-gradient(45deg, #5436DA, #7B61FF)',
-    description: '官方Claude API，无需代理，但需要解决中国大陆账号充值问题。',
+    color: 'from-[#5436DA] to-[#7B61FF]',
+    description: 'Official Claude API with first-party Claude model access and no proxy layer.',
     isDirectlyUsable: true,
     originalUrl: 'https://api.anthropic.com',
     apiKeyUrl: 'https://claude.ai',
-    features: ['官方API', '无需代理', '稳定可靠'],
+    features: ['Official API', 'No proxy required', 'Stable access'],
     specialConfig: {
-      envVars: {},
-      notes:
-        '🔄 中国大陆充值方法：<br>1. 弄个美区Apple ID下载Claude Code<br>2. 支付宝定位切到旧金山，使用小程序PockytShop买20刀的苹果礼品卡<br>3. 用礼品卡去苹果App Store充值<br>4. 在Claude Code中完成订阅',
+      envVars: {
+        ANTHROPIC_API_KEY: 'sk-ant-your-key',
+      },
+      notes: 'Use this when your Claude Code account and billing are already available.',
     },
   },
   {
@@ -62,30 +66,35 @@ export const providers: Provider[] = [
     name: 'DeepSeek',
     displayName: 'DeepSeek',
     icon: 'DS',
-    description: 'High-performance reasoning models with excellent cost efficiency. Perfect for complex coding tasks.',
+    color: 'from-blue-600 to-cyan-500',
+    description: 'High-performance reasoning models with strong cost efficiency for coding and analysis tasks.',
     isDirectlyUsable: true,
-    proxyUrl: 'https://aispeeds.me',
+    proxyUrl: 'https://api.deepseek.com/anthropic',
     originalUrl: 'https://api.deepseek.com',
-    aliasCommand: 'alias deepseek="ANTHROPIC_BASE_URL=https://api.deepseek.com/anthropic ANTHROPIC_MODEL=deepseek-chat claude"',
+    aliasCommand:
+      'alias deepseek="ANTHROPIC_BASE_URL=https://api.deepseek.com/anthropic ANTHROPIC_MODEL=deepseek-chat claude"',
     apiKeyUrl: 'https://platform.deepseek.com',
-    features: ['High reasoning capability', 'Cost efficient', 'Fast response'],
+    features: ['Strong reasoning', 'Cost efficient', 'Fast responses'],
   },
   {
     id: 'anyrouter',
     name: 'AnyRouter',
     displayName: 'AnyRouter',
     icon: 'AR',
-    description:
-      'Model proxy service - Provides access to Claude and other models. Click to register and get $100 free credits!',
+    color: 'from-purple-600 to-pink-500',
+    description: 'Model proxy service with direct Claude Code-compatible access and trial credits for new users.',
     isDirectlyUsable: true,
     proxyUrl: 'https://anyrouter.top',
     originalUrl: 'https://anyrouter.top',
     aliasCommand: 'alias anyrouter="ANTHROPIC_AUTH_TOKEN=sk-xxxxxx ANTHROPIC_BASE_URL=https://anyrouter.top claude"',
     apiKeyUrl: 'https://anyrouter.top/console/token?aff=4Ly0',
-    features: ['$100 free credits', 'Multiple models', 'Easy setup'],
+    features: ['$100 trial credits', 'Multiple models', 'Easy setup'],
     specialConfig: {
-      envVars: {},
-      notes: '🎁 Register to get $100 free credits',
+      envVars: {
+        ANTHROPIC_AUTH_TOKEN: 'sk-xxxxxx',
+        ANTHROPIC_BASE_URL: 'https://anyrouter.top',
+      },
+      notes: 'Register first, then create a token in the console.',
     },
   },
   {
@@ -93,35 +102,37 @@ export const providers: Provider[] = [
     name: 'Kimi',
     displayName: 'Kimi (Moonshot AI)',
     icon: 'KM',
-    description: 'Advanced Chinese AI models with strong multilingual capabilities and long context support.',
+    color: 'from-slate-700 to-blue-500',
+    description: 'Chinese AI models with multilingual capability and long-context support.',
     isDirectlyUsable: true,
     proxyUrl: 'https://api.moonshot.cn/anthropic',
     originalUrl: 'https://api.moonshot.cn/v1',
     aliasCommand:
       'alias kimi="ANTHROPIC_AUTH_TOKEN=sk-xxxxxx ANTHROPIC_BASE_URL=https://api.moonshot.cn/anthropic claude"',
     apiKeyUrl: 'https://platform.moonshot.cn',
-    features: ['Chinese AI models', 'Multilingual support', 'Long context'],
+    features: ['Chinese models', 'Multilingual support', 'Long context'],
   },
   {
     id: 'siliconflow',
     name: 'SiliconFlow',
     displayName: 'SiliconFlow',
     icon: 'SF',
-    description: 'Chinese AI infrastructure platform providing access to various domestic and international models.',
+    color: 'from-emerald-600 to-teal-500',
+    description: 'Chinese AI infrastructure platform with access to domestic and international models.',
     isDirectlyUsable: true,
     proxyUrl: 'https://api.siliconflow.cn/',
     originalUrl: 'https://api.siliconflow.cn/v1',
     aliasCommand:
       'alias siliconflow="ANTHROPIC_BASE_URL=https://api.siliconflow.cn/ ANTHROPIC_API_KEY=sk-your-siliconflow-key ANTHROPIC_MODEL=Pro/moonshotai/Kimi-K2-Instruct claude"',
     apiKeyUrl: 'https://siliconflow.cn',
-    features: ['Chinese platform', 'Multiple models', 'Domestic & international'],
+    features: ['Chinese platform', 'Multiple models', 'Domestic and international'],
     specialConfig: {
       envVars: {
         ANTHROPIC_BASE_URL: 'https://api.siliconflow.cn/',
         ANTHROPIC_API_KEY: 'sk-your-siliconflow-key',
         ANTHROPIC_MODEL: 'Pro/moonshotai/Kimi-K2-Instruct',
       },
-      notes: 'Uses special environment variable format',
+      notes: 'This provider uses ANTHROPIC_API_KEY instead of ANTHROPIC_AUTH_TOKEN.',
     },
   },
   {
@@ -129,21 +140,21 @@ export const providers: Provider[] = [
     name: 'Qwen3-Coder',
     displayName: 'Qwen3-Coder',
     icon: 'Q3C',
-    description:
-      'Advanced coding model from Alibaba Cloud with strong programming capabilities and Chinese language support.',
+    color: 'from-orange-500 to-amber-500',
+    description: 'Alibaba Cloud coding model with strong programming capability and Chinese support.',
     isDirectlyUsable: true,
     proxyUrl: 'https://dashscope.aliyuncs.com/api/v2/apps/claude-code-proxy',
     originalUrl: 'https://dashscope.aliyuncs.com/api/v1',
     aliasCommand:
       'alias qwen3-coder="ANTHROPIC_BASE_URL=https://dashscope.aliyuncs.com/api/v2/apps/claude-code-proxy ANTHROPIC_AUTH_TOKEN=your-dashscope-apikey claude"',
     apiKeyUrl: 'https://dashscope.console.aliyun.com',
-    features: ['Programming focused', 'Chinese language support', 'Alibaba OpenSource'],
+    features: ['Programming focused', 'Chinese support', 'Alibaba ecosystem'],
     specialConfig: {
       envVars: {
         ANTHROPIC_BASE_URL: 'https://dashscope.aliyuncs.com/api/v2/apps/claude-code-proxy',
         ANTHROPIC_AUTH_TOKEN: 'your-dashscope-apikey',
       },
-      notes: 'Qwen3-Coder may be expensive according to some feedbacks',
+      notes: 'Check pricing before heavy use.',
     },
   },
   {
@@ -151,21 +162,20 @@ export const providers: Provider[] = [
     name: 'AICodeWith',
     displayName: 'AICodeWith',
     icon: 'ACW',
-    description:
-      'AI coding assistant platform providing direct Claude Code API access. Get 2000 free credits upon registration!',
+    color: 'from-indigo-600 to-violet-500',
+    description: 'AI coding assistant platform with Claude Code API access and trial credits.',
     isDirectlyUsable: true,
     proxyUrl: 'https://api.aicodewith.com',
     originalUrl: 'https://api.aicodewith.com',
-    aliasCommand:
-      'alias aicodewith="ANTHROPIC_AUTH_TOKEN=xxx ANTHROPIC_BASE_URL=https://api.aicodewith.com claude --dangerously-skip-permissions"',
+    aliasCommand: 'alias aicodewith="ANTHROPIC_AUTH_TOKEN=xxx ANTHROPIC_BASE_URL=https://api.aicodewith.com claude"',
     apiKeyUrl: 'https://aicodewith.com/?invitation=VI84XXSW',
-    features: ['2000 free credits', 'Direct API access', 'No deployment needed'],
+    features: ['Trial credits', 'Direct API access', 'No deployment needed'],
     specialConfig: {
       envVars: {
         ANTHROPIC_AUTH_TOKEN: 'xxx',
         ANTHROPIC_BASE_URL: 'https://api.aicodewith.com',
       },
-      notes: '🎁 Get 2000 free credits (~10 conversations) upon registration',
+      notes: 'Create an account and replace the token placeholder before use.',
     },
   },
   {
@@ -173,24 +183,22 @@ export const providers: Provider[] = [
     name: 'Claude-Code',
     displayName: 'Claude-Code',
     icon: 'CC',
-    color: 'linear-gradient(45deg, #FF6B35, #F7931E)',
-    description:
-      'Professional Claude Code API service with stable access and excellent performance. Get 4000 free credits (~20 conversations) upon registration!',
+    color: 'from-[#FF6B35] to-[#F7931E]',
+    description: 'Claude Code API service with stable access, trial credits, and hosted compatibility endpoints.',
     isDirectlyUsable: true,
     proxyUrl: 'https://api.claude-code.top/api/claudecode',
     originalUrl: 'https://api.claude-code.top',
     aliasCommand:
-      'alias cc-cc="ANTHROPIC_AUTH_TOKEN=xxx ANTHROPIC_API_KEY=xxx ANTHROPIC_BASE_URL=https://api.claude-code.top/api/claudecode claude --dangerously-skip-permissions"',
+      'alias cc-cc="ANTHROPIC_AUTH_TOKEN=xxx ANTHROPIC_API_KEY=xxx ANTHROPIC_BASE_URL=https://api.claude-code.top/api/claudecode claude"',
     apiKeyUrl: 'https://www.claude-code.top/register?inviteCode=5GTISY',
-    features: ['4000 free credits', 'Professional service', 'Stable access', 'Premium experience'],
+    features: ['Trial credits', 'Hosted service', 'Stable access', 'Claude Code focused'],
     specialConfig: {
       envVars: {
         ANTHROPIC_AUTH_TOKEN: 'xxx',
         ANTHROPIC_API_KEY: 'xxx',
         ANTHROPIC_BASE_URL: 'https://api.claude-code.top/api/claudecode',
       },
-      notes:
-        '🎁 Get **6000** free credits (~30 conversations) upon registration with invitation code <strong>5GTISY</strong>, which gives you an additional **2000** credits. ',
+      notes: 'Both auth token and API key placeholders are required by this service.',
     },
   },
   {
@@ -198,7 +206,8 @@ export const providers: Provider[] = [
     name: 'OpenRouter',
     displayName: 'OpenRouter',
     icon: 'OR',
-    description: 'Access to multiple AI models through a single API, including Claude, GPT, and open-source models.',
+    color: 'from-red-500 to-pink-500',
+    description: 'Access Claude, GPT, and open-source models through a single OpenAI-compatible API.',
     isDirectlyUsable: false,
     originalUrl: 'https://openrouter.ai/api/v1',
     apiKeyUrl: 'https://openrouter.ai',
@@ -209,10 +218,34 @@ export const providers: Provider[] = [
     name: 'OpenAI',
     displayName: 'OpenAI',
     icon: 'AI',
-    description: 'Industry-leading GPT models including GPT-4o and GPT-4o-mini for diverse AI applications.',
+    color: 'from-zinc-700 to-zinc-500',
+    description: 'GPT models including GPT-4o and GPT-4o-mini through the OpenAI-compatible proxy path.',
     isDirectlyUsable: false,
     originalUrl: 'https://api.openai.com/v1',
     apiKeyUrl: 'https://platform.openai.com',
-    features: ['GPT-4o models', 'Industry leading', 'Diverse applications'],
+    features: ['GPT-4o models', 'Industry leading', 'Broad tooling support'],
   },
 ];
+
+export function getProviderEnvVars(provider: Provider): Record<string, string> {
+  if (provider.specialConfig && Object.keys(provider.specialConfig.envVars).length > 0) {
+    return provider.specialConfig.envVars;
+  }
+
+  if (provider.proxyUrl) {
+    return {
+      ANTHROPIC_BASE_URL: provider.proxyUrl,
+      ANTHROPIC_AUTH_TOKEN: 'your-api-key',
+    };
+  }
+
+  return {
+    ANTHROPIC_API_KEY: 'your-api-key',
+  };
+}
+
+export function getProviderEnvBlock(provider: Provider): string {
+  return Object.entries(getProviderEnvVars(provider))
+    .map(([key, value]) => `export ${key}="${value}"`)
+    .join('\n');
+}

@@ -246,20 +246,22 @@ export default function BrandPage() {
 
         {/* ── 品牌色彩 ── */}
         <section className='mb-10'>
-          <h2 className='text-xl font-semibold mb-4'>品牌色彩</h2>
+          <h2 className='text-xl font-semibold mb-2'>品牌色彩</h2>
+          <p className='text-sm text-text-secondary mb-4'>Logo 资产色直接来自 BRAND_COLORS，独立于 UI theme tokens。</p>
           <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6'>
             {(
               [
-                { name: 'Teal 500', hex: BRAND_COLORS.primary, cls: 'bg-teal-500', text: 'text-white' },
-                { name: 'Blue 600', hex: BRAND_COLORS.secondary, cls: 'bg-primary', text: 'text-white' },
-                { name: 'Teal 400', hex: BRAND_COLORS.accent, cls: 'bg-teal-400', text: 'text-gray-900' },
-                { name: 'Slate 900', hex: BRAND_COLORS.dark, cls: 'bg-text-primary', text: 'text-white' },
-                { name: 'Slate 50', hex: BRAND_COLORS.light, cls: 'bg-bg-secondary', text: 'text-text-primary' },
+                { name: 'Teal 500', hex: BRAND_COLORS.primary, text: 'text-teal-500-foreground' },
+                { name: 'Blue 600', hex: BRAND_COLORS.secondary, text: 'text-white' },
+                { name: 'Teal 400', hex: BRAND_COLORS.accent, text: 'text-teal-400-foreground' },
+                { name: 'Slate 900', hex: BRAND_COLORS.dark, text: 'text-white' },
+                { name: 'Slate 50', hex: BRAND_COLORS.light, text: 'text-text-primary' },
               ] as const
             ).map(c => (
               <div key={c.name} className='flex flex-col gap-2'>
                 <div
-                  className={`h-24 w-full rounded-lg shadow-md ${c.cls} ${c.text} flex flex-col items-center justify-center p-3 relative group`}
+                  className={`h-24 w-full rounded-lg shadow-md ${c.text} flex flex-col items-center justify-center p-3 relative group`}
+                  style={{ backgroundColor: c.hex }}
                 >
                   <span className='text-xs font-mono opacity-90'>{c.hex}</span>
                   <button
@@ -287,7 +289,9 @@ export default function BrandPage() {
             {/* 方式一 */}
             <div className='bg-bg-primary rounded-xl border border-border-light overflow-hidden'>
               <div className='flex items-center gap-3 px-6 py-4 border-b border-border-light bg-bg-tertiary'>
-                <span className='px-2 py-0.5 rounded-md text-xs font-semibold text-white bg-teal-500'>1</span>
+                <span className='px-2 py-0.5 rounded-md text-xs font-semibold text-teal-500-foreground bg-teal-500'>
+                  1
+                </span>
                 <h3 className='text-base font-semibold text-text-primary'>直接引用 SVG</h3>
                 <span className='text-xs text-text-muted ml-auto'>最简单 · 零依赖</span>
               </div>
@@ -307,7 +311,9 @@ export default function BrandPage() {
             {/* 方式二 */}
             <div className='bg-bg-primary rounded-xl border border-border-light overflow-hidden'>
               <div className='flex items-center gap-3 px-6 py-4 border-b border-border-light bg-bg-tertiary'>
-                <span className='px-2 py-0.5 rounded-md text-xs font-semibold text-white bg-primary'>2</span>
+                <span className='px-2 py-0.5 rounded-md text-xs font-semibold text-primary-foreground bg-primary'>
+                  2
+                </span>
                 <h3 className='text-base font-semibold text-text-primary'>JavaScript Brand Kit</h3>
                 <span className='text-xs text-text-muted ml-auto'>最灵活 · 动态插入</span>
               </div>
@@ -353,7 +359,9 @@ export default function BrandPage() {
             {/* 方式三 */}
             <div className='bg-bg-primary rounded-xl border border-border-light overflow-hidden'>
               <div className='flex items-center gap-3 px-6 py-4 border-b border-border-light bg-bg-tertiary'>
-                <span className='px-2 py-0.5 rounded-md text-xs font-semibold text-white bg-secondary'>3</span>
+                <span className='px-2 py-0.5 rounded-md text-xs font-semibold text-primary-light-foreground bg-primary-light'>
+                  3
+                </span>
                 <h3 className='text-base font-semibold text-text-primary'>内联 SVG</h3>
                 <span className='text-xs text-text-muted ml-auto'>最高性能 · 可定制</span>
               </div>

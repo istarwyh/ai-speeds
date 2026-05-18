@@ -261,7 +261,7 @@ export default function PlaygroundPage() {
                 onClick={() => setApiType(value)}
                 className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                   apiType === value
-                    ? 'bg-teal-500 text-white shadow-sm'
+                    ? 'bg-teal-500 text-teal-500-foreground shadow-sm'
                     : 'bg-bg-primary text-text-secondary hover:bg-bg-tertiary border border-border-light'
                 }`}
               >
@@ -312,7 +312,7 @@ export default function PlaygroundPage() {
                       onClick={() => setModel(m)}
                       className={`rounded-md px-2 py-0.5 text-xs transition-colors ${
                         model === m
-                          ? 'bg-teal-500 text-white'
+                          ? 'bg-teal-500 text-teal-500-foreground'
                           : 'bg-bg-tertiary text-text-secondary hover:bg-teal-500/10 hover:text-teal-600'
                       }`}
                     >
@@ -408,7 +408,7 @@ export default function PlaygroundPage() {
             {loading ? (
               <button
                 onClick={handleStop}
-                className='w-full rounded-lg bg-error px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:opacity-90'
+                className='w-full rounded-lg bg-error px-4 py-2.5 text-sm font-medium text-error-foreground shadow-sm transition-colors hover:opacity-90'
               >
                 Stop
               </button>
@@ -416,7 +416,7 @@ export default function PlaygroundPage() {
               <button
                 onClick={handleSend}
                 disabled={!canSend}
-                className='w-full rounded-lg bg-teal-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-teal-600 disabled:cursor-not-allowed disabled:opacity-50'
+                className='w-full rounded-lg bg-teal-500 px-4 py-2.5 text-sm font-medium text-teal-500-foreground shadow-sm transition-colors hover:bg-teal-600 disabled:cursor-not-allowed disabled:opacity-50'
               >
                 Send Test
               </button>
@@ -450,7 +450,9 @@ export default function PlaygroundPage() {
                     type='button'
                     onClick={() => setViewMode('rendered')}
                     className={`px-2.5 py-1 text-xs font-medium transition-colors ${
-                      viewMode === 'rendered' ? 'bg-teal-500 text-white' : 'text-text-secondary hover:text-text-primary'
+                      viewMode === 'rendered'
+                        ? 'bg-teal-500 text-teal-500-foreground'
+                        : 'text-text-secondary hover:text-text-primary'
                     }`}
                   >
                     Rendered
@@ -459,7 +461,9 @@ export default function PlaygroundPage() {
                     type='button'
                     onClick={() => setViewMode('raw')}
                     className={`px-2.5 py-1 text-xs font-medium transition-colors ${
-                      viewMode === 'raw' ? 'bg-teal-500 text-white' : 'text-text-secondary hover:text-text-primary'
+                      viewMode === 'raw'
+                        ? 'bg-teal-500 text-teal-500-foreground'
+                        : 'text-text-secondary hover:text-text-primary'
                     }`}
                   >
                     Raw

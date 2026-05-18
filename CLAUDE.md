@@ -16,7 +16,6 @@ Deployed to Cloudflare Workers at `cc.xiaohui.cool` / `aispeeds.me`.
 
 ```bash
 pnpm install                  # Install dependencies
-pnpm run build:client         # REQUIRED before first dev session (generates legacy content maps)
 pnpm run dev                  # Dev server with Turbopack (localhost:3000)
 pnpm run build                # Production Next.js build
 pnpm run typecheck            # TypeScript type checking (tsc --noEmit)
@@ -28,9 +27,6 @@ pnpm run cf:build             # Build via OpenNext for Cloudflare
 pnpm run cf:preview           # Local preview of CF build
 pnpm run cf:deploy            # Build + deploy to production
 
-# Legacy client (esbuild bundling)
-pnpm run build:client         # Smart build with change detection
-pnpm run build:client:direct  # Force full rebuild
 ```
 
 **No test framework is configured.** There are no test files or test runner in
@@ -58,23 +54,20 @@ Utility:     src/lib/, src/config/               — Shared utilities
 
 API keys are passed per-request via `x-api-key` header, not stored server-side.
 
-### Hybrid Frontend
+### Frontend
 
-- **New code**: `src/app/` (Next.js App Router) + `src/components/` (React)
-- **Legacy code**: `src/legacy/` — excluded from ESLint and TypeScript checking
-- **Bridge**: `LegacyPageWrapper` injects legacy HTML via
-  `dangerouslySetInnerHTML` and executes scripts
-- **Homepage content**: Served from `@cc4pm/homepage` NPM package, built into
-  `src/legacy/scripts/generated/homepageHtml`, served via `/api/static/homepage`
-  route
+- `src/app/` uses Next.js App Router routes.
+- `src/components/HomePageWithNav.tsx` renders the React/Tailwind homepage,
+  navigation, and get-started guide.
+- `src/config/providers.ts` stores provider card data used by the get-started
+  guide.
 
 ### Route Map
 
-| Route                      | Handler                                             |
-| -------------------------- | --------------------------------------------------- |
-| `POST /api/v1/messages`    | Claude API proxy (also at `/v1/messages`)           |
-| `GET /api/img-proxy`       | CORS image proxy (also at `/img-proxy` via rewrite) |
-| `GET /api/static/homepage` | Serves generated homepage HTML                      |
+| Route                   | Handler                                             |
+| ----------------------- | --------------------------------------------------- |
+| `POST /api/v1/messages` | Claude API proxy (also at `/v1/messages`)           |
+| `GET /api/img-proxy`    | CORS image proxy (also at `/img-proxy` via rewrite) |
 
 ## Tech Stack
 
@@ -83,7 +76,7 @@ API keys are passed per-request via `x-api-key` header, not stored server-side.
   `noUncheckedIndexedAccess`, `noUnusedLocals`, `noUnusedParameters`)
 - **Runtime**: Edge Runtime (V8 Isolates) on Cloudflare Workers via
   `@opennextjs/cloudflare`
-- **Build**: Turbopack (dev) + esbuild (legacy client modules)
+- **Build**: Turbopack (dev) + Next.js production build
 - **Package manager**: pnpm (`.npmrc`: `shamefully-hoist=true`,
   `strict-peer-dependencies=false`)
 
@@ -94,8 +87,6 @@ API keys are passed per-request via `x-api-key` header, not stored server-side.
 - **No `any`**: ESLint error for `@typescript-eslint/no-explicit-any`
 - **No non-null assertions**: ESLint error for
   `@typescript-eslint/no-non-null-assertion`
-- **Legacy code**: Never add new code to `src/legacy/` — it's excluded from type
-  checking and linting
 - **Single quotes**, semicolons, trailing commas, 120 char print width (see
   `.prettierrc.json`)
 
@@ -133,7 +124,85 @@ Subject: lowercase, 3-100 chars, no period. Header max 120 chars.
 
 - `next.config.mjs` has `eslint.ignoreDuringBuilds: true` and
   `typescript.ignoreBuildErrors: true` (temporary during migration)
-- `src/legacy/` is excluded from TypeScript (`tsconfig.json`) and ESLint
-  (`eslint.config.js`)
 - CI deploys on push to `main` via `.github/workflows/deploy.yml` (requires
   `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets)
+
+## CCPM Rules
+
+The following rules are defined in `.claude/rules/` and must be followed:
+
+### DateTime
+
+- **Always use real system datetime** — never estimate or use placeholders
+- Get datetime: `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+- All dates in frontmatter use ISO 8601 UTC format: `YYYY-MM-DDTHH:MM:SSZ`
+- Never change `created` field after initial creation; always update `updated`
+  field
+
+### Path Standards
+
+- **Use relative paths** — never expose absolute paths with usernames
+- Project files: `internal/auth/server.go` (not `/Users/username/project/...`)
+- Cross-project: `../project-name/src/file.ts`
+- GitHub issues/comments must never contain absolute paths
+
+### Standard Patterns
+
+- **Fail fast** — check critical prerequisites, then proceed
+- **Trust the system** — don't over-validate things that rarely fail
+- **Clear errors** — when something fails, say exactly what and how to fix it
+- **Minimal output** — show what matters, skip decoration
+- **Smart defaults** — only ask when destructive or ambiguous
+
+### GitHub Operations
+
+- **Check remote origin** before ANY write operation to GitHub
+- **Don't pre-check authentication** — just run the command and handle failure
+- Always specify `--repo` when creating issues
+- Use `--json` for structured output when parsing
+- Keep operations atomic — one gh command per action
+
+### Test Execution
+
+- **Use test-runner agent** from `.claude/agents/test-runner.md`
+- **No mocking** — use real services for accurate results
+- Verbose output — capture everything for debugging
+- Check test structure first — before assuming code bugs
+
+### Frontmatter Operations
+
+- Standard fields: `name`, `status`, `created`, `updated`
+- Status values: `backlog`, `in-progress`, `complete` (PRDs); `open`,
+  `in-progress`, `closed` (tasks)
+- Always update `updated` field with current datetime on modification
+
+### Strip Frontmatter
+
+- Strip YAML frontmatter before sending content to GitHub
+- Command:
+  `sed -e '1{/^---$/!b' -e ':a' -e 'N' -e '/\n---$/!ba' -e 'd' -e '}' input.md > output.md`
+- Always strip when creating issues, posting comments, or syncing to external
+  systems
+
+### Agent Coordination
+
+- **File-level parallelism** — agents working on different files never conflict
+- **Explicit coordination** — when same file needed, coordinate explicitly
+- **Fail fast** — surface conflicts immediately
+- **Human resolution** — conflicts are resolved by humans, not agents
+- Stay in assigned file patterns; commit early and often
+
+### Branch & Worktree Operations
+
+- Create branches/worktrees from clean, updated main
+- One branch/worktree per epic
+- Commit frequently with small, focused commits
+- Merge conflicts → stop and report for human resolution
+- Delete stale branches/worktrees after merge
+
+### AST-Grep
+
+- Use `ast-grep` for structural code patterns and language-aware refactoring
+- Check if installed: `command -v ast-grep >/dev/null 2>&1`
+- Pattern syntax: `$VAR` (capture), `$$$` (wildcard), literal code (exact match)
+- Supported: JS/TS/TSX, Python, Go, Rust, Ruby, and 20+ languages

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { BrandIcon, BrandIconSimple, BrandWordmark } from '@/components/brand';
+import { colorTokenGroups, radiusTokens } from '@/styles/designTokens';
 
 export default function StyleGuidePage() {
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
@@ -12,89 +13,14 @@ export default function StyleGuidePage() {
     setTimeout(() => setCopiedToken(null), 2000);
   };
 
-  const brand = [
-    { name: 'Primary', cls: 'bg-primary', hex: '#2563eb', cssVar: '--color-primary', text: 'text-white' },
-    {
-      name: 'Primary Dark',
-      cls: 'bg-primary-dark',
-      hex: '#1d4ed8',
-      cssVar: '--color-primary-dark',
-      text: 'text-white',
-    },
-    {
-      name: 'Primary Light',
-      cls: 'bg-primary-light',
-      hex: '#3b82f6',
-      cssVar: '--color-primary-light',
-      text: 'text-white',
-    },
-    { name: 'Secondary', cls: 'bg-secondary', hex: '#7c3aed', cssVar: '--color-secondary', text: 'text-white' },
-    { name: 'Accent', cls: 'bg-accent', hex: '#06b6d4', cssVar: '--color-accent', text: 'text-white' },
-  ];
-
-  const feedback = [
-    { name: 'Success', cls: 'bg-success', hex: '#10b981', cssVar: '--color-success', text: 'text-white' },
-    { name: 'Warning', cls: 'bg-warning', hex: '#f59e0b', cssVar: '--color-warning', text: 'text-white' },
-    { name: 'Error', cls: 'bg-error', hex: '#ef4444', cssVar: '--color-error', text: 'text-white' },
-  ];
-
-  const teal = [
-    { name: 'Teal 400', cls: 'bg-teal-400', hex: '#7eddd6', cssVar: '--color-teal-400', text: 'text-gray-900' },
-    { name: 'Teal 500', cls: 'bg-teal-500', hex: '#4ecdc4', cssVar: '--color-teal-500', text: 'text-white' },
-    { name: 'Teal 600', cls: 'bg-teal-600', hex: '#3ba29c', cssVar: '--color-teal-600', text: 'text-white' },
-  ];
-
-  const surfaces = [
-    { name: 'BG Primary', cls: 'bg-bg-primary', hex: '#ffffff', cssVar: '--color-bg-primary', border: true },
-    { name: 'BG Secondary', cls: 'bg-bg-secondary', hex: '#f8fafc', cssVar: '--color-bg-secondary', border: true },
-    { name: 'BG Tertiary', cls: 'bg-bg-tertiary', hex: '#f1f5f9', cssVar: '--color-bg-tertiary', border: true },
-    { name: 'BG Accent', cls: 'bg-bg-accent', hex: '#eff6ff', cssVar: '--color-bg-accent', border: true },
-    { name: 'BG Warm', cls: 'bg-bg-warm', hex: '#fffcf8', cssVar: '--color-bg-warm', border: true },
-  ];
-
-  const textColors = [
-    { name: 'Text Primary', cls: 'text-text-primary', hex: '#0f172a', cssVar: '--color-text-primary' },
-    { name: 'Text Secondary', cls: 'text-text-secondary', hex: '#475569', cssVar: '--color-text-secondary' },
-    { name: 'Text Muted', cls: 'text-text-muted', hex: '#64748b', cssVar: '--color-text-muted' },
-    { name: 'Text Inverse', cls: 'text-text-inverse', hex: '#ffffff', cssVar: '--color-text-inverse' },
-  ];
-
-  const borders = [
-    { name: 'Border Light', hex: '#e2e8f0', cssVar: '--color-border-light' },
-    { name: 'Border Medium', hex: '#cbd5e1', cssVar: '--color-border-medium' },
-    { name: 'Border Dark', hex: '#94a3b8', cssVar: '--color-border-dark' },
-  ];
-
-  const practices = [
-    {
-      name: 'Practices Accent',
-      cls: 'bg-practices-accent',
-      hex: '#06b6d4',
-      cssVar: '--color-practices-accent',
-      text: 'text-white',
-    },
-    {
-      name: 'Practices Primary',
-      cls: 'bg-practices-primary',
-      hex: '#2563eb',
-      cssVar: '--color-practices-primary',
-      text: 'text-white',
-    },
-    {
-      name: 'Practices Secondary',
-      cls: 'bg-practices-secondary',
-      hex: '#6366f1',
-      cssVar: '--color-practices-secondary',
-      text: 'text-white',
-    },
-  ];
+  const { brand, feedback, teal, surfaces, text: textColors, borders, practices } = colorTokenGroups;
 
   const ColorSwatch = ({
     name,
     cls,
     hex,
     cssVar,
-    text = 'text-white',
+    text = 'text-primary-foreground',
   }: {
     name: string;
     cls: string;
@@ -191,7 +117,13 @@ export default function StyleGuidePage() {
 
   const TextSwatch = ({ name, cls, hex, cssVar }: { name: string; cls: string; hex: string; cssVar: string }) => (
     <div className='flex flex-col gap-2 bg-bg-primary rounded-lg border border-border-light p-4'>
-      <p className={`text-2xl font-semibold ${cls}`}>The quick brown fox</p>
+      <p
+        className={`text-2xl font-semibold ${cls} ${
+          cls === 'text-text-inverse' ? 'inline-block rounded-md bg-text-primary px-3 py-2' : ''
+        }`}
+      >
+        The quick brown fox
+      </p>
       <span className='text-sm font-medium text-text-primary'>{name}</span>
       <div className='flex items-center gap-2'>
         <code className='text-xs text-text-muted font-mono flex-1'>{cls}</code>
@@ -385,7 +317,7 @@ export default function StyleGuidePage() {
         {/* Color Swatches */}
         <section className='mb-10'>
           <h2 className='text-xl font-semibold mb-4'>Brand Colors</h2>
-          <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6'>
+          <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6'>
             {brand.map(c => (
               <ColorSwatch key={c.name} {...c} />
             ))}
@@ -434,8 +366,7 @@ export default function StyleGuidePage() {
             {borders.map(b => (
               <div key={b.name} className='flex flex-col gap-2'>
                 <div
-                  className='h-24 w-full rounded-lg bg-bg-primary border-4 flex items-center justify-center'
-                  style={{ borderColor: b.hex }}
+                  className={`h-24 w-full rounded-lg bg-bg-primary border-4 ${b.cls} flex items-center justify-center`}
                 >
                   <span className='text-xs font-mono text-text-muted'>{b.hex}</span>
                 </div>
@@ -446,7 +377,7 @@ export default function StyleGuidePage() {
         </section>
 
         <section className='mb-10'>
-          <h2 className='text-xl font-semibold mb-4'>Best Practices Page Colors</h2>
+          <h2 className='text-xl font-semibold mb-4'>Page-scoped Alias Colors</h2>
           <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6'>
             {practices.map(c => (
               <ColorSwatch key={c.name} {...c} />
@@ -501,12 +432,12 @@ export default function StyleGuidePage() {
         <section className='mb-10'>
           <h2 className='text-xl font-semibold mb-4'>Border Radius</h2>
           <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6'>
-            {['sm', 'md', 'lg', 'xl', '2xl', '3xl'].map(size => (
-              <div key={size} className='flex flex-col gap-2'>
-                <div className={`h-20 w-full bg-primary rounded-${size} flex items-center justify-center`}>
-                  <span className='text-xs font-mono text-white'>rounded-{size}</span>
+            {radiusTokens.map(radius => (
+              <div key={radius.name} className='flex flex-col gap-2'>
+                <div className={`h-20 w-full bg-primary ${radius.cls} flex items-center justify-center`}>
+                  <span className='text-xs font-mono text-primary-foreground'>{radius.cls}</span>
                 </div>
-                <span className='text-sm font-medium text-text-primary'>{size}</span>
+                <span className='text-sm font-medium text-text-primary'>{radius.name}</span>
               </div>
             ))}
           </div>
@@ -519,22 +450,19 @@ export default function StyleGuidePage() {
           <div className='mb-8'>
             <h3 className='text-lg font-medium mb-4 text-text-secondary'>Buttons</h3>
             <div className='flex flex-wrap gap-4'>
-              <button className='px-6 py-3 rounded-xl text-white bg-primary hover:bg-primary-dark transition-colors shadow-md font-medium'>
+              <button className='px-6 py-3 rounded-xl text-primary-foreground bg-primary hover:bg-primary-dark transition-colors shadow-md font-medium'>
                 Primary Button
               </button>
-              <button className='px-6 py-3 rounded-xl text-white bg-secondary hover:opacity-90 transition-opacity shadow-md font-medium'>
-                Secondary Button
-              </button>
-              <button className='px-6 py-3 rounded-xl text-white bg-accent hover:bg-teal-600 transition-colors shadow-md font-medium'>
+              <button className='px-6 py-3 rounded-xl text-accent-foreground bg-accent hover:bg-teal-600 transition-colors shadow-md font-medium'>
                 Accent Button
               </button>
-              <button className='px-6 py-3 rounded-xl text-white bg-success hover:opacity-90 transition-opacity shadow-md font-medium'>
+              <button className='px-6 py-3 rounded-xl text-success-foreground bg-success hover:opacity-90 transition-opacity shadow-md font-medium'>
                 Success
               </button>
-              <button className='px-6 py-3 rounded-xl text-white bg-warning hover:opacity-90 transition-opacity shadow-md font-medium'>
+              <button className='px-6 py-3 rounded-xl text-warning-foreground bg-warning hover:opacity-90 transition-opacity shadow-md font-medium'>
                 Warning
               </button>
-              <button className='px-6 py-3 rounded-xl text-white bg-error hover:opacity-90 transition-opacity shadow-md font-medium'>
+              <button className='px-6 py-3 rounded-xl text-error-foreground bg-error hover:opacity-90 transition-opacity shadow-md font-medium'>
                 Error
               </button>
               <button className='px-6 py-3 rounded-xl text-text-primary bg-bg-primary border-2 border-primary hover:bg-bg-tertiary transition-colors font-medium'>
@@ -553,12 +481,12 @@ export default function StyleGuidePage() {
                 <div className='p-4 flex flex-col gap-3'>
                   <div className='flex items-start justify-between gap-2'>
                     <h3 className='text-base font-semibold'>AI Content Tool</h3>
-                    <span className='px-2 py-1 rounded-md text-xs text-white bg-primary'>AI</span>
+                    <span className='px-2 py-1 rounded-md text-xs text-primary-foreground bg-primary'>AI</span>
                   </div>
                   <p className='text-sm text-text-secondary'>
                     Create amazing content with AI assistance using advanced models.
                   </p>
-                  <button className='mt-2 w-full px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors'>
+                  <button className='mt-2 w-full px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary-dark transition-colors'>
                     Try Now
                   </button>
                 </div>
@@ -570,12 +498,12 @@ export default function StyleGuidePage() {
                 <div className='p-4 flex flex-col gap-3'>
                   <div className='flex items-start justify-between gap-2'>
                     <h3 className='text-base font-semibold'>Design System</h3>
-                    <span className='px-2 py-1 rounded-md text-xs text-white bg-accent'>New</span>
+                    <span className='px-2 py-1 rounded-md text-xs text-accent-foreground bg-accent'>New</span>
                   </div>
                   <p className='text-sm text-text-secondary'>
                     Token-driven design system with comprehensive components.
                   </p>
-                  <button className='mt-2 w-full px-4 py-2 rounded-lg bg-accent text-white hover:bg-teal-600 transition-colors'>
+                  <button className='mt-2 w-full px-4 py-2 rounded-lg bg-accent text-accent-foreground hover:bg-teal-600 transition-colors'>
                     Explore
                   </button>
                 </div>
@@ -587,10 +515,10 @@ export default function StyleGuidePage() {
                 <div className='p-4 flex flex-col gap-3'>
                   <div className='flex items-start justify-between gap-2'>
                     <h3 className='text-base font-semibold'>Analytics Dashboard</h3>
-                    <span className='px-2 py-1 rounded-md text-xs text-white bg-yellow-500'>Pro</span>
+                    <span className='px-2 py-1 rounded-md text-xs text-gray-950 bg-yellow-500'>Pro</span>
                   </div>
                   <p className='text-sm text-text-secondary'>Track performance metrics and insights in real-time.</p>
-                  <button className='mt-2 w-full px-4 py-2 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600 transition-colors'>
+                  <button className='mt-2 w-full px-4 py-2 rounded-lg bg-yellow-500 text-gray-950 hover:bg-yellow-600 transition-colors'>
                     View Stats
                   </button>
                 </div>
