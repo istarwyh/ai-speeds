@@ -60,7 +60,7 @@ export function HomePageWithNav() {
         onClick={() => setMobileOpen(true)}
         className='fixed left-4 top-4 z-40 rounded-2xl border border-border-light bg-bg-primary px-4 py-3 text-sm font-semibold text-text-primary shadow-lg md:hidden'
       >
-        Menu
+        菜单
       </button>
 
       <aside
@@ -81,7 +81,7 @@ export function HomePageWithNav() {
               type='button'
               onClick={toggleSidebar}
               className='rounded-xl border border-border-light px-3 py-2 text-xs font-semibold text-text-secondary transition hover:border-primary hover:text-text-primary'
-              aria-label='Collapse sidebar'
+              aria-label='收起侧边栏'
             >
               ←
             </button>
@@ -93,7 +93,7 @@ export function HomePageWithNav() {
             type='button'
             onClick={toggleSidebar}
             className='mt-4 rounded-xl border border-border-light px-3 py-2 text-xs font-semibold text-text-secondary transition hover:border-primary hover:text-text-primary'
-            aria-label='Expand sidebar'
+            aria-label='展开侧边栏'
           >
             →
           </button>
@@ -145,7 +145,7 @@ export function HomePageWithNav() {
                 onClick={() => setMobileOpen(false)}
                 className='rounded-xl border border-border-light px-3 py-2 text-sm font-semibold text-text-secondary'
               >
-                Close
+                关闭
               </button>
             </div>
             <div className='mt-6 grid gap-2'>
@@ -187,10 +187,6 @@ export function HomePageWithNav() {
 
 function Cc4pmHomepageFrame() {
   return (
-    <iframe
-      src='/api/static/homepage'
-      title='cc4pm homepage'
-      className='block h-screen w-full border-0 bg-bg-primary'
-    />
+    <iframe src='/api/static/homepage' title='cc4pm 首页' className='block h-screen w-full border-0 bg-bg-primary' />
   );
 }
