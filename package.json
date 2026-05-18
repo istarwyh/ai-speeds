@@ -1,12 +1,9 @@
 {
   "name": "aispeeds",
   "version": "1.0.0",
-  "main": "index.ts",
   "type": "module",
   "scripts": {
     "build": "next build",
-    "build:client": "node scripts/build-client-safe.cjs # 智能构建：带文件锁和变更检测，避免重复构建",
-    "build:client:direct": "node scripts/build-client.cjs # 直接构建：跳过安全检查，强制重新构建所有客户端模块",
     "dev": "cross-env NODE_NO_WARNINGS=1 next dev --turbopack # Next.js 开发服务器（带 Turbopack 加速）",
     "cf:build": "opennextjs-cloudflare build # 构建 Cloudflare Workers 版本",
     "cf:preview": "pnpm cf:build && opennextjs-cloudflare preview # 预览 Cloudflare 构建结果",
@@ -35,7 +32,6 @@
     "autoprefixer": "^10.5.0",
     "commitizen": "^4.3.1",
     "cross-env": "^10.1.0",
-    "esbuild": "^0.28.0",
     "eslint": "^10.2.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",

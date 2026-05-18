@@ -12,9 +12,8 @@ Deployed at **[aispeeds.me](https://aispeeds.me)**.
   API with real-time SSE streaming
 - **Multi-Provider** -- DeepSeek, OpenAI, OpenRouter, Kimi, SiliconFlow, NVIDIA
   NIM, or any OpenAI-compatible endpoint
-- **cc4pm Integration** -- Embedded
-  [Claude Code for Product Maker](https://github.com/istarwyh/cc4pm) homepage
-  with 200+ skills for product makers
+- **React Homepage** -- Native Next.js landing and get-started guide for product
+  makers and Claude Code users
 - **Edge Deploy** -- Cloudflare Workers (300+ locations, sub-ms cold start)
 
 ---
@@ -23,25 +22,13 @@ Deployed at **[aispeeds.me](https://aispeeds.me)**.
 
 The app has 4 main navigation tabs, each serving a distinct purpose:
 
-### 1. Home -- cc4pm Homepage
+### 1. Home -- Product Maker Homepage
 
 **Route**: `/`
 
-The default landing page embeds the
-**[cc4pm](https://github.com/istarwyh/cc4pm)** (Claude Code for Product Maker)
-homepage -- an Anthropic hackathon award-winning project that provides an AI
-product private tutor with 200+ skills across 4 core modules:
-
-| Module                                  | Skills | Focus                                               |
-| --------------------------------------- | ------ | --------------------------------------------------- |
-| **BMM** (Business Modeling Methodology) | 44     | PRD creation, sprint planning, market research      |
-| **CIS** (Creative Intelligence System)  | 10     | Brainstorming, design thinking, innovation strategy |
-| **WDS** (Web Design System)             | 50     | UX design, prototyping, Figma integration           |
-| **Engineering**                         | 94+    | TDD, security review, agentic engineering           |
-
-The homepage content is sourced from the `@cc4pm/homepage` npm package and
-auto-synced via a multi-repo CI/CD pipeline (see
-[cc4pm Pipeline](#cc4pm-pipeline) below).
+The default landing page is a native React/Tailwind experience for AI product
+makers. It introduces AI Speeds, Claude Code Router, and quick entry points for
+the get-started guide, whiteboard, and API playground.
 
 ### 2. Get Started -- How to Use Claude Code
 
@@ -146,15 +133,13 @@ src/
       playground/route.ts        # API test proxy
       playground/models/route.ts # Model list fetcher
       img-proxy/route.ts         # CORS image proxy
-      static/homepage/route.ts   # Serves cc4pm homepage HTML
     (main)/
-      home/page.tsx              # Home page (cc4pm iframe / legacy wrapper)
+      home/page.tsx              # Home page shell with hash-based sections
       playground/page.tsx        # API playground UI
       whiteboard/page.tsx        # Whiteboard (Excalidraw)
       brand/page.tsx             # Brand kit
   components/
-    HomePageWithNav.tsx           # Homepage with sidebar + cc4pm iframe
-    LegacyPageWrapper.tsx         # Bridge: legacy HTML strings into React
+    HomePageWithNav.tsx           # React homepage, navigation, and get-started guide
     features/whiteboard/          # Whiteboard components
   services/
     llm-provider/
@@ -164,10 +149,8 @@ src/
         stream.ts                 # OpenAI SSE -> Anthropic SSE streaming
   config/
     navigation.ts                 # Navigation section IDs
+    providers.ts                  # Provider card data for get-started guide
     ui-texts.ts                   # UI text constants (tab labels, etc.)
-  legacy/                         # Legacy HTML-string templates
-    features/get-started/         # "How to use CC" guide
-    scripts/generated/            # Auto-generated cc4pm homepage HTML
   lib/                            # Utilities
 ```
 
@@ -177,35 +160,7 @@ src/
 - **Styling**: Tailwind CSS 3
 - **Language**: TypeScript (strict mode)
 - **Runtime**: Edge Runtime on Cloudflare Workers via `@opennextjs/cloudflare`
-- **Build**: Turbopack (dev) + esbuild (legacy client)
-
----
-
-## cc4pm Pipeline
-
-The cc4pm homepage is maintained in a separate repository
-([istarwyh/cc4pm](https://github.com/istarwyh/cc4pm)) and automatically synced
-to this project via a multi-repo CI/CD pipeline:
-
-```
-cc4pm/main (push to packages/homepage/**)
-    |
-    v
-publish-homepage.yml  (in cc4pm repo)
-    |--- npm publish @cc4pm/homepage@x.y.z
-    |--- repository_dispatch "cc4pm-homepage-released"
-         |
-         v
-sync-cc4pm.yml  (in this repo)
-    |--- pnpm add @cc4pm/homepage@x.y.z
-    |--- git commit & push
-    |--- Cloudflare Workers auto-deploy
-```
-
-At build time, `scripts/build-client.cjs` reads `@cc4pm/homepage/index.html` and
-embeds it as a TypeScript constant (since Cloudflare Workers cannot use
-`fs.readFileSync` at runtime). The HTML is then served via
-`/api/static/homepage`.
+- **Build**: Turbopack (dev) + Next.js production build
 
 ---
 
@@ -213,7 +168,6 @@ embeds it as a TypeScript constant (since Cloudflare Workers cannot use
 
 ```bash
 pnpm install
-pnpm run build:client   # Required before first dev session (generates cc4pm HTML)
 pnpm run dev             # Dev server at localhost:3000
 ```
 

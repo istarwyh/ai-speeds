@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
-import './globals.css';
-import { designTokens } from '../styles/designTokens';
-import type { ReactNode } from 'react';
 import Script from 'next/script';
+import type { ReactNode } from 'react';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'AI Speeds - Make AI Speeds Us',
@@ -16,16 +15,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang='en' suppressHydrationWarning>
       <head>
-        {/* Font Awesome icons will be imported as React components */}
         <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
       </head>
       <body>
-        {/* Inject global CSS variables (design tokens) at runtime */}
-        <style
-          // Tokens are defined as a CSS string targeting :root
-          // This keeps components token-driven without hex values
-          dangerouslySetInnerHTML={{ __html: designTokens }}
-        />
         {children}
 
         {/* WUUNU SNIPPET - DON'T CHANGE THIS (START) */}

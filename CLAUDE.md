@@ -16,7 +16,6 @@ Deployed to Cloudflare Workers at `cc.xiaohui.cool` / `aispeeds.me`.
 
 ```bash
 pnpm install                  # Install dependencies
-pnpm run build:client         # REQUIRED before first dev session (generates legacy content maps)
 pnpm run dev                  # Dev server with Turbopack (localhost:3000)
 pnpm run build                # Production Next.js build
 pnpm run typecheck            # TypeScript type checking (tsc --noEmit)
@@ -28,9 +27,6 @@ pnpm run cf:build             # Build via OpenNext for Cloudflare
 pnpm run cf:preview           # Local preview of CF build
 pnpm run cf:deploy            # Build + deploy to production
 
-# Legacy client (esbuild bundling)
-pnpm run build:client         # Smart build with change detection
-pnpm run build:client:direct  # Force full rebuild
 ```
 
 **No test framework is configured.** There are no test files or test runner in
@@ -58,23 +54,20 @@ Utility:     src/lib/, src/config/               — Shared utilities
 
 API keys are passed per-request via `x-api-key` header, not stored server-side.
 
-### Hybrid Frontend
+### Frontend
 
-- **New code**: `src/app/` (Next.js App Router) + `src/components/` (React)
-- **Legacy code**: `src/legacy/` — excluded from ESLint and TypeScript checking
-- **Bridge**: `LegacyPageWrapper` injects legacy HTML via
-  `dangerouslySetInnerHTML` and executes scripts
-- **Homepage content**: Served from `@cc4pm/homepage` NPM package, built into
-  `src/legacy/scripts/generated/homepageHtml`, served via `/api/static/homepage`
-  route
+- `src/app/` uses Next.js App Router routes.
+- `src/components/HomePageWithNav.tsx` renders the React/Tailwind homepage,
+  navigation, and get-started guide.
+- `src/config/providers.ts` stores provider card data used by the get-started
+  guide.
 
 ### Route Map
 
-| Route                      | Handler                                             |
-| -------------------------- | --------------------------------------------------- |
-| `POST /api/v1/messages`    | Claude API proxy (also at `/v1/messages`)           |
-| `GET /api/img-proxy`       | CORS image proxy (also at `/img-proxy` via rewrite) |
-| `GET /api/static/homepage` | Serves generated homepage HTML                      |
+| Route                   | Handler                                             |
+| ----------------------- | --------------------------------------------------- |
+| `POST /api/v1/messages` | Claude API proxy (also at `/v1/messages`)           |
+| `GET /api/img-proxy`    | CORS image proxy (also at `/img-proxy` via rewrite) |
 
 ## Tech Stack
 
@@ -83,7 +76,7 @@ API keys are passed per-request via `x-api-key` header, not stored server-side.
   `noUncheckedIndexedAccess`, `noUnusedLocals`, `noUnusedParameters`)
 - **Runtime**: Edge Runtime (V8 Isolates) on Cloudflare Workers via
   `@opennextjs/cloudflare`
-- **Build**: Turbopack (dev) + esbuild (legacy client modules)
+- **Build**: Turbopack (dev) + Next.js production build
 - **Package manager**: pnpm (`.npmrc`: `shamefully-hoist=true`,
   `strict-peer-dependencies=false`)
 
@@ -94,8 +87,6 @@ API keys are passed per-request via `x-api-key` header, not stored server-side.
 - **No `any`**: ESLint error for `@typescript-eslint/no-explicit-any`
 - **No non-null assertions**: ESLint error for
   `@typescript-eslint/no-non-null-assertion`
-- **Legacy code**: Never add new code to `src/legacy/` — it's excluded from type
-  checking and linting
 - **Single quotes**, semicolons, trailing commas, 120 char print width (see
   `.prettierrc.json`)
 
@@ -133,8 +124,6 @@ Subject: lowercase, 3-100 chars, no period. Header max 120 chars.
 
 - `next.config.mjs` has `eslint.ignoreDuringBuilds: true` and
   `typescript.ignoreBuildErrors: true` (temporary during migration)
-- `src/legacy/` is excluded from TypeScript (`tsconfig.json`) and ESLint
-  (`eslint.config.js`)
 - CI deploys on push to `main` via `.github/workflows/deploy.yml` (requires
   `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets)
 

@@ -2,7 +2,7 @@
  * AI Speeds Brand Constants
  *
  * 统一的品牌标识常量
- * 包括颜色、尺寸、设计规范等
+ * 颜色用于 logo 资产，不等同于 UI theme tokens
  */
 
 export const BRAND_COLORS = {
