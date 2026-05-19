@@ -187,6 +187,6 @@ export function HomePageWithNav() {
 
 function Cc4pmHomepageFrame() {
   return (
-    <iframe src='/api/static/homepage' title='cc4pm 首页' className='block h-screen w-full border-0 bg-bg-primary' />
+    <iframe src='/static/cc4pm-homepage' title='cc4pm 首页' className='block h-screen w-full border-0 bg-bg-primary' />
   );
 }

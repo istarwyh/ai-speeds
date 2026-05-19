@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "next build",
-    "dev": "cross-env NODE_NO_WARNINGS=1 next dev --turbopack # Next.js 开发服务器（带 Turbopack 加速）",
+    "prepare:homepage": "node scripts/prepare-cc4pm-homepage.mjs",
+    "build": "pnpm run prepare:homepage && next build",
+    "dev": "pnpm run prepare:homepage && cross-env NODE_NO_WARNINGS=1 next dev --turbopack # Next.js 开发服务器（带 Turbopack 加速）",
     "cf:build": "opennextjs-cloudflare build # 构建 Cloudflare Workers 版本",
     "cf:preview": "pnpm cf:build && opennextjs-cloudflare preview # 预览 Cloudflare 构建结果",
     "cf:deploy": "pnpm cf:build && opennextjs-cloudflare deploy # 部署到 Cloudflare Workers",
