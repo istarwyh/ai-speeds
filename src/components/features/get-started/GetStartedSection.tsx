@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import { DEFAULT_PROVIDER_ID, getProviderEnvBlock, providers, type Provider } from '@/config/providers';
 import { UI_TEXTS } from '@/config/ui-texts';
 
@@ -45,21 +45,21 @@ brew install node
 node --version`,
 };
 
-const colors: Record<string, string> = {
-  amber: '#f59e0b',
-  blue: '#2563eb',
-  cyan: '#06b6d4',
-  emerald: '#059669',
-  indigo: '#4f46e5',
-  orange: '#f97316',
-  pink: '#ec4899',
-  purple: '#9333ea',
-  red: '#ef4444',
-  slate: '#334155',
-  teal: '#14b8a6',
-  violet: '#8b5cf6',
-  zinc: '#3f3f46',
-};
+const colors = new Map([
+  ['amber', '#f59e0b'],
+  ['blue', '#2563eb'],
+  ['cyan', '#06b6d4'],
+  ['emerald', '#059669'],
+  ['indigo', '#4f46e5'],
+  ['orange', '#f97316'],
+  ['pink', '#ec4899'],
+  ['purple', '#9333ea'],
+  ['red', '#ef4444'],
+  ['slate', '#334155'],
+  ['teal', '#14b8a6'],
+  ['violet', '#8b5cf6'],
+  ['zinc', '#3f3f46'],
+]);
 
 const displayFont: CSSProperties = {
   fontFamily: ['Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', 'serif'].join(', '),
@@ -71,7 +71,7 @@ function resolveColor(token: string): string {
   }
 
   const [name = 'cyan'] = token.split('-');
-  return colors[name] ?? '#06b6d4';
+  return colors.get(name) ?? '#06b6d4';
 }
 
 function providerStyle(provider: Provider): CSSProperties {
@@ -101,20 +101,61 @@ function CopyButton({ text }: { text: string }) {
 }
 
 function CodeBlock({ code }: { code: string }) {
+  const [isMobile, setIsMobile] = useState(false);
+  const [expanded, setExpanded] = useState(true);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+    const syncState = () => {
+      setIsMobile(mediaQuery.matches);
+      setExpanded(!mediaQuery.matches);
+    };
+
+    syncState();
+    mediaQuery.addEventListener('change', syncState);
+    return () => mediaQuery.removeEventListener('change', syncState);
+  }, []);
+
+  const showCode = !isMobile || expanded;
+  const previewLine = code.split('\n')[0] ?? code;
+
   return (
-    <div className='mt-4 overflow-hidden rounded-3xl border border-slate-900/10 bg-slate-950 shadow-2xl shadow-slate-950/10'>
-      <div className='flex items-center justify-between border-b border-white/10 px-4 py-3 text-xs text-white/60'>
-        <div className='flex items-center gap-2'>
-          <span className='h-2.5 w-2.5 rounded-full bg-[#ff6b57]' />
-          <span className='h-2.5 w-2.5 rounded-full bg-[#f6c85f]' />
-          <span className='h-2.5 w-2.5 rounded-full bg-[#46d07d]' />
-          <span className='ml-2 font-semibold tracking-wide'>终端</span>
+    <div className='mt-4 overflow-hidden rounded-[1.5rem] border border-slate-900/10 bg-slate-950 shadow-2xl shadow-slate-950/10 sm:rounded-3xl'>
+      <div className='flex flex-col gap-3 border-b border-white/10 px-3 py-3 text-xs text-white/60 sm:flex-row sm:items-center sm:justify-between sm:px-4'>
+        <div className='flex min-w-0 items-center gap-2'>
+          <span className='h-2.5 w-2.5 shrink-0 rounded-full bg-[#ff6b57]' />
+          <span className='h-2.5 w-2.5 shrink-0 rounded-full bg-[#f6c85f]' />
+          <span className='h-2.5 w-2.5 shrink-0 rounded-full bg-[#46d07d]' />
+          <span className='ml-1 truncate font-semibold tracking-wide sm:ml-2'>终端</span>
         </div>
-        <CopyButton text={code} />
+        <div className='flex items-center justify-end gap-2'>
+          {isMobile ? (
+            <button
+              type='button'
+              aria-expanded={showCode}
+              onClick={() => setExpanded(current => !current)}
+              className='rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/80 transition hover:border-white/40 hover:bg-white/15 hover:text-white'
+            >
+              {showCode ? '收起' : '展开命令'}
+            </button>
+          ) : null}
+          <CopyButton text={code} />
+        </div>
       </div>
-      <pre className='overflow-x-auto whitespace-pre-wrap p-5 text-sm leading-7 text-cyan-100'>
-        <code>{code}</code>
-      </pre>
+      {showCode ? (
+        <pre className='max-h-72 overflow-auto whitespace-pre-wrap break-words p-4 text-xs leading-6 text-cyan-100 sm:max-h-none sm:p-5 sm:text-sm sm:leading-7'>
+          <code>{code}</code>
+        </pre>
+      ) : (
+        <button
+          type='button'
+          onClick={() => setExpanded(true)}
+          className='block w-full bg-slate-900/80 p-4 text-left transition hover:bg-slate-900'
+        >
+          <span className='block truncate font-mono text-xs leading-6 text-cyan-100'>{previewLine}</span>
+          <span className='mt-1 block text-xs font-semibold text-white/45'>点击展开完整命令</span>
+        </button>
+      )}
     </div>
   );
 }
@@ -166,13 +207,13 @@ function ProviderCard({
 
 function Card({ number, title, children }: { number: string; title: string; children: ReactNode }) {
   return (
-    <div className='group relative overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white/85 p-6 shadow-xl shadow-slate-900/5 backdrop-blur transition hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-900/10'>
+    <div className='group relative overflow-hidden rounded-[1.5rem] border border-slate-200/80 bg-white/85 p-4 shadow-xl shadow-slate-900/5 backdrop-blur transition hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-900/10 sm:rounded-[2rem] sm:p-6'>
       <div className='absolute -right-12 -top-12 h-32 w-32 rounded-full bg-[#e57a5a]/10 transition group-hover:scale-125' />
       <div className='relative'>
-        <div className='flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-sm font-black text-white shadow-lg shadow-slate-950/20'>
+        <div className='flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-sm font-black text-white shadow-lg shadow-slate-950/20 sm:h-11 sm:w-11'>
           {number}
         </div>
-        <h2 className='mt-5 text-2xl font-black tracking-tight text-slate-950' style={displayFont}>
+        <h2 className='mt-4 text-xl font-black tracking-tight text-slate-950 sm:mt-5 sm:text-2xl' style={displayFont}>
           {title}
         </h2>
         {children}
@@ -182,7 +223,9 @@ function Card({ number, title, children }: { number: string; title: string; chil
 }
 
 function SectionLabel({ children }: { children: ReactNode }) {
-  return <p className='text-xs font-black uppercase tracking-[0.32em] text-[#d4614a]'>{children}</p>;
+  return (
+    <p className='text-xs font-black uppercase tracking-[0.22em] text-[#d4614a] sm:tracking-[0.32em]'>{children}</p>
+  );
 }
 
 export function GetStartedSection() {
@@ -198,7 +241,7 @@ export function GetStartedSection() {
   return (
     <section
       id='get-started'
-      className='relative min-h-screen overflow-hidden bg-[#f7f0e6] px-4 py-10 text-slate-950 sm:px-6 lg:px-10'
+      className='relative min-h-[calc(100dvh-4rem)] overflow-hidden bg-[#f7f0e6] px-3 py-6 text-slate-950 sm:px-6 sm:py-10 lg:px-10'
     >
       <div aria-hidden className='pointer-events-none absolute inset-0 overflow-hidden'>
         <div className='absolute left-[-12rem] top-[-10rem] h-[30rem] w-[30rem] rounded-full bg-[#e57a5a]/20 blur-3xl' />
@@ -209,18 +252,18 @@ export function GetStartedSection() {
 
       <div className='relative mx-auto max-w-7xl'>
         <div className='grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-stretch'>
-          <div className='rounded-[2.5rem] border border-white/70 bg-white/70 p-6 shadow-2xl shadow-slate-900/5 backdrop-blur sm:p-8 lg:p-10'>
+          <div className='rounded-[1.75rem] border border-white/70 bg-white/70 p-5 shadow-2xl shadow-slate-900/5 backdrop-blur sm:rounded-[2.5rem] sm:p-8 lg:p-10'>
             <SectionLabel>{UI_TEXTS.MODULE_TITLES['get-started']}</SectionLabel>
             <h1
-              className='mt-5 max-w-4xl text-4xl font-black leading-tight tracking-tight text-slate-950 sm:text-6xl'
+              className='mt-4 max-w-4xl text-3xl font-black leading-tight tracking-tight text-slate-950 sm:mt-5 sm:text-6xl'
               style={displayFont}
             >
               把 Claude Code 接到你想用的模型。
             </h1>
-            <p className='mt-5 max-w-2xl text-lg leading-8 text-slate-600'>
+            <p className='mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:mt-5 sm:text-lg sm:leading-8'>
               先安装 CLI，再选择服务商，复制环境变量即可开跑。需要私有路由时，再部署 AI Speeds。
             </p>
-            <div className='mt-8 grid gap-3 sm:grid-cols-3'>
+            <div className='mt-6 grid gap-3 sm:mt-8 sm:grid-cols-3'>
               {quickFacts.map(item => (
                 <div key={item.label} className='rounded-3xl border border-slate-200/80 bg-white/80 p-4 shadow-sm'>
                   <p className='text-xs font-bold tracking-wide text-slate-500'>{item.label}</p>
@@ -230,15 +273,15 @@ export function GetStartedSection() {
             </div>
           </div>
 
-          <div className='relative overflow-hidden rounded-[2.5rem] bg-slate-950 p-6 text-white shadow-2xl shadow-slate-950/20 sm:p-8'>
+          <div className='relative overflow-hidden rounded-[1.75rem] bg-slate-950 p-5 text-white shadow-2xl shadow-slate-950/20 sm:rounded-[2.5rem] sm:p-8'>
             <div className='absolute -right-16 -top-16 h-44 w-44 rounded-full bg-cyan-400/25 blur-2xl' />
             <div className='absolute -bottom-16 -left-16 h-44 w-44 rounded-full bg-[#e57a5a]/30 blur-2xl' />
             <div className='relative'>
               <SectionLabel>推荐流程</SectionLabel>
-              <h2 className='mt-4 text-3xl font-black tracking-tight' style={displayFont}>
+              <h2 className='mt-4 text-2xl font-black tracking-tight sm:text-3xl' style={displayFont}>
                 四步完成接入
               </h2>
-              <div className='mt-8 space-y-4'>
+              <div className='mt-6 space-y-3 sm:mt-8 sm:space-y-4'>
                 {workflow.map((item, index) => (
                   <div key={item} className='flex gap-4 rounded-3xl border border-white/10 bg-white/[0.06] p-4'>
                     <span className='flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-sm font-black text-slate-950'>
@@ -288,12 +331,12 @@ export function GetStartedSection() {
               </a>
             </Card>
 
-            <div className='relative overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white/85 p-6 shadow-xl shadow-slate-900/5 backdrop-blur'>
+            <div className='relative overflow-hidden rounded-[1.5rem] border border-slate-200/80 bg-white/85 p-4 shadow-xl shadow-slate-900/5 backdrop-blur sm:rounded-[2rem] sm:p-6'>
               <div className='absolute right-0 top-0 h-28 w-28 rounded-bl-[4rem] bg-[#e57a5a]/10' />
               <div className='relative flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between'>
                 <div>
                   <SectionLabel>服务商详情</SectionLabel>
-                  <h3 className='mt-3 text-3xl font-black text-slate-950' style={displayFont}>
+                  <h3 className='mt-3 text-2xl font-black text-slate-950 sm:text-3xl' style={displayFont}>
                     {selectedProvider.displayName}
                   </h3>
                   <p className='mt-3 max-w-3xl leading-7 text-slate-600'>{selectedProvider.description}</p>
