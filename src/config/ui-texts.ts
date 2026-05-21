@@ -16,7 +16,7 @@ export const UI_TEXTS = {
   },
 
   MODULE_DESCRIPTIONS: {
-    'get-started': '快速开始使用 Claude Code Router，连接你喜欢的 AI Provider',
+    'get-started': '安装、选服务商、复制环境变量，一页完成 Claude Code 接入',
   },
 
   // 导航图标
@@ -27,7 +27,7 @@ export const UI_TEXTS = {
   // 通用按钮文字
   BUTTONS: {
     BACK_TO_OVERVIEW: '返回概览',
-    COPY_COMMAND: '复制命令',
+    COPY_COMMAND: '复制',
   },
 
   // 面包屑导航

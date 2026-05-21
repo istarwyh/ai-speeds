@@ -54,14 +54,24 @@ export function HomePageWithNav() {
 
   return (
     <div className='min-h-screen bg-bg-secondary text-text-primary'>
-      <button
-        type='button'
-        aria-expanded={mobileOpen}
-        onClick={() => setMobileOpen(true)}
-        className='fixed left-4 top-4 z-40 rounded-2xl border border-border-light bg-bg-primary px-4 py-3 text-sm font-semibold text-text-primary shadow-lg md:hidden'
-      >
-        Menu
-      </button>
+      <header className='fixed inset-x-0 top-0 z-40 flex h-16 w-screen max-w-full items-center gap-3 border-b border-border-light bg-bg-primary/95 px-4 shadow-sm backdrop-blur md:hidden'>
+        <button
+          type='button'
+          onClick={() => selectSection('home')}
+          className='flex min-w-0 shrink items-center rounded-2xl p-2 text-left transition hover:bg-bg-tertiary'
+        >
+          <BrandLogo size='small' showText={false} />
+          <span className='ml-2 truncate text-base font-semibold text-text-primary'>AI Speeds</span>
+        </button>
+        <button
+          type='button'
+          aria-expanded={mobileOpen}
+          onClick={() => setMobileOpen(true)}
+          className='shrink-0 rounded-2xl border border-border-light bg-bg-secondary px-4 py-2 text-sm font-semibold text-text-primary shadow-sm'
+        >
+          菜单
+        </button>
+      </header>
 
       <aside
         className={`fixed inset-y-0 left-0 z-30 hidden flex-col border-r border-border-light bg-bg-primary p-4 shadow-xl backdrop-blur transition-all md:flex ${
@@ -81,7 +91,7 @@ export function HomePageWithNav() {
               type='button'
               onClick={toggleSidebar}
               className='rounded-xl border border-border-light px-3 py-2 text-xs font-semibold text-text-secondary transition hover:border-primary hover:text-text-primary'
-              aria-label='Collapse sidebar'
+              aria-label='收起侧边栏'
             >
               ←
             </button>
@@ -93,7 +103,7 @@ export function HomePageWithNav() {
             type='button'
             onClick={toggleSidebar}
             className='mt-4 rounded-xl border border-border-light px-3 py-2 text-xs font-semibold text-text-secondary transition hover:border-primary hover:text-text-primary'
-            aria-label='Expand sidebar'
+            aria-label='展开侧边栏'
           >
             →
           </button>
@@ -145,7 +155,7 @@ export function HomePageWithNav() {
                 onClick={() => setMobileOpen(false)}
                 className='rounded-xl border border-border-light px-3 py-2 text-sm font-semibold text-text-secondary'
               >
-                Close
+                关闭
               </button>
             </div>
             <div className='mt-6 grid gap-2'>
@@ -178,7 +188,7 @@ export function HomePageWithNav() {
         </div>
       )}
 
-      <main className={`transition-all ${sidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
+      <main className={`pt-16 transition-all md:pt-0 ${sidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
         {activeSection === 'home' ? <Cc4pmHomepageFrame /> : <GetStartedSection />}
       </main>
     </div>
@@ -188,9 +198,9 @@ export function HomePageWithNav() {
 function Cc4pmHomepageFrame() {
   return (
     <iframe
-      src='/api/static/homepage'
-      title='cc4pm homepage'
-      className='block h-screen w-full border-0 bg-bg-primary'
+      src='/static/cc4pm-homepage.html'
+      title='cc4pm 首页'
+      className='block h-[calc(100dvh-4rem)] w-full border-0 bg-bg-primary md:h-screen'
     />
   );
 }
