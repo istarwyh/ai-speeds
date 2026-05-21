@@ -193,7 +193,9 @@ body {
 `;
 
 const homepageHtml = await readFile(sourcePath, 'utf8');
-const embeddedHomepage = homepageHtml.replace(navPattern, '').replace('</style>', `${embeddedOverrides}\n</style>`);
+const embeddedHomepage = homepageHtml
+  .replace(navPattern, '')
+  .replace('</head>', `<style>${embeddedOverrides}</style>\n</head>`);
 
 await mkdir(dirname(outputPath), { recursive: true });
 await writeFile(outputPath, embeddedHomepage, 'utf8');
