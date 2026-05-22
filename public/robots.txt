@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /v1/
+Disallow: /img-proxy
+
+Sitemap: https://aispeeds.me/sitemap.xml
