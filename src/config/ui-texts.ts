@@ -6,6 +6,7 @@ export const UI_TEXTS = {
   NAVIGATION: {
     HOME: '献给产品主理人',
     GET_STARTED: '如何用上CC',
+    AI_WIREFRAME: '快速设计 UI 结构',
     WHITEBOARD: '白板',
     PLAYGROUND: '接口测试',
   },
@@ -13,15 +14,18 @@ export const UI_TEXTS = {
   // 模块标题和描述
   MODULE_TITLES: {
     'get-started': '如何用上CC',
+    'ai-wireframe': '快速设计 UI 结构',
   },
 
   MODULE_DESCRIPTIONS: {
     'get-started': '安装、选服务商、复制环境变量，一页完成 Claude Code 接入',
+    'ai-wireframe': '面向 AI 编程工作流的低保真 UI 结构编辑器',
   },
 
   // 导航图标
   MODULE_ICONS: {
     'get-started': '🚀',
+    'ai-wireframe': '▦',
   },
 
   // 通用按钮文字
