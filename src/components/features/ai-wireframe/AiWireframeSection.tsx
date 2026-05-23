@@ -1226,6 +1226,10 @@ function createInitialWireframe(): WireframeDocument {
   return defaultTemplate ? createWireframeFromTemplate(defaultTemplate) : emptyWireframe;
 }
 
+function createElementId(kind: WireframeElementKind): string {
+  return `wire-${kind}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 11)}`;
+}
+
 function createElementAt(
   kind: WireframeElementKind,
   x: number,
@@ -1236,7 +1240,7 @@ function createElementAt(
   const maxZ = existingElements.reduce((currentMax, element) => Math.max(currentMax, element.z), 0);
   return normalizeElementBounds({
     ...preset,
-    id: `wire-${kind}-${Date.now().toString(36)}-${existingElements.length}`,
+    id: createElementId(kind),
     x: x - preset.w / 2,
     y: y - preset.h / 2,
     z: maxZ + 1,
@@ -1753,6 +1757,7 @@ function CanvasElement({
 export function AiWireframeSection() {
   const canvasRef = useRef<HTMLDivElement>(null);
   const dragStateRef = useRef<DragState | null>(null);
+  const feedbackTimeoutRef = useRef<number | null>(null);
   const [wireframe, setWireframe] = useState<WireframeDocument>(() => createInitialWireframe());
   const [activeTool, setActiveTool] = useState<ToolId>('select');
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
@@ -1806,12 +1811,25 @@ export function AiWireframeSection() {
     window.localStorage.setItem(storageKey, JSON.stringify(wireframe));
   }, [hydrated, wireframe]);
 
-  const showFeedback = (nextFeedback: Feedback) => {
+  const showFeedback = useCallback((nextFeedback: Feedback) => {
+    if (feedbackTimeoutRef.current) {
+      window.clearTimeout(feedbackTimeoutRef.current);
+    }
+
     setFeedback(nextFeedback);
-    window.setTimeout(() => {
+    feedbackTimeoutRef.current = window.setTimeout(() => {
       setFeedback(current => (current?.message === nextFeedback.message ? null : current));
+      feedbackTimeoutRef.current = null;
     }, 3000);
-  };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (feedbackTimeoutRef.current) {
+        window.clearTimeout(feedbackTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const updateElement = (id: string, patch: Partial<WireframeElement>) => {
     setWireframe(current => ({
@@ -1845,14 +1863,17 @@ export function AiWireframeSection() {
     });
   };
 
-  const removeElement = (id: string) => {
-    setWireframe(current => ({ ...current, elements: current.elements.filter(element => element.id !== id) }));
-    setSelectedElementId(current => (current === id ? null : current));
-    setInlineEditingId(current => (current === id ? null : current));
-    showFeedback({ tone: 'info', message: '图层已删除。' });
-  };
+  const removeElement = useCallback(
+    (id: string) => {
+      setWireframe(current => ({ ...current, elements: current.elements.filter(element => element.id !== id) }));
+      setSelectedElementId(current => (current === id ? null : current));
+      setInlineEditingId(current => (current === id ? null : current));
+      showFeedback({ tone: 'info', message: '图层已删除。' });
+    },
+    [showFeedback],
+  );
 
-  const duplicateSelectedElement = () => {
+  const duplicateSelectedElement = useCallback(() => {
     if (!selectedElement) {
       return;
     }
@@ -1861,7 +1882,7 @@ export function AiWireframeSection() {
       const maxZ = current.elements.reduce((currentMax, element) => Math.max(currentMax, element.z), 0);
       const duplicate = normalizeElementBounds({
         ...selectedElement,
-        id: `wire-${selectedElement.kind}-${Date.now().toString(36)}-copy`,
+        id: createElementId(selectedElement.kind),
         title: `${selectedElement.title} 副本`,
         x: selectedElement.x + 3,
         y: selectedElement.y + 3,
@@ -1871,7 +1892,7 @@ export function AiWireframeSection() {
       showFeedback({ tone: 'success', message: '图层已复制。' });
       return { ...current, elements: [...current.elements, duplicate] };
     });
-  };
+  }, [selectedElement, showFeedback]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -1894,7 +1915,7 @@ export function AiWireframeSection() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  });
+  }, [duplicateSelectedElement, removeElement, selectedElementId]);
 
   const canvasPointFromEvent = (event: PointerEvent<HTMLDivElement> | DragEvent<HTMLDivElement>) => {
     const canvas = canvasRef.current;
