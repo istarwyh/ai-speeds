@@ -33,9 +33,13 @@ type ToolId = 'select' | WireframeElementKind;
 type DragMode = 'move' | 'resize';
 type ResizeHandle = 'nw' | 'ne' | 'sw' | 'se';
 type SecondaryPanel = 'templates' | 'export' | 'page';
-type OutputMode = 'wireframe' | 'prompt';
+type RightPanel = 'layers' | 'inspector';
 type FeedbackTone = 'success' | 'error' | 'info';
+type CanvasViewport = 'web' | 'mobile';
 type NumberField = 'x' | 'y' | 'w' | 'h' | 'z';
+type AlignmentGuide = { orientation: 'horizontal' | 'vertical'; position: number };
+type PlacementPreview = { kind: WireframeElementKind; x: number; y: number; w: number; h: number };
+type OutputSection = { title: string; content: string };
 
 type WireframeElement = {
   id: string;
@@ -72,6 +76,14 @@ type WireframeTemplate = {
 
 type ElementPreset = Omit<WireframeElement, 'id' | 'x' | 'y' | 'z'>;
 
+type DragOrigin = {
+  id: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+
 type DragState = {
   id: string;
   mode: DragMode;
@@ -82,6 +94,7 @@ type DragState = {
   originY: number;
   originW: number;
   originH: number;
+  origins: DragOrigin[];
 };
 
 type Feedback = {
@@ -104,6 +117,14 @@ const pageColumns = 78;
 const pageRows = 31;
 const minElementWidth = 6;
 const minElementHeight = 4;
+const canvasViewports: Record<CanvasViewport, { label: string; width: number; height: number; note: string }> = {
+  web: { label: 'Web 端', width: 1180, height: 820, note: '桌面页面稿纸' },
+  mobile: { label: '移动端', width: 390, height: 844, note: '手机页面稿纸' },
+};
+const canvasViewportIds: CanvasViewport[] = ['web', 'mobile'];
+const canvasZoomMin = 0.5;
+const canvasZoomMax = 1.6;
+const canvasZoomStep = 0.1;
 
 const elementKindIds: WireframeElementKind[] = [
   'text',
@@ -127,11 +148,11 @@ const regionIds: WireframeRegion[] = ['header', 'sidebar', 'main', 'footer', 'mo
 const tools: ToolDefinition[] = [
   { id: 'select', label: '选择', group: 'BASICS', glyph: '⌖', hint: '移动、缩放、编辑图层' },
   { id: 'text', label: '文本', group: 'BASICS', glyph: 'T', hint: '标题、标签或说明文字' },
+  { id: 'button', label: '按钮', group: 'UI ELEMENTS', glyph: '●', hint: '主要或次要操作' },
+  { id: 'input', label: '输入框', group: 'UI ELEMENTS', glyph: '⌜⌟', hint: '文本输入或表单控件' },
+  { id: 'card', label: '卡片', group: 'UI ELEMENTS', glyph: '▱', hint: '成组内容面板' },
   { id: 'box', label: '区块', group: 'BASICS', glyph: '□', hint: '通用内容区域' },
   { id: 'divider', label: '分割线', group: 'BASICS', glyph: '─', hint: '视觉分隔或流程线' },
-  { id: 'button', label: '按钮', group: 'UI ELEMENTS', glyph: '[ ]', hint: '主要或次要操作' },
-  { id: 'input', label: '输入框', group: 'UI ELEMENTS', glyph: '▯', hint: '文本输入或表单控件' },
-  { id: 'card', label: '卡片', group: 'UI ELEMENTS', glyph: '▱', hint: '成组内容面板' },
   { id: 'table', label: '表格', group: 'UI ELEMENTS', glyph: '▦', hint: '带行列的数据表' },
   { id: 'modal', label: '弹窗', group: 'UI ELEMENTS', glyph: '▣', hint: '对话框或确认流程' },
   { id: 'navbar', label: '导航', group: 'STRUCTURE', glyph: '⌐', hint: '顶部导航或页面头部' },
@@ -141,6 +162,8 @@ const tools: ToolDefinition[] = [
   { id: 'pagination', label: '分页', group: 'STRUCTURE', glyph: '<>', hint: '分页控制区' },
   { id: 'placeholder', label: '占位区', group: 'STRUCTURE', glyph: '▒', hint: '图表、图片、空状态或未知区域' },
 ];
+
+const primaryToolIds: ToolId[] = ['select', 'text', 'button', 'input', 'card', 'box'];
 
 const emptyWireframe: WireframeDocument = {
   pageName: '未命名页面',
@@ -438,6 +461,86 @@ function normalizeElementBounds(element: WireframeElement): WireframeElement {
   };
 }
 
+function cloneWireframe(wireframe: WireframeDocument): WireframeDocument {
+  return {
+    ...wireframe,
+    elements: wireframe.elements.map(element => ({ ...element })),
+  };
+}
+
+function toolById(id: ToolId): ToolDefinition | null {
+  return tools.find(tool => tool.id === id) ?? null;
+}
+
+function snapValue(value: number, targets: number[]): { value: number; guide: number | null } {
+  const threshold = 1.25;
+  let snappedValue = value;
+  let guide: number | null = null;
+  let bestDistance = threshold;
+
+  targets.forEach(target => {
+    const distance = Math.abs(value - target);
+    if (distance <= bestDistance) {
+      snappedValue = target;
+      guide = target;
+      bestDistance = distance;
+    }
+  });
+
+  return { value: snappedValue, guide };
+}
+
+function snapMovingElement(
+  element: WireframeElement,
+  patch: Pick<WireframeElement, 'x' | 'y'>,
+  elements: WireframeElement[],
+  movingIds: string[],
+): { patch: Pick<WireframeElement, 'x' | 'y'>; guides: AlignmentGuide[] } {
+  const stationaryElements = elements.filter(candidate => !movingIds.includes(candidate.id));
+  const verticalTargets = [
+    0,
+    50,
+    100,
+    ...stationaryElements.flatMap(candidate => [candidate.x, candidate.x + candidate.w / 2, candidate.x + candidate.w]),
+  ];
+  const horizontalTargets = [
+    0,
+    50,
+    100,
+    ...stationaryElements.flatMap(candidate => [candidate.y, candidate.y + candidate.h / 2, candidate.y + candidate.h]),
+  ];
+  const left = patch.x;
+  const centerX = patch.x + element.w / 2;
+  const right = patch.x + element.w;
+  const top = patch.y;
+  const centerY = patch.y + element.h / 2;
+  const bottom = patch.y + element.h;
+  const leftSnap = snapValue(left, verticalTargets);
+  const centerXSnap = snapValue(centerX, verticalTargets);
+  const rightSnap = snapValue(right, verticalTargets);
+  const topSnap = snapValue(top, horizontalTargets);
+  const centerYSnap = snapValue(centerY, horizontalTargets);
+  const bottomSnap = snapValue(bottom, horizontalTargets);
+  const verticalSnap = [leftSnap, centerXSnap, rightSnap].find(result => result.guide !== null);
+  const horizontalSnap = [topSnap, centerYSnap, bottomSnap].find(result => result.guide !== null);
+  let nextX = patch.x;
+  let nextY = patch.y;
+  const guides: AlignmentGuide[] = [];
+
+  if (verticalSnap && verticalSnap.guide !== null) {
+    nextX += verticalSnap.value - (verticalSnap === leftSnap ? left : verticalSnap === centerXSnap ? centerX : right);
+    guides.push({ orientation: 'vertical', position: verticalSnap.guide });
+  }
+
+  if (horizontalSnap && horizontalSnap.guide !== null) {
+    nextY +=
+      horizontalSnap.value - (horizontalSnap === topSnap ? top : horizontalSnap === centerYSnap ? centerY : bottom);
+    guides.push({ orientation: 'horizontal', position: horizontalSnap.guide });
+  }
+
+  return { patch: { x: nextX, y: nextY }, guides };
+}
+
 function templateElement(
   kind: WireframeElementKind,
   title: string,
@@ -457,43 +560,43 @@ const wireframeTemplates: WireframeTemplate[] = [
   {
     id: 'google-search-example',
     name: 'Google 搜索页示例',
-    description: '极简搜索首页：顶部入口、中心搜索框、快捷按钮和底部信息。',
+    description: '更像搜索首页：右上导航、中心品牌、搜索胶囊、双按钮和底部链接。',
     pageName: 'Google 搜索页结构示例',
-    purpose: '帮助用户理解一个搜索首页如何由品牌区、搜索框、主操作和辅助导航组成。',
+    purpose: '帮助用户理解一个搜索首页如何由右上入口、品牌焦点、搜索框、快捷操作和底部辅助导航组成。',
     styleDirection: '极简、留白充足、中心聚焦；只表达结构，不使用真实品牌素材或图片。',
     elements: [
       templateElement(
         'navbar',
-        '顶部导航',
-        '邮箱 | 图片 | 应用入口 | [登录]',
-        58,
+        '右上导航',
+        'Gmail | 图片 | 应用 | 登录',
+        56,
         4,
-        34,
-        8,
+        38,
+        7,
         'header',
         '顶部导航靠右，登录是最明确的账号入口。',
         1,
       ),
       templateElement(
         'text',
-        '品牌标识 / Logo 区',
-        '用文字或占位块表达品牌，不依赖真实 Logo 图片。',
-        32,
-        21,
+        'Google',
+        '品牌字标占位，不依赖真实 Logo 图片。',
         36,
-        12,
+        19,
+        28,
+        11,
         'main',
-        '这是视觉焦点，但导出给 AI 时只需要说明这里是品牌标识区。',
+        '这是视觉焦点，保持居中和足够留白。',
         2,
       ),
       templateElement(
         'search',
-        '搜索任何内容...',
-        '语音入口 | 图片搜索入口 | 自动补全建议',
+        '搜索或输入网址',
+        '语音搜索 | 图片搜索 | 自动补全',
         24,
-        39,
+        38,
         52,
-        10,
+        9,
         'main',
         '输入时展示搜索建议；回车或点击搜索按钮提交。',
         3,
@@ -503,9 +606,9 @@ const wireframeTemplates: WireframeTemplate[] = [
         'Google 搜索',
         '主要搜索操作',
         34,
-        54,
-        16,
-        8,
+        52,
+        15,
+        7,
         'main',
         '提交当前关键词并进入搜索结果页。',
         4,
@@ -514,178 +617,214 @@ const wireframeTemplates: WireframeTemplate[] = [
         'button',
         '手气不错',
         '次要探索操作',
+        51,
         52,
-        54,
-        16,
-        8,
+        15,
+        7,
         'main',
         '直接跳转到一个最匹配结果，可作为次要按钮。',
         5,
       ),
       templateElement(
-        'box',
-        '底部信息区',
-        '关于 | 广告 | 商务 | 隐私 | 条款 | 设置',
+        'text',
+        '语言切换',
+        'Google 提供：English | 简体中文',
+        35,
+        64,
+        30,
+        7,
+        'main',
+        '辅助链接弱化展示。',
         6,
-        84,
+      ),
+      templateElement(
+        'box',
+        '底部链接栏',
+        '关于 | 广告 | 商务 | 隐私 | 条款 | 设置',
+        4,
         88,
+        92,
         8,
         'footer',
         '底部是辅助链接，移动端可折叠为两行。',
-        6,
+        7,
       ),
     ],
   },
   {
     id: 'douyin-feed-example',
     name: '抖音短视频页示例',
-    description: '沉浸式视频流：顶部频道、视频主体、右侧互动和底部发布入口。',
+    description: '手机画板形态：9:16 视频、频道、右侧互动、底部文案和导航。',
     pageName: '抖音短视频页结构示例',
     purpose: '表达一个短视频沉浸式信息流页面的核心区域、互动关系和导航层级。',
     styleDirection: '移动端优先、沉浸式、内容占满主体；结构上突出视频、互动和切换下一条。',
     elements: [
       templateElement(
-        'tabs',
-        '顶部频道',
-        '关注 | 推荐 | 同城 | 直播',
-        28,
-        4,
-        44,
-        8,
-        'header',
-        '推荐是默认激活频道。',
+        'box',
+        '手机画板 9:16',
+        '沉浸式短视频 App 容器',
+        35,
+        3,
+        30,
+        93,
+        'main',
+        '移动端画板，所有核心控件都在手机容器内。',
         1,
       ),
+      templateElement('tabs', '频道', '关注 | 推荐 | 同城', 39, 7, 22, 7, 'header', '推荐是默认激活频道。', 2),
       templateElement(
         'placeholder',
-        '竖向视频画面',
-        '当前视频内容占位\n上下滑切换下一条',
-        18,
-        14,
-        55,
-        62,
+        '全屏视频',
+        '上下滑切换下一条',
+        38,
+        15,
+        24,
+        57,
         'main',
         '视频区域是页面主体，支持上下滑动切换内容。',
-        2,
-      ),
-      templateElement(
-        'list',
-        '右侧互动栏',
-        '头像 + 关注\n点赞 12.8w\n评论 3421\n收藏\n分享',
-        76,
-        22,
-        15,
-        44,
-        'floating',
-        '互动栏悬浮在视频右侧，点击评论打开底部评论面板。',
         3,
       ),
       templateElement(
-        'box',
-        '视频信息区',
-        '@创作者昵称\n视频标题 / 文案 / 话题标签\n背景音乐信息',
+        'list',
+        '互动栏',
+        '头像 +\n♥ 12.8w\n评论 3421\n收藏\n分享',
+        60,
+        30,
         8,
-        70,
-        58,
-        16,
+        34,
+        'floating',
+        '互动栏悬浮在视频右侧，点击评论打开底部评论面板。',
+        4,
+      ),
+      templateElement(
+        'text',
+        '视频文案',
+        '@创作者昵称\n标题 / 话题标签 / 音乐',
+        39,
+        72,
+        21,
+        12,
         'main',
         '底部文案覆盖在视频上，保证可读性。',
-        4,
+        5,
       ),
       templateElement(
         'navbar',
         '底部导航',
-        '首页 | 朋友 | [+] | 消息 | 我',
-        8,
-        90,
-        84,
-        8,
+        '首页 | 朋友 | + | 消息 | 我',
+        38,
+        88,
+        24,
+        7,
         'footer',
         '发布按钮位于导航中间，是高优先级入口。',
-        5,
+        6,
       ),
     ],
   },
   {
     id: 'xiaohongshu-notes-example',
     name: '小红书笔记流示例',
-    description: '内容社区首页：搜索、频道筛选、瀑布流笔记卡和底部导航。',
+    description: '手机画板形态：搜索、频道筛选、双列瀑布流卡片和底部导航。',
     pageName: '小红书笔记流结构示例',
     purpose: '表达一个种草社区首页如何组织搜索、频道、瀑布流内容和发布入口。',
     styleDirection: '内容卡片优先、轻社区氛围、移动端瀑布流；重点表达卡片层级和互动信息。',
     elements: [
       templateElement(
-        'search',
-        '搜索笔记 / 商品 / 用户',
-        '搜索框 + 扫一扫入口 + 消息入口',
-        6,
-        4,
-        70,
-        9,
-        'header',
-        '搜索是内容发现主入口。',
+        'box',
+        '手机画板',
+        '内容社区 App 首页容器',
+        34,
+        3,
+        32,
+        93,
+        'main',
+        '移动端画板，内部是双列瀑布流。',
         1,
       ),
-      templateElement('button', '发布', '右上角发布入口', 80, 4, 13, 9, 'header', '打开图文或视频发布流程。', 2),
+      templateElement(
+        'search',
+        '搜索笔记 / 商品 / 用户',
+        '扫一扫 | 消息',
+        37,
+        7,
+        26,
+        7,
+        'header',
+        '搜索是内容发现主入口。',
+        2,
+      ),
       templateElement(
         'tabs',
         '频道筛选',
-        '关注 | 发现 | 附近 | 美食 | 穿搭 | 旅行',
-        6,
+        '关注 | 发现 | 附近 | 美食',
+        37,
         17,
-        86,
-        8,
+        26,
+        6,
         'main',
         '横向滚动频道，发现为默认激活。',
         3,
       ),
       templateElement(
         'card',
-        '笔记卡片 A',
-        '封面图占位\n标题：周末咖啡店路线\n作者头像 + 昵称\n♥ 2.4k',
-        7,
-        30,
+        '咖啡路线',
+        '封面图\n标题：周末咖啡店路线\n♥ 2.4k',
+        37,
         26,
-        31,
+        12,
+        27,
         'main',
         '卡片点击进入笔记详情，点赞数展示在卡片底部。',
         4,
       ),
       templateElement(
         'card',
-        '笔记卡片 B',
-        '封面图占位\n标题：通勤穿搭清单\n作者头像 + 昵称\n♥ 987',
-        37,
-        30,
+        '通勤穿搭',
+        '封面图\n标题：一周通勤穿搭\n♥ 987',
+        51,
         26,
-        38,
+        12,
+        33,
         'main',
         '瀑布流卡片高度可不同。',
         5,
       ),
       templateElement(
         'card',
-        '笔记卡片 C',
-        '封面图占位\n标题：新手露营装备\n作者头像 + 昵称\n♥ 1.1k',
-        67,
-        30,
-        26,
-        29,
+        '露营装备',
+        '封面图\n标题：新手露营装备\n♥ 1.1k',
+        37,
+        56,
+        12,
+        25,
         'main',
-        '移动端保持两列瀑布流或单列退化。',
+        '移动端双列瀑布流继续向下滚动。',
         6,
+      ),
+      templateElement(
+        'card',
+        '晚餐灵感',
+        '封面图\n标题：下班快手菜\n♥ 3.2k',
+        51,
+        62,
+        12,
+        20,
+        'main',
+        '短卡片与长卡片错位排列。',
+        7,
       ),
       templateElement(
         'navbar',
         '底部导航',
-        '首页 | 购物 | [+] | 消息 | 我',
-        7,
+        '首页 | 购物 | + | 消息 | 我',
+        37,
         88,
-        86,
-        8,
+        26,
+        7,
         'footer',
         '发布入口居中，底部导航固定。',
-        7,
+        8,
       ),
     ],
   },
@@ -1390,12 +1529,44 @@ function summarizeInteractions(elements: WireframeElement[]): string {
   return interactions.join('\n');
 }
 
+function createWireframeSections(wireframe: WireframeDocument): OutputSection[] {
+  return [
+    { title: '页面用途', content: wireframe.purpose },
+    { title: '结构线框', content: generateAsciiWireframe(wireframe) },
+    { title: '组件说明', content: summarizeComponents(wireframe.elements) },
+  ];
+}
+
+function createPromptSections(wireframe: WireframeDocument): OutputSection[] {
+  return [
+    { title: '页面用途', content: wireframe.purpose },
+    { title: '样式方向', content: wireframe.styleDirection },
+    { title: '结构线框', content: generateAsciiWireframe(wireframe) },
+    { title: '主要组件', content: summarizeComponents(wireframe.elements) },
+    { title: '交互行为', content: summarizeInteractions(wireframe.elements) },
+    {
+      title: '响应式要求',
+      content:
+        '- 桌面端保持线框图展示的层级关系。\n- 移动端按以下顺序纵向堆叠主要区域：头部、主体内容、次要/侧边内容、底部操作。\n- 保持主操作可见，并确保表单和表格在窄屏可用。',
+    },
+    {
+      title: '验收标准',
+      content:
+        '- 实现后的页面应匹配线框图中的布局层级和组件关系。\n- 标签、输入框、按钮、标签页、表格、列表、空状态和弹窗状态都应使用可访问的 HTML 表达。\n- 主操作和次要操作在视觉上有清晰区分。\n- 根据需要处理加载、空状态、禁用、焦点和错误状态。\n- 页面核心结构不依赖图片传达。',
+    },
+  ];
+}
+
+function formatSections(sections: OutputSection[]): string {
+  return sections.map(section => `## ${section.title}\n${section.content}`).join('\n\n');
+}
+
 function generateWireframeMarkdown(wireframe: WireframeDocument): string {
-  return `# ${wireframe.pageName}\n\n${wireframe.purpose}\n\n\`\`\`text\n${generateAsciiWireframe(wireframe)}\n\`\`\`\n\n## 组件说明\n${summarizeComponents(wireframe.elements)}\n`;
+  return `# ${wireframe.pageName}\n\n${formatSections(createWireframeSections(wireframe))}\n`;
 }
 
 function generateImplementationPrompt(wireframe: WireframeDocument): string {
-  return `请根据下面的结构化线框图实现这个 UI 页面。\n\n## 页面用途\n${wireframe.purpose}\n\n## 样式方向\n${wireframe.styleDirection}\n\n## 线框图\n\`\`\`text\n${generateAsciiWireframe(wireframe)}\n\`\`\`\n\n## 主要组件\n${summarizeComponents(wireframe.elements)}\n\n## 交互行为\n${summarizeInteractions(wireframe.elements)}\n\n## 响应式要求\n- 桌面端保持线框图展示的层级关系。\n- 移动端按以下顺序纵向堆叠主要区域：头部、主体内容、次要/侧边内容、底部操作。\n- 保持主操作可见，并确保表单和表格在窄屏可用。\n\n## 验收标准\n- 实现后的页面应匹配线框图中的布局层级和组件关系。\n- 标签、输入框、按钮、标签页、表格、列表、空状态和弹窗状态都应使用可访问的 HTML 表达。\n- 主操作和次要操作在视觉上有清晰区分。\n- 根据需要处理加载、空状态、禁用、焦点和错误状态。\n- 页面核心结构不依赖图片传达。\n`;
+  return `请根据下面的结构化线框图实现这个 UI 页面。\n\n${formatSections(createPromptSections(wireframe))}\n`;
 }
 
 function feedbackClass(tone: FeedbackTone): string {
@@ -1411,15 +1582,11 @@ function feedbackClass(tone: FeedbackTone): string {
 }
 
 function toolButtonClass(active: boolean): string {
-  return `flex w-full items-center gap-3 rounded-none border-l-4 px-3 py-2.5 text-left text-sm transition ${
+  return `flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition ${
     active
-      ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-600/20'
-      : 'border-transparent text-slate-600 hover:border-slate-300 hover:bg-slate-100 hover:text-slate-950'
+      ? 'border-l-4 border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-600/20'
+      : 'border-l-4 border-transparent text-slate-600 hover:border-slate-300 hover:bg-slate-100 hover:text-slate-950'
   }`;
-}
-
-function panelHeadingClass(): string {
-  return 'border-b border-slate-200 px-4 py-3 text-[0.68rem] font-black uppercase tracking-[0.2em] text-slate-400';
 }
 
 function isTypingTarget(target: unknown): boolean {
@@ -1474,7 +1641,7 @@ function SmallButton({
       onClick={onClick}
       className={`rounded-xl border px-3 py-2 text-xs font-black transition hover:-translate-y-0.5 ${
         active
-          ? 'border-slate-950 bg-slate-950 text-white shadow-lg shadow-slate-950/15'
+          ? 'border-slate-950 bg-slate-950 text-white shadow-lg shadow-slate-950/10'
           : 'border-slate-200 bg-white text-slate-600 hover:border-slate-950 hover:text-slate-950'
       }`}
     >
@@ -1485,50 +1652,90 @@ function SmallButton({
 
 function ElementPreview({ element }: { element: WireframeElement }) {
   const lines = splitLines(element.details);
+  const firstLine = lines[0] ?? element.details;
+
+  if (element.kind === 'text') {
+    return (
+      <div className='flex h-full flex-col justify-center gap-2'>
+        <strong className='truncate text-lg leading-none tracking-tight text-slate-900'>{element.title}</strong>
+        {firstLine ? <span className='truncate text-xs font-semibold text-slate-400'>{firstLine}</span> : null}
+      </div>
+    );
+  }
 
   if (element.kind === 'navbar') {
     return (
-      <div className='flex h-full items-center justify-between gap-3'>
-        <strong className='truncate text-sm'>{element.title}</strong>
-        <div className='flex min-w-0 flex-wrap justify-end gap-1 text-[0.62rem] text-slate-500'>
-          {(lines[0] ?? '').split('|').map(item => (
-            <span key={item} className='rounded-full border border-slate-300 px-2 py-1'>
-              {item.trim()}
-            </span>
-          ))}
+      <div className='flex h-full items-center justify-between gap-4 border-b border-slate-200/80 px-1'>
+        <strong className='truncate text-sm tracking-tight'>{element.title}</strong>
+        <div className='flex min-w-0 items-center justify-end gap-2 text-[0.62rem] font-bold text-slate-500'>
+          {(firstLine || '导航项 | 操作')
+            .split('|')
+            .slice(0, 5)
+            .map(item => (
+              <span key={item} className='truncate rounded-full bg-slate-100 px-2 py-1'>
+                {item.trim()}
+              </span>
+            ))}
         </div>
       </div>
     );
   }
 
   if (element.kind === 'button') {
-    return <div className='flex h-full items-center justify-center font-black'>[ {element.title} ]</div>;
+    const buttonClass = element.details.includes('危险')
+      ? 'border-red-400 bg-red-50 text-red-900'
+      : element.details.includes('次要')
+        ? 'border-slate-400 bg-white text-slate-700'
+        : 'border-slate-950 bg-slate-950 text-white';
+
+    return (
+      <div className='flex h-full items-center justify-center'>
+        <div
+          className={`min-w-[70%] rounded-full border px-4 py-2 text-center text-sm font-black shadow-sm ${buttonClass}`}
+        >
+          {element.title}
+        </div>
+      </div>
+    );
   }
 
   if (element.kind === 'input' || element.kind === 'search') {
     return (
-      <div className='flex h-full flex-col justify-center gap-1'>
-        <span className='text-[0.62rem] font-black uppercase tracking-[0.16em] text-slate-400'>
-          {element.kind === 'search' ? '搜索区域' : '输入框'}
-        </span>
-        <div className='rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-500'>
-          [ {element.title} ]
+      <div className='flex h-full flex-col justify-center gap-2'>
+        <span className='truncate text-[0.68rem] font-black text-slate-500'>{element.title}</span>
+        <div className='flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-400 shadow-inner shadow-slate-900/5'>
+          <span className='text-slate-300'>{element.kind === 'search' ? '⌕' : 'Aa'}</span>
+          <span className='truncate'>{firstLine || (element.kind === 'search' ? '搜索关键词' : '输入内容')}</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (element.kind === 'card') {
+    return (
+      <div className='flex h-full flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm'>
+        <div className='h-8 rounded-xl bg-slate-100' />
+        <strong className='truncate text-sm'>{element.title}</strong>
+        <span className='truncate text-xs font-semibold text-slate-400'>{firstLine || '卡片内容摘要'}</span>
+        <div className='mt-auto flex gap-1'>
+          <span className='h-1.5 flex-1 rounded-full bg-slate-200' />
+          <span className='h-1.5 w-8 rounded-full bg-slate-100' />
         </div>
       </div>
     );
   }
 
   if (element.kind === 'table') {
-    const header = lines[0] ?? '列名 | 列名 | 操作';
+    const header = firstLine || '列名 | 列名 | 操作';
     const rows = lines.slice(1, 4);
 
     return (
       <div className='flex h-full flex-col gap-2 overflow-hidden'>
         <strong className='truncate text-xs'>{element.title}</strong>
-        <div className='rounded-xl border border-slate-300 bg-white/70 text-[0.62rem]'>
+        <div className='overflow-hidden rounded-xl border border-slate-300 bg-white text-[0.62rem] shadow-inner shadow-slate-900/5'>
           <div className='truncate border-b border-slate-300 bg-slate-100 px-2 py-1 font-black'>{header}</div>
-          {rows.map(row => (
-            <div key={row} className='truncate border-b border-slate-200 px-2 py-1 last:border-b-0'>
+          {(rows.length > 0 ? rows : ['示例行', '示例行']).map((row, index) => (
+            <div key={`${row}-${index}`} className='truncate border-b border-slate-200 px-2 py-1 last:border-b-0'>
               {row}
             </div>
           ))}
@@ -1539,12 +1746,13 @@ function ElementPreview({ element }: { element: WireframeElement }) {
 
   if (element.kind === 'list') {
     return (
-      <div className='space-y-1 overflow-hidden'>
-        <strong className='block truncate text-xs'>{element.title}</strong>
-        {lines.slice(0, 5).map(line => (
-          <p key={line} className='truncate text-[0.68rem] text-slate-600'>
-            - {line}
-          </p>
+      <div className='space-y-2 overflow-hidden'>
+        <strong className='block truncate text-sm'>{element.title}</strong>
+        {(lines.length > 0 ? lines : ['列表项', '列表项', '列表项']).slice(0, 4).map((line, index) => (
+          <div key={`${line}-${index}`} className='flex items-center gap-2 text-[0.68rem] text-slate-600'>
+            <span className='h-2 w-2 shrink-0 rounded-full bg-slate-300' />
+            <span className='truncate'>{line}</span>
+          </div>
         ))}
       </div>
     );
@@ -1554,15 +1762,18 @@ function ElementPreview({ element }: { element: WireframeElement }) {
     return (
       <div className='flex h-full flex-col justify-center gap-2'>
         <strong className='truncate text-xs'>{element.title}</strong>
-        <div className='flex flex-wrap gap-1 text-[0.62rem]'>
-          {(lines[0] ?? '').split('|').map((item, index) => (
-            <span
-              key={item}
-              className={`rounded-full border px-2 py-1 ${index === 0 ? 'bg-slate-950 text-white' : ''}`}
-            >
-              {item.trim()}
-            </span>
-          ))}
+        <div className='inline-flex max-w-full overflow-hidden rounded-2xl border border-slate-300 bg-slate-100 p-1 text-[0.62rem] font-black'>
+          {(firstLine || '选项一 | 选项二 | 选项三')
+            .split('|')
+            .slice(0, 4)
+            .map((item, index) => (
+              <span
+                key={item}
+                className={`truncate rounded-xl px-2 py-1 ${index === 0 ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500'}`}
+              >
+                {item.trim()}
+              </span>
+            ))}
         </div>
       </div>
     );
@@ -1570,17 +1781,24 @@ function ElementPreview({ element }: { element: WireframeElement }) {
 
   if (element.kind === 'pagination') {
     return (
-      <div className='flex h-full items-center justify-center text-center text-xs font-black'>
-        {lines[0] ?? '< 上一页   1  2  3   下一页 >'}
+      <div className='flex h-full items-center justify-center gap-1 text-center text-xs font-black text-slate-600'>
+        {(firstLine || '< 上一页   1  2  3   下一页 >')
+          .split(/\s+/)
+          .slice(0, 8)
+          .map((item, index) => (
+            <span key={`${item}-${index}`} className='rounded-lg border border-slate-200 bg-white px-2 py-1'>
+              {item}
+            </span>
+          ))}
       </div>
     );
   }
 
   if (element.kind === 'placeholder') {
     return (
-      <div className='flex h-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-400 bg-slate-50/80 text-center'>
-        <strong className='text-xs'>{element.title}</strong>
-        <span className='px-2 text-[0.65rem] text-slate-500'>{lines[0] ?? '占位区'}</span>
+      <div className='flex h-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-400 bg-slate-50/80 text-center'>
+        <div className='h-10 w-14 rounded-xl border border-slate-300 bg-white shadow-inner shadow-slate-900/5' />
+        <strong className='max-w-full truncate px-3 text-xs'>{element.title}</strong>
       </div>
     );
   }
@@ -1588,23 +1806,35 @@ function ElementPreview({ element }: { element: WireframeElement }) {
   if (element.kind === 'divider') {
     return (
       <div className='flex h-full items-center gap-3'>
-        <span className='h-px flex-1 bg-slate-400' />
-        <strong className='truncate text-[0.68rem] uppercase tracking-[0.18em] text-slate-500'>{element.title}</strong>
-        <span className='h-px flex-1 bg-slate-400' />
+        <span className='h-px flex-1 bg-slate-300' />
+        <strong className='truncate text-[0.68rem] uppercase tracking-[0.18em] text-slate-400'>{element.title}</strong>
+        <span className='h-px flex-1 bg-slate-300' />
+      </div>
+    );
+  }
+
+  if (element.kind === 'modal') {
+    return (
+      <div className='flex h-full items-center justify-center rounded-[1.25rem] bg-slate-950/20 p-4'>
+        <div className='w-full max-w-[90%] rounded-3xl border border-slate-300 bg-white p-4 shadow-2xl shadow-slate-950/20'>
+          <strong className='block truncate text-base'>{element.title}</strong>
+          <p className='mt-2 line-clamp-2 text-xs font-semibold leading-5 text-slate-500'>
+            {firstLine || '弹窗内容说明'}
+          </p>
+          <div className='mt-4 flex justify-end gap-2'>
+            <span className='h-7 w-14 rounded-full border border-slate-300 bg-white' />
+            <span className='h-7 w-16 rounded-full bg-slate-950' />
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className='space-y-1 overflow-hidden'>
-      <strong className='block truncate text-xs'>
-        {element.kind === 'modal' ? `弹窗：${element.title}` : element.title}
-      </strong>
-      {lines.slice(0, 4).map(line => (
-        <p key={line} className='truncate text-[0.68rem] text-slate-600'>
-          {line}
-        </p>
-      ))}
+    <div className='flex h-full flex-col gap-2 rounded-2xl border border-slate-200/80 bg-white/70 p-3'>
+      <strong className='block truncate text-sm'>{element.title}</strong>
+      {firstLine ? <span className='truncate text-xs font-semibold text-slate-400'>{firstLine}</span> : null}
+      <span className='mt-auto h-2 w-2/3 rounded-full bg-slate-100' />
     </div>
   );
 }
@@ -1653,7 +1883,7 @@ function CanvasElement({
   selected: boolean;
   editing: boolean;
   inlineTitle: string;
-  onSelect: (id: string) => void;
+  onSelect: (id: string, additive: boolean) => void;
   onStartDrag: (event: PointerEvent<HTMLElement>, element: WireframeElement) => void;
   onStartResize: (event: PointerEvent<HTMLButtonElement>, element: WireframeElement, handle: ResizeHandle) => void;
   onStartInlineEdit: (element: WireframeElement) => void;
@@ -1683,7 +1913,7 @@ function CanvasElement({
       }}
       onClick={event => {
         event.stopPropagation();
-        onSelect(element.id);
+        onSelect(element.id, event.shiftKey || event.metaKey || event.ctrlKey);
       }}
       onKeyDown={event => {
         if (event.key === 'ArrowLeft') {
@@ -1703,14 +1933,18 @@ function CanvasElement({
           onStartInlineEdit(element);
         }
       }}
-      className={`group absolute cursor-move overflow-visible rounded-2xl border bg-white/88 p-3 text-left text-slate-800 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:shadow-lg ${
-        selected ? 'border-blue-700 ring-2 ring-blue-600 ring-offset-2 ring-offset-[#fbfaf4]' : 'border-slate-300'
-      } ${element.kind === 'modal' ? 'shadow-2xl shadow-slate-950/25' : ''}`}
+      className={`group absolute cursor-move overflow-visible rounded-[1.35rem] border text-left text-slate-800 backdrop-blur transition hover:-translate-y-0.5 hover:shadow-lg ${
+        element.kind === 'modal' ? 'bg-transparent p-0 shadow-none' : 'bg-white/90 p-2 shadow-sm'
+      } ${selected ? 'border-blue-700 ring-2 ring-blue-600 ring-offset-2 ring-offset-[#fbfaf4]' : 'border-slate-200/80 hover:border-slate-300'}`}
     >
-      <div className='pointer-events-none absolute right-2 top-2 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[0.56rem] font-black uppercase tracking-[0.12em] text-slate-400'>
-        {kindLabel(element.kind)}
+      <div
+        className={`pointer-events-none absolute right-2 top-2 z-10 rounded-full border border-slate-200 bg-white/95 px-2 py-0.5 text-[0.56rem] font-black uppercase tracking-[0.12em] text-slate-400 shadow-sm transition ${
+          selected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+        }`}
+      >
+        {kindLabel(element.kind)} · {Math.round(element.w)}×{Math.round(element.h)}
       </div>
-      <div className='h-full overflow-hidden pt-5'>
+      <div className='h-full overflow-hidden'>
         {editing ? (
           <input
             autoFocus
@@ -1753,32 +1987,61 @@ function CanvasElement({
 export function AiWireframeSection() {
   const canvasRef = useRef<HTMLDivElement>(null);
   const dragStateRef = useRef<DragState | null>(null);
+  const historyRef = useRef<{ past: WireframeDocument[]; future: WireframeDocument[] }>({ past: [], future: [] });
+  const feedbackKeyRef = useRef(0);
+  const copyStatusRef = useRef<HTMLElement>(null);
+  const copyButtonRef = useRef<HTMLButtonElement>(null);
+  const copyStatusTimeoutRef = useRef<number | null>(null);
   const [wireframe, setWireframe] = useState<WireframeDocument>(() => createInitialWireframe());
   const [activeTool, setActiveTool] = useState<ToolId>('select');
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
+  const [selectedElementIds, setSelectedElementIds] = useState<string[]>([]);
   const [dragState, setDragState] = useState<DragState | null>(null);
+  const [alignmentGuides, setAlignmentGuides] = useState<AlignmentGuide[]>([]);
+  const [placementPreview, setPlacementPreview] = useState<PlacementPreview | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>({
     tone: 'info',
     message: '已加载 Google 搜索页结构示例。你可以直接拖动、双击改文案，或从模板切换抖音/小红书示例。',
   });
   const [secondaryPanel, setSecondaryPanel] = useState<SecondaryPanel | null>(null);
-  const [outputMode, setOutputMode] = useState<OutputMode>('wireframe');
+  const [rightPanel, setRightPanel] = useState<RightPanel>('layers');
+  const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(true);
+  const [rightSidebarPinned, setRightSidebarPinned] = useState(false);
+  const [moreToolsOpen, setMoreToolsOpen] = useState(false);
   const [inlineEditingId, setInlineEditingId] = useState<string | null>(null);
   const [inlineTitle, setInlineTitle] = useState('');
+  const [promptDraft, setPromptDraft] = useState('');
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [canvasViewport, setCanvasViewport] = useState<CanvasViewport>('web');
+  const [canvasZoom, setCanvasZoom] = useState(1);
 
   const selectedElement = useMemo(
     () => wireframe.elements.find(element => element.id === selectedElementId) ?? null,
     [selectedElementId, wireframe.elements],
   );
+  const selectedElements = useMemo(
+    () => wireframe.elements.filter(element => selectedElementIds.includes(element.id)),
+    [selectedElementIds, wireframe.elements],
+  );
   const layers = useMemo(
     () => wireframe.elements.slice().sort((first, second) => second.z - first.z || second.y - first.y),
     [wireframe.elements],
   );
+  const primaryTools = useMemo(
+    () => primaryToolIds.map(toolById).filter((tool): tool is ToolDefinition => tool !== null),
+    [],
+  );
+  const moreTools = useMemo(() => tools.filter(tool => !primaryToolIds.includes(tool.id)), []);
   const markdownOutput = useMemo(() => generateWireframeMarkdown(wireframe), [wireframe]);
   const promptOutput = useMemo(() => generateImplementationPrompt(wireframe), [wireframe]);
-  const visibleOutput = outputMode === 'wireframe' ? markdownOutput : promptOutput;
+  const activeCanvasViewport = canvasViewports[canvasViewport];
+  const canUndo = historyRef.current.past.length > 0;
+  const canRedo = historyRef.current.future.length > 0;
+  const canvasZoomPercent = Math.round(canvasZoom * 100);
+  const canZoomOut = canvasZoom > canvasZoomMin;
+  const canZoomIn = canvasZoom < canvasZoomMax;
+  const rightSidebarExpanded = rightSidebarPinned || !rightSidebarCollapsed;
 
   useEffect(() => {
     const stored = window.localStorage.getItem(storageKey);
@@ -1807,14 +2070,146 @@ export function AiWireframeSection() {
   }, [hydrated, wireframe]);
 
   const showFeedback = (nextFeedback: Feedback) => {
+    const feedbackKey = feedbackKeyRef.current + 1;
+    feedbackKeyRef.current = feedbackKey;
     setFeedback(nextFeedback);
     window.setTimeout(() => {
-      setFeedback(current => (current?.message === nextFeedback.message ? null : current));
+      if (feedbackKeyRef.current === feedbackKey) {
+        setFeedback(null);
+      }
     }, 3000);
   };
 
+  const showCopyFeedback = (nextFeedback: Feedback) => {
+    const statusElement = copyStatusRef.current;
+    const buttonElement = copyButtonRef.current;
+
+    if (copyStatusTimeoutRef.current !== null) {
+      window.clearTimeout(copyStatusTimeoutRef.current);
+    }
+
+    if (statusElement) {
+      statusElement.hidden = false;
+      statusElement.textContent = nextFeedback.message;
+      statusElement.className = `rounded-xl border px-3 py-2 text-xs font-black ${feedbackClass(nextFeedback.tone)}`;
+    }
+
+    if (buttonElement) {
+      buttonElement.textContent =
+        nextFeedback.tone === 'success' ? '已复制' : nextFeedback.tone === 'error' ? '复制失败' : '复制中...';
+    }
+
+    copyStatusTimeoutRef.current = window.setTimeout(() => {
+      if (statusElement) {
+        statusElement.hidden = true;
+        statusElement.textContent = '';
+      }
+
+      if (buttonElement) {
+        buttonElement.textContent = '复制 Markdown';
+      }
+    }, 3000);
+  };
+
+  const updateCanvasZoom = (nextZoom: number) => {
+    setCanvasZoom(clamp(Number(nextZoom.toFixed(2)), canvasZoomMin, canvasZoomMax));
+  };
+
+  const stepCanvasZoom = (direction: -1 | 1) => {
+    setCanvasZoom(current =>
+      clamp(Number((current + canvasZoomStep * direction).toFixed(2)), canvasZoomMin, canvasZoomMax),
+    );
+  };
+
+  const pushHistory = (snapshot: WireframeDocument) => {
+    historyRef.current = {
+      past: [...historyRef.current.past.slice(-49), cloneWireframe(snapshot)],
+      future: [],
+    };
+  };
+
+  const setWireframeWithHistory = (updater: (current: WireframeDocument) => WireframeDocument) => {
+    setWireframe(current => {
+      const next = updater(current);
+      if (next === current) {
+        return current;
+      }
+
+      historyRef.current = {
+        past: [...historyRef.current.past.slice(-49), cloneWireframe(current)],
+        future: [],
+      };
+      return next;
+    });
+  };
+
+  const selectElement = (id: string | null, additive = false) => {
+    if (!id) {
+      setSelectedElementId(null);
+      setSelectedElementIds([]);
+      return;
+    }
+
+    if (additive) {
+      setSelectedElementIds(current => {
+        const next = current.includes(id) ? current.filter(currentId => currentId !== id) : [...current, id];
+        setSelectedElementId(next.at(-1) ?? null);
+        return next;
+      });
+    } else {
+      setSelectedElementId(id);
+      setSelectedElementIds([id]);
+    }
+  };
+
+  const selectElementForEditing = (id: string | null, additive = false) => {
+    selectElement(id, additive);
+    if (id && !additive) {
+      setRightPanel('inspector');
+      setRightSidebarCollapsed(false);
+    }
+  };
+
+  const undoWireframe = () => {
+    setWireframe(current => {
+      const previous = historyRef.current.past.at(-1);
+      if (!previous) {
+        return current;
+      }
+
+      historyRef.current = {
+        past: historyRef.current.past.slice(0, -1),
+        future: [cloneWireframe(current), ...historyRef.current.future.slice(0, 49)],
+      };
+      setSelectedElementId(null);
+      setSelectedElementIds([]);
+      setInlineEditingId(null);
+      setAlignmentGuides([]);
+      return cloneWireframe(previous);
+    });
+  };
+
+  const redoWireframe = () => {
+    setWireframe(current => {
+      const next = historyRef.current.future[0];
+      if (!next) {
+        return current;
+      }
+
+      historyRef.current = {
+        past: [...historyRef.current.past.slice(-49), cloneWireframe(current)],
+        future: historyRef.current.future.slice(1),
+      };
+      setSelectedElementId(null);
+      setSelectedElementIds([]);
+      setInlineEditingId(null);
+      setAlignmentGuides([]);
+      return cloneWireframe(next);
+    });
+  };
+
   const updateElement = (id: string, patch: Partial<WireframeElement>) => {
-    setWireframe(current => ({
+    setWireframeWithHistory(current => ({
       ...current,
       elements: current.elements.map(element =>
         element.id === id ? normalizeElementBounds({ ...element, ...patch }) : element,
@@ -1827,7 +2222,7 @@ export function AiWireframeSection() {
       return;
     }
 
-    setWireframe(current => ({
+    setWireframeWithHistory(current => ({
       ...current,
       elements: current.elements.map(element =>
         element.id === id ? normalizeElementBounds(applyNumberField(element, field, value)) : element,
@@ -1836,20 +2231,38 @@ export function AiWireframeSection() {
   };
 
   const placeElement = (kind: WireframeElementKind, x: number, y: number) => {
-    setWireframe(current => {
+    setWireframeWithHistory(current => {
       const nextElement = createElementAt(kind, x, y, current.elements);
       setSelectedElementId(nextElement.id);
+      setSelectedElementIds([nextElement.id]);
+      setRightPanel('inspector');
       setInlineEditingId(null);
       showFeedback({ tone: 'success', message: `已放置${kindLabel(kind)}，可拖拽调整位置。` });
       return { ...current, elements: [...current.elements, nextElement] };
     });
   };
 
+  const removeElements = (ids: string[]) => {
+    if (ids.length === 0) {
+      return;
+    }
+
+    setWireframeWithHistory(current => ({
+      ...current,
+      elements: current.elements.filter(element => !ids.includes(element.id)),
+    }));
+    setSelectedElementId(current => (current && ids.includes(current) ? null : current));
+    setSelectedElementIds(current => current.filter(id => !ids.includes(id)));
+    setInlineEditingId(current => (current && ids.includes(current) ? null : current));
+    showFeedback({ tone: 'info', message: ids.length > 1 ? '已删除选中的多个图层。' : '图层已删除。' });
+  };
+
   const removeElement = (id: string) => {
-    setWireframe(current => ({ ...current, elements: current.elements.filter(element => element.id !== id) }));
-    setSelectedElementId(current => (current === id ? null : current));
-    setInlineEditingId(current => (current === id ? null : current));
-    showFeedback({ tone: 'info', message: '图层已删除。' });
+    removeElements([id]);
+  };
+
+  const removeSelectedElements = () => {
+    removeElements(selectedElementIds.length > 0 ? selectedElementIds : selectedElementId ? [selectedElementId] : []);
   };
 
   const duplicateSelectedElement = () => {
@@ -1857,7 +2270,7 @@ export function AiWireframeSection() {
       return;
     }
 
-    setWireframe(current => {
+    setWireframeWithHistory(current => {
       const maxZ = current.elements.reduce((currentMax, element) => Math.max(currentMax, element.z), 0);
       const duplicate = normalizeElementBounds({
         ...selectedElement,
@@ -1868,6 +2281,8 @@ export function AiWireframeSection() {
         z: maxZ + 1,
       });
       setSelectedElementId(duplicate.id);
+      setSelectedElementIds([duplicate.id]);
+      setRightPanel('inspector');
       showFeedback({ tone: 'success', message: '图层已复制。' });
       return { ...current, elements: [...current.elements, duplicate] };
     });
@@ -1879,14 +2294,32 @@ export function AiWireframeSection() {
         return;
       }
 
-      if (!selectedElementId) {
+      const key = event.key.toLowerCase();
+
+      if ((event.metaKey || event.ctrlKey) && key === 'z') {
+        event.preventDefault();
+        if (event.shiftKey) {
+          redoWireframe();
+        } else {
+          undoWireframe();
+        }
+        return;
+      }
+
+      if ((event.metaKey || event.ctrlKey) && key === 'y') {
+        event.preventDefault();
+        redoWireframe();
+        return;
+      }
+
+      if (!selectedElementId && selectedElementIds.length === 0) {
         return;
       }
 
       if (event.key === 'Delete' || event.key === 'Backspace') {
         event.preventDefault();
-        removeElement(selectedElementId);
-      } else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'd') {
+        removeSelectedElements();
+      } else if ((event.metaKey || event.ctrlKey) && key === 'd') {
         event.preventDefault();
         duplicateSelectedElement();
       }
@@ -1922,7 +2355,7 @@ export function AiWireframeSection() {
       return;
     }
 
-    setSelectedElementId(null);
+    selectElement(null);
     setInlineEditingId(null);
   };
 
@@ -1933,9 +2366,21 @@ export function AiWireframeSection() {
 
     event.preventDefault();
     event.stopPropagation();
+
+    if (event.shiftKey || event.metaKey || event.ctrlKey) {
+      selectElement(element.id, true);
+      return;
+    }
+
     event.currentTarget.setPointerCapture(event.pointerId);
     setActiveTool('select');
+    const movingIds = selectedElementIds.includes(element.id) ? selectedElementIds : [element.id];
+    const origins = wireframe.elements
+      .filter(candidate => movingIds.includes(candidate.id))
+      .map(candidate => ({ id: candidate.id, x: candidate.x, y: candidate.y, w: candidate.w, h: candidate.h }));
     setSelectedElementId(element.id);
+    setSelectedElementIds(movingIds);
+    pushHistory(wireframe);
 
     const nextDragState: DragState = {
       id: element.id,
@@ -1947,6 +2392,7 @@ export function AiWireframeSection() {
       originY: element.y,
       originW: element.w,
       originH: element.h,
+      origins,
     };
     dragStateRef.current = nextDragState;
     setDragState(nextDragState);
@@ -1957,6 +2403,8 @@ export function AiWireframeSection() {
     event.stopPropagation();
     event.currentTarget.setPointerCapture(event.pointerId);
     setSelectedElementId(element.id);
+    setSelectedElementIds([element.id]);
+    pushHistory(wireframe);
 
     const nextDragState: DragState = {
       id: element.id,
@@ -1968,6 +2416,7 @@ export function AiWireframeSection() {
       originY: element.y,
       originW: element.w,
       originH: element.h,
+      origins: [{ id: element.id, x: element.x, y: element.y, w: element.w, h: element.h }],
     };
     dragStateRef.current = nextDragState;
     setDragState(nextDragState);
@@ -1987,39 +2436,74 @@ export function AiWireframeSection() {
     const bounds = canvas.getBoundingClientRect();
     const dx = ((clientX - currentDragState.startClientX) / bounds.width) * 100;
     const dy = ((clientY - currentDragState.startClientY) / bounds.height) * 100;
-    let patch: Partial<WireframeElement>;
 
-    if (currentDragState.mode === 'move') {
-      patch = { x: currentDragState.originX + dx, y: currentDragState.originY + dy };
-    } else if (currentDragState.handle === 'se') {
-      patch = { w: currentDragState.originW + dx, h: currentDragState.originH + dy };
-    } else if (currentDragState.handle === 'sw') {
-      patch = {
-        x: currentDragState.originX + dx,
-        w: currentDragState.originW - dx,
-        h: currentDragState.originH + dy,
-      };
-    } else if (currentDragState.handle === 'ne') {
-      patch = {
-        y: currentDragState.originY + dy,
-        w: currentDragState.originW + dx,
-        h: currentDragState.originH - dy,
-      };
-    } else {
-      patch = {
-        x: currentDragState.originX + dx,
-        y: currentDragState.originY + dy,
-        w: currentDragState.originW - dx,
-        h: currentDragState.originH - dy,
-      };
-    }
+    setWireframe(current => {
+      if (currentDragState.mode === 'move') {
+        const primaryOrigin = currentDragState.origins.find(origin => origin.id === currentDragState.id);
+        if (!primaryOrigin) {
+          return current;
+        }
 
-    setWireframe(current => ({
-      ...current,
-      elements: current.elements.map(element =>
-        element.id === currentDragState.id ? normalizeElementBounds({ ...element, ...patch }) : element,
-      ),
-    }));
+        const movingIds = currentDragState.origins.map(origin => origin.id);
+        const primaryElement = current.elements.find(element => element.id === currentDragState.id);
+        if (!primaryElement) {
+          return current;
+        }
+
+        const snapped = snapMovingElement(
+          primaryElement,
+          { x: primaryOrigin.x + dx, y: primaryOrigin.y + dy },
+          current.elements,
+          movingIds,
+        );
+        const snappedDx = snapped.patch.x - primaryOrigin.x;
+        const snappedDy = snapped.patch.y - primaryOrigin.y;
+        setAlignmentGuides(snapped.guides);
+
+        return {
+          ...current,
+          elements: current.elements.map(element => {
+            const origin = currentDragState.origins.find(candidate => candidate.id === element.id);
+            return origin
+              ? normalizeElementBounds({ ...element, x: origin.x + snappedDx, y: origin.y + snappedDy })
+              : element;
+          }),
+        };
+      }
+
+      let patch: Partial<WireframeElement>;
+
+      if (currentDragState.handle === 'se') {
+        patch = { w: currentDragState.originW + dx, h: currentDragState.originH + dy };
+      } else if (currentDragState.handle === 'sw') {
+        patch = {
+          x: currentDragState.originX + dx,
+          w: currentDragState.originW - dx,
+          h: currentDragState.originH + dy,
+        };
+      } else if (currentDragState.handle === 'ne') {
+        patch = {
+          y: currentDragState.originY + dy,
+          w: currentDragState.originW + dx,
+          h: currentDragState.originH - dy,
+        };
+      } else {
+        patch = {
+          x: currentDragState.originX + dx,
+          y: currentDragState.originY + dy,
+          w: currentDragState.originW - dx,
+          h: currentDragState.originH - dy,
+        };
+      }
+
+      setAlignmentGuides([]);
+      return {
+        ...current,
+        elements: current.elements.map(element =>
+          element.id === currentDragState.id ? normalizeElementBounds({ ...element, ...patch }) : element,
+        ),
+      };
+    });
   }, []);
 
   const continueDrag = (event: PointerEvent<HTMLDivElement>) => {
@@ -2030,6 +2514,7 @@ export function AiWireframeSection() {
     if (dragStateRef.current || dragState) {
       dragStateRef.current = null;
       setDragState(null);
+      setAlignmentGuides([]);
     }
   };
 
@@ -2040,6 +2525,7 @@ export function AiWireframeSection() {
     const handlePointerEnd = () => {
       dragStateRef.current = null;
       setDragState(null);
+      setAlignmentGuides([]);
     };
 
     window.addEventListener('pointermove', handlePointerMove);
@@ -2053,17 +2539,24 @@ export function AiWireframeSection() {
   }, [updateDraggingElement]);
 
   const nudgeElement = (id: string, dx: number, dy: number) => {
+    const movingIds = selectedElementIds.includes(id) ? selectedElementIds : [id];
     setSelectedElementId(id);
-    setWireframe(current => ({
+    setSelectedElementIds(movingIds);
+    setWireframeWithHistory(current => ({
       ...current,
       elements: current.elements.map(element =>
-        element.id === id ? normalizeElementBounds({ ...element, x: element.x + dx, y: element.y + dy }) : element,
+        movingIds.includes(element.id)
+          ? normalizeElementBounds({ ...element, x: element.x + dx, y: element.y + dy })
+          : element,
       ),
     }));
   };
 
   const startInlineEdit = (element: WireframeElement) => {
     setSelectedElementId(element.id);
+    setSelectedElementIds([element.id]);
+    setRightPanel('inspector');
+    setRightSidebarCollapsed(false);
     setInlineEditingId(element.id);
     setInlineTitle(element.title);
   };
@@ -2088,9 +2581,39 @@ export function AiWireframeSection() {
     event.dataTransfer.setData(dragDataType, kind);
   };
 
+  const handleToolDragEnd = () => {
+    setPlacementPreview(null);
+  };
+
+  const updatePlacementPreview = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const droppedKind = event.dataTransfer.getData(dragDataType);
+    if (!isElementKind(droppedKind)) {
+      setPlacementPreview(null);
+      return;
+    }
+
+    const point = canvasPointFromEvent(event);
+    if (!point) {
+      setPlacementPreview(null);
+      return;
+    }
+
+    const preset = presetFor(droppedKind);
+    const preview = normalizeElementBounds({
+      ...preset,
+      id: 'placement-preview',
+      x: point.x - preset.w / 2,
+      y: point.y - preset.h / 2,
+      z: 999,
+    });
+    setPlacementPreview({ kind: droppedKind, x: preview.x, y: preview.y, w: preview.w, h: preview.h });
+  };
+
   const handleCanvasDrop = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     const droppedKind = event.dataTransfer.getData(dragDataType);
+    setPlacementPreview(null);
     if (!isElementKind(droppedKind)) {
       return;
     }
@@ -2112,8 +2635,10 @@ export function AiWireframeSection() {
     }
 
     const nextWireframe = createWireframeFromTemplate(template);
-    setWireframe(nextWireframe);
+    setWireframeWithHistory(() => nextWireframe);
     setSelectedElementId(nextWireframe.elements[0]?.id ?? null);
+    setSelectedElementIds(nextWireframe.elements[0] ? [nextWireframe.elements[0].id] : []);
+    setRightPanel('layers');
     setSecondaryPanel(null);
     showFeedback({ tone: 'success', message: `已载入「${template.name}」模板，可继续拖拽图层调整。` });
   };
@@ -2129,29 +2654,110 @@ export function AiWireframeSection() {
       return;
     }
 
-    setWireframe(current => ({ ...current, elements: [] }));
+    setWireframeWithHistory(current => ({ ...current, elements: [] }));
     setSelectedElementId(null);
+    setSelectedElementIds([]);
     setInlineEditingId(null);
     showFeedback({ tone: 'success', message: '画布已清空。可以选择工具或载入模板继续。' });
   };
 
+  const copyTextWithTextarea = (text: string): boolean => {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', 'true');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    textarea.style.top = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+
+    try {
+      return document.execCommand('copy');
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  };
+
   const copyText = async (text: string, successMessage: string) => {
+    let timeoutId: number | undefined;
+
+    showCopyFeedback({ tone: 'info', message: '正在复制...' });
+
+    if (copyTextWithTextarea(text)) {
+      showCopyFeedback({ tone: 'success', message: '已复制' });
+      showFeedback({ tone: 'success', message: successMessage });
+      return;
+    }
+
     try {
       if (!navigator.clipboard?.writeText) {
         throw new Error('剪贴板 API 不可用');
       }
 
-      await navigator.clipboard.writeText(text);
+      await Promise.race([
+        navigator.clipboard.writeText(text),
+        new Promise<never>((_, reject) => {
+          timeoutId = window.setTimeout(() => reject(new Error('剪贴板写入超时')), 2000);
+        }),
+      ]);
+      showCopyFeedback({ tone: 'success', message: '已复制' });
       showFeedback({ tone: 'success', message: successMessage });
     } catch {
+      showCopyFeedback({ tone: 'error', message: '复制失败' });
       showFeedback({ tone: 'error', message: '复制失败。请打开“导出”面板手动复制文本。' });
+    } finally {
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
     }
   };
 
   const openPromptPanel = () => {
-    setOutputMode('prompt');
+    setPromptDraft(promptOutput);
     setSecondaryPanel('export');
     showFeedback({ tone: 'success', message: '已在“导出”面板生成 AI 实现提示词。' });
+  };
+
+  const alignSelectedElements = (mode: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => {
+    if (selectedElements.length < 2) {
+      showFeedback({ tone: 'info', message: '请先多选两个或更多图层。' });
+      return;
+    }
+
+    const left = Math.min(...selectedElements.map(element => element.x));
+    const right = Math.max(...selectedElements.map(element => element.x + element.w));
+    const top = Math.min(...selectedElements.map(element => element.y));
+    const bottom = Math.max(...selectedElements.map(element => element.y + element.h));
+    const center = (left + right) / 2;
+    const middle = (top + bottom) / 2;
+
+    setWireframeWithHistory(current => ({
+      ...current,
+      elements: current.elements.map(element => {
+        if (!selectedElementIds.includes(element.id)) {
+          return element;
+        }
+
+        if (mode === 'left') {
+          return normalizeElementBounds({ ...element, x: left });
+        }
+        if (mode === 'center') {
+          return normalizeElementBounds({ ...element, x: center - element.w / 2 });
+        }
+        if (mode === 'right') {
+          return normalizeElementBounds({ ...element, x: right - element.w });
+        }
+        if (mode === 'top') {
+          return normalizeElementBounds({ ...element, y: top });
+        }
+        if (mode === 'middle') {
+          return normalizeElementBounds({ ...element, y: middle - element.h / 2 });
+        }
+        return normalizeElementBounds({ ...element, y: bottom - element.h });
+      }),
+    }));
+    showFeedback({ tone: 'success', message: '已对齐选中图层。' });
   };
 
   const bringLayerForward = () => {
@@ -2173,71 +2779,120 @@ export function AiWireframeSection() {
   return (
     <section
       id='ai-wireframe'
-      className='h-[calc(100dvh-4rem)] overflow-hidden bg-[#f7f5ee] text-slate-950 md:h-screen'
+      className='relative h-[calc(100dvh-4rem)] overflow-hidden bg-[#f7f5ee] text-slate-950 md:h-screen'
     >
-      <div className='grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)_auto] lg:grid-cols-[248px_minmax(0,1fr)_360px] lg:grid-rows-1'>
+      <div className='grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)] lg:grid-cols-[224px_minmax(0,1fr)] lg:grid-rows-1'>
         <aside className='min-h-0 border-b border-slate-200 bg-white lg:border-b-0 lg:border-r'>
           <div className='flex h-full min-h-0 flex-col'>
             <div className='border-b border-slate-200 px-4 py-4'>
-              <div className='flex items-center justify-between'>
-                <button type='button' onClick={() => setActiveTool('select')} className='text-left'>
-                  <p className='text-2xl font-black tracking-tight' style={displayFont}>
-                    快速设计 UI 结构
-                  </p>
-                  <p className='mt-1 text-xs font-semibold text-slate-400'>先搭页面结构，再复制给 AI 编程工具。</p>
-                </button>
-                <span className='text-xs font-black text-slate-300'>{wireframe.elements.length}</span>
-              </div>
+              <button type='button' onClick={() => setActiveTool('select')} className='text-left'>
+                <p className='text-xl font-black tracking-tight' style={displayFont}>
+                  快速设计 UI 结构
+                </p>
+                <p className='mt-1 text-xs font-semibold text-slate-400'>画布里先搭结构，再复制给 AI 编程工具。</p>
+              </button>
               <button
                 type='button'
                 onClick={openPromptPanel}
-                className='mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-900 bg-slate-950 px-4 py-3 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-blue-600'
+                className='mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-floating-border bg-floating-surface px-4 py-3 text-sm font-black text-text-primary shadow-floating backdrop-blur-floating transition hover:translate-y-lift hover:border-primary hover:bg-floating-surface-strong active:scale-press'
               >
                 <span>生成提示词</span>
               </button>
-              <div className='mt-3 rounded-2xl border border-blue-100 bg-blue-50 px-3 py-3 text-xs font-semibold leading-5 text-blue-950'>
-                默认加载 Google 搜索页结构示例；在 Templates 里还可以切换抖音和小红书页面，直接拖动或双击修改。
+              <div className='mt-3 flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-black text-slate-500'>
+                <span>{wireframe.elements.length} 个图层</span>
+                <span>{selectedElementIds.length > 1 ? `已多选 ${selectedElementIds.length}` : '低保真模式'}</span>
               </div>
             </div>
 
-            <div className='min-h-0 flex-1 overflow-y-auto py-3'>
-              {(['BASICS', 'UI ELEMENTS', 'STRUCTURE'] as ToolDefinition['group'][]).map(group => (
-                <div key={group} className='mb-5'>
-                  <p className='px-4 pb-2 text-[0.68rem] font-black uppercase tracking-[0.18em] text-slate-300'>
-                    {toolGroupLabel(group)}
-                  </p>
-                  {tools
-                    .filter(tool => tool.group === group)
-                    .map(tool => {
-                      const draggable = isElementKind(tool.id);
-                      return (
-                        <button
-                          key={tool.id}
-                          type='button'
-                          draggable={draggable}
-                          onDragStart={event => {
-                            if (isElementKind(tool.id)) {
-                              handleToolDragStart(event, tool.id);
-                            }
-                          }}
-                          onClick={() => setActiveTool(tool.id)}
-                          title={tool.hint}
-                          className={toolButtonClass(activeTool === tool.id)}
-                        >
-                          <span className='w-7 shrink-0 font-mono text-base'>{tool.glyph}</span>
-                          <span className='min-w-0'>
-                            <span className='block truncate font-mono'>{tool.label}</span>
-                            <span
-                              className={`block truncate text-[0.64rem] ${activeTool === tool.id ? 'text-white/70' : 'text-slate-400'}`}
+            <div className='min-h-0 flex-1 overflow-y-auto py-4'>
+              <p className='px-4 pb-2 text-[0.68rem] font-black uppercase tracking-[0.18em] text-slate-300'>常用工具</p>
+              <div className='grid grid-cols-2 gap-2 px-3'>
+                {primaryTools.map(tool => {
+                  const draggable = isElementKind(tool.id);
+                  return (
+                    <button
+                      key={tool.id}
+                      type='button'
+                      draggable={draggable}
+                      onDragStart={event => {
+                        if (isElementKind(tool.id)) {
+                          handleToolDragStart(event, tool.id);
+                        }
+                      }}
+                      onDragEnd={handleToolDragEnd}
+                      onClick={() => setActiveTool(tool.id)}
+                      title={tool.hint}
+                      className={`rounded-2xl border px-3 py-3 text-left transition hover:-translate-y-0.5 ${
+                        activeTool === tool.id
+                          ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-600/20'
+                          : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                      }`}
+                    >
+                      <span className='block font-mono text-lg'>{tool.glyph}</span>
+                      <span className='mt-2 block truncate text-sm font-black'>{tool.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                type='button'
+                onClick={() => setMoreToolsOpen(current => !current)}
+                className='mx-3 mt-4 flex w-[calc(100%-1.5rem)] items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-black text-slate-600 hover:border-slate-300 hover:bg-white'
+              >
+                <span>更多元素</span>
+                <span>{moreToolsOpen ? '收起' : '展开'}</span>
+              </button>
+
+              {moreToolsOpen ? (
+                <div className='mt-4'>
+                  {(['BASICS', 'UI ELEMENTS', 'STRUCTURE'] as ToolDefinition['group'][]).map(group => {
+                    const groupTools = moreTools.filter(tool => tool.group === group);
+                    if (groupTools.length === 0) {
+                      return null;
+                    }
+
+                    return (
+                      <div key={group} className='mb-4'>
+                        <p className='px-4 pb-2 text-[0.68rem] font-black uppercase tracking-[0.18em] text-slate-300'>
+                          {toolGroupLabel(group)}
+                        </p>
+                        {groupTools.map(tool => {
+                          const draggable = isElementKind(tool.id);
+                          return (
+                            <button
+                              key={tool.id}
+                              type='button'
+                              draggable={draggable}
+                              onDragStart={event => {
+                                if (isElementKind(tool.id)) {
+                                  handleToolDragStart(event, tool.id);
+                                }
+                              }}
+                              onDragEnd={handleToolDragEnd}
+                              onClick={() => setActiveTool(tool.id)}
+                              title={tool.hint}
+                              className={toolButtonClass(activeTool === tool.id)}
                             >
-                              {tool.hint}
-                            </span>
-                          </span>
-                        </button>
-                      );
-                    })}
+                              <span className='w-7 shrink-0 font-mono text-base'>{tool.glyph}</span>
+                              <span className='min-w-0'>
+                                <span className='block truncate font-mono'>{tool.label}</span>
+                                <span
+                                  className={`block truncate text-[0.64rem] ${
+                                    activeTool === tool.id ? 'text-white/70' : 'text-slate-400'
+                                  }`}
+                                >
+                                  {tool.hint}
+                                </span>
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
+              ) : null}
             </div>
 
             <div className='grid grid-cols-4 border-t border-slate-200 bg-white p-2'>
@@ -2250,13 +2905,6 @@ export function AiWireframeSection() {
               </button>
               <button
                 type='button'
-                onClick={clearCanvas}
-                className='rounded-xl px-2 py-2 text-xs font-black text-slate-500 hover:bg-slate-100'
-              >
-                清空
-              </button>
-              <button
-                type='button'
                 onClick={() => setSecondaryPanel('page')}
                 className='rounded-xl px-2 py-2 text-xs font-black text-slate-500 hover:bg-slate-100'
               >
@@ -2264,7 +2912,14 @@ export function AiWireframeSection() {
               </button>
               <button
                 type='button'
-                onClick={() => setSecondaryPanel('export')}
+                onClick={clearCanvas}
+                className='rounded-xl px-2 py-2 text-xs font-black text-slate-500 hover:bg-slate-100'
+              >
+                清空
+              </button>
+              <button
+                type='button'
+                onClick={openPromptPanel}
                 className='rounded-xl bg-blue-50 px-2 py-2 text-xs font-black text-blue-700 hover:bg-blue-100'
               >
                 导出
@@ -2273,9 +2928,12 @@ export function AiWireframeSection() {
           </div>
         </aside>
 
-        <main className='min-h-0 min-w-0 bg-[#f3f1ea]'>
+        <main
+          className='min-h-0 min-w-0 bg-[#f3f1ea] transition-[padding] duration-200'
+          style={{ paddingRight: rightSidebarExpanded ? 'min(340px, calc(100vw - 1rem))' : '3.5rem' }}
+        >
           <div className='flex h-full min-h-0 flex-col'>
-            <div className='flex h-14 shrink-0 items-center justify-between gap-3 border-b border-slate-200 bg-white/90 px-4 backdrop-blur'>
+            <div className='flex min-h-[3.5rem] shrink-0 flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white/90 px-4 py-2 backdrop-blur'>
               <div className='flex min-w-0 items-center gap-3'>
                 <div className='hidden h-3 w-3 rounded-full bg-blue-600 lg:block' />
                 <input
@@ -2288,8 +2946,66 @@ export function AiWireframeSection() {
                   当前工具：{activeTool === 'select' ? '选择' : kindLabel(activeTool)}
                 </span>
               </div>
-              <div className='flex shrink-0 items-center gap-2'>
+              <div className='flex shrink-0 flex-wrap items-center justify-end gap-2'>
+                <div
+                  role='tablist'
+                  aria-label='切换稿纸端型'
+                  className='flex rounded-2xl border border-slate-200 bg-slate-100 p-1 shadow-inner shadow-slate-950/5'
+                >
+                  {canvasViewportIds.map(viewportId => {
+                    const viewport = canvasViewports[viewportId];
+                    const selected = canvasViewport === viewportId;
+
+                    return (
+                      <button
+                        key={viewportId}
+                        type='button'
+                        role='tab'
+                        aria-selected={selected}
+                        aria-controls='ai-wireframe-canvas'
+                        onClick={() => setCanvasViewport(viewportId)}
+                        className={`rounded-xl px-3 py-1.5 text-xs font-black transition ${
+                          selected
+                            ? 'bg-slate-950 text-white shadow-lg shadow-slate-950/10'
+                            : 'text-slate-500 hover:bg-white hover:text-slate-950'
+                        }`}
+                      >
+                        <span className='block'>{viewport.label}</span>
+                        <span
+                          className={`hidden text-[0.62rem] leading-none ${
+                            selected ? 'text-white/60' : 'text-slate-400'
+                          } lg:block`}
+                        >
+                          {viewport.width}×{viewport.height}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
                 <button
+                  type='button'
+                  onClick={undoWireframe}
+                  disabled={!canUndo}
+                  className='rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-600 transition hover:border-slate-950 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-35'
+                >
+                  Undo
+                </button>
+                <button
+                  type='button'
+                  onClick={redoWireframe}
+                  disabled={!canRedo}
+                  className='rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-600 transition hover:border-slate-950 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-35'
+                >
+                  Redo
+                </button>
+                <span
+                  ref={copyStatusRef}
+                  hidden
+                  aria-live='polite'
+                  className='rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-700'
+                />
+                <button
+                  ref={copyButtonRef}
                   type='button'
                   onClick={() => void copyText(markdownOutput, 'Markdown 线框图已复制，可粘贴到 AI 编程工具。')}
                   className='rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-600 transition hover:border-slate-950 hover:text-slate-950'
@@ -2299,7 +3015,7 @@ export function AiWireframeSection() {
                 <button
                   type='button'
                   onClick={openPromptPanel}
-                  className='rounded-xl bg-slate-950 px-3 py-2 text-xs font-black text-white transition hover:bg-blue-600'
+                  className='rounded-pill border border-floating-border bg-floating-surface px-3 py-2 text-xs font-black text-text-primary shadow-floating backdrop-blur-floating transition hover:translate-y-lift hover:border-primary hover:bg-floating-surface-strong active:scale-press'
                 >
                   提示词
                 </button>
@@ -2308,224 +3024,477 @@ export function AiWireframeSection() {
 
             <div className='relative min-h-0 flex-1 overflow-auto p-6'>
               <div
-                ref={canvasRef}
-                role='region'
-                aria-label='线框图画布'
-                onPointerDown={handleCanvasPointerDown}
-                onPointerMove={continueDrag}
-                onPointerUp={endDrag}
-                onPointerCancel={endDrag}
-                onDragOver={event => event.preventDefault()}
-                onDrop={handleCanvasDrop}
-                className={`relative mx-auto h-[820px] w-[1180px] overflow-hidden rounded-[0.35rem] border bg-[#fbfaf4] shadow-2xl shadow-slate-900/10 transition ${
-                  isElementKind(activeTool)
-                    ? 'cursor-crosshair border-blue-500 ring-4 ring-blue-100'
-                    : 'cursor-default border-slate-200'
-                }`}
-                style={canvasGridStyle}
+                className='relative mx-auto shrink-0 transition-[height,width] duration-150'
+                style={{
+                  width: activeCanvasViewport.width * canvasZoom,
+                  height: activeCanvasViewport.height * canvasZoom,
+                }}
               >
-                {wireframe.elements.length === 0 ? (
-                  <div className='pointer-events-none absolute inset-0 flex items-center justify-center p-10 text-center'>
-                    <div className='max-w-md rounded-[2rem] border border-dashed border-slate-300 bg-white/75 p-7 shadow-xl shadow-slate-900/5 backdrop-blur'>
-                      <p className='text-2xl font-black tracking-tight' style={displayFont}>
-                        开始搭建页面结构。
-                      </p>
-                      <p className='mt-3 text-sm leading-7 text-slate-500'>
-                        从左侧拖入工具，或选中工具后点击网格任意位置。双击图层即可重命名。
-                      </p>
-                    </div>
-                  </div>
-                ) : null}
+                <div
+                  id='ai-wireframe-canvas'
+                  ref={canvasRef}
+                  role='region'
+                  aria-label='线框图画布'
+                  onPointerDown={handleCanvasPointerDown}
+                  onPointerMove={continueDrag}
+                  onPointerUp={endDrag}
+                  onPointerCancel={endDrag}
+                  onDragOver={updatePlacementPreview}
+                  onDragLeave={() => setPlacementPreview(null)}
+                  onDrop={handleCanvasDrop}
+                  className={`absolute left-0 top-0 overflow-hidden border bg-[#fbfaf4] transition ${
+                    canvasViewport === 'mobile'
+                      ? 'rounded-[2rem] shadow-[0_28px_90px_rgba(15,23,42,0.18)] ring-8 ring-slate-950/5'
+                      : 'rounded-[0.35rem] shadow-2xl shadow-slate-900/10'
+                  } ${
+                    isElementKind(activeTool)
+                      ? 'cursor-crosshair border-blue-500 ring-4 ring-blue-100'
+                      : 'cursor-default border-slate-200'
+                  }`}
+                  style={{
+                    ...canvasGridStyle,
+                    width: activeCanvasViewport.width,
+                    height: activeCanvasViewport.height,
+                    transform: `scale(${canvasZoom})`,
+                    transformOrigin: 'top left',
+                  }}
+                >
+                  {canvasViewport === 'mobile' ? (
+                    <>
+                      <div className='pointer-events-none absolute left-1/2 top-3 z-[1002] h-5 w-24 -translate-x-1/2 rounded-full bg-slate-950/10 ring-1 ring-slate-950/10' />
+                      <div className='pointer-events-none absolute bottom-3 left-1/2 z-[1002] h-1.5 w-24 -translate-x-1/2 rounded-full bg-slate-950/10' />
+                    </>
+                  ) : null}
 
-                {wireframe.elements.map(element => (
-                  <CanvasElement
-                    key={element.id}
-                    element={element}
-                    selected={element.id === selectedElementId}
-                    editing={element.id === inlineEditingId}
-                    inlineTitle={inlineTitle}
-                    onSelect={setSelectedElementId}
-                    onStartDrag={startMove}
-                    onStartResize={startResize}
-                    onStartInlineEdit={startInlineEdit}
-                    onInlineTitleChange={setInlineTitle}
-                    onCommitInlineEdit={commitInlineEdit}
-                    onCancelInlineEdit={cancelInlineEdit}
-                    onNudge={nudgeElement}
-                  />
-                ))}
+                  {wireframe.elements.length === 0 ? (
+                    <div className='pointer-events-none absolute inset-0 flex items-center justify-center p-10 text-center'>
+                      <div className='max-w-md rounded-[2rem] border border-dashed border-slate-300 bg-white/75 p-7 shadow-xl shadow-slate-900/5 backdrop-blur'>
+                        <p className='text-2xl font-black tracking-tight' style={displayFont}>
+                          开始搭建页面结构。
+                        </p>
+                        <p className='mt-3 text-sm leading-7 text-slate-500'>
+                          从左侧拖入工具，或选中工具后点击网格任意位置。双击图层即可重命名。
+                        </p>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {placementPreview ? (
+                    <div
+                      className='pointer-events-none absolute rounded-[1.35rem] border-2 border-dashed border-blue-500 bg-blue-500/10 shadow-2xl shadow-blue-600/10'
+                      style={{
+                        left: `${placementPreview.x}%`,
+                        top: `${placementPreview.y}%`,
+                        width: `${placementPreview.w}%`,
+                        height: `${placementPreview.h}%`,
+                        zIndex: 1000,
+                      }}
+                    >
+                      <div className='absolute -top-7 left-0 rounded-full bg-blue-600 px-3 py-1 text-[0.65rem] font-black text-white shadow-lg shadow-blue-600/20'>
+                        放置 {kindLabel(placementPreview.kind)}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {alignmentGuides.map(guide => (
+                    <div
+                      key={`${guide.orientation}-${guide.position}`}
+                      className='pointer-events-none absolute z-[1001] bg-blue-500/70 shadow-[0_0_0_1px_rgba(59,130,246,0.2)]'
+                      style={
+                        guide.orientation === 'vertical'
+                          ? { left: `${guide.position}%`, top: 0, bottom: 0, width: 1 }
+                          : { top: `${guide.position}%`, left: 0, right: 0, height: 1 }
+                      }
+                    />
+                  ))}
+
+                  {wireframe.elements.map(element => (
+                    <CanvasElement
+                      key={element.id}
+                      element={element}
+                      selected={selectedElementIds.includes(element.id)}
+                      editing={element.id === inlineEditingId}
+                      inlineTitle={inlineTitle}
+                      onSelect={selectElementForEditing}
+                      onStartDrag={startMove}
+                      onStartResize={startResize}
+                      onStartInlineEdit={startInlineEdit}
+                      onInlineTitleChange={setInlineTitle}
+                      onCommitInlineEdit={commitInlineEdit}
+                      onCancelInlineEdit={cancelInlineEdit}
+                      onNudge={nudgeElement}
+                    />
+                  ))}
+                </div>
               </div>
 
               {feedback ? (
                 <div
-                  className={`pointer-events-none fixed bottom-6 left-1/2 z-50 max-w-xl -translate-x-1/2 rounded-2xl border px-4 py-3 text-sm font-semibold shadow-2xl ${feedbackClass(feedback.tone)}`}
+                  className={`pointer-events-none fixed bottom-24 left-1/2 z-50 max-w-xl -translate-x-1/2 rounded-2xl border px-4 py-3 text-sm font-semibold shadow-2xl ${feedbackClass(feedback.tone)}`}
                 >
                   {feedback.message}
                 </div>
               ) : null}
             </div>
+
+            <div className='flex h-12 shrink-0 items-center bg-[#f3f1ea]/95 px-5 backdrop-blur'>
+              <div className='flex w-fit items-center rounded-2xl bg-white/70 p-1 shadow-sm shadow-slate-900/5 backdrop-blur'>
+                <span className='hidden px-2 text-[0.65rem] font-black uppercase tracking-[0.18em] text-slate-400 sm:inline'>
+                  {activeCanvasViewport.note}
+                </span>
+                <button
+                  type='button'
+                  onClick={() => stepCanvasZoom(-1)}
+                  disabled={!canZoomOut}
+                  className='flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 text-sm font-black text-slate-600 transition hover:border-slate-950 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-35'
+                  aria-label='缩小稿纸'
+                >
+                  −
+                </button>
+                <input
+                  type='range'
+                  min={canvasZoomMin * 100}
+                  max={canvasZoomMax * 100}
+                  step={canvasZoomStep * 100}
+                  value={canvasZoomPercent}
+                  onChange={event => updateCanvasZoom(Number(event.target.value) / 100)}
+                  className='h-1.5 w-24 accent-slate-950 sm:w-32'
+                  aria-label='调整稿纸缩放比例'
+                />
+                <button
+                  type='button'
+                  onClick={() => stepCanvasZoom(1)}
+                  disabled={!canZoomIn}
+                  className='flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 text-sm font-black text-slate-600 transition hover:border-slate-950 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-35'
+                  aria-label='放大稿纸'
+                >
+                  +
+                </button>
+                <button
+                  type='button'
+                  onClick={() => updateCanvasZoom(1)}
+                  className='min-w-14 rounded-pill border border-floating-border bg-floating-surface px-3 py-2 text-xs font-black text-text-primary shadow-floating backdrop-blur-floating transition hover:translate-y-lift hover:border-primary hover:bg-floating-surface-strong active:scale-press'
+                  aria-label='重置稿纸缩放比例'
+                >
+                  {canvasZoomPercent}%
+                </button>
+              </div>
+            </div>
           </div>
         </main>
 
-        <aside className='min-h-0 border-t border-slate-200 bg-white lg:border-l lg:border-t-0'>
-          <div className='grid h-full min-h-0 grid-rows-[minmax(0,0.45fr)_minmax(0,0.55fr)]'>
-            <section className='min-h-0 border-b border-slate-200'>
-              <div className={panelHeadingClass()}>图层</div>
-              <div className='h-full min-h-0 overflow-y-auto p-3'>
-                {layers.length === 0 ? (
-                  <p className='rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 font-mono text-sm leading-6 text-slate-400'>
-                    在画布上绘制或插入元素后，图层会显示在这里。
-                  </p>
-                ) : (
-                  <div className='space-y-2'>
-                    {layers.map(element => (
-                      <button
-                        key={element.id}
-                        type='button'
-                        onClick={() => setSelectedElementId(element.id)}
-                        className={`flex w-full items-center justify-between gap-3 rounded-2xl border px-3 py-3 text-left transition ${
-                          selectedElementId === element.id
-                            ? 'border-blue-600 bg-blue-50 text-blue-950'
-                            : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
-                        }`}
-                      >
-                        <span className='min-w-0'>
-                          <span className='block truncate text-sm font-black'>{element.title}</span>
-                          <span className='block truncate text-[0.68rem] font-semibold text-slate-400'>
-                            {kindLabel(element.kind)} · {regionLabel(element.region)}
-                          </span>
-                        </span>
-                        <span className='text-[0.68rem] font-black text-slate-300'>z{element.z}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </section>
-
-            <section className='min-h-0'>
-              <div className={panelHeadingClass()}>检查器</div>
-              <div className='h-full min-h-0 overflow-y-auto p-4'>
-                {selectedElement ? (
-                  <div className='space-y-4'>
-                    <div className='rounded-2xl border border-slate-200 bg-slate-50 p-3'>
-                      <p className='text-xs font-black text-slate-400'>{kindLabel(selectedElement.kind)}</p>
-                      <p className='mt-1 truncate text-lg font-black'>{selectedElement.title}</p>
-                    </div>
-
-                    <FieldLabel label='名称'>
-                      <input
-                        value={selectedElement.title}
-                        onChange={event => updateElement(selectedElement.id, { title: event.target.value })}
-                        className='w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100'
-                      />
-                    </FieldLabel>
-                    <FieldLabel label='详情 / 行数据 / 标签'>
-                      <textarea
-                        value={selectedElement.details}
-                        onChange={event => updateElement(selectedElement.id, { details: event.target.value })}
-                        rows={5}
-                        className='w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100'
-                      />
-                    </FieldLabel>
-                    <FieldLabel label='AI 实现说明'>
-                      <textarea
-                        value={selectedElement.notes}
-                        onChange={event => updateElement(selectedElement.id, { notes: event.target.value })}
-                        rows={3}
-                        className='w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100'
-                      />
-                    </FieldLabel>
-                    <FieldLabel label='所属区域'>
-                      <select
-                        value={selectedElement.region}
-                        onChange={event => {
-                          if (isRegion(event.target.value)) {
-                            updateElement(selectedElement.id, { region: event.target.value });
-                          }
-                        }}
-                        className='w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100'
-                      >
-                        {regionIds.map(region => (
-                          <option key={region} value={region}>
-                            {regionLabel(region)}
-                          </option>
-                        ))}
-                      </select>
-                    </FieldLabel>
-
-                    <div className='grid grid-cols-3 gap-2'>
-                      <SmallButton onClick={() => nudgeElement(selectedElement.id, -2, 0)}>左移</SmallButton>
-                      <SmallButton onClick={() => nudgeElement(selectedElement.id, 0, -2)}>上移</SmallButton>
-                      <SmallButton onClick={() => nudgeElement(selectedElement.id, 2, 0)}>右移</SmallButton>
-                      <SmallButton onClick={() => updateElement(selectedElement.id, { w: selectedElement.w - 3 })}>
-                        变窄
-                      </SmallButton>
-                      <SmallButton onClick={() => nudgeElement(selectedElement.id, 0, 2)}>下移</SmallButton>
-                      <SmallButton onClick={() => updateElement(selectedElement.id, { w: selectedElement.w + 3 })}>
-                        变宽
-                      </SmallButton>
-                      <SmallButton onClick={sendLayerBackward}>后移</SmallButton>
-                      <SmallButton onClick={duplicateSelectedElement}>复制</SmallButton>
-                      <SmallButton onClick={bringLayerForward}>前移</SmallButton>
-                    </div>
-
-                    <button
-                      type='button'
-                      onClick={() => setAdvancedOpen(current => !current)}
-                      className='w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-600 transition hover:border-slate-950 hover:text-slate-950'
+        <aside
+          onMouseEnter={() => setRightSidebarCollapsed(false)}
+          onMouseLeave={() => {
+            if (!rightSidebarPinned) {
+              setRightSidebarCollapsed(true);
+            }
+          }}
+          className={`absolute inset-y-0 right-0 z-30 min-h-0 border-l border-slate-200 bg-white/95 shadow-2xl shadow-slate-950/10 backdrop-blur transition-[width] duration-200 ${
+            rightSidebarExpanded ? 'w-[min(340px,calc(100vw-1rem))]' : 'w-14'
+          }`}
+        >
+          {!rightSidebarExpanded ? (
+            <div className='flex h-full flex-col items-center gap-2 p-2'>
+              <button
+                type='button'
+                onClick={() => setRightSidebarCollapsed(false)}
+                className='rounded-2xl border border-slate-200 bg-slate-950 px-3 py-3 text-xs font-black text-white transition hover:bg-blue-600'
+                aria-label='展开右侧栏'
+              >
+                ‹
+              </button>
+              <button
+                type='button'
+                onClick={() => {
+                  setRightPanel('layers');
+                  setRightSidebarCollapsed(false);
+                }}
+                className='[writing-mode:vertical-rl] rounded-2xl border border-slate-200 px-2 py-3 text-[0.68rem] font-black text-slate-500 hover:bg-slate-50'
+              >
+                图层
+              </button>
+              <button
+                type='button'
+                onClick={() => {
+                  setRightPanel('inspector');
+                  setRightSidebarCollapsed(false);
+                }}
+                className='[writing-mode:vertical-rl] rounded-2xl border border-slate-200 px-2 py-3 text-[0.68rem] font-black text-slate-500 hover:bg-slate-50'
+              >
+                检查器
+              </button>
+            </div>
+          ) : (
+            <div className='flex h-full min-h-0 flex-col'>
+              <div className='border-b border-slate-200 p-3'>
+                <div className='flex items-center gap-2 rounded-2xl bg-slate-100 p-1'>
+                  <button
+                    type='button'
+                    onClick={() => setRightPanel('layers')}
+                    className={`flex-1 rounded-xl px-3 py-2 text-xs font-black transition ${
+                      rightPanel === 'layers'
+                        ? 'bg-white text-slate-950 shadow-sm'
+                        : 'text-slate-500 hover:text-slate-950'
+                    }`}
+                  >
+                    图层
+                  </button>
+                  <button
+                    type='button'
+                    onClick={() => setRightPanel('inspector')}
+                    className={`flex-1 rounded-xl px-3 py-2 text-xs font-black transition ${
+                      rightPanel === 'inspector'
+                        ? 'bg-white text-slate-950 shadow-sm'
+                        : 'text-slate-500 hover:text-slate-950'
+                    }`}
+                  >
+                    检查器
+                  </button>
+                  <button
+                    type='button'
+                    onClick={() => setRightSidebarPinned(current => !current)}
+                    className={`inline-flex h-8 w-8 flex-none items-center justify-center rounded-xl transition ${
+                      rightSidebarPinned
+                        ? 'bg-slate-950 text-white'
+                        : 'text-slate-400 hover:bg-white hover:text-slate-950'
+                    }`}
+                    aria-label={rightSidebarPinned ? '取消固定右侧栏' : '固定右侧栏'}
+                    aria-pressed={rightSidebarPinned}
+                  >
+                    <svg
+                      aria-hidden='true'
+                      className={`h-4 w-4 transition-transform ${rightSidebarPinned ? 'rotate-0' : '-rotate-45'}`}
+                      fill='none'
+                      stroke='currentColor'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2.5}
+                      viewBox='0 0 24 24'
                     >
-                      {advancedOpen ? '收起精确数值' : '微调精确数值'}
-                    </button>
-                    {advancedOpen ? (
-                      <div className='grid grid-cols-2 gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3'>
-                        {(['x', 'y', 'w', 'h', 'z'] as NumberField[]).map(field => (
-                          <FieldLabel key={field} label={field.toUpperCase()}>
-                            <input
-                              type='number'
-                              value={
-                                field === 'x'
-                                  ? selectedElement.x
-                                  : field === 'y'
-                                    ? selectedElement.y
-                                    : field === 'w'
-                                      ? selectedElement.w
-                                      : field === 'h'
-                                        ? selectedElement.h
-                                        : selectedElement.z
-                              }
-                              onChange={event =>
-                                updateElementNumber(selectedElement.id, field, Number(event.target.value))
-                              }
-                              className='w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-bold outline-none focus:border-blue-600'
-                            />
-                          </FieldLabel>
-                        ))}
+                      <path d='M12 17v5' />
+                      <path d='M9 10.8a2 2 0 0 1-1.1 1.8l-1.8.9A2 2 0 0 0 5 15.2V16h14v-.8a2 2 0 0 0-1.1-1.8l-1.8-.9A2 2 0 0 1 15 10.8V7h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1z' />
+                    </svg>
+                  </button>
+                  <button
+                    type='button'
+                    onClick={() => {
+                      setRightSidebarPinned(false);
+                      setRightSidebarCollapsed(true);
+                    }}
+                    className='rounded-xl px-3 py-2 text-xs font-black text-slate-400 hover:bg-white hover:text-slate-950'
+                    aria-label='折叠右侧栏'
+                  >
+                    ›
+                  </button>
+                </div>
+              </div>
+
+              <div className='min-h-0 flex-1 overflow-y-auto p-4'>
+                {rightPanel === 'layers' ? (
+                  layers.length === 0 ? (
+                    <p className='rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 font-mono text-sm leading-6 text-slate-400'>
+                      在画布上绘制或插入元素后，图层会显示在这里。
+                    </p>
+                  ) : (
+                    <div className='space-y-2'>
+                      {layers.map(element => {
+                        const isSelected = selectedElementIds.includes(element.id);
+                        return (
+                          <button
+                            key={element.id}
+                            type='button'
+                            onClick={event =>
+                              selectElementForEditing(element.id, event.shiftKey || event.metaKey || event.ctrlKey)
+                            }
+                            className={`flex w-full items-center justify-between gap-3 rounded-2xl border px-3 py-3 text-left transition ${
+                              isSelected
+                                ? 'border-blue-600 bg-blue-50 text-blue-950'
+                                : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+                            }`}
+                          >
+                            <span className='min-w-0'>
+                              <span className='block truncate text-sm font-black'>{element.title}</span>
+                              <span className='block truncate text-[0.68rem] font-semibold text-slate-400'>
+                                {kindLabel(element.kind)} · {regionLabel(element.region)}
+                              </span>
+                            </span>
+                            <span className='text-[0.68rem] font-black text-slate-300'>z{element.z}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )
+                ) : null}
+
+                {rightPanel === 'inspector' ? (
+                  selectedElements.length > 1 ? (
+                    <div className='space-y-4'>
+                      <div className='rounded-2xl border border-blue-100 bg-blue-50 p-3'>
+                        <p className='text-xs font-black text-blue-500'>多选</p>
+                        <p className='mt-1 text-lg font-black text-blue-950'>{selectedElements.length} 个图层</p>
                       </div>
-                    ) : null}
-                    <button
-                      type='button'
-                      onClick={() => removeElement(selectedElement.id)}
-                      className='w-full rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-black text-red-900 transition hover:border-red-400 hover:bg-red-100'
-                    >
-                      删除图层
-                    </button>
-                  </div>
-                ) : (
-                  <p className='rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 font-mono text-sm leading-6 text-slate-400'>
-                    选择画布或列表中的图层来编辑文案和行为说明。大部分布局调整建议直接在画布上完成。
-                  </p>
-                )}
+                      <div className='grid grid-cols-3 gap-2'>
+                        <SmallButton onClick={() => alignSelectedElements('left')}>左齐</SmallButton>
+                        <SmallButton onClick={() => alignSelectedElements('center')}>中齐</SmallButton>
+                        <SmallButton onClick={() => alignSelectedElements('right')}>右齐</SmallButton>
+                        <SmallButton onClick={() => alignSelectedElements('top')}>顶齐</SmallButton>
+                        <SmallButton onClick={() => alignSelectedElements('middle')}>居中</SmallButton>
+                        <SmallButton onClick={() => alignSelectedElements('bottom')}>底齐</SmallButton>
+                      </div>
+                      <div className='grid grid-cols-2 gap-2'>
+                        <SmallButton
+                          onClick={() => nudgeElement(selectedElementId ?? selectedElements[0]?.id ?? '', -2, 0)}
+                        >
+                          左移
+                        </SmallButton>
+                        <SmallButton
+                          onClick={() => nudgeElement(selectedElementId ?? selectedElements[0]?.id ?? '', 2, 0)}
+                        >
+                          右移
+                        </SmallButton>
+                        <SmallButton
+                          onClick={() => nudgeElement(selectedElementId ?? selectedElements[0]?.id ?? '', 0, -2)}
+                        >
+                          上移
+                        </SmallButton>
+                        <SmallButton
+                          onClick={() => nudgeElement(selectedElementId ?? selectedElements[0]?.id ?? '', 0, 2)}
+                        >
+                          下移
+                        </SmallButton>
+                      </div>
+                      <button
+                        type='button'
+                        onClick={removeSelectedElements}
+                        className='w-full rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-black text-red-900 transition hover:border-red-400 hover:bg-red-100'
+                      >
+                        删除选中图层
+                      </button>
+                    </div>
+                  ) : selectedElement ? (
+                    <div className='space-y-4'>
+                      <div className='rounded-2xl border border-slate-200 bg-slate-50 p-3'>
+                        <p className='text-xs font-black text-slate-400'>{kindLabel(selectedElement.kind)}</p>
+                        <p className='mt-1 truncate text-lg font-black'>{selectedElement.title}</p>
+                      </div>
+
+                      <FieldLabel label='名称'>
+                        <input
+                          value={selectedElement.title}
+                          onChange={event => updateElement(selectedElement.id, { title: event.target.value })}
+                          className='w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100'
+                        />
+                      </FieldLabel>
+                      <FieldLabel label='详情 / 行数据 / 标签'>
+                        <textarea
+                          value={selectedElement.details}
+                          onChange={event => updateElement(selectedElement.id, { details: event.target.value })}
+                          rows={5}
+                          className='w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100'
+                        />
+                      </FieldLabel>
+                      <FieldLabel label='AI 实现说明'>
+                        <textarea
+                          value={selectedElement.notes}
+                          onChange={event => updateElement(selectedElement.id, { notes: event.target.value })}
+                          rows={3}
+                          className='w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100'
+                        />
+                      </FieldLabel>
+                      <FieldLabel label='所属区域'>
+                        <select
+                          value={selectedElement.region}
+                          onChange={event => {
+                            if (isRegion(event.target.value)) {
+                              updateElement(selectedElement.id, { region: event.target.value });
+                            }
+                          }}
+                          className='w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100'
+                        >
+                          {regionIds.map(region => (
+                            <option key={region} value={region}>
+                              {regionLabel(region)}
+                            </option>
+                          ))}
+                        </select>
+                      </FieldLabel>
+
+                      <div className='grid grid-cols-3 gap-2'>
+                        <SmallButton onClick={() => nudgeElement(selectedElement.id, -2, 0)}>左移</SmallButton>
+                        <SmallButton onClick={() => nudgeElement(selectedElement.id, 0, -2)}>上移</SmallButton>
+                        <SmallButton onClick={() => nudgeElement(selectedElement.id, 2, 0)}>右移</SmallButton>
+                        <SmallButton onClick={() => updateElement(selectedElement.id, { w: selectedElement.w - 3 })}>
+                          变窄
+                        </SmallButton>
+                        <SmallButton onClick={() => nudgeElement(selectedElement.id, 0, 2)}>下移</SmallButton>
+                        <SmallButton onClick={() => updateElement(selectedElement.id, { w: selectedElement.w + 3 })}>
+                          变宽
+                        </SmallButton>
+                        <SmallButton onClick={sendLayerBackward}>后移</SmallButton>
+                        <SmallButton onClick={duplicateSelectedElement}>复制</SmallButton>
+                        <SmallButton onClick={bringLayerForward}>前移</SmallButton>
+                      </div>
+
+                      <button
+                        type='button'
+                        onClick={() => setAdvancedOpen(current => !current)}
+                        className='w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-600 transition hover:border-slate-950 hover:text-slate-950'
+                      >
+                        {advancedOpen ? '收起精确数值' : '微调精确数值'}
+                      </button>
+                      {advancedOpen ? (
+                        <div className='grid grid-cols-2 gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3'>
+                          {(['x', 'y', 'w', 'h', 'z'] as NumberField[]).map(field => (
+                            <FieldLabel key={field} label={field.toUpperCase()}>
+                              <input
+                                type='number'
+                                value={
+                                  field === 'x'
+                                    ? selectedElement.x
+                                    : field === 'y'
+                                      ? selectedElement.y
+                                      : field === 'w'
+                                        ? selectedElement.w
+                                        : field === 'h'
+                                          ? selectedElement.h
+                                          : selectedElement.z
+                                }
+                                onChange={event =>
+                                  updateElementNumber(selectedElement.id, field, Number(event.target.value))
+                                }
+                                className='w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-bold outline-none focus:border-blue-600'
+                              />
+                            </FieldLabel>
+                          ))}
+                        </div>
+                      ) : null}
+                      <button
+                        type='button'
+                        onClick={() => removeElement(selectedElement.id)}
+                        className='w-full rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-black text-red-900 transition hover:border-red-400 hover:bg-red-100'
+                      >
+                        删除图层
+                      </button>
+                    </div>
+                  ) : (
+                    <p className='rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 font-mono text-sm leading-6 text-slate-400'>
+                      选择画布或列表中的图层来编辑文案和行为说明。按住 Shift 或 ⌘ 可以多选。
+                    </p>
+                  )
+                ) : null}
               </div>
-            </section>
-          </div>
+            </div>
+          )}
         </aside>
       </div>
 
       {secondaryPanel ? (
         <div className='fixed inset-0 z-[70] bg-slate-950/30 backdrop-blur-sm' onClick={() => setSecondaryPanel(null)}>
           <div
-            className='absolute inset-y-0 right-0 flex w-full max-w-xl flex-col border-l border-slate-200 bg-white shadow-2xl'
+            className={`absolute inset-y-0 right-0 flex w-full flex-col border-l border-slate-200 bg-white shadow-2xl ${
+              secondaryPanel === 'export' ? 'max-w-6xl' : 'max-w-xl'
+            }`}
             onClick={event => event.stopPropagation()}
           >
             <div className='flex items-center justify-between border-b border-slate-200 px-5 py-4'>
@@ -2535,7 +3504,7 @@ export function AiWireframeSection() {
                 </p>
                 <h2 className='mt-1 text-2xl font-black' style={displayFont}>
                   {secondaryPanel === 'templates'
-                    ? '从常用结构开始'
+                    ? '从产品示例或常用结构开始'
                     : secondaryPanel === 'page'
                       ? '告诉 AI 这个页面要做什么'
                       : '复制 AI 可读文本'}
@@ -2599,27 +3568,50 @@ export function AiWireframeSection() {
             ) : null}
 
             {secondaryPanel === 'export' ? (
-              <div className='flex min-h-0 flex-1 flex-col p-5'>
-                <div className='flex flex-wrap gap-2'>
-                  <SmallButton onClick={() => setOutputMode('wireframe')} active={outputMode === 'wireframe'}>
-                    Markdown 线框图
-                  </SmallButton>
-                  <SmallButton onClick={() => setOutputMode('prompt')} active={outputMode === 'prompt'}>
-                    AI 实现提示词
-                  </SmallButton>
-                  <SmallButton
-                    onClick={() =>
-                      void copyText(visibleOutput, '内容已复制，可粘贴到 Claude Code、Cursor 或 Copilot。')
-                    }
-                  >
-                    复制当前内容
-                  </SmallButton>
+              <div className='grid min-h-0 flex-1 gap-4 p-5 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]'>
+                <div className='min-h-0 overflow-hidden rounded-3xl border border-slate-200 bg-[#fbfaf4] p-4'>
+                  <div className='flex items-center justify-between gap-3'>
+                    <div>
+                      <p className='text-[0.68rem] font-black uppercase tracking-[0.2em] text-slate-400'>线框预览</p>
+                      <h3 className='mt-1 truncate text-lg font-black'>{wireframe.pageName}</h3>
+                    </div>
+                    <span className='rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-black text-slate-400'>
+                      {wireframe.elements.length} elements
+                    </span>
+                  </div>
+                  <pre className='mt-4 h-[min(58dvh,520px)] overflow-auto rounded-2xl border border-slate-200 bg-white/80 p-4 font-mono text-[0.62rem] leading-4 text-slate-500 shadow-inner shadow-slate-900/5'>
+                    {generateAsciiWireframe(wireframe)}
+                  </pre>
                 </div>
-                <textarea
-                  readOnly
-                  value={visibleOutput}
-                  className='mt-4 min-h-0 flex-1 resize-none rounded-2xl border border-slate-900 bg-slate-950 p-4 font-mono text-xs leading-5 text-cyan-50 outline-none'
-                />
+
+                <div className='flex min-h-0 flex-col rounded-3xl border border-slate-200 bg-white'>
+                  <div className='flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-3'>
+                    <div>
+                      <p className='text-[0.68rem] font-black uppercase tracking-[0.2em] text-slate-400'>Prompt</p>
+                      <h3 className='mt-1 text-base font-black'>AI 实现提示词</h3>
+                    </div>
+                    <div className='flex flex-wrap gap-2'>
+                      <SmallButton onClick={() => setPromptDraft(promptOutput)}>恢复生成内容</SmallButton>
+                      <SmallButton
+                        onClick={() =>
+                          void copyText(promptDraft, '完整提示词已复制，可粘贴到 Claude Code、Cursor 或 Copilot。')
+                        }
+                      >
+                        复制完整提示词
+                      </SmallButton>
+                    </div>
+                  </div>
+
+                  <div className='min-h-0 flex-1 p-4'>
+                    <textarea
+                      value={promptDraft}
+                      onChange={event => setPromptDraft(event.target.value)}
+                      spellCheck={false}
+                      className='h-full w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 p-4 font-mono text-xs leading-6 text-slate-700 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100'
+                      aria-label='可编辑 AI 实现提示词'
+                    />
+                  </div>
+                </div>
               </div>
             ) : null}
           </div>

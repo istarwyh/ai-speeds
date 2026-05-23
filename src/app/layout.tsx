@@ -17,7 +17,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <head>
         <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         {children}
 
         {/* WUUNU SNIPPET - DON'T CHANGE THIS (START) */}

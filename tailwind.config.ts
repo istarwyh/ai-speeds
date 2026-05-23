@@ -47,6 +47,13 @@ const config: Config = {
         'bg-accent': 'var(--color-bg-accent)',
         'bg-warm': 'var(--color-bg-warm)',
 
+        // Floating glass colors
+        floating: {
+          surface: 'var(--color-surface-floating)',
+          'surface-strong': 'var(--color-surface-floating-strong)',
+          border: 'var(--color-border-floating)',
+        },
+
         // Text colors
         'text-primary': 'var(--color-text-primary)',
         'text-secondary': 'var(--color-text-secondary)',
@@ -62,6 +69,23 @@ const config: Config = {
         'practices-accent': 'var(--color-practices-accent)',
         'practices-primary': 'var(--color-practices-primary)',
         'practices-secondary': 'var(--color-practices-secondary)',
+      },
+      borderRadius: {
+        pill: 'var(--radius-pill)',
+      },
+      boxShadow: {
+        floating: 'var(--shadow-floating)',
+        'floating-strong': 'var(--shadow-floating-strong)',
+        'primary-glow': 'var(--shadow-primary-glow)',
+      },
+      backdropBlur: {
+        floating: 'var(--blur-floating)',
+      },
+      translate: {
+        lift: 'var(--motion-hover-lift)',
+      },
+      scale: {
+        press: 'var(--motion-press-scale)',
       },
     },
   },

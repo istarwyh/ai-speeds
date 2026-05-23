@@ -13,7 +13,7 @@ export default function StyleGuidePage() {
     setTimeout(() => setCopiedToken(null), 2000);
   };
 
-  const { brand, feedback, teal, surfaces, text: textColors, borders, practices } = colorTokenGroups;
+  const { brand, feedback, teal, surfaces, floating, text: textColors, borders, practices } = colorTokenGroups;
 
   const ColorSwatch = ({
     name,
@@ -346,6 +346,15 @@ export default function StyleGuidePage() {
           <h2 className='text-xl font-semibold mb-4'>Surface Colors</h2>
           <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6'>
             {surfaces.map(c => (
+              <SurfaceSwatch key={c.name} {...c} />
+            ))}
+          </div>
+        </section>
+
+        <section className='mb-10'>
+          <h2 className='text-xl font-semibold mb-4'>Floating Glass Surfaces</h2>
+          <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6'>
+            {floating.map(c => (
               <SurfaceSwatch key={c.name} {...c} />
             ))}
           </div>

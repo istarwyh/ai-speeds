@@ -39,10 +39,13 @@
 
   --color-surface-glass-1: rgba(255, 255, 255, 0.06);
   --color-surface-glass-2: rgba(255, 255, 255, 0.1);
+  --color-surface-floating: rgba(255, 255, 255, 0.85);
+  --color-surface-floating-strong: rgba(255, 255, 255, 0.95);
 
   --color-border-light: #e2e8f0;
   --color-border-medium: #cbd5e1;
   --color-border-dark: #94a3b8;
+  --color-border-floating: rgba(226, 232, 240, 0.8);
 
   /* Page-scoped compatibility aliases for legacy practices content. */
   --color-practices-page-bg: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
@@ -105,15 +108,23 @@
   --radius-xl: 0.75rem;
   --radius-2xl: 1rem;
   --radius-3xl: 1.5rem;
+  --radius-pill: 9999px;
 
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-floating: 0 10px 15px -3px rgb(15 23 42 / 0.1), 0 4px 6px -4px rgb(15 23 42 / 0.1);
+  --shadow-floating-strong: 0 25px 50px -12px rgb(15 23 42 / 0.2);
+  --shadow-primary-glow: 0 0 18px var(--color-primary);
+
+  --blur-floating: 24px;
 
   --transition-fast: 0.15s ease-out;
   --transition-normal: 0.2s ease-out;
   --transition-slow: 0.3s ease-out;
+  --motion-hover-lift: -0.125rem;
+  --motion-press-scale: 0.98;
 
   --line-height-tight: 1.2;
   --line-height-normal: 1.5;
