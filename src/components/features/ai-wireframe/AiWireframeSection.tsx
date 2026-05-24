@@ -2954,7 +2954,7 @@ export function AiWireframeSection() {
                 <div
                   role='tablist'
                   aria-label='切换稿纸端型'
-                  className='flex rounded-2xl border border-slate-200 bg-slate-100 p-1 shadow-inner shadow-slate-950/5'
+                  className='flex rounded-pill border border-floating-border bg-floating-surface p-1 shadow-floating backdrop-blur-floating'
                 >
                   {canvasViewportIds.map(viewportId => {
                     const viewport = canvasViewports[viewportId];
@@ -2968,16 +2968,16 @@ export function AiWireframeSection() {
                         aria-selected={selected}
                         aria-controls='ai-wireframe-canvas'
                         onClick={() => setCanvasViewport(viewportId)}
-                        className={`rounded-xl px-3 py-1.5 text-xs font-black transition ${
+                        className={`rounded-pill px-3 py-1.5 text-xs font-black transition hover:translate-y-lift active:scale-press ${
                           selected
-                            ? 'bg-slate-950 text-white shadow-lg shadow-slate-950/10'
-                            : 'text-slate-500 hover:bg-white hover:text-slate-950'
+                            ? 'bg-primary text-primary-foreground shadow-primary-glow'
+                            : 'text-text-secondary hover:bg-floating-surface-strong hover:text-text-primary'
                         }`}
                       >
                         <span className='block'>{viewport.label}</span>
                         <span
                           className={`hidden text-[0.62rem] leading-none ${
-                            selected ? 'text-white/60' : 'text-slate-400'
+                            selected ? 'text-primary-foreground/70' : 'text-text-muted'
                           } lg:block`}
                         >
                           {viewport.width}×{viewport.height}
@@ -3203,7 +3203,7 @@ export function AiWireframeSection() {
               <button
                 type='button'
                 onClick={() => setRightSidebarCollapsed(false)}
-                className='rounded-2xl border border-slate-200 bg-slate-950 px-3 py-3 text-xs font-black text-white transition hover:bg-blue-600'
+                className='inline-flex h-10 w-10 items-center justify-center rounded-pill border border-floating-border bg-floating-surface text-sm font-black text-text-primary shadow-floating backdrop-blur-floating transition hover:translate-y-lift hover:border-primary hover:bg-floating-surface-strong active:scale-press'
                 aria-label='展开右侧栏'
               >
                 ‹
@@ -3286,7 +3286,7 @@ export function AiWireframeSection() {
                       setRightSidebarPinned(false);
                       setRightSidebarCollapsed(true);
                     }}
-                    className='rounded-xl px-3 py-2 text-xs font-black text-slate-400 hover:bg-white hover:text-slate-950'
+                    className='inline-flex h-8 w-8 flex-none items-center justify-center rounded-pill border border-floating-border bg-floating-surface text-xs font-black text-text-primary shadow-floating backdrop-blur-floating transition hover:translate-y-lift hover:border-primary hover:bg-floating-surface-strong active:scale-press'
                     aria-label='折叠右侧栏'
                   >
                     ›
