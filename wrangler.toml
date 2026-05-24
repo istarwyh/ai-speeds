@@ -21,6 +21,8 @@ IMAGE_PROXY_WHITELIST = "*"
 # Cache TTL in seconds for proxied images
 IMAGE_PROXY_CACHE_TTL = "86400"
 
+NEXT_PUBLIC_SITE_URL = "https://aispeeds.me"
+
 # Enable logging
 [observability]
 enabled = true

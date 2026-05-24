@@ -1365,6 +1365,10 @@ function createInitialWireframe(): WireframeDocument {
   return defaultTemplate ? createWireframeFromTemplate(defaultTemplate) : emptyWireframe;
 }
 
+function createElementId(kind: WireframeElementKind): string {
+  return `wire-${kind}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 11)}`;
+}
+
 function createElementAt(
   kind: WireframeElementKind,
   x: number,
@@ -1375,7 +1379,7 @@ function createElementAt(
   const maxZ = existingElements.reduce((currentMax, element) => Math.max(currentMax, element.z), 0);
   return normalizeElementBounds({
     ...preset,
-    id: `wire-${kind}-${Date.now().toString(36)}-${existingElements.length}`,
+    id: createElementId(kind),
     x: x - preset.w / 2,
     y: y - preset.h / 2,
     z: maxZ + 1,
@@ -2274,7 +2278,7 @@ export function AiWireframeSection() {
       const maxZ = current.elements.reduce((currentMax, element) => Math.max(currentMax, element.z), 0);
       const duplicate = normalizeElementBounds({
         ...selectedElement,
-        id: `wire-${selectedElement.kind}-${Date.now().toString(36)}-copy`,
+        id: createElementId(selectedElement.kind),
         title: `${selectedElement.title} 副本`,
         x: selectedElement.x + 3,
         y: selectedElement.y + 3,
