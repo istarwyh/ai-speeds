@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { type CSSProperties, type PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from 'react';
 import { BrandLogo } from '@/components/brand';
 import { AiWireframeSection } from '@/components/features/ai-wireframe/AiWireframeSection';
 import { GetStartedSection } from '@/components/features/get-started/GetStartedSection';
@@ -18,6 +18,32 @@ const utilityLinks = [
   { label: UI_TEXTS.NAVIGATION.PLAYGROUND, href: '/playground' },
 ];
 
+type MenuPosition = {
+  x: number;
+  y: number;
+};
+
+type DragState = {
+  pointerId: number;
+  startX: number;
+  startY: number;
+  originX: number;
+  originY: number;
+  lastX: number;
+  lastY: number;
+  moved: boolean;
+};
+
+type MenuPlacement = {
+  horizontal: 'left' | 'right';
+  vertical: 'top' | 'bottom';
+};
+
+const MENU_STORAGE_KEY = 'aispeeds-homepage-menu-position';
+const MENU_EDGE_PADDING = 16;
+const MENU_HOVER_PADDING = 12;
+const MENU_DRAG_THRESHOLD = 4;
+
 function isSectionId(value: string): value is SectionId {
   return SECTION_IDS.some(section => section === value);
 }
@@ -27,9 +53,130 @@ function readHashSection(): SectionId {
   return isSectionId(hashSection) ? hashSection : DEFAULT_SECTION_ID;
 }
 
+function clampNumber(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function getStoredMenuPosition(): MenuPosition | null {
+  try {
+    const storedValue = window.localStorage.getItem(MENU_STORAGE_KEY);
+
+    if (!storedValue) {
+      return null;
+    }
+
+    const parsedValue: unknown = JSON.parse(storedValue);
+
+    if (typeof parsedValue !== 'object' || parsedValue === null) {
+      return null;
+    }
+
+    const position = parsedValue as Record<string, unknown>;
+
+    if (
+      typeof position['x'] !== 'number' ||
+      typeof position['y'] !== 'number' ||
+      !Number.isFinite(position['x']) ||
+      !Number.isFinite(position['y'])
+    ) {
+      return null;
+    }
+
+    return { x: position['x'], y: position['y'] };
+  } catch {
+    return null;
+  }
+}
+
+function getDefaultMenuPosition(buttonElement: HTMLButtonElement | null): MenuPosition {
+  const edgePadding = window.matchMedia('(min-width: 640px)').matches ? 24 : MENU_EDGE_PADDING;
+  const buttonWidth = buttonElement?.offsetWidth ?? 96;
+
+  return {
+    x: window.innerWidth - buttonWidth - edgePadding,
+    y: edgePadding,
+  };
+}
+
+function clampMenuPosition(position: MenuPosition, buttonElement: HTMLButtonElement | null): MenuPosition {
+  const buttonWidth = buttonElement?.offsetWidth ?? 96;
+  const buttonHeight = buttonElement?.offsetHeight ?? 44;
+  const maxX = Math.max(MENU_EDGE_PADDING, window.innerWidth - buttonWidth - MENU_EDGE_PADDING);
+  const maxY = Math.max(MENU_EDGE_PADDING, window.innerHeight - buttonHeight - MENU_EDGE_PADDING);
+
+  return {
+    x: clampNumber(position.x, MENU_EDGE_PADDING, maxX),
+    y: clampNumber(position.y, MENU_EDGE_PADDING, maxY),
+  };
+}
+
+function getMenuPlacement(position: MenuPosition | null): MenuPlacement {
+  if (typeof window === 'undefined' || !position) {
+    return { horizontal: 'right', vertical: 'bottom' };
+  }
+
+  return {
+    horizontal: position.x < window.innerWidth / 2 ? 'left' : 'right',
+    vertical: position.y < window.innerHeight / 2 ? 'bottom' : 'top',
+  };
+}
+
+function storeMenuPosition(position: MenuPosition) {
+  try {
+    window.localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(position));
+  } catch {
+    return;
+  }
+}
+
 export function HomePageWithNav() {
   const [activeSection, setActiveSection] = useState<SectionId>(DEFAULT_SECTION_ID);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
+  const [hoverEnabled, setHoverEnabled] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuShellRef = useRef<HTMLDivElement>(null);
+  const dragStateRef = useRef<DragState | null>(null);
+  const hoverCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const ignoreClickAfterDragRef = useRef(false);
+  const menuPlacement = getMenuPlacement(menuPosition);
+  const menuShellStyle: CSSProperties | undefined = menuPosition
+    ? {
+        left: menuPosition.x - MENU_HOVER_PADDING,
+        top: menuPosition.y - MENU_HOVER_PADDING,
+      }
+    : undefined;
+
+  const clearHoverClose = () => {
+    if (hoverCloseTimerRef.current === null) {
+      return;
+    }
+
+    clearTimeout(hoverCloseTimerRef.current);
+    hoverCloseTimerRef.current = null;
+  };
+
+  const openMenuFromHover = () => {
+    if (!hoverEnabled || isDragging) {
+      return;
+    }
+
+    clearHoverClose();
+    setMenuOpen(true);
+  };
+
+  const closeMenuFromHover = () => {
+    if (!hoverEnabled) {
+      return;
+    }
+
+    clearHoverClose();
+    hoverCloseTimerRef.current = setTimeout(() => {
+      setMenuOpen(false);
+      hoverCloseTimerRef.current = null;
+    }, 180);
+  };
 
   useEffect(() => {
     setActiveSection(readHashSection());
@@ -38,6 +185,146 @@ export function HomePageWithNav() {
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
+
+  useEffect(() => {
+    const initialPosition = getStoredMenuPosition() ?? getDefaultMenuPosition(menuButtonRef.current);
+    setMenuPosition(clampMenuPosition(initialPosition, menuButtonRef.current));
+
+    const onResize = () => {
+      setMenuPosition(currentPosition =>
+        clampMenuPosition(currentPosition ?? getDefaultMenuPosition(menuButtonRef.current), menuButtonRef.current),
+      );
+    };
+
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  useEffect(() => {
+    const hoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const syncHoverSupport = () => setHoverEnabled(hoverQuery.matches);
+
+    syncHoverSupport();
+    hoverQuery.addEventListener('change', syncHoverSupport);
+    return () => hoverQuery.removeEventListener('change', syncHoverSupport);
+  }, []);
+
+  useEffect(() => {
+    if (!menuOpen) {
+      return;
+    }
+
+    const closeOnOutsidePointerDown = (event: globalThis.PointerEvent) => {
+      const target = event.target;
+
+      if (target instanceof globalThis.Node && menuShellRef.current?.contains(target)) {
+        return;
+      }
+
+      setMenuOpen(false);
+    };
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', closeOnOutsidePointerDown);
+    document.addEventListener('keydown', closeOnEscape);
+
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutsidePointerDown);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [menuOpen]);
+
+  useEffect(() => {
+    return () => clearHoverClose();
+  }, []);
+
+  const handleMenuButtonClick = () => {
+    if (ignoreClickAfterDragRef.current) {
+      ignoreClickAfterDragRef.current = false;
+      return;
+    }
+
+    setMenuOpen(current => (hoverEnabled ? true : !current));
+  };
+
+  const handleMenuPointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    if (event.button !== 0) {
+      return;
+    }
+
+    clearHoverClose();
+
+    const origin =
+      menuPosition ?? clampMenuPosition(getDefaultMenuPosition(menuButtonRef.current), menuButtonRef.current);
+    dragStateRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      originX: origin.x,
+      originY: origin.y,
+      lastX: origin.x,
+      lastY: origin.y,
+      moved: false,
+    };
+    setMenuPosition(origin);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleMenuPointerMove = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    const dragState = dragStateRef.current;
+
+    if (!dragState || dragState.pointerId !== event.pointerId) {
+      return;
+    }
+
+    const deltaX = event.clientX - dragState.startX;
+    const deltaY = event.clientY - dragState.startY;
+
+    if (!dragState.moved && Math.hypot(deltaX, deltaY) < MENU_DRAG_THRESHOLD) {
+      return;
+    }
+
+    dragState.moved = true;
+    setIsDragging(true);
+    setMenuOpen(false);
+
+    const nextPosition = clampMenuPosition(
+      { x: dragState.originX + deltaX, y: dragState.originY + deltaY },
+      menuButtonRef.current,
+    );
+    dragState.lastX = nextPosition.x;
+    dragState.lastY = nextPosition.y;
+    setMenuPosition(nextPosition);
+    event.preventDefault();
+  };
+
+  const finishMenuDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    const dragState = dragStateRef.current;
+
+    if (!dragState || dragState.pointerId !== event.pointerId) {
+      return;
+    }
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
+    dragStateRef.current = null;
+    setIsDragging(false);
+
+    if (!dragState.moved) {
+      return;
+    }
+
+    const nextPosition = { x: dragState.lastX, y: dragState.lastY };
+    ignoreClickAfterDragRef.current = true;
+    storeMenuPosition(nextPosition);
+  };
 
   const selectSection = (section: SectionId) => {
     setActiveSection(section);
@@ -53,25 +340,53 @@ export function HomePageWithNav() {
 
   return (
     <div className='min-h-screen bg-bg-secondary text-text-primary'>
-      <button
-        type='button'
-        aria-controls='homepage-menu'
-        aria-expanded={menuOpen}
-        onClick={() => setMenuOpen(true)}
-        className='fixed right-4 top-4 z-40 flex items-center gap-2 rounded-full border border-border-light/80 bg-bg-primary/85 px-4 py-2 text-sm font-semibold text-text-primary shadow-lg shadow-slate-950/10 backdrop-blur-xl transition hover:-translate-y-0.5 hover:border-primary hover:bg-bg-primary sm:right-6 sm:top-6'
-      >
-        <span className='h-2 w-2 rounded-full bg-primary shadow-[0_0_18px_var(--color-primary)]' />
-        菜单
-      </button>
-
       {menuOpen && (
-        <div className='fixed inset-0 z-50 bg-text-primary/10 p-4 backdrop-blur-sm' onClick={() => setMenuOpen(false)}>
-          <div
+        <div
+          aria-hidden='true'
+          className='fixed inset-0 z-40 bg-transparent'
+          onPointerDown={() => setMenuOpen(false)}
+        />
+      )}
+
+      <div
+        ref={menuShellRef}
+        className={`fixed p-3 ${menuOpen ? 'z-50' : 'z-40'} ${menuPosition ? '' : 'right-1 top-1 sm:right-3 sm:top-3'}`}
+        style={menuShellStyle}
+        onMouseEnter={openMenuFromHover}
+        onMouseLeave={closeMenuFromHover}
+      >
+        <button
+          ref={menuButtonRef}
+          type='button'
+          aria-controls='homepage-menu'
+          aria-expanded={menuOpen}
+          aria-haspopup='true'
+          aria-label={menuOpen ? '收起页面菜单' : '展开页面菜单'}
+          onClick={handleMenuButtonClick}
+          onFocus={() => {
+            if (hoverEnabled) {
+              setMenuOpen(true);
+            }
+          }}
+          onPointerDown={handleMenuPointerDown}
+          onPointerMove={handleMenuPointerMove}
+          onPointerUp={finishMenuDrag}
+          onPointerCancel={finishMenuDrag}
+          className={`flex touch-none select-none items-center gap-2 rounded-pill border border-floating-border bg-floating-surface px-4 py-2 text-sm font-semibold text-text-primary shadow-floating backdrop-blur-floating transition hover:translate-y-lift hover:border-primary hover:bg-floating-surface-strong active:scale-press ${
+            isDragging ? 'cursor-grabbing' : 'cursor-grab'
+          }`}
+        >
+          <span className='h-2 w-2 rounded-full bg-primary shadow-primary-glow' />
+          菜单
+        </button>
+
+        {menuOpen && (
+          <nav
             id='homepage-menu'
-            role='dialog'
-            aria-modal='true'
-            className='ml-auto mt-14 w-full max-w-sm rounded-3xl border border-border-light bg-bg-primary/95 p-4 shadow-2xl shadow-slate-950/20 backdrop-blur-xl sm:mr-2 sm:mt-2'
-            onClick={event => event.stopPropagation()}
+            aria-label='页面导航菜单'
+            className={`absolute w-[min(24rem,calc(100vw-2rem))] rounded-3xl border border-floating-border bg-floating-surface-strong p-4 shadow-floating-strong backdrop-blur-floating ${
+              menuPlacement.horizontal === 'right' ? 'right-3' : 'left-3'
+            } ${menuPlacement.vertical === 'bottom' ? 'top-full mt-1' : 'bottom-full mb-1'}`}
           >
             <div className='flex items-center justify-between gap-4'>
               <BrandLogo size='medium' />
@@ -88,6 +403,7 @@ export function HomePageWithNav() {
                 <button
                   key={item.section}
                   type='button'
+                  aria-current={activeSection === item.section ? 'page' : undefined}
                   onClick={() => selectSection(item.section)}
                   className={`rounded-2xl px-4 py-3 text-left font-semibold transition ${
                     activeSection === item.section
@@ -109,9 +425,9 @@ export function HomePageWithNav() {
                 </a>
               ))}
             </div>
-          </div>
-        </div>
-      )}
+          </nav>
+        )}
+      </div>
 
       <main className='min-h-screen'>
         {activeSection === 'home' ? (

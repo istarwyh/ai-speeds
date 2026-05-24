@@ -62,6 +62,25 @@ API keys are passed per-request via `x-api-key` header, not stored server-side.
 - `src/config/providers.ts` stores provider card data used by the get-started
   guide.
 
+### Design Style
+
+The current UI direction is warm tech with light glass surfaces, large rounded
+geometry, slate typography, and warm coral highlights. Floating controls and
+compact utility CTAs such as prompt buttons should reuse the homepage menu style
+via semantic Tailwind tokens instead of hard-coded slate buttons:
+
+```txt
+rounded-pill border border-floating-border bg-floating-surface text-text-primary
+shadow-floating backdrop-blur-floating transition
+hover:translate-y-lift hover:border-primary hover:bg-floating-surface-strong
+active:scale-press
+```
+
+Use `shadow-primary-glow` for small primary dots and
+`bg-floating-surface-strong` with `shadow-floating-strong` for floating
+menus/popovers. Token sources are `src/app/globals.css`, `tailwind.config.ts`,
+and `src/styles/designTokens.ts`.
+
 ### Route Map
 
 | Route                   | Handler                                             |

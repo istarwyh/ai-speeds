@@ -137,6 +137,24 @@ export const colorTokenGroups = {
       usage: '推荐内容、轻量警示、暖色卡片',
     },
   ],
+  floating: [
+    {
+      name: '浮动玻璃面',
+      cls: 'bg-floating-surface',
+      hex: 'rgba(255,255,255,0.85)',
+      cssVar: '--color-surface-floating',
+      border: true,
+      usage: '悬浮按钮、工具条控制、轻玻璃控件',
+    },
+    {
+      name: '浮动玻璃强面',
+      cls: 'bg-floating-surface-strong',
+      hex: 'rgba(255,255,255,0.95)',
+      cssVar: '--color-surface-floating-strong',
+      border: true,
+      usage: '悬浮菜单、弹层、hover 面',
+    },
+  ],
   text: [
     {
       name: '主文本',
@@ -189,6 +207,13 @@ export const colorTokenGroups = {
       cssVar: '--color-border-dark',
       usage: '强分割、强调边框',
     },
+    {
+      name: '浮动玻璃边框',
+      cls: 'border-floating-border',
+      hex: 'rgba(226,232,240,0.8)',
+      cssVar: '--color-border-floating',
+      usage: '悬浮按钮、工具条控制、轻玻璃控件边框',
+    },
   ],
   practices: [
     {
@@ -225,4 +250,47 @@ export const radiusTokens = [
   { name: '大圆角', cls: 'rounded-xl', usage: '导航项、浮层按钮' },
   { name: '超大圆角', cls: 'rounded-2xl', usage: '卡片、菜单、操作区' },
   { name: '胶囊圆角', cls: 'rounded-3xl', usage: '品牌卡片、强调容器' },
+  { name: '悬浮胶囊', cls: 'rounded-pill', usage: '悬浮按钮、可拖拽入口、浮动控制' },
+] as const;
+
+export const effectTokens = [
+  {
+    name: '浮动轻阴影',
+    cls: 'shadow-floating',
+    cssVar: '--shadow-floating',
+    usage: '悬浮按钮、轻量浮动控制',
+  },
+  {
+    name: '浮动强阴影',
+    cls: 'shadow-floating-strong',
+    cssVar: '--shadow-floating-strong',
+    usage: '悬浮菜单、弹层容器',
+  },
+  {
+    name: '主品牌光晕',
+    cls: 'shadow-primary-glow',
+    cssVar: '--shadow-primary-glow',
+    usage: '品牌状态点、重点提示',
+  },
+  {
+    name: '浮动玻璃模糊',
+    cls: 'backdrop-blur-floating',
+    cssVar: '--blur-floating',
+    usage: '轻玻璃控件背景模糊',
+  },
+] as const;
+
+export const motionTokens = [
+  {
+    name: '悬浮上移',
+    cls: 'hover:translate-y-lift',
+    cssVar: '--motion-hover-lift',
+    usage: '悬浮控件 hover 轻微上浮',
+  },
+  {
+    name: '按压缩放',
+    cls: 'active:scale-press',
+    cssVar: '--motion-press-scale',
+    usage: '按钮 active 按压反馈',
+  },
 ] as const;
