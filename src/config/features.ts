@@ -68,7 +68,7 @@ export const featurePages: readonly FeaturePage[] = [
   },
   {
     id: 'brand',
-    title: 'Brand Kit',
+    title: UI_TEXTS.NAVIGATION.BRAND,
     href: '/brand',
     kind: 'route',
     isPublic: true,

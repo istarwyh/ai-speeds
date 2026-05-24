@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { type CSSProperties, type PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from 'react';
 import { BrandLogo } from '@/components/brand';
 import { AiWireframeSection } from '@/components/features/ai-wireframe/AiWireframeSection';
@@ -11,6 +12,7 @@ import {
   isHomeSectionId,
   type HomeSectionId,
 } from '@/config/features';
+import { UI_TEXTS } from '@/config/ui-texts';
 
 type MenuPosition = {
   x: number;
@@ -239,7 +241,7 @@ export function HomePageWithNav() {
       return;
     }
 
-    setMenuOpen(current => (hoverEnabled ? true : !current));
+    setMenuOpen(current => !current);
   };
 
   const handleMenuPointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
@@ -345,7 +347,7 @@ export function HomePageWithNav() {
           aria-controls='homepage-menu'
           aria-expanded={menuOpen}
           aria-haspopup='true'
-          aria-label={menuOpen ? '收起页面菜单' : '展开页面菜单'}
+          aria-label={menuOpen ? UI_TEXTS.MENU.COLLAPSE : UI_TEXTS.MENU.EXPAND}
           onClick={handleMenuButtonClick}
           onFocus={() => {
             if (hoverEnabled) {
@@ -361,13 +363,13 @@ export function HomePageWithNav() {
           }`}
         >
           <span className='h-2 w-2 rounded-full bg-primary shadow-primary-glow' />
-          菜单
+          {UI_TEXTS.MENU.LABEL}
         </button>
 
         {menuOpen && (
           <nav
             id='homepage-menu'
-            aria-label='页面导航菜单'
+            aria-label={UI_TEXTS.MENU.NAVIGATION_ARIA}
             className={`absolute w-[min(24rem,calc(100vw-2rem))] rounded-3xl border border-floating-border bg-floating-surface-strong p-4 shadow-floating-strong backdrop-blur-floating ${
               menuPlacement.horizontal === 'right' ? 'right-3' : 'left-3'
             } ${menuPlacement.vertical === 'bottom' ? 'top-full mt-1' : 'bottom-full mb-1'}`}
@@ -379,7 +381,7 @@ export function HomePageWithNav() {
                 onClick={() => setMenuOpen(false)}
                 className='rounded-full border border-border-light px-3 py-2 text-sm font-semibold text-text-secondary transition hover:border-primary hover:text-text-primary'
               >
-                关闭
+                {UI_TEXTS.BUTTONS.CLOSE}
               </button>
             </div>
             <div className='mt-6 grid gap-2'>
@@ -399,14 +401,14 @@ export function HomePageWithNav() {
                 </button>
               ))}
               {homeUtilityFeatures.map(item => (
-                <a
+                <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
                   className='rounded-2xl bg-bg-secondary px-4 py-3 font-semibold text-text-primary transition hover:bg-bg-tertiary'
                 >
                   {item.title}
-                </a>
+                </Link>
               ))}
             </div>
           </nav>
