@@ -1,5 +1,11 @@
-import { HomePageWithNav } from '@/components/HomePageWithNav';
+'use client';
+
+import { useEffect } from 'react';
 
 export default function HomePage() {
-  return <HomePageWithNav />;
+  useEffect(() => {
+    window.location.replace(window.location.hash ? `/${window.location.hash}` : '/');
+  }, []);
+
+  return null;
 }

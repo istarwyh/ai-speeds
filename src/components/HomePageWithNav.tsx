@@ -4,19 +4,13 @@ import { type CSSProperties, type PointerEvent as ReactPointerEvent, useEffect, 
 import { BrandLogo } from '@/components/brand';
 import { AiWireframeSection } from '@/components/features/ai-wireframe/AiWireframeSection';
 import { GetStartedSection } from '@/components/features/get-started/GetStartedSection';
-import { DEFAULT_SECTION_ID, SECTION_IDS, type SectionId } from '@/config/navigation';
-import { UI_TEXTS } from '@/config/ui-texts';
-
-const navItems: Array<{ label: string; section: SectionId }> = [
-  { label: UI_TEXTS.NAVIGATION.HOME, section: 'home' },
-  { label: UI_TEXTS.NAVIGATION.GET_STARTED, section: 'get-started' },
-  { label: UI_TEXTS.NAVIGATION.AI_WIREFRAME, section: 'ai-wireframe' },
-];
-
-const utilityLinks = [
-  { label: UI_TEXTS.NAVIGATION.WHITEBOARD, href: '/whiteboard' },
-  { label: UI_TEXTS.NAVIGATION.PLAYGROUND, href: '/playground' },
-];
+import {
+  DEFAULT_HOME_SECTION_ID,
+  homeSectionFeatures,
+  homeUtilityFeatures,
+  isHomeSectionId,
+  type HomeSectionId,
+} from '@/config/features';
 
 type MenuPosition = {
   x: number;
@@ -44,13 +38,9 @@ const MENU_EDGE_PADDING = 16;
 const MENU_HOVER_PADDING = 12;
 const MENU_DRAG_THRESHOLD = 4;
 
-function isSectionId(value: string): value is SectionId {
-  return SECTION_IDS.some(section => section === value);
-}
-
-function readHashSection(): SectionId {
+function readHashSection(): HomeSectionId {
   const hashSection = window.location.hash.slice(1);
-  return isSectionId(hashSection) ? hashSection : DEFAULT_SECTION_ID;
+  return isHomeSectionId(hashSection) ? hashSection : DEFAULT_HOME_SECTION_ID;
 }
 
 function clampNumber(value: number, min: number, max: number) {
@@ -130,7 +120,7 @@ function storeMenuPosition(position: MenuPosition) {
 }
 
 export function HomePageWithNav() {
-  const [activeSection, setActiveSection] = useState<SectionId>(DEFAULT_SECTION_ID);
+  const [activeSection, setActiveSection] = useState<HomeSectionId>(DEFAULT_HOME_SECTION_ID);
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
   const [hoverEnabled, setHoverEnabled] = useState(false);
@@ -326,16 +316,10 @@ export function HomePageWithNav() {
     storeMenuPosition(nextPosition);
   };
 
-  const selectSection = (section: SectionId) => {
+  const selectSection = (section: HomeSectionId, href: string) => {
     setActiveSection(section);
     setMenuOpen(false);
-
-    if (section === DEFAULT_SECTION_ID) {
-      window.history.pushState(null, '', '/');
-      return;
-    }
-
-    window.history.pushState(null, '', `/home#${section}`);
+    window.history.pushState(null, '', href);
   };
 
   return (
@@ -399,29 +383,29 @@ export function HomePageWithNav() {
               </button>
             </div>
             <div className='mt-6 grid gap-2'>
-              {navItems.map(item => (
+              {homeSectionFeatures.map(item => (
                 <button
-                  key={item.section}
+                  key={item.id}
                   type='button'
-                  aria-current={activeSection === item.section ? 'page' : undefined}
-                  onClick={() => selectSection(item.section)}
+                  aria-current={activeSection === item.id ? 'page' : undefined}
+                  onClick={() => selectSection(item.id, item.href)}
                   className={`rounded-2xl px-4 py-3 text-left font-semibold transition ${
-                    activeSection === item.section
+                    activeSection === item.id
                       ? 'bg-primary text-primary-foreground shadow-sm'
                       : 'bg-bg-secondary text-text-primary hover:bg-bg-tertiary'
                   }`}
                 >
-                  {item.label}
+                  {item.title}
                 </button>
               ))}
-              {utilityLinks.map(item => (
+              {homeUtilityFeatures.map(item => (
                 <a
                   key={item.href}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
                   className='rounded-2xl bg-bg-secondary px-4 py-3 font-semibold text-text-primary transition hover:bg-bg-tertiary'
                 >
-                  {item.label}
+                  {item.title}
                 </a>
               ))}
             </div>
