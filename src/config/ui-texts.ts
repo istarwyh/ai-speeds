@@ -9,6 +9,7 @@ export const UI_TEXTS = {
     AI_WIREFRAME: '快速设计 UI 结构',
     WHITEBOARD: '白板',
     PLAYGROUND: '接口测试',
+    BRAND: 'Brand Kit',
   },
 
   // 模块标题和描述
@@ -32,6 +33,14 @@ export const UI_TEXTS = {
   BUTTONS: {
     BACK_TO_OVERVIEW: '返回概览',
     COPY_COMMAND: '复制',
+    CLOSE: '关闭',
+  },
+
+  MENU: {
+    LABEL: '菜单',
+    COLLAPSE: '收起页面菜单',
+    EXPAND: '展开页面菜单',
+    NAVIGATION_ARIA: '页面导航菜单',
   },
 
   // 面包屑导航

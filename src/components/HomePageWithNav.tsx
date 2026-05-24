@@ -1,22 +1,18 @@
 'use client';
 
+import Link from 'next/link';
 import { type CSSProperties, type PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from 'react';
 import { BrandLogo } from '@/components/brand';
 import { AiWireframeSection } from '@/components/features/ai-wireframe/AiWireframeSection';
 import { GetStartedSection } from '@/components/features/get-started/GetStartedSection';
-import { DEFAULT_SECTION_ID, SECTION_IDS, type SectionId } from '@/config/navigation';
+import {
+  DEFAULT_HOME_SECTION_ID,
+  homeSectionFeatures,
+  homeUtilityFeatures,
+  isHomeSectionId,
+  type HomeSectionId,
+} from '@/config/features';
 import { UI_TEXTS } from '@/config/ui-texts';
-
-const navItems: Array<{ label: string; section: SectionId }> = [
-  { label: UI_TEXTS.NAVIGATION.HOME, section: 'home' },
-  { label: UI_TEXTS.NAVIGATION.GET_STARTED, section: 'get-started' },
-  { label: UI_TEXTS.NAVIGATION.AI_WIREFRAME, section: 'ai-wireframe' },
-];
-
-const utilityLinks = [
-  { label: UI_TEXTS.NAVIGATION.WHITEBOARD, href: '/whiteboard' },
-  { label: UI_TEXTS.NAVIGATION.PLAYGROUND, href: '/playground' },
-];
 
 type MenuPosition = {
   x: number;
@@ -44,13 +40,9 @@ const MENU_EDGE_PADDING = 16;
 const MENU_HOVER_PADDING = 12;
 const MENU_DRAG_THRESHOLD = 4;
 
-function isSectionId(value: string): value is SectionId {
-  return SECTION_IDS.some(section => section === value);
-}
-
-function readHashSection(): SectionId {
+function readHashSection(): HomeSectionId {
   const hashSection = window.location.hash.slice(1);
-  return isSectionId(hashSection) ? hashSection : DEFAULT_SECTION_ID;
+  return isHomeSectionId(hashSection) ? hashSection : DEFAULT_HOME_SECTION_ID;
 }
 
 function clampNumber(value: number, min: number, max: number) {
@@ -130,7 +122,7 @@ function storeMenuPosition(position: MenuPosition) {
 }
 
 export function HomePageWithNav() {
-  const [activeSection, setActiveSection] = useState<SectionId>(DEFAULT_SECTION_ID);
+  const [activeSection, setActiveSection] = useState<HomeSectionId>(DEFAULT_HOME_SECTION_ID);
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
   const [hoverEnabled, setHoverEnabled] = useState(false);
@@ -249,7 +241,7 @@ export function HomePageWithNav() {
       return;
     }
 
-    setMenuOpen(current => (hoverEnabled ? true : !current));
+    setMenuOpen(current => !current);
   };
 
   const handleMenuPointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
@@ -326,16 +318,10 @@ export function HomePageWithNav() {
     storeMenuPosition(nextPosition);
   };
 
-  const selectSection = (section: SectionId) => {
+  const selectSection = (section: HomeSectionId, href: string) => {
     setActiveSection(section);
     setMenuOpen(false);
-
-    if (section === DEFAULT_SECTION_ID) {
-      window.history.pushState(null, '', '/');
-      return;
-    }
-
-    window.history.pushState(null, '', `/home#${section}`);
+    window.history.pushState(null, '', href);
   };
 
   return (
@@ -361,7 +347,7 @@ export function HomePageWithNav() {
           aria-controls='homepage-menu'
           aria-expanded={menuOpen}
           aria-haspopup='true'
-          aria-label={menuOpen ? '收起页面菜单' : '展开页面菜单'}
+          aria-label={menuOpen ? UI_TEXTS.MENU.COLLAPSE : UI_TEXTS.MENU.EXPAND}
           onClick={handleMenuButtonClick}
           onFocus={() => {
             if (hoverEnabled) {
@@ -377,13 +363,13 @@ export function HomePageWithNav() {
           }`}
         >
           <span className='h-2 w-2 rounded-full bg-primary shadow-primary-glow' />
-          菜单
+          {UI_TEXTS.MENU.LABEL}
         </button>
 
         {menuOpen && (
           <nav
             id='homepage-menu'
-            aria-label='页面导航菜单'
+            aria-label={UI_TEXTS.MENU.NAVIGATION_ARIA}
             className={`absolute w-[min(24rem,calc(100vw-2rem))] rounded-3xl border border-floating-border bg-floating-surface-strong p-4 shadow-floating-strong backdrop-blur-floating ${
               menuPlacement.horizontal === 'right' ? 'right-3' : 'left-3'
             } ${menuPlacement.vertical === 'bottom' ? 'top-full mt-1' : 'bottom-full mb-1'}`}
@@ -395,34 +381,34 @@ export function HomePageWithNav() {
                 onClick={() => setMenuOpen(false)}
                 className='rounded-full border border-border-light px-3 py-2 text-sm font-semibold text-text-secondary transition hover:border-primary hover:text-text-primary'
               >
-                关闭
+                {UI_TEXTS.BUTTONS.CLOSE}
               </button>
             </div>
             <div className='mt-6 grid gap-2'>
-              {navItems.map(item => (
+              {homeSectionFeatures.map(item => (
                 <button
-                  key={item.section}
+                  key={item.id}
                   type='button'
-                  aria-current={activeSection === item.section ? 'page' : undefined}
-                  onClick={() => selectSection(item.section)}
+                  aria-current={activeSection === item.id ? 'page' : undefined}
+                  onClick={() => selectSection(item.id, item.href)}
                   className={`rounded-2xl px-4 py-3 text-left font-semibold transition ${
-                    activeSection === item.section
+                    activeSection === item.id
                       ? 'bg-primary text-primary-foreground shadow-sm'
                       : 'bg-bg-secondary text-text-primary hover:bg-bg-tertiary'
                   }`}
                 >
-                  {item.label}
+                  {item.title}
                 </button>
               ))}
-              {utilityLinks.map(item => (
-                <a
+              {homeUtilityFeatures.map(item => (
+                <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
                   className='rounded-2xl bg-bg-secondary px-4 py-3 font-semibold text-text-primary transition hover:bg-bg-tertiary'
                 >
-                  {item.label}
-                </a>
+                  {item.title}
+                </Link>
               ))}
             </div>
           </nav>
