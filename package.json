@@ -1,6 +1,7 @@
 {
   "name": "aispeeds",
   "version": "1.0.0",
+  "packageManager": "pnpm@10.18.1",
   "type": "module",
   "scripts": {
     "prepare:homepage": "node scripts/prepare-cc4pm-homepage.mjs",
