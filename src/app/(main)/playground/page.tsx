@@ -6,6 +6,7 @@ import { BrandIcon } from '@/components/brand';
 import { UI_TEXTS } from '@/config/ui-texts';
 
 type ApiType = 'openai' | 'anthropic' | 'openai-responses';
+type PlaygroundMode = 'agnes' | 'custom';
 
 interface TestResult {
   status: number;
@@ -20,6 +21,13 @@ interface RawSseLine {
 }
 
 const DEFAULT_URL = 'https://aispeeds.me';
+const AGNES_URL = 'https://apihub.agnes-ai.com/v1';
+const AGNES_MODEL = 'agnes-2.0-flash';
+
+const CHAT_COMPLETIONS_PRESETS: { value: PlaygroundMode; label: string }[] = [
+  { value: 'agnes', label: 'Agnes 免费测试' },
+  { value: 'custom', label: '自定义 Chat Completions' },
+];
 
 const API_TYPE_OPTIONS: { value: ApiType; label: string }[] = [
   { value: 'openai', label: 'Chat Completions' },
@@ -28,6 +36,7 @@ const API_TYPE_OPTIONS: { value: ApiType; label: string }[] = [
 ];
 
 export default function PlaygroundPage() {
+  const [mode, setMode] = useState<PlaygroundMode>('agnes');
   const [apiType, setApiType] = useState<ApiType>('openai');
   const [url, setUrl] = useState(DEFAULT_URL);
   const [model, setModel] = useState('');
@@ -48,8 +57,40 @@ export default function PlaygroundPage() {
   const [error, setError] = useState('');
   const abortRef = useRef<AbortController | null>(null);
 
+  const isChatCompletions = apiType === 'openai';
+  const isAgnesMode = isChatCompletions && mode === 'agnes';
+  const requestMode: PlaygroundMode = isAgnesMode ? 'agnes' : 'custom';
+  const effectiveUrl = isAgnesMode ? AGNES_URL : url;
+  const effectiveModel = isAgnesMode ? AGNES_MODEL : model;
+
+  const resetOutput = () => {
+    setError('');
+    setResult(null);
+    setStreamText('');
+    setRawLines([]);
+    setViewMode('rendered');
+    setStreamDone(false);
+    setStreamLatency(null);
+    setModels([]);
+    setModelsHint('');
+  };
+
+  const handleApiTypeChange = (nextApiType: ApiType) => {
+    abortRef.current?.abort();
+    setLoading(false);
+    setApiType(nextApiType);
+    resetOutput();
+  };
+
+  const handleModeChange = (nextMode: PlaygroundMode) => {
+    abortRef.current?.abort();
+    setLoading(false);
+    setMode(nextMode);
+    resetOutput();
+  };
+
   const handleSend = async () => {
-    if (!url || !model || !key) {
+    if (!effectiveUrl || !effectiveModel || (!isAgnesMode && !key)) {
       return;
     }
 
@@ -58,13 +99,7 @@ export default function PlaygroundPage() {
     abortRef.current = controller;
 
     setLoading(true);
-    setError('');
-    setResult(null);
-    setStreamText('');
-    setRawLines([]);
-    setViewMode('rendered');
-    setStreamDone(false);
-    setStreamLatency(null);
+    resetOutput();
 
     const start = Date.now();
 
@@ -72,7 +107,11 @@ export default function PlaygroundPage() {
       const res = await fetch('/api/playground', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, model, key, apiType, message: message || undefined, timeout }),
+        body: JSON.stringify(
+          isAgnesMode
+            ? { mode: requestMode, message: message || undefined, timeout }
+            : { mode: requestMode, url, model, key, apiType, message: message || undefined, timeout },
+        ),
         signal: controller.signal,
       });
 
@@ -203,7 +242,7 @@ export default function PlaygroundPage() {
   };
 
   const handleFetchModels = async () => {
-    if (!url.trim() || !key.trim()) {
+    if (!isAgnesMode && (!url.trim() || !key.trim())) {
       return;
     }
 
@@ -215,7 +254,7 @@ export default function PlaygroundPage() {
       const res = await fetch('/api/playground/models', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, key, apiType }),
+        body: JSON.stringify(isAgnesMode ? { mode: requestMode } : { mode: requestMode, url, key, apiType }),
       });
       const data = await res.json();
       if (data.models?.length) {
@@ -231,7 +270,7 @@ export default function PlaygroundPage() {
     }
   };
 
-  const canSend = url.trim() && model.trim() && key.trim() && !loading;
+  const canSend = Boolean(effectiveUrl.trim() && effectiveModel.trim() && (isAgnesMode || key.trim()) && !loading);
 
   const formatRawLine = (line: RawSseLine) => {
     if (line.event) {
@@ -253,12 +292,11 @@ export default function PlaygroundPage() {
 
       <div className='mx-auto max-w-2xl px-4 py-8'>
         <div className='space-y-6'>
-          {/* API Type Toggle */}
           <div className='flex gap-2'>
             {API_TYPE_OPTIONS.map(({ value, label }) => (
               <button
                 key={value}
-                onClick={() => setApiType(value)}
+                onClick={() => handleApiTypeChange(value)}
                 className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                   apiType === value
                     ? 'bg-teal-500 text-teal-500-foreground shadow-sm'
@@ -270,16 +308,37 @@ export default function PlaygroundPage() {
             ))}
           </div>
 
+          {isChatCompletions && (
+            <div className='rounded-xl border border-border-light bg-bg-primary p-2 shadow-sm'>
+              <div className='flex flex-wrap gap-2'>
+                {CHAT_COMPLETIONS_PRESETS.map(({ value, label }) => (
+                  <button
+                    key={value}
+                    onClick={() => handleModeChange(value)}
+                    className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                      mode === value
+                        ? 'bg-teal-500/10 text-teal-600 ring-1 ring-teal-500/30'
+                        : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Form */}
           <div className='rounded-xl border border-border-light bg-bg-primary p-6 shadow-sm space-y-4'>
             <div>
               <label className='mb-1.5 block text-sm font-medium text-text-primary'>URL</label>
               <input
                 type='text'
-                value={url}
+                value={effectiveUrl}
                 onChange={e => setUrl(e.target.value)}
-                placeholder={DEFAULT_URL}
-                className='w-full rounded-lg border border-border-medium px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none'
+                placeholder={isAgnesMode ? AGNES_URL : DEFAULT_URL}
+                disabled={isAgnesMode}
+                className='w-full rounded-lg border border-border-medium px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none disabled:cursor-not-allowed disabled:bg-bg-secondary'
               />
             </div>
 
@@ -289,7 +348,7 @@ export default function PlaygroundPage() {
                 <button
                   type='button'
                   onClick={handleFetchModels}
-                  disabled={!url.trim() || !key.trim() || modelsLoading}
+                  disabled={(!isAgnesMode && (!url.trim() || !key.trim())) || modelsLoading}
                   className='text-xs text-teal-600 hover:text-teal-500 disabled:cursor-not-allowed disabled:text-text-muted transition-colors'
                 >
                   {modelsLoading ? 'Fetching...' : 'Fetch Models'}
@@ -297,10 +356,13 @@ export default function PlaygroundPage() {
               </div>
               <input
                 type='text'
-                value={model}
+                value={effectiveModel}
                 onChange={e => setModel(e.target.value)}
-                placeholder={apiType === 'anthropic' ? 'claude-sonnet-4-20250514' : 'gpt-4o'}
-                className='w-full rounded-lg border border-border-medium px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none'
+                placeholder={
+                  isAgnesMode ? AGNES_MODEL : apiType === 'anthropic' ? 'claude-sonnet-4-20250514' : 'gpt-4o'
+                }
+                disabled={isAgnesMode}
+                className='w-full rounded-lg border border-border-medium px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none disabled:cursor-not-allowed disabled:bg-bg-secondary'
               />
               {modelsHint && <p className='mt-1.5 text-xs text-text-muted'>{modelsHint}</p>}
               {models.length > 0 && (
@@ -309,9 +371,14 @@ export default function PlaygroundPage() {
                     <button
                       key={m}
                       type='button'
-                      onClick={() => setModel(m)}
-                      className={`rounded-md px-2 py-0.5 text-xs transition-colors ${
-                        model === m
+                      onClick={() => {
+                        if (!isAgnesMode) {
+                          setModel(m);
+                        }
+                      }}
+                      disabled={isAgnesMode}
+                      className={`rounded-md px-2 py-0.5 text-xs transition-colors disabled:cursor-not-allowed ${
+                        effectiveModel === m
                           ? 'bg-teal-500 text-teal-500-foreground'
                           : 'bg-bg-tertiary text-text-secondary hover:bg-teal-500/10 hover:text-teal-600'
                       }`}
@@ -323,57 +390,59 @@ export default function PlaygroundPage() {
               )}
             </div>
 
-            <div>
-              <label className='mb-1.5 block text-sm font-medium text-text-primary'>API Key</label>
-              <div className='relative'>
-                <input
-                  type={showKey ? 'text' : 'password'}
-                  value={key}
-                  onChange={e => setKey(e.target.value)}
-                  placeholder='sk-...'
-                  className='w-full rounded-lg border border-border-medium px-3 py-2 pr-10 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none'
-                />
-                <button
-                  type='button'
-                  onClick={() => setShowKey(!showKey)}
-                  className='absolute right-2 top-1/2 -translate-y-1/2 p-1 text-text-muted hover:text-text-primary transition-colors'
-                  aria-label={showKey ? 'Hide API Key' : 'Show API Key'}
-                >
-                  {showKey ? (
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      strokeWidth={1.5}
-                      stroke='currentColor'
-                      className='h-4 w-4'
-                    >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        d='M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88'
-                      />
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      strokeWidth={1.5}
-                      stroke='currentColor'
-                      className='h-4 w-4'
-                    >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        d='M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z'
-                      />
-                      <path strokeLinecap='round' strokeLinejoin='round' d='M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z' />
-                    </svg>
-                  )}
-                </button>
+            {!isAgnesMode && (
+              <div>
+                <label className='mb-1.5 block text-sm font-medium text-text-primary'>API Key</label>
+                <div className='relative'>
+                  <input
+                    type={showKey ? 'text' : 'password'}
+                    value={key}
+                    onChange={e => setKey(e.target.value)}
+                    placeholder='sk-...'
+                    className='w-full rounded-lg border border-border-medium px-3 py-2 pr-10 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none'
+                  />
+                  <button
+                    type='button'
+                    onClick={() => setShowKey(!showKey)}
+                    className='absolute right-2 top-1/2 -translate-y-1/2 p-1 text-text-muted hover:text-text-primary transition-colors'
+                    aria-label={showKey ? 'Hide API Key' : 'Show API Key'}
+                  >
+                    {showKey ? (
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        strokeWidth={1.5}
+                        stroke='currentColor'
+                        className='h-4 w-4'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          d='M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88'
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        strokeWidth={1.5}
+                        stroke='currentColor'
+                        className='h-4 w-4'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          d='M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z'
+                        />
+                        <path strokeLinecap='round' strokeLinejoin='round' d='M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z' />
+                      </svg>
+                    )}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             <div>
               <label className='mb-1.5 block text-sm font-medium text-text-primary'>

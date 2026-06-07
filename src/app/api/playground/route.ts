@@ -4,12 +4,17 @@ import { validateProxyUrl } from '@/lib/url-validation';
 export const runtime = 'nodejs';
 
 type ApiType = 'openai' | 'anthropic' | 'openai-responses';
+type PlaygroundMode = 'agnes' | 'custom';
+
+const AGNES_BASE_URL = 'https://apihub.agnes-ai.com/v1';
+const AGNES_MODEL = 'agnes-2.0-flash';
 
 interface PlaygroundRequest {
-  url: string;
-  model: string;
-  key: string;
-  apiType: ApiType;
+  mode?: PlaygroundMode;
+  url?: string;
+  model?: string;
+  key?: string;
+  apiType?: ApiType;
   message?: string;
   timeout?: number;
   stream?: boolean;
@@ -18,21 +23,42 @@ interface PlaygroundRequest {
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as PlaygroundRequest;
-    const { url, model, key, apiType, message, timeout, stream } = body;
+    const { message, timeout, stream } = body;
+    const mode = body.mode ?? 'custom';
 
-    if (!url || !model || !key) {
-      return NextResponse.json({ error: 'url, model, and key are required' }, { status: 400 });
-    }
+    let model: string;
+    let key: string;
+    let apiType: ApiType;
+    let baseUrl: string;
 
-    const validation = validateProxyUrl(url);
-    if (!validation.ok) {
-      return NextResponse.json({ error: validation.error }, { status: 400 });
+    if (mode === 'agnes') {
+      key = process.env['AGNES_API_KEY'] ?? '';
+      if (!key) {
+        return NextResponse.json({ error: 'AGNES_API_KEY is not configured on the server' }, { status: 503 });
+      }
+
+      model = AGNES_MODEL;
+      apiType = 'openai';
+      baseUrl = AGNES_BASE_URL;
+    } else {
+      if (!body.url || !body.model || !body.key) {
+        return NextResponse.json({ error: 'url, model, and key are required' }, { status: 400 });
+      }
+
+      const validation = validateProxyUrl(body.url);
+      if (!validation.ok) {
+        return NextResponse.json({ error: validation.error }, { status: 400 });
+      }
+
+      model = body.model;
+      key = body.key;
+      apiType = body.apiType ?? 'openai';
+      baseUrl = validation.url.href.replace(/\/$/, '');
     }
 
     const testMessage = message || 'Say hello in one sentence.';
     const timeoutMs = Math.min(Math.max((timeout ?? 60) * 1000, 10_000), 120_000);
     const useStream = stream !== false;
-    const baseUrl = validation.url.href.replace(/\/$/, '');
 
     let targetUrl: string;
     let headers: Record<string, string>;

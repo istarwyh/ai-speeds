@@ -3,16 +3,25 @@ import { validateProxyUrl } from '@/lib/url-validation';
 
 export const runtime = 'nodejs';
 
+type PlaygroundMode = 'agnes' | 'custom';
+
+const AGNES_MODEL = 'agnes-2.0-flash';
+
 interface ModelsRequest {
-  url: string;
-  key: string;
-  apiType: 'openai' | 'anthropic' | 'openai-responses';
+  mode?: PlaygroundMode;
+  url?: string;
+  key?: string;
+  apiType?: 'openai' | 'anthropic' | 'openai-responses';
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as ModelsRequest;
     const { url, key, apiType } = body;
+
+    if ((body.mode ?? 'custom') === 'agnes') {
+      return NextResponse.json({ models: [AGNES_MODEL] });
+    }
 
     if (!url || !key) {
       return NextResponse.json({ error: 'url and key are required' }, { status: 400 });
