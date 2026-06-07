@@ -6004,12 +6004,6 @@ packages:
     engines: { node: ">=10" }
     hasBin: true
 
-  semver@7.8.2:
-    resolution:
-      { integrity: sha512-c8jsqUZm3omBOI66G90z1Dyw5z622G8oLG+omfsHBJf3CWQTlOcwOjvOG6wtiNfW6anKm/eA39LMwMtMez2TiQ== }
-    engines: { node: ">=10" }
-    hasBin: true
-
   send@1.2.1:
     resolution:
       { integrity: sha512-1gnZf7DFcoIcajTjTwjwuDjzuz4PPcY2StKPlsGAQ1+YH20IRVrBaXSWmdjowTJ6u8Rc01PoYOGHXfP1mYcZNQ== }
@@ -12280,8 +12274,6 @@ snapshots:
 
   semver@7.7.4: {}
 
-  semver@7.8.2: {}
-
   send@1.2.1:
     dependencies:
       debug: 4.4.3
@@ -12335,7 +12327,7 @@ snapshots:
     dependencies:
       color: 4.2.3
       detect-libc: 2.1.2
-      semver: 7.8.2
+      semver: 7.7.4
     optionalDependencies:
       "@img/sharp-darwin-arm64": 0.33.5
       "@img/sharp-darwin-x64": 0.33.5

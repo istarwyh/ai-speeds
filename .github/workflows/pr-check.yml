@@ -1,0 +1,66 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify build readiness
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify deploy workflow scripts exist
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+
+          const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+          const workflow = '.github/workflows/deploy.yml';
+          const content = readFileSync(workflow, 'utf8');
+          const builtins = new Set(['install', 'dlx', 'exec', 'add', 'remove', 'update', 'audit']);
+          const missing = [];
+
+          for (const match of content.matchAll(/\bpnpm[ \t]+(?:run[ \t]+)?([A-Za-z0-9:_-]+)/g)) {
+            const command = match[1];
+            if (!builtins.has(command) && !pkg.scripts?.[command]) {
+              missing.push(`${workflow}: pnpm ${command}`);
+            }
+          }
+
+          if (missing.length) {
+            console.error(`Missing package scripts:\n${missing.map((line) => `- ${line}`).join('\n')}`);
+            process.exit(1);
+          }
+          NODE
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Build client bundles
+        run: pnpm run build
+
+      - name: Build for Cloudflare Workers
+        run: pnpm run cf:build

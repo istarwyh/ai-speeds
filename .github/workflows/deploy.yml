@@ -19,7 +19,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10.18.1
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -31,13 +31,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build client bundles
-        run: pnpm build:client:direct
+        run: pnpm run build
 
       - name: Typecheck
-        run: pnpm typecheck
+        run: pnpm run typecheck
 
       - name: Build for Cloudflare Workers
-        run: pnpm cf:build
+        run: pnpm run cf:build
 
       - name: Deploy to Cloudflare Workers
         env:
