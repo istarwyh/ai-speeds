@@ -8,8 +8,8 @@ importers:
   .:
     dependencies:
       "@cc4pm/homepage":
-        specifier: ^1.0.12
-        version: 1.0.12
+        specifier: ^1.0.13
+        version: 1.0.13
       "@excalidraw/excalidraw":
         specifier: ^0.18.1
         version: 0.18.1(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(immer@11.1.4)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -551,9 +551,9 @@ packages:
       { integrity: sha512-ctxtJ/eA+t+6q2++vj5j7FYX3nRu311q1wfYH3xjlLOsczhlhxAg2FWNUXhpGvAw3BWo1xBcvOV6/YLc2r5FJw== }
     hasBin: true
 
-  "@cc4pm/homepage@1.0.12":
+  "@cc4pm/homepage@1.0.13":
     resolution:
-      { integrity: sha512-Lr1zYIY0z4u/CeV1IAJOtpfBt83IC7bh7DFVF5Qa9kADYv2embA4NbsHczYA8+H3fZyywQM8wPC/9xAyOAcNSg== }
+      { integrity: sha512-/dqQILczQLp+DEzPHeOglWgMfmsw1npbQZsw62toloywLjhlaW2DJS5Y5yBIptxvdesFBLnCT5q8ueRGBV1RsA== }
 
   "@chevrotain/cst-dts-gen@11.0.3":
     resolution:
@@ -7527,7 +7527,7 @@ snapshots:
     dependencies:
       css-tree: 3.2.1
 
-  "@cc4pm/homepage@1.0.12": {}
+  "@cc4pm/homepage@1.0.13": {}
 
   "@chevrotain/cst-dts-gen@11.0.3":
     dependencies:
