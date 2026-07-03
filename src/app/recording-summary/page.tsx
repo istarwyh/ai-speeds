@@ -85,6 +85,10 @@ type SpeechRecognitionWindow = {
 };
 
 function getSpeechRecognitionConstructor(): SpeechRecognitionConstructor | undefined {
+  if (typeof window === 'undefined') {
+    return undefined;
+  }
+
   const speechWindow = window as unknown as SpeechRecognitionWindow;
 
   return speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition;
@@ -140,7 +144,7 @@ export default function RecordingSummaryPage() {
     setInterimTranscript('');
   };
 
-  const startListening = async () => {
+  const startListening = () => {
     if (recognitionActiveRef.current) {
       return;
     }
@@ -159,16 +163,6 @@ export default function RecordingSummaryPage() {
     }
 
     try {
-      if (navigator.mediaDevices?.getUserMedia) {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        stream.getTracks().forEach(track => track.stop());
-      }
-
-      if (!mountedRef.current || !recognitionActiveRef.current || stopRequestedRef.current) {
-        recognitionActiveRef.current = false;
-        return;
-      }
-
       const recognition = new Recognition();
       recognition.continuous = true;
       recognition.interimResults = true;
