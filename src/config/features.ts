@@ -67,6 +67,16 @@ export const featurePages: readonly FeaturePage[] = [
     sitemapChangeFrequency: 'monthly',
   },
   {
+    id: 'recording-summary',
+    title: UI_TEXTS.NAVIGATION.RECORDING_SUMMARY,
+    href: '/recording-summary',
+    kind: 'route',
+    isPublic: true,
+    showInHomeMenu: true,
+    sitemapPriority: 0.7,
+    sitemapChangeFrequency: 'monthly',
+  },
+  {
     id: 'brand',
     title: UI_TEXTS.NAVIGATION.BRAND,
     href: '/brand',

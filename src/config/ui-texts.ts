@@ -9,6 +9,7 @@ export const UI_TEXTS = {
     AI_WIREFRAME: '快速设计 UI 结构',
     WHITEBOARD: '白板',
     PLAYGROUND: '接口测试',
+    RECORDING_SUMMARY: '录音总结',
     BRAND: 'Brand Kit',
   },
 
