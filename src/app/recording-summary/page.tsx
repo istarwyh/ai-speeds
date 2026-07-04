@@ -414,9 +414,30 @@ export default function RecordingSummaryPage() {
     }
   };
 
+  const discardActiveRecording = () => {
+    recordingActiveRef.current = false;
+    stopDraftTranscription();
+    clearRecordingTimer();
+
+    if (recorderRef.current) {
+      recorderRef.current.ondataavailable = null;
+      recorderRef.current.onerror = null;
+      recorderRef.current.onstop = null;
+
+      if (recorderRef.current.state !== 'inactive') {
+        recorderRef.current.stop();
+      }
+
+      recorderRef.current = null;
+    }
+
+    stopMediaStream();
+    setIsRecording(false);
+  };
+
   const clearContent = () => {
     if (isRecording) {
-      stopRecording();
+      discardActiveRecording();
     }
 
     revokeAudioUrl();
