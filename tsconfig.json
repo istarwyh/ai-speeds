@@ -47,7 +47,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@/client/*": ["./src/client/*"],
       "@/server/*": ["./src/server/*"],
       "@/services/*": ["./src/services/*"],
       "@/shared/*": ["./src/shared/*"]
@@ -64,7 +63,7 @@
     ]
   },
   "include": ["*.js", "*.ts", "scripts/**/*", "src/**/*", "types/**/*.d.ts", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "dist", ".wrangler", "**/*.min.js"],
+  "exclude": ["node_modules", "dist", ".wrangler"],
   "ts-node": {
     "esm": true,
     "compilerOptions": {

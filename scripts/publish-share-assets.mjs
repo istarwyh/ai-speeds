@@ -9,6 +9,7 @@ import { basename, dirname, join, relative, resolve, sep } from 'node:path';
 import process from 'node:process';
 import { promisify } from 'node:util';
 import { fileURLToPath, URL } from 'node:url';
+import { assertSupportedNodeVersion } from './node-runtime.mjs';
 import {
   GetObjectCommand,
   HeadObjectCommand,
@@ -27,7 +28,7 @@ const manifestContentDisposition = 'inline; filename="manifest.json"';
 const expectedPayloadCount = 84;
 const expectedObjectCount = 85;
 const sha256Pattern = /^[a-f0-9]{64}$/;
-const safePrefixPattern = /^[a-z0-9][a-z0-9._-]*(?:\/[a-z0-9][a-z0-9._-]*){2,}$/;
+const safePathSegmentPattern = /^[a-z0-9][a-z0-9._-]*$/;
 const safeKeyPattern = /^[a-z0-9][a-z0-9._/-]*$/;
 const publicBodyVerificationKeys = new Set([
   'manifest.json',
@@ -223,12 +224,8 @@ function parseHttpsUrl(value, label) {
 
 /** @param {string} prefix @param {string} slug @param {string} version */
 function validatePrefix(prefix, slug, version) {
-  if (
-    prefix.length > 512 ||
-    !safePrefixPattern.test(prefix) ||
-    prefix.includes('//') ||
-    prefix.split('/').some(segment => segment === '.' || segment === '..')
-  ) {
+  const segments = prefix.split('/');
+  if (prefix.length > 512 || segments.length < 3 || segments.some(segment => !safePathSegmentPattern.test(segment))) {
     throw new Error(`Unsafe R2 object prefix: ${prefix}`);
   }
   if (!prefix.endsWith(`/${slug}/${version}`) && prefix !== `${slug}/${version}`) {
@@ -808,6 +805,7 @@ async function publish(options) {
 }
 
 async function main() {
+  assertSupportedNodeVersion();
   const options = parseArguments(process.argv.slice(2));
   await publish(options);
 }

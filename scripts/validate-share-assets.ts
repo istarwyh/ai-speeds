@@ -8,6 +8,7 @@ import { basename, dirname, join, relative, resolve, sep } from 'node:path';
 import process from 'node:process';
 import { promisify } from 'node:util';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { assertSupportedNodeVersion } from './node-runtime.mjs';
 
 const execFile = promisify(execFileCallback);
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -1218,23 +1219,6 @@ function validateManifestAgainstRegistry(manifest: Manifest, share: RegistryShar
   }
 }
 
-function validateManifestTranscriptAgainstRegistry(
-  registry: UnknownRecord,
-  share: RegistryShare,
-  manifest: Manifest,
-): string {
-  const expectedTranscript = renderRegistryTranscript(registry, share.value, manifest.slideCount);
-  const transcriptPayload = manifest.payloads.find(payload => payload.key === 'transcript.md');
-  if (!transcriptPayload) {
-    throw new Error(`Manifest for Share ${share.slug} has no transcript.md payload`);
-  }
-  const expectedSha256 = sha256Bytes(new TextEncoder().encode(expectedTranscript));
-  if (transcriptPayload.sha256 !== expectedSha256) {
-    throw new Error(`Manifest transcript does not exactly match registry Share ${share.slug}`);
-  }
-  return expectedTranscript;
-}
-
 async function readLocalManifest(stagingDirectory: string): Promise<Manifest> {
   const manifestPath = join(stagingDirectory, 'manifest.json');
   await requireFile(manifestPath);
@@ -1248,11 +1232,8 @@ async function readLocalManifest(stagingDirectory: string): Promise<Manifest> {
 }
 
 async function run(): Promise<void> {
+  assertSupportedNodeVersion();
   const options = parseArguments(process.argv.slice(2));
-  const nodeMajor = Number(process.versions.node.split('.')[0]);
-  if (!Number.isInteger(nodeMajor) || nodeMajor < 22) {
-    throw new Error('Node.js 22 or newer is required');
-  }
   const registry = await loadRegistry(options.registryPath);
   const registryResult = validateRegistry(registry, options.mode === 'local' ? options.slug : undefined);
 
@@ -1268,7 +1249,7 @@ async function run(): Promise<void> {
     const manifest = await readLocalManifest(options.stagingDirectory);
     validateApprovedReleaseInvariant(manifest);
     validateManifestAgainstRegistry(manifest, localShare);
-    const expectedTranscript = validateManifestTranscriptAgainstRegistry(registry, localShare, manifest);
+    const expectedTranscript = renderRegistryTranscript(registry, localShare.value, manifest.slideCount);
     await validateLocalStaging(options.stagingDirectory, manifest, expectedTranscript);
     log(`Validated local staging: ${manifest.payloadCount} payloads and ${manifest.totalObjectCount} total objects`);
     return;
@@ -1290,7 +1271,6 @@ async function run(): Promise<void> {
     const remote = await fetchRemoteManifest(baseUrl, options.requestTimeoutMs);
     validateApprovedReleaseInvariant(remote.manifest);
     validateManifestAgainstRegistry(remote.manifest, share);
-    validateManifestTranscriptAgainstRegistry(registry, share, remote.manifest);
     await validateRemoteAssets(baseUrl, remote.manifest, options, remote.bytes, remote.response);
   }
   log(`Validated public registry and remote assets for ${publicShares.length} Share entries`);

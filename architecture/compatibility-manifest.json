@@ -1,0 +1,244 @@
+{
+  "schemaVersion": 1,
+  "externalHomepage": {
+    "package": "@cc4pm/homepage",
+    "packageManifest": "package.json",
+    "source": "node_modules/@cc4pm/homepage/index.html",
+    "adapter": "scripts/prepare-cc4pm-homepage.mjs",
+    "generated": "public/static/cc4pm-homepage.html",
+    "publicPath": "/static/cc4pm-homepage.html",
+    "headersFile": "public/_headers",
+    "contentSecurityPolicy": "sandbox allow-scripts allow-popups",
+    "iframeSandbox": "allow-popups allow-scripts",
+    "iframeAllow": "clipboard-write",
+    "iframeReferrerPolicy": "no-referrer",
+    "references": [
+      {
+        "source": "src/components/HomePageWithNav.tsx",
+        "kind": "iframe-src"
+      },
+      {
+        "source": "src/app/api/static/homepage/route.ts",
+        "kind": "redirect-location"
+      }
+    ]
+  },
+  "compatibility": {
+    "facades": [
+      {
+        "route": "/home",
+        "owner": "src/app/(main)/home/page.tsx",
+        "kind": "client-redirect",
+        "target": "/",
+        "targetOwner": "src/app/page.tsx"
+      },
+      {
+        "route": "/v1/messages",
+        "owner": "src/app/v1/messages/route.ts",
+        "kind": "module-reexport",
+        "specifier": "@/app/api/v1/messages/route",
+        "targetOwner": "src/app/api/v1/messages/route.ts"
+      },
+      {
+        "route": "/img-proxy",
+        "owner": "next.config.mjs",
+        "kind": "rewrite",
+        "target": "/api/img-proxy",
+        "targetOwner": "src/app/api/img-proxy/route.ts"
+      },
+      {
+        "route": "/api/static/homepage",
+        "owner": "src/app/api/static/homepage/route.ts",
+        "kind": "redirect",
+        "target": "/static/cc4pm-homepage.html",
+        "targetOwner": "public/static/cc4pm-homepage.html"
+      }
+    ],
+    "ambientDeclarations": [
+      {
+        "module": "@cc4pm/homepage",
+        "owner": "types/cc4pm-homepage.d.ts"
+      }
+    ],
+    "tokenDefinitions": [
+      {
+        "owner": "src/app/globals.css",
+        "name": "--color-practices-page-bg",
+        "value": "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "name": "--color-practices-text-primary",
+        "value": "#0f172a"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "name": "--color-practices-text-secondary",
+        "value": "#475569"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "name": "--color-practices-bg-primary",
+        "value": "#ffffff"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "name": "--color-practices-bg-secondary",
+        "value": "#f8fafc"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "name": "--color-practices-bg-hover",
+        "value": "#f1f5f9"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "name": "--color-practices-border-color",
+        "value": "#e2e8f0"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "name": "--color-practices-border-hover",
+        "value": "#cbd5e1"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "name": "--color-practices-accent",
+        "value": "#06b6d4"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "name": "--color-practices-primary",
+        "value": "#e57a5a"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "name": "--color-practices-secondary",
+        "value": "#f08b6d"
+      }
+    ],
+    "tokenAliases": [
+      {
+        "owner": "src/app/globals.css",
+        "alias": "--bp-bg-primary",
+        "target": "--color-practices-bg-primary"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "alias": "--bp-bg-secondary",
+        "target": "--color-practices-bg-secondary"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "alias": "--bp-text-primary",
+        "target": "--color-practices-text-primary"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "alias": "--bp-text-secondary",
+        "target": "--color-practices-text-secondary"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "alias": "--bp-border-color",
+        "target": "--color-practices-border-color"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "alias": "--bp-border-hover",
+        "target": "--color-practices-border-hover"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "alias": "--bp-accent",
+        "target": "--color-practices-accent"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "alias": "--bp-primary",
+        "target": "--color-practices-primary"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "alias": "--bp-primary-dark",
+        "target": "--color-primary-dark"
+      },
+      {
+        "owner": "src/app/globals.css",
+        "alias": "--bp-secondary",
+        "target": "--color-practices-secondary"
+      }
+    ],
+    "tailwindMappings": [
+      {
+        "owner": "tailwind.config.ts",
+        "name": "practices-accent",
+        "cssVariable": "--color-practices-accent"
+      },
+      {
+        "owner": "tailwind.config.ts",
+        "name": "practices-primary",
+        "cssVariable": "--color-practices-primary"
+      },
+      {
+        "owner": "tailwind.config.ts",
+        "name": "practices-secondary",
+        "cssVariable": "--color-practices-secondary"
+      }
+    ],
+    "designTokenEntries": [
+      {
+        "owner": "src/styles/designTokens.ts",
+        "group": "practices",
+        "name": "页面辅助青",
+        "className": "bg-practices-accent",
+        "hex": "#06b6d4",
+        "cssVariable": "--color-practices-accent",
+        "textClass": "text-accent-foreground",
+        "usage": "旧页面兼容用辅助色"
+      },
+      {
+        "owner": "src/styles/designTokens.ts",
+        "group": "practices",
+        "name": "页面暖主色",
+        "className": "bg-practices-primary",
+        "hex": "#e57a5a",
+        "cssVariable": "--color-practices-primary",
+        "textClass": "text-primary-foreground",
+        "usage": "旧页面兼容用主色"
+      },
+      {
+        "owner": "src/styles/designTokens.ts",
+        "group": "practices",
+        "name": "页面暖浅色",
+        "className": "bg-practices-secondary",
+        "hex": "#f08b6d",
+        "cssVariable": "--color-practices-secondary",
+        "textClass": "text-primary-light-foreground",
+        "usage": "旧页面兼容用浅色"
+      }
+    ]
+  },
+  "forbiddenRoots": [
+    "shared/scripts/generated",
+    "src/client",
+    "src/components-next",
+    "src/legacy",
+    "src/scripts/generated"
+  ],
+  "forbiddenFiles": [
+    "scripts/build-client-safe.cjs",
+    "scripts/build-client-safe.js",
+    "scripts/build-client.cjs",
+    "scripts/build-client.js",
+    "scripts/migrate-to-legacy.sh"
+  ],
+  "forbiddenSymbols": ["LegacyPageWrapper"],
+  "apiToMainExceptions": [
+    {
+      "source": "src/app/api/playground/route.ts",
+      "specifier": "@/app/(main)/playground/_lib/playgroundRequest",
+      "target": "src/app/(main)/playground/_lib/playgroundRequest.ts"
+    }
+  ]
+}

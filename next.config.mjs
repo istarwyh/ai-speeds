@@ -1,21 +1,21 @@
-import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
+  output: 'standalone',
   reactStrictMode: true,
   eslint: {
-    ignoreDuringBuilds: true, // 暂时忽略 ESLint 错误，专注于迁移
+    ignoreDuringBuilds: true, // Tracked debt; CI runs the explicit lint gate.
   },
   typescript: {
-    ignoreBuildErrors: true, // 暂时忽略 TypeScript 错误
+    ignoreBuildErrors: true, // Tracked debt; CI runs the explicit typecheck gate.
   },
-  pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
+  pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "**",
+        protocol: 'https',
+        hostname: '**',
       },
     ],
   },

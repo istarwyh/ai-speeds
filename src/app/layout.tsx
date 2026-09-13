@@ -26,6 +26,11 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  const wuunuWebSocketUrl = process.env.NODE_ENV !== 'production' ? process.env['WUUNU_WS_URL'] : undefined;
+  const serializedWuunuWebSocketUrl = wuunuWebSocketUrl
+    ? JSON.stringify(wuunuWebSocketUrl).replaceAll('<', '\\u003c')
+    : undefined;
+
   return (
     <html lang='zh-CN' suppressHydrationWarning>
       <head>
@@ -34,13 +39,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         {children}
 
-        {/* WUUNU SNIPPET - DON'T CHANGE THIS (START) */}
-        {process.env.NODE_ENV !== 'production' && (
+        {serializedWuunuWebSocketUrl && (
           <>
             <Script id='wuunu-ws' strategy='afterInteractive'>
-              {
-                'window.__WUUNU_WS__ = "http://127.0.0.1:50587/?token=00d31b4f76e3e558f349116515e961b1f3d2e45f226b6fe0";'
-              }
+              {`window.__WUUNU_WS__ = ${serializedWuunuWebSocketUrl};`}
             </Script>
             <Script
               id='wuunu-widget'
@@ -50,7 +52,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             />
           </>
         )}
-        {/* WUUNU SNIPPET - DON'T CHANGE THIS (END) */}
       </body>
     </html>
   );

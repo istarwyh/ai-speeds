@@ -3,15 +3,29 @@
 import { createHash } from 'node:crypto';
 import { error, log } from 'node:console';
 import { execFile as execFileCallback } from 'node:child_process';
-import { access, lstat, mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises';
+import {
+  access,
+  lstat,
+  mkdir,
+  mkdtemp,
+  readFile,
+  readdir,
+  rename,
+  rmdir,
+  stat,
+  unlink,
+  writeFile,
+} from 'node:fs/promises';
 import { constants as fsConstants } from 'node:fs';
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import process from 'node:process';
 import { promisify } from 'node:util';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { assertSupportedNodeVersion } from './node-runtime.mjs';
 
 const execFile = promisify(execFileCallback);
-const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const scriptPath = fileURLToPath(import.meta.url);
+const repoRoot = resolve(dirname(scriptPath), '..');
 const slug = 'agent-native-product-ai-maker-shanghai';
 const version = 'v4';
 const expectedSourceSha256 = 'd2a8f210a4904bfbe8d157f7a7014380164cc4dc3f8abd4341746fc9bf7ac44f';
@@ -263,10 +277,6 @@ async function preflight() {
   const minor = Number(versionMatch[2]);
   if (major < 3 || (major === 3 && minor < 9)) {
     throw new Error('Python 3.9 or newer is required');
-  }
-  const nodeMajor = Number(process.versions.node.split('.')[0]);
-  if (!Number.isInteger(nodeMajor) || nodeMajor < 22) {
-    throw new Error('Node.js 22 or newer is required to import the TypeScript Share registry');
   }
   return { python, soffice, pdfinfo, pdftoppm, cwebp };
 }
@@ -740,6 +750,278 @@ function isMissingPathError(cause) {
   return isRecord(cause) && cause['code'] === 'ENOENT';
 }
 
+/** @param {unknown} cause @returns {boolean} */
+function isExistingPathError(cause) {
+  return isRecord(cause) && cause['code'] === 'EEXIST';
+}
+
+/**
+ * @param {string} parent
+ * @param {string} candidate
+ * @param {string} label
+ * @returns {string}
+ */
+function requireStrictDescendant(parent, candidate, label) {
+  const normalizedParent = resolve(parent);
+  const normalizedCandidate = resolve(candidate);
+  const candidateRelative = relative(normalizedParent, normalizedCandidate);
+  if (
+    !candidateRelative ||
+    candidateRelative === '..' ||
+    candidateRelative.startsWith(`..${sep}`) ||
+    isAbsolute(candidateRelative)
+  ) {
+    throw new Error(`${label} must remain beneath ${displayPath(normalizedParent)}`);
+  }
+  return normalizedCandidate;
+}
+
+/** @param {string} path @returns {Promise<import('node:fs').Stats | undefined>} */
+async function lstatIfExists(path) {
+  try {
+    return await lstat(path);
+  } catch (cause) {
+    if (isMissingPathError(cause)) {
+      return undefined;
+    }
+    throw cause;
+  }
+}
+
+/** @param {string} path @param {string} label @returns {Promise<import('node:fs').Stats>} */
+async function requireRealDirectory(path, label) {
+  let details;
+  try {
+    details = await lstat(path);
+  } catch (cause) {
+    throw new Error(`${label} is unavailable: ${displayPath(path)}`, { cause });
+  }
+  if (details.isSymbolicLink()) {
+    throw new Error(`${label} must not be a symbolic link: ${displayPath(path)}`);
+  }
+  if (!details.isDirectory()) {
+    throw new Error(`${label} must be a directory: ${displayPath(path)}`);
+  }
+  return details;
+}
+
+/** @param {string} path @param {string} label @returns {Promise<import('node:fs').Stats>} */
+async function requireRealFile(path, label) {
+  let details;
+  try {
+    details = await lstat(path);
+  } catch (cause) {
+    throw new Error(`${label} is unavailable: ${displayPath(path)}`, { cause });
+  }
+  if (details.isSymbolicLink()) {
+    throw new Error(`${label} must not be a symbolic link: ${displayPath(path)}`);
+  }
+  if (!details.isFile()) {
+    throw new Error(`${label} must be a regular file: ${displayPath(path)}`);
+  }
+  if (details.size <= 0) {
+    throw new Error(`${label} must not be empty: ${displayPath(path)}`);
+  }
+  return details;
+}
+
+/**
+ * @param {string} root
+ * @param {string[]} segments
+ * @param {string} label
+ * @returns {Promise<string>}
+ */
+async function ensureRealDirectoryChain(root, segments, label) {
+  await requireRealDirectory(root, `${label} root`);
+  let current = resolve(root);
+  for (const segment of segments) {
+    if (!segment || segment === '.' || segment === '..' || basename(segment) !== segment) {
+      throw new Error(`${label} contains an invalid path segment`);
+    }
+    current = join(current, segment);
+    try {
+      await mkdir(current);
+    } catch (cause) {
+      if (!isExistingPathError(cause)) {
+        throw new Error(`Unable to create ${label}: ${displayPath(current)}`, { cause });
+      }
+    }
+    await requireRealDirectory(current, label);
+  }
+  return current;
+}
+
+/** @param {string} parent @param {string} prefix @param {string} label @returns {Promise<string>} */
+async function createVerifiedUniqueDirectory(parent, prefix, label) {
+  await requireRealDirectory(parent, `${label} parent`);
+  const directory = requireStrictDescendant(parent, await mkdtemp(join(parent, prefix)), label);
+  await requireRealDirectory(directory, label);
+  return directory;
+}
+
+/** @param {string} workRoot @param {string} prefix @returns {Promise<string>} */
+async function createVerifiedRunDirectory(workRoot, prefix) {
+  return createVerifiedUniqueDirectory(workRoot, prefix, 'Share preparation run directory');
+}
+
+/** @param {string} path @param {string} boundary */
+async function removeEntryWithoutFollowingSymlinks(path, boundary) {
+  requireStrictDescendant(boundary, path, 'Cleanup entry');
+  const details = await lstatIfExists(path);
+  if (!details) {
+    return;
+  }
+  if (details.isDirectory() && !details.isSymbolicLink()) {
+    for (const name of await readdir(path)) {
+      await removeEntryWithoutFollowingSymlinks(join(path, name), boundary);
+    }
+    await rmdir(path);
+    return;
+  }
+  await unlink(path);
+}
+
+/** @param {string} directory @param {string} allowedParent */
+async function removeVerifiedDirectoryTree(directory, allowedParent) {
+  const verifiedDirectory = requireStrictDescendant(allowedParent, directory, 'Cleanup directory');
+  const details = await lstatIfExists(verifiedDirectory);
+  if (!details) {
+    return;
+  }
+  if (details.isSymbolicLink()) {
+    throw new Error(`Refusing to recursively clean a symbolic link: ${displayPath(verifiedDirectory)}`);
+  }
+  if (!details.isDirectory()) {
+    throw new Error(`Cleanup target is not a directory: ${displayPath(verifiedDirectory)}`);
+  }
+  await removeEntryWithoutFollowingSymlinks(verifiedDirectory, allowedParent);
+}
+
+/**
+ * @param {string} reviewReport
+ * @param {string} runDirectory
+ * @param {string} workRoot
+ * @returns {Promise<string>}
+ */
+async function persistSanitizerReviewReport(reviewReport, runDirectory, workRoot) {
+  await requireRealDirectory(workRoot, 'Share work directory');
+  const verifiedRunDirectory = requireStrictDescendant(workRoot, runDirectory, 'Share preparation run directory');
+  const verifiedReport = requireStrictDescendant(verifiedRunDirectory, reviewReport, 'Sanitizer review report');
+  await requireRealDirectory(verifiedRunDirectory, 'Share preparation run directory');
+  await requireRealFile(verifiedReport, 'Sanitizer review report');
+
+  const reviewRoot = await ensureRealDirectoryChain(workRoot, ['sanitizer-reviews'], 'Sanitizer review archive');
+  const reviewDirectory = await createVerifiedUniqueDirectory(
+    reviewRoot,
+    `${slug}-${version}-`,
+    'Sanitizer review archive entry',
+  );
+  const persistedReport = requireStrictDescendant(
+    reviewDirectory,
+    join(reviewDirectory, 'sanitizer-review.json'),
+    'Persisted sanitizer review report',
+  );
+  try {
+    await rename(verifiedReport, persistedReport);
+    await requireRealFile(persistedReport, 'Persisted sanitizer review report');
+  } catch (cause) {
+    /** @type {unknown} */
+    let cleanupError;
+    try {
+      await removeVerifiedDirectoryTree(reviewDirectory, reviewRoot);
+    } catch (cleanupCause) {
+      cleanupError = cleanupCause;
+    }
+    if (cleanupError) {
+      throw new AggregateError(
+        [cause, cleanupError],
+        'Unable to persist the sanitizer review report or clean its private archive entry',
+        { cause },
+      );
+    }
+    throw new Error('Unable to persist the sanitizer review report', { cause });
+  }
+  return persistedReport;
+}
+
+/** @param {string} left @param {string} right */
+async function requireSameFileSystem(left, right) {
+  const [leftDetails, rightDetails] = await Promise.all([
+    requireRealDirectory(left, 'Prepared staging directory'),
+    requireRealDirectory(right, 'Public staging parent'),
+  ]);
+  if (leftDetails.dev !== rightDetails.dev) {
+    throw new Error('Prepared and public staging directories must be on the same filesystem');
+  }
+}
+
+/** @param {string} output @param {boolean} force @returns {Promise<boolean>} */
+async function inspectExistingOutput(output, force) {
+  const details = await lstatIfExists(output);
+  if (!details) {
+    return false;
+  }
+  if (details.isSymbolicLink()) {
+    throw new Error(`Staging output must not be a symbolic link: ${displayPath(output)}`);
+  }
+  if (!details.isDirectory()) {
+    throw new Error(`Staging output must be a directory: ${displayPath(output)}`);
+  }
+  if (!force) {
+    throw new Error(`Staging already exists: ${displayPath(output)}; pass --force to replace generated assets`);
+  }
+  return true;
+}
+
+class ReleaseRecoveryError extends Error {
+  /** @param {string} message @param {{cause: unknown}} options */
+  constructor(message, options) {
+    super(message, options);
+    this.name = 'ReleaseRecoveryError';
+  }
+}
+
+/**
+ * @param {string} stageDirectory
+ * @param {string} output
+ * @param {string} runDirectory
+ * @param {boolean} force
+ */
+async function replacePreparedDirectory(stageDirectory, output, runDirectory, force) {
+  const verifiedStage = requireStrictDescendant(runDirectory, stageDirectory, 'Prepared staging directory');
+  const backupDirectory = requireStrictDescendant(
+    runDirectory,
+    join(runDirectory, 'previous-release'),
+    'Release backup directory',
+  );
+  await requireRealDirectory(verifiedStage, 'Prepared staging directory');
+  if (await lstatIfExists(backupDirectory)) {
+    throw new Error('Release backup directory already exists inside the isolated run directory');
+  }
+  const outputParent = dirname(output);
+  await requireSameFileSystem(verifiedStage, outputParent);
+  const replacingExisting = await inspectExistingOutput(output, force);
+  if (!replacingExisting) {
+    await rename(verifiedStage, output);
+    return;
+  }
+
+  await rename(output, backupDirectory);
+  try {
+    await rename(verifiedStage, output);
+  } catch (installCause) {
+    try {
+      await rename(backupDirectory, output);
+    } catch (restoreCause) {
+      throw new ReleaseRecoveryError(
+        'Atomic replacement failed and the previous release could not be restored automatically; recovery data remains in dist/shares/.work',
+        { cause: new AggregateError([installCause, restoreCause]) },
+      );
+    }
+    throw new Error('Atomic replacement failed; the previous release was restored', { cause: installCause });
+  }
+}
+
 /** @param {string} output */
 async function assertSafeStagingOutput(output) {
   const stagingRoot = resolve(repoRoot, 'dist', 'shares');
@@ -791,36 +1073,47 @@ async function prepare(options, executables) {
   if (actualSourceSha256 !== expectedSourceSha256) {
     throw new Error(`Authoritative source SHA-256 mismatch: received ${actualSourceSha256}`);
   }
-  if (
-    options.output === resolve(repoRoot, 'dist', 'shares', '.work') ||
-    options.output.startsWith(`${resolve(repoRoot, 'dist', 'shares', '.work')}${sep}`)
-  ) {
-    throw new Error('The public staging directory cannot be inside dist/shares/.work');
-  }
-  if (await pathExists(options.output)) {
-    if (!options.force) {
-      throw new Error(
-        `Staging already exists: ${displayPath(options.output)}; pass --force to replace generated assets`,
-      );
-    }
-    await rm(options.output, { recursive: true, force: true });
-  }
 
-  const workRoot = resolve(repoRoot, 'dist', 'shares', '.work');
-  const runDirectory = join(workRoot, `${slug}-${version}-${process.pid}`);
-  const stageDirectory = join(runDirectory, 'stage');
-  const rasterDirectory = join(runDirectory, 'raster');
-  const libreOfficeOutputDirectory = join(runDirectory, 'libreoffice-output');
-  const libreOfficeProfileDirectory = join(runDirectory, 'libreoffice-profile');
-  const reviewReport = join(workRoot, `${slug}-${version}-sanitizer-review.json`);
-  await rm(runDirectory, { recursive: true, force: true });
-  await mkdir(join(stageDirectory, 'slides'), { recursive: true });
-  await mkdir(join(stageDirectory, 'thumbnails'), { recursive: true });
-  await mkdir(rasterDirectory, { recursive: true });
-  await mkdir(libreOfficeOutputDirectory, { recursive: true });
-  await mkdir(libreOfficeProfileDirectory, { recursive: true });
+  const stagingRoot = await ensureRealDirectoryChain(repoRoot, ['dist', 'shares'], 'Share staging directory');
+  const outputParent = await ensureRealDirectoryChain(stagingRoot, [slug], 'Public staging parent');
+  await inspectExistingOutput(options.output, options.force);
+  const workRoot = await ensureRealDirectoryChain(stagingRoot, ['.work'], 'Share work directory');
+  const runDirectory = await createVerifiedRunDirectory(workRoot, `${slug}-${version}-`);
+  const stageDirectory = requireStrictDescendant(
+    runDirectory,
+    join(runDirectory, 'stage'),
+    'Prepared staging directory',
+  );
+  const rasterDirectory = requireStrictDescendant(runDirectory, join(runDirectory, 'raster'), 'Raster work directory');
+  const libreOfficeOutputDirectory = requireStrictDescendant(
+    runDirectory,
+    join(runDirectory, 'libreoffice-output'),
+    'LibreOffice output directory',
+  );
+  const libreOfficeProfileDirectory = requireStrictDescendant(
+    runDirectory,
+    join(runDirectory, 'libreoffice-profile'),
+    'LibreOffice profile directory',
+  );
+  const reviewReport = requireStrictDescendant(
+    runDirectory,
+    join(runDirectory, 'sanitizer-review.json'),
+    'Sanitizer review report',
+  );
 
+  /** @type {unknown} */
+  let operationError;
+  let preserveRunDirectory = false;
+  let successMessage = '';
   try {
+    await requireSameFileSystem(runDirectory, outputParent);
+    await ensureRealDirectoryChain(runDirectory, ['stage'], 'Prepared staging directory');
+    await ensureRealDirectoryChain(stageDirectory, ['slides'], 'Prepared slides directory');
+    await ensureRealDirectoryChain(stageDirectory, ['thumbnails'], 'Prepared thumbnails directory');
+    await ensureRealDirectoryChain(runDirectory, ['raster'], 'Raster work directory');
+    await ensureRealDirectoryChain(runDirectory, ['libreoffice-output'], 'LibreOffice output directory');
+    await ensureRealDirectoryChain(runDirectory, ['libreoffice-profile'], 'LibreOffice profile directory');
+
     const sanitizerPath = resolve(repoRoot, 'scripts', 'sanitize-share-pptx.py');
     const sanitizedPptx = join(stageDirectory, 'source.pptx');
     const sanitizerExecution = await runCommand(
@@ -1010,35 +1303,60 @@ async function prepare(options, executables) {
     if (finalFiles.length !== expectedPayloadCount + 1 || !finalFiles.includes(manifestFileName)) {
       throw new Error('Final staging must contain exactly 84 payloads and one manifest');
     }
-    await mkdir(dirname(options.output), { recursive: true });
-    await rename(stageDirectory, options.output);
-    log(
+    const persistedReviewReport = await persistSanitizerReviewReport(reviewReport, runDirectory, workRoot);
+    await replacePreparedDirectory(stageDirectory, options.output, runDirectory, options.force);
+    successMessage = [
       `Prepared ${payloads.length} payloads (${manifest.totalPayloadBytes} bytes) and manifest at ${displayPath(options.output)}`,
-    );
-    log(`Private sanitizer review: ${displayPath(reviewReport)}`);
-  } finally {
-    await rm(runDirectory, { recursive: true, force: true });
+      `Private sanitizer review: ${displayPath(persistedReviewReport)}`,
+    ].join('\n');
+  } catch (cause) {
+    operationError = cause;
+    preserveRunDirectory = cause instanceof ReleaseRecoveryError;
   }
-}
 
-/** @param {string} path @returns {Promise<boolean>} */
-async function pathExists(path) {
-  try {
-    await access(path);
-    return true;
-  } catch {
-    return false;
+  /** @type {unknown} */
+  let cleanupError;
+  if (!preserveRunDirectory) {
+    try {
+      await removeVerifiedDirectoryTree(runDirectory, workRoot);
+    } catch (cause) {
+      cleanupError = cause;
+    }
   }
+  if (operationError) {
+    if (cleanupError) {
+      const operationMessage = operationError instanceof Error ? operationError.message : String(operationError);
+      throw new Error(`${operationMessage}; isolated work cleanup also failed`, {
+        cause: new AggregateError([operationError, cleanupError]),
+      });
+    }
+    throw operationError;
+  }
+  if (cleanupError) {
+    throw new Error('Prepared output was installed, but isolated work cleanup failed', { cause: cleanupError });
+  }
+  log(successMessage);
 }
 
 async function main() {
+  assertSupportedNodeVersion();
   const options = parseArguments(process.argv.slice(2));
   const executables = await preflight();
   await prepare(options, executables);
 }
 
-main().catch(cause => {
-  const message = cause instanceof Error ? cause.message : String(cause);
-  error(`prepare-share-assets: ${message}`);
-  process.exitCode = 1;
-});
+export {
+  createVerifiedRunDirectory,
+  ensureRealDirectoryChain,
+  persistSanitizerReviewReport,
+  removeVerifiedDirectoryTree,
+  replacePreparedDirectory,
+};
+
+if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
+  main().catch(cause => {
+    const message = cause instanceof Error ? cause.message : String(cause);
+    error(`prepare-share-assets: ${message}`);
+    process.exitCode = 1;
+  });
+}

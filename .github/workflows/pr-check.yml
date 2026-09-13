@@ -26,11 +26,32 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '22.18.0'
           cache: 'pnpm'
+
+      - name: Verify Node runtime
+        run: |
+          node scripts/node-runtime.mjs
+          node scripts/node-runtime.mjs --self-test
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Verify frozen homepage artifact
+        run: |
+          git ls-files --error-unmatch -- public/static/cc4pm-homepage.html public/_headers >/dev/null
+          node scripts/prepare-cc4pm-homepage.mjs --self-test
+          pnpm run prepare:homepage
+          artifact_status=$(git status --porcelain --untracked-files=all -- public/static/cc4pm-homepage.html public/_headers)
+          if [ -n "$artifact_status" ]; then
+            printf '%s\n' "$artifact_status"
+            exit 1
+          fi
+
+      - name: Validate architecture boundaries
+        run: |
+          pnpm run architecture:check
+          pnpm run architecture:check:self-test
 
       - name: Verify deploy workflow scripts exist
         run: |
@@ -62,7 +83,7 @@ jobs:
       - name: Validate Share registry
         run: pnpm run shares:validate -- --registry-only
 
-      - name: Build client bundles
+      - name: Build Next.js application
         run: pnpm run build
 
       - name: Typecheck
@@ -70,3 +91,15 @@ jobs:
 
       - name: Build for Cloudflare Workers
         run: pnpm run cf:build
+
+      - name: Revalidate architecture and frozen homepage artifact
+        run: |
+          pnpm run architecture:check
+          git ls-files --error-unmatch -- public/static/cc4pm-homepage.html public/_headers >/dev/null
+          test -f .open-next/assets/_headers
+          cmp public/_headers .open-next/assets/_headers
+          artifact_status=$(git status --porcelain --untracked-files=all -- public/static/cc4pm-homepage.html public/_headers)
+          if [ -n "$artifact_status" ]; then
+            printf '%s\n' "$artifact_status"
+            exit 1
+          fi

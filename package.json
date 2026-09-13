@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "packageManager": "pnpm@10.18.1",
   "type": "module",
+  "engines": {
+    "node": "^22.18.0 || >=24.0.0"
+  },
   "scripts": {
     "prepare:homepage": "node scripts/prepare-cc4pm-homepage.mjs",
     "build": "pnpm run prepare:homepage && next build",
@@ -14,8 +17,12 @@
     "lint": "eslint . --fix # ESLint 检查并自动修复代码问题",
     "lint:check": "eslint .",
     "format": "prettier --write . # Prettier 格式化所有代码文件",
+    "node:check": "node scripts/node-runtime.mjs",
+    "node:check:self-test": "node scripts/node-runtime.mjs --self-test",
+    "architecture:check": "node scripts/validate-architecture.mjs",
+    "architecture:check:self-test": "node scripts/validate-architecture.mjs --self-test",
     "shares:prepare": "node scripts/prepare-share-assets.mjs",
-    "shares:validate": "node --experimental-strip-types scripts/validate-share-assets.ts",
+    "shares:validate": "node scripts/node-runtime.mjs && node scripts/validate-share-assets.ts",
     "shares:publish": "node scripts/publish-share-assets.mjs",
     "typecheck": "tsc --noEmit # TypeScript 类型检查（不生成文件）",
     "audit": "pnpm audit --audit-level=moderate # 安全审计：检查依赖漏洞"
