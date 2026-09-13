@@ -10,7 +10,7 @@ const compatibilityImportPaths = [
     message:
       '[LEG-002] Do not import the external homepage package; the adapter may only read its exact index.html file.',
   },
-  ...['@/app/(main)/home/page', 'src/app/(main)/home/page'].map(name => ({
+  ...['@/app/(legacy)/home/page', 'src/app/(legacy)/home/page'].map(name => ({
     name,
     message: '[COMP-002] Compatibility route owners are façades, not reusable implementation modules.',
   })),
@@ -55,10 +55,10 @@ const compatibilityImportPatterns = [
   },
   {
     group: [
-      '@/app/(main)/home/page.*',
+      '@/app/(legacy)/home/page.*',
       '@/app/v1/messages/route.*',
       '@/app/api/static/homepage/route.*',
-      'src/app/(main)/home/page.*',
+      'src/app/(legacy)/home/page.*',
       'src/app/v1/messages/route.*',
       'src/app/api/static/homepage/route.*',
     ],
@@ -81,7 +81,7 @@ const apiImportRule = [
     patterns: [
       ...compatibilityImportPatterns,
       {
-        regex: '^(?:@/|src/)app/\\(main\\)/',
+        regex: '^(?:@/|src/)app/\\((?:site|tools|immersive|legacy)\\)/',
         message: '[API-001] API routes must not import UI-route internals; move shared logic to a neutral context.',
       },
     ],
@@ -95,12 +95,17 @@ const playgroundApiImportRule = [
     patterns: [
       ...compatibilityImportPatterns,
       {
-        regex: '^@/app/\\(main\\)/(?!playground/_lib/playgroundRequest$)',
+        regex: '^@/app/\\(tools\\)/(?!playground/_lib/playgroundRequest$)',
         message:
           '[API-001] The Playground route may use only its exact recorded compatibility edge into UI-route internals.',
       },
       {
-        regex: '^src/app/\\(main\\)/',
+        regex: '^@/app/\\((?:site|immersive|legacy)\\)/',
+        message:
+          '[API-001] The Playground route may use only its exact recorded compatibility edge into UI-route internals.',
+      },
+      {
+        regex: '^src/app/\\((?:site|tools|immersive|legacy)\\)/',
         message:
           '[API-001] The Playground exception permits only the exact @/ alias spelling recorded in the manifest.',
       },
@@ -112,20 +117,41 @@ export default [
   {
     ignores: [
       'node_modules/**',
+      '.claude/worktrees/**',
       '.next/**',
       '.open-next/**',
       '.wrangler/**',
-      '.claude/worktrees/**',
       'dist/**',
       'build/**',
       'coverage/**',
       '.cache/**',
+      'src/scripts/generated/**',
+      '**/*.min.js',
+      '**/*.min.css',
+      '**/*Bundle.ts',
+      '**/bundle-*/**',
+      'scripts/*.cjs',
+      'fix-eslint-issues.js',
     ],
   },
   js.configs.recommended,
   {
     files: ['**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}'],
-    ignores: ['node_modules/**', 'dist/**', 'build/**', '.wrangler/**', 'coverage/**', '.cache/**'],
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'build/**',
+      '.wrangler/**',
+      'coverage/**',
+      '.cache/**',
+      'src/scripts/generated/**',
+      '**/*.min.js',
+      '**/*.min.css',
+      '**/*Bundle.ts',
+      '**/bundle-*/**',
+      'scripts/*.cjs',
+      'fix-eslint-issues.js',
+    ],
     languageOptions: {
       parser: tsparser,
       parserOptions: {
@@ -168,6 +194,7 @@ export default [
         HTMLElement: 'readonly',
         HTMLDivElement: 'readonly',
         HTMLButtonElement: 'readonly',
+        HTMLInputElement: 'readonly',
         HTMLCanvasElement: 'readonly',
         Event: 'readonly',
         KeyboardEvent: 'readonly',

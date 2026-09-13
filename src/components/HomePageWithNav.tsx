@@ -193,9 +193,14 @@ export function HomePageWithNav() {
   useEffect(() => {
     setActiveSection(readHashSection());
 
-    const onHashChange = () => setActiveSection(readHashSection());
-    window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
+    const syncSectionFromLocation = () => setActiveSection(readHashSection());
+    window.addEventListener('hashchange', syncSectionFromLocation);
+    window.addEventListener('popstate', syncSectionFromLocation);
+
+    return () => {
+      window.removeEventListener('hashchange', syncSectionFromLocation);
+      window.removeEventListener('popstate', syncSectionFromLocation);
+    };
   }, []);
 
   useEffect(() => {
@@ -338,10 +343,10 @@ export function HomePageWithNav() {
     storeMenuPosition(nextPosition);
   };
 
-  const selectSection = (section: HomeSectionId, href: string) => {
+  const selectSection = (section: HomeSectionId) => {
     setActiveSection(section);
     setMenuOpen(false);
-    window.history.pushState(null, '', href);
+    window.history.pushState(null, '', section === DEFAULT_HOME_SECTION_ID ? '/' : `/#${section}`);
   };
 
   return (
@@ -411,7 +416,7 @@ export function HomePageWithNav() {
                   key={item.id}
                   type='button'
                   aria-current={activeSection === item.id ? 'page' : undefined}
-                  onClick={() => selectSection(item.id, item.href)}
+                  onClick={() => selectSection(item.id)}
                   className={`rounded-2xl px-4 py-3 text-left font-semibold transition ${
                     activeSection === item.id
                       ? 'bg-primary text-primary-foreground shadow-sm'

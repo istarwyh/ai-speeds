@@ -1,4 +1,5 @@
 export { agentNativeProductAiMakerShanghai } from './agent-native-product-ai-maker-shanghai.ts';
+export { shareProvenanceBySlug } from './provenance.ts';
 export {
   SHARE_ASSET_ORIGIN,
   getCoverUrl,

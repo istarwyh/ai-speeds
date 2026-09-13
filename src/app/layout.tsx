@@ -6,8 +6,8 @@ import './globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(CANONICAL_SITE_URL),
-  title: 'AI Speeds - Make AI Speeds Us',
-  description: 'Make AI Speeds Us',
+  title: 'AI Speeds - 让 AI 的速度成为每个人的能力',
+  description: '帮助人们拥抱 AI 时代带来的巨大生产力和范式跃进。',
   icons: {
     icon: '/favicon.svg',
   },
@@ -15,13 +15,13 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'AI Speeds',
     locale: 'zh_CN',
-    title: 'AI Speeds - Make AI Speeds Us',
-    description: 'Make AI Speeds Us',
+    title: 'AI Speeds - 让 AI 的速度成为每个人的能力',
+    description: '帮助人们拥抱 AI 时代带来的巨大生产力和范式跃进。',
   },
   twitter: {
     card: 'summary',
-    title: 'AI Speeds - Make AI Speeds Us',
-    description: 'Make AI Speeds Us',
+    title: 'AI Speeds - 让 AI 的速度成为每个人的能力',
+    description: '帮助人们拥抱 AI 时代带来的巨大生产力和范式跃进。',
   },
 };
 

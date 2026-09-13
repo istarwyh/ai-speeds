@@ -1,4 +1,7 @@
 import { headers } from 'next/headers';
+import { SITE_LINKS } from '@/config/site-links';
+
+export const CANONICAL_SITE_URL = SITE_LINKS.canonicalUrl;
 
 export const CANONICAL_SITE_URL = 'https://aispeeds.me';
 

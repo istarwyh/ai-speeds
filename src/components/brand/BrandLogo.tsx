@@ -5,14 +5,16 @@
  * 适用于页面头部、导航栏等主要位置
  */
 
+import { cn } from '@/lib/utils/cn';
 import { BrandIcon } from './BrandIcon';
 
-interface BrandLogoProps {
+export interface BrandLogoProps {
   size?: 'small' | 'medium' | 'large';
   showText?: boolean;
   variant?: 'default' | 'monochrome' | 'gradient';
   design?: 'lightning' | 'spiral' | 'letterform';
   className?: string;
+  textClassName?: string;
 }
 
 const sizeConfig = {
@@ -26,14 +28,17 @@ export function BrandLogo({
   showText = true,
   variant = 'default',
   design = 'spiral',
-  className = '',
+  className,
+  textClassName,
 }: BrandLogoProps) {
-  const config = sizeConfig[size] || sizeConfig.medium;
+  const config = sizeConfig[size];
 
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <BrandIcon size={config.icon} variant={variant} design={design} />
-      {showText && <span className={`font-semibold ${config.text} text-slate-900 dark:text-slate-100`}>AI Speeds</span>}
+    <div className={cn('flex items-center gap-2', className)}>
+      <span aria-hidden='true'>
+        <BrandIcon size={config.icon} variant={variant} design={design} />
+      </span>
+      {showText && <span className={cn('font-semibold text-text-primary', config.text, textClassName)}>AI Speeds</span>}
     </div>
   );
 }

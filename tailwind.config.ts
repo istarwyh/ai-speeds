@@ -9,6 +9,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        editorial: ['var(--font-family-editorial)'],
+      },
       colors: {
         // Brand colors
         primary: {
@@ -54,6 +57,7 @@ const config: Config = {
           'surface-strong': 'var(--color-surface-floating-strong)',
           border: 'var(--color-border-floating)',
         },
+        'header-surface': 'var(--color-surface-header)',
 
         // Text colors
         'text-primary': 'var(--color-text-primary)',
@@ -71,6 +75,14 @@ const config: Config = {
         'practices-primary': 'var(--color-practices-primary)',
         'practices-secondary': 'var(--color-practices-secondary)',
       },
+      maxWidth: {
+        site: 'var(--container-site)',
+      },
+      height: {
+        'site-header': 'var(--size-site-header)',
+        'site-header-mobile': 'var(--size-site-header-mobile)',
+        'tool-header': 'var(--size-tool-header)',
+      },
       borderRadius: {
         pill: 'var(--radius-pill)',
       },
@@ -80,6 +92,7 @@ const config: Config = {
         'primary-glow': 'var(--shadow-primary-glow)',
       },
       backdropBlur: {
+        header: 'var(--blur-header)',
         floating: 'var(--blur-floating)',
       },
       translate: {

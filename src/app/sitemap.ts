@@ -2,6 +2,9 @@ import type { MetadataRoute } from 'next';
 import { featurePages } from '@/config/features';
 import { CANONICAL_SITE_URL } from '@/config/site-url';
 import { getPublicShares } from '@/content/shares';
+import { assertSiteContentRegistries } from '@/lib/site-content-validation';
+
+assertSiteContentRegistries();
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const shares = getPublicShares();
@@ -12,7 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }, undefined);
 
   const featureEntries = featurePages
-    .filter(feature => feature.kind === 'route' && feature.isPublic)
+    .filter(feature => feature.targetKind === 'route' && feature.isPublic && feature.includeInSitemap)
     .map(feature => {
       const entry: MetadataRoute.Sitemap[number] = {
         url: `${CANONICAL_SITE_URL}${feature.href === '/' ? '' : feature.href}`,

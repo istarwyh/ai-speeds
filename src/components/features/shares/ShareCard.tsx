@@ -3,6 +3,7 @@ import { ArrowUpRight, Images } from 'lucide-react';
 import type { Share } from '@/content/shares';
 import { getCoverUrl, getDeckArtifact } from '@/content/shares';
 import { UI_TEXTS } from '@/config/ui-texts';
+import { getShareProvenance } from '@/lib/attribution';
 
 const floatingControlClass =
   'rounded-pill border border-floating-border bg-floating-surface text-text-primary shadow-floating backdrop-blur-floating transition hover:translate-y-lift hover:border-primary hover:bg-floating-surface-strong active:scale-press focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
@@ -14,6 +15,7 @@ type ShareCardProps = {
 
 export function ShareCard({ share, priority = false }: ShareCardProps) {
   const deck = getDeckArtifact(share);
+  const provenance = getShareProvenance(share);
 
   return (
     <article className='group flex h-full flex-col overflow-hidden rounded-[2rem] border border-floating-border bg-floating-surface shadow-floating backdrop-blur-floating transition duration-300 hover:translate-y-lift hover:border-primary/50 hover:shadow-floating-strong'>
@@ -64,8 +66,8 @@ export function ShareCard({ share, priority = false }: ShareCardProps) {
 
         <div className='mt-auto flex items-end justify-between gap-4 pt-6'>
           <div className='min-w-0 text-xs leading-5 text-text-muted sm:text-sm'>
-            <p className='truncate font-medium text-text-secondary'>{share.author.name}</p>
-            {share.event ? <p className='truncate'>{share.event.name}</p> : null}
+            <p className='truncate font-medium text-text-secondary'>{provenance.label}</p>
+            <p className='truncate'>{share.event.name}</p>
           </div>
           <Link
             href={`/shares/${share.slug}`}
