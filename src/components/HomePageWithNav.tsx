@@ -454,6 +454,9 @@ function Cc4pmHomepageFrame() {
     <iframe
       src='/static/cc4pm-homepage.html'
       title='cc4pm 首页'
+      sandbox='allow-popups allow-scripts'
+      allow='clipboard-write'
+      referrerPolicy='no-referrer'
       className='block h-[100dvh] w-full border-0 bg-bg-primary'
     />
   );

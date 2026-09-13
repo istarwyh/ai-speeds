@@ -21,6 +21,10 @@ pnpm run build                # Production Next.js build
 pnpm run typecheck            # TypeScript type checking (tsc --noEmit)
 pnpm run lint                 # ESLint with auto-fix
 pnpm run format               # Prettier formatting
+pnpm run node:check           # Verify the supported Node.js runtime
+pnpm run node:check:self-test # Verify the runtime version predicate
+pnpm run architecture:check   # Validate source dependency boundaries
+pnpm run architecture:check:self-test # Verify the architecture checker
 
 # Cloudflare Workers deployment
 pnpm run cf:build             # Build via OpenNext for Cloudflare
@@ -33,6 +37,12 @@ pnpm run cf:deploy            # Build + deploy to production
 this project.
 
 ## Architecture
+
+`docs/SRC_ARCHITECTURE.md` is the current source map. Normative dependency,
+legacy, compatibility, and exception rules are defined in
+`.claude/rules/architecture-boundaries.md`, with the closed compatibility budget
+in `architecture/compatibility-manifest.json`, and enforced by the architecture
+commands above.
 
 ### Three-Layer API Proxy
 
@@ -57,8 +67,9 @@ API keys are passed per-request via `x-api-key` header, not stored server-side.
 ### Frontend
 
 - `src/app/` uses Next.js App Router routes.
-- `src/components/HomePageWithNav.tsx` renders the React/Tailwind homepage,
-  navigation, and get-started guide.
+- `src/components/HomePageWithNav.tsx` owns native navigation and sections and
+  embeds the prepared external homepage through the frozen iframe seam;
+  `public/_headers` keeps direct and popup loads response-sandboxed.
 - `src/config/providers.ts` stores provider card data used by the get-started
   guide.
 
@@ -91,9 +102,10 @@ and `src/styles/designTokens.ts`.
 ## Tech Stack
 
 - **Framework**: Next.js 15 (App Router) + React 19 + Tailwind CSS 3
+- **Tooling runtime**: Node.js `^22.18.0 || >=24.0.0`; Node.js 23 is unsupported
 - **Language**: TypeScript strict mode (`noImplicitAny`,
   `noUncheckedIndexedAccess`, `noUnusedLocals`, `noUnusedParameters`)
-- **Runtime**: Edge Runtime (V8 Isolates) on Cloudflare Workers via
+- **Runtime**: Node.js route handlers deployed to Cloudflare Workers via
   `@opennextjs/cloudflare`
 - **Build**: Turbopack (dev) + Next.js production build
 - **Package manager**: pnpm (`.npmrc`: `shamefully-hoist=true`,
@@ -121,28 +133,30 @@ Subject: lowercase, 3-100 chars, no period. Header max 120 chars.
 
 - **pre-commit**: lint-staged (ESLint fix + Prettier), rejects files >500KB
 - **commit-msg**: commitlint validation
-- **pre-push**: Scoped TypeScript typecheck on changed files under `src/app`,
-  `src/components-next`, `scripts`, `modules`
+- **pre-push**: Requires a clean checkout at the pushed commit, then typechecks
+  selected changed source files
 
 ## Environment Variables
 
-| Variable                     | Purpose                                  |
-| ---------------------------- | ---------------------------------------- |
-| `DEEPSEEK_BASE_URL`          | DeepSeek API backend                     |
-| `OPENAI_BASE_URL`            | OpenAI API backend                       |
-| `KIMI_BASE_URL`              | Kimi API backend                         |
-| `SILICONFLOW_BASE_URL`       | SiliconFlow API backend                  |
-| `OPENROUTER_BASE_URL`        | OpenRouter API backend                   |
-| `NVIDIA_NIM_BASE_URL`        | NVIDIA NIM API backend                   |
-| `OPENAI_COMPATIBLE_BASE_URL` | Generic fallback (auto-detects provider) |
-| `IMAGE_PROXY_WHITELIST`      | Comma-separated hostnames or `*`         |
-| `IMAGE_PROXY_CACHE_TTL`      | Cache TTL in seconds (default 86400)     |
-| `IMAGE_PROXY_TIMEOUT_MS`     | Proxy timeout (default 12000)            |
+| Variable                     | Purpose                                   |
+| ---------------------------- | ----------------------------------------- |
+| `DEEPSEEK_BASE_URL`          | DeepSeek API backend                      |
+| `OPENAI_BASE_URL`            | OpenAI API backend                        |
+| `KIMI_BASE_URL`              | Kimi API backend                          |
+| `SILICONFLOW_BASE_URL`       | SiliconFlow API backend                   |
+| `OPENROUTER_BASE_URL`        | OpenRouter API backend                    |
+| `NVIDIA_NIM_BASE_URL`        | NVIDIA NIM API backend                    |
+| `OPENAI_COMPATIBLE_BASE_URL` | Generic fallback (auto-detects provider)  |
+| `IMAGE_PROXY_WHITELIST`      | Comma-separated hostnames or `*`          |
+| `IMAGE_PROXY_CACHE_TTL`      | Cache TTL in seconds (default 86400)      |
+| `IMAGE_PROXY_TIMEOUT_MS`     | Proxy timeout (default 12000)             |
+| `WUUNU_WS_URL`               | Optional uncommitted local dev widget URL |
 
 ## Build Notes
 
 - `next.config.mjs` has `eslint.ignoreDuringBuilds: true` and
-  `typescript.ignoreBuildErrors: true` (temporary during migration)
+  `typescript.ignoreBuildErrors: true` as tracked technical debt; CI still runs
+  explicit lint and typecheck gates
 - CI deploys on push to `main` via `.github/workflows/deploy.yml` (requires
   `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets)
 

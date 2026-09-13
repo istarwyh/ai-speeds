@@ -1,0 +1,4 @@
+/static/cc4pm-homepage.html
+  Content-Security-Policy: sandbox allow-scripts allow-popups
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff

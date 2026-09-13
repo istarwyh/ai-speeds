@@ -1,284 +1,216 @@
-# src/ 目录架构说明
+# Source Architecture
 
-## 📊 当前调用关系（隔离前）
+This document is the current authority for the repository's source layout and
+import direction. Normative constraints and rule IDs live in
+`.claude/rules/architecture-boundaries.md`.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     Next.js App Router (新)                      │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  app/layout.tsx                                                  │
-│  └── 注入 designTokens (复用) ✅                                 │
-│                                                                  │
-│  app/(main)/home/page.tsx                                        │
-│  └── <LegacyPageWrapper /> (适配器)                             │
-│      │                                                           │
-│      ├── 导入 @/index (Legacy 聚合器) ⚠️                        │
-│      │   ├── navigationComponent                                │
-│      │   ├── allStyles (所有 Legacy 样式)                       │
-│      │   └── allScripts (所有 Legacy 脚本)                      │
-│      │                                                           │
-│      └── 导入功能模块 ⚠️                                         │
-│          ├── @/features/get-started                             │
-│          ├── @/features/best-practices                          │
-│          ├── @/features/how-to-implement                        │
-│          └── @/features/how-to-apply-cc                         │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
+Last reviewed: `2026-09-13T08:41:49Z`.
 
-┌─────────────────────────────────────────────────────────────────┐
-│                    Legacy 系统依赖链 (旧)                        │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  src/index.ts (聚合器)                                           │
-│  ├── components/layout/* (头部、侧边栏)                         │
-│  ├── components/navigation/* (导航、卡片)                       │
-│  ├── styles/index.ts                                            │
-│  │   ├── designTokens.ts ✅ (复用)                              │
-│  │   ├── baseStyles.ts ⚠️                                       │
-│  │   ├── componentStyles.ts ⚠️                                  │
-│  │   └── ... (其他样式文件) ⚠️                                  │
-│  └── scripts/index.ts                                           │
-│      ├── sidebar.ts ⚠️                                          │
-│      ├── navigation.ts ⚠️                                       │
-│      ├── codeExamples.ts ⚠️                                     │
-│      └── generated/* (构建生成) ⚠️                              │
-│                                                                  │
-│  features/* (功能模块)                                           │
-│  ├── get-started/                                               │
-│  ├── best-practices/                                            │
-│  ├── how-to-implement/                                          │
-│  └── how-to-apply-cc/                                           │
-│                                                                  │
-│  client/* (客户端模块 - 需要构建)                               │
-│  ├── bestPractices/                                             │
-│  ├── howToImplement/                                            │
-│  └── howToApplyCC/                                              │
-│      └── 构建为 → scripts/generated/*Bundle.ts                  │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
+## System map
 
-图例：
-✅ 复用资源 - 新旧架构都使用
-⚠️  Legacy 代码 - 需要隔离
-```
-
-## 🎯 隔离后的架构（推荐）
-
-```
-src/
-├── app/                          # Next.js App Router ✨
-│   ├── (main)/                   # 主应用路由组
-│   │   ├── home/                 # 主页（使用适配器）
-│   │   │   └── page.tsx          # → LegacyPageWrapper
-│   │   ├── dashboard/            # 新功能示例
-│   │   └── settings/             # 新功能示例
-│   │
-│   ├── api/                      # API 路由
-│   │   ├── v1/messages/          # Claude API 代理
-│   │   └── img-proxy/            # 图片代理
-│   │
-│   ├── layout.tsx                # 根布局
-│   ├── page.tsx                  # 根页面
-│   └── globals.css               # 全局样式
-│
-├── components/              # React 组件 (新架构) ✨
-│   ├── ui/                       # shadcn/ui 组件
-│   ├── features/                 # 功能组件
-│   ├── layouts/                  # 布局组件
-│   ├── LegacyPageWrapper.tsx     # 适配器（过渡用）
-│   └── BrandIcon.tsx             # 品牌图标
-│
-├── legacy/                       # Legacy 代码（隔离） 📦
-│   ├── components/               # 旧组件
-│   ├── features/                 # 旧功能模块
-│   ├── client/                   # 旧客户端代码
-│   ├── styles/                   # 旧样式文件
-│   ├── scripts/                  # 旧脚本文件
-│   └── index.ts                  # 旧聚合器
-│
-├── api/                          # API 逻辑（复用） ✅
-│   ├── adapters/                 # 格式转换
-│   ├── providers.ts              # 供应商配置
-│   └── types.ts                  # API 类型
-│
-├── lib/                          # 工具函数（复用） ✅
-│   ├── utils/                    # 通用工具
-│   └── config/                   # 配置文件
-│
-├── config/                       # 配置文件（复用） ✅
-│   └── navigation.ts             # 导航配置
-│
-├── types/                        # 类型定义（复用） ✅
-│   └── *.ts                      # 共享类型
-│
-└── styles/                       # 样式系统
-    ├── designTokens.ts           # 设计令牌（复用） ✅
-    └── globals.css               # 全局样式（新）
-```
-
-## 🔄 调用关系（隔离后）
-
-```
+```text
 Next.js App Router
-├── app/layout.tsx
-│   └── designTokens ✅
-│
-└── app/(main)/home/page.tsx
-    └── <LegacyPageWrapper />
-        └── @/legacy/* (完全隔离) 📦
-
-新功能开发
-├── app/(main)/dashboard/page.tsx
-│   ├── @/components/features/* ✨
-│   ├── @/lib/utils/* ✅
-│   └── @/services/llm-provider/* ✅
-│
-└── components/features/*
-    ├── @/components/ui/* (shadcn/ui) ✨
-    ├── @/lib/hooks/* ✅
-    └── @/types/* ✅
+├── product routes and route-local UI
+├── API route controllers
+├── feature UI
+│   ├── homepage host
+│   ├── Shares
+│   ├── playground
+│   └── whiteboard
+├── feature domain/content
+│   ├── src/content/shares
+│   └── src/services/llm-provider
+└── shared foundations
+    ├── src/components/brand
+    ├── src/config
+    ├── src/lib
+    ├── src/styles
+    └── src/types
 ```
 
-## 📋 文件分类详解
+The project no longer has the retired `src/legacy/`, `src/client/`, or
+`src/components-next/` trees; the `src/scripts/generated/` or
+`shared/scripts/generated/` client-bundle outputs; `LegacyPageWrapper`; or the
+retired `scripts/build-client.js`, `scripts/build-client.cjs`,
+`scripts/build-client-safe.js`, `scripts/build-client-safe.cjs`, and
+`scripts/migrate-to-legacy.sh` entry points. Instructions that describe them are
+historical, not current architecture.
 
-### ✨ 新架构（Next.js）
+## App Router contexts
 
-**完全使用 Next.js 最佳实践**
+### Application shell
 
-- `app/` - App Router 路由
-- `components/` - React 组件（shadcn/ui）
-- 使用 Server Components（默认）
-- 需要交互时使用 'use client'
-- Tailwind CSS + CSS 变量
+- `src/app/layout.tsx` owns the root HTML shell, global CSS, and site metadata.
+- `src/app/(main)/layout.tsx` is the route-group layout for primary product
+  pages.
+- `src/app/page.tsx` composes the root homepage through
+  `src/components/HomePageWithNav.tsx`.
+- Route-local implementation details stay next to their route, using folders
+  such as `_components` and `_lib` when they are not shared.
 
-### ✅ 复用资源
+### Product routes
 
-**新旧架构都可以使用**
+Current product contexts include:
 
-- `api/` - API 逻辑和类型定义
-- `lib/` - 工具函数和 Hooks
-- `config/` - 配置文件
-- `types/` - TypeScript 类型定义
-- `styles/designTokens.ts` - 设计令牌
+- `/` — homepage host and native homepage sections.
+- `/playground` — request-building UI plus its own API endpoints.
+- `/whiteboard` — the Excalidraw-based whiteboard feature.
+- `/recording-summary` — recording and transcription workflow.
+- `/shares`, `/shares/[slug]`, `/shares/[slug]/deck` — public Shares catalog,
+  detail, and deck viewer.
+- `/brand` and `/design/style-guide` — brand and design-system references.
 
-### 📦 Legacy 代码（隔离）
+The route map is not permission to import across contexts. Route entry points
+compose their own feature code and shared foundations; private feature files do
+not become shared merely because they are under `src/`.
 
-**只通过适配器使用，不要直接修改**
+## API proxy context
 
-- `legacy/components/` - 旧布局组件
-- `legacy/features/` - 旧功能模块
-- `legacy/client/` - 旧客户端代码（需构建）
-- `legacy/styles/` - 旧样式文件
-- `legacy/scripts/` - 旧脚本文件
+The Claude-compatible proxy has one canonical implementation:
 
-## 🚀 开发指南
+```text
+POST /api/v1/messages
+  -> src/app/api/v1/messages/route.ts
+  -> src/services/llm-provider/providers.ts
+  -> src/services/llm-provider/adapters/format.ts
+  -> src/services/llm-provider/adapters/stream.ts
+  -> selected OpenAI-compatible upstream
+```
 
-### 新功能开发流程
+The controller extracts `x-api-key` and performs environment-driven provider
+selection. It uses the service-owned provider configuration and protocol
+adapters to convert Anthropic request/response formats and stream Server-Sent
+Events when requested. The route declares the Node.js runtime.
 
-1. **创建路由**
+Provider selection order is:
 
-   ```bash
-   src/app/(main)/new-feature/page.tsx
-   ```
+1. `DEEPSEEK_BASE_URL`
+2. `OPENAI_BASE_URL`
+3. `KIMI_BASE_URL`
+4. `SILICONFLOW_BASE_URL`
+5. `OPENROUTER_BASE_URL`
+6. `NVIDIA_NIM_BASE_URL`
+7. `OPENAI_COMPATIBLE_BASE_URL`, with provider detection
+8. the default NVIDIA NIM configuration
 
-2. **创建组件**
+`POST /v1/messages` is a compatibility façade that delegates to the canonical
+controller. New code must use the canonical implementation rather than adding
+logic to the alias.
 
-   ```bash
-   src/components/features/NewFeature.tsx
-   ```
+## Shares context
 
-3. **使用 shadcn/ui**
+Shares is a complete vertical feature:
 
-   ```bash
-   npx shadcn@latest add button
-   ```
+```text
+src/app/(main)/shares/**
+  -> src/components/features/shares/**
+  -> src/content/shares/**
+  -> public assets at https://assets.aispeeds.me
+```
 
-4. **样式使用 Tailwind**
+- `src/content/shares/types.ts` defines the content contract.
+- `src/content/shares/registry.ts` owns registration, lookup, URL construction,
+  and publication validation.
+- `src/content/shares/<slug>.ts` contains share-specific metadata and slide
+  content.
+- `src/components/features/shares/index.ts` is the public UI entry point for
+  Shares routes.
+- Shares routes generate static parameters from public registry entries and
+  reject unknown or non-public slugs.
 
-   ```tsx
-   <div className="bg-[var(--color-bg-primary)]">
-   ```
+Routes may import the public Shares UI and content APIs. Shares UI may import
+Shares content types/helpers and shared brand, config, and utility modules.
+Neither layer imports the API proxy, another feature's private implementation,
+or the homepage artifact pipeline.
 
-5. **复用 API 和工具**
-   ```tsx
-   import { fetchProviders } from '@/services/llm-provider/providers';
-   import { cn } from '@/lib/utils';
-   ```
+## Homepage seam
 
-### 禁止操作
+The root homepage deliberately contains one frozen external artifact boundary:
 
-❌ **不要修改 `src/legacy/` 下的任何文件** ❌ **不要在新代码中导入
-`@/legacy/*`（除了适配器）** ❌ **不要混用旧的字符串模板和新的 React 组件**
+```text
+external @cc4pm/homepage index.html
+  -> scripts/prepare-cc4pm-homepage.mjs
+  -> public/static/cc4pm-homepage.html
+     + public/_headers response sandbox
+  -> src/components/HomePageWithNav.tsx iframe
+     and /api/static/homepage redirect
+```
 
-### 迁移策略
+`prepare:homepage` copies and applies the existing embed-specific adjustments
+before development and production builds. `HomePageWithNav` owns the native
+floating navigation and renders the prepared document only through a sandboxed
+iframe without `allow-same-origin` or `allow-popups-to-escape-sandbox`.
+`public/_headers` applies the same sandbox at the response layer so direct loads
+and popup documents cannot regain the application's origin. CI regenerates the
+artifact, validates this response policy, and fails on any diff, preventing
+committed artifact drift. The `/api/static/homepage` route is a redirect to the
+same prepared artifact.
 
-当需要迁移某个 legacy 功能时：
+This is an isolation seam, not a platform for new work. The adapter may read
+only `node_modules/@cc4pm/homepage/index.html`; no source file, including the
+adapter, may import, re-export, require, or dynamically import the package or a
+subpath. New features cannot depend on the external HTML, generated file,
+preparation script, DOM shape, or scripts inside the iframe. Add native
+routes/components instead. Do not add a second consumer or move application
+behavior into the preparation step.
 
-1. 在 `src/app/` 创建新路由
-2. 在 `src/components/` 用 React 重写
-3. 测试新功能完全正常
-4. 从 `LegacyPageWrapper` 移除旧模块
-5. 删除 `src/legacy/` 中对应代码
+## Dependency direction
 
-## 🔧 构建系统
+| From                                   | May import                                                                         | Must not import                                                         |
+| -------------------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `src/app/**`                           | its feature UI/domain, route-local code, shared foundations                        | another context's private files without an explicit public contract     |
+| `src/components/features/<context>/**` | the same context's public domain/content API, brand UI, config, lib, styles, types | App Router entries, API route handlers, another feature's private files |
+| `src/content/<context>/**`             | same-context files and non-UI shared foundations                                   | React components, App Router entries, unrelated services                |
+| `src/services/<context>/**`            | same-context files and non-UI shared foundations                                   | React components, App Router entries, unrelated feature content         |
+| shared foundations                     | same or lower-level shared foundations                                             | feature UI/domain and App Router entries                                |
 
-### 客户端代码构建
+The intended flow is always composition inward from routes and downward toward
+feature-owned logic and shared leaves. If two contexts need the same primitive,
+extract a context-neutral module; do not make one feature depend on the other.
 
-Legacy 客户端代码需要构建：
+## Compatibility façades
+
+Compatibility surfaces are temporary delegates, not alternate implementation
+locations. Current route-level compatibility includes:
+
+- `src/app/(main)/home/page.tsx`, which redirects the former `/home` entry to
+  `/` while preserving the hash.
+- `src/app/v1/messages/route.ts`, which re-exports the canonical message
+  handler.
+- `src/app/api/static/homepage/route.ts`, which redirects to the prepared
+  homepage artifact.
+- the `/img-proxy` rewrite, which delegates to `/api/img-proxy`.
+
+`architecture/compatibility-manifest.json` is the exact, closed inventory. In
+addition to the route façades above, it records the ambient declaration in
+`types/cc4pm-homepage.d.ts` and the practices compatibility design-token
+surfaces in `src/app/globals.css`, `tailwind.config.ts`, and
+`src/styles/designTokens.ts`: definitions, aliases, Tailwind mappings, and
+catalog entries. These entries exist only to preserve current consumers; new
+code must not adopt them.
+
+A façade may redirect, re-export, or delegate; it may not own business logic,
+validation, rendering policy, or state. The entire compatibility inventory is a
+maximum budget that must only shrink. New entry points must be canonical rather
+than added to that budget.
+
+The manifest also records the sole import-direction exception:
+`src/app/api/playground/route.ts` imports
+`@/app/(main)/playground/_lib/playgroundRequest`. This exact API-to-main edge is
+grandfathered while both sides share the request contract. Do not copy it. When
+that boundary changes, move the contract to a context-neutral owner and remove
+the exception.
+
+## Architecture validation
+
+Run both checks when changing imports, route ownership, compatibility paths, or
+the homepage seam:
 
 ```bash
-npm run build:client
+pnpm run architecture:check
+pnpm run architecture:check:self-test
 ```
 
-构建流程：
-
-```
-src/legacy/client/bestPractices/
-  └── index.ts
-      ↓ esbuild
-src/legacy/scripts/generated/
-  └── bestPracticesBundle.ts (IIFE)
-      ↓ 导入
-src/legacy/scripts/index.ts
-  └── allScripts
-      ↓ 注入
-LegacyPageWrapper
-  └── dangerouslySetInnerHTML
-```
-
-### Next.js 构建
-
-```bash
-npm run build
-```
-
-## 📚 相关文档
-
-- `docs/LEGACY_ISOLATION_GUIDE.md` - 完整隔离指南
-- `docs/QUICK_START_NEW_DEV.md` - 新架构开发快速开始
-- `scripts/migrate-to-legacy.sh` - 一键隔离脚本
-
-## ⚡ 一键隔离
-
-运行隔离脚本：
-
-```bash
-./scripts/migrate-to-legacy.sh
-```
-
-脚本会自动：
-
-1. ✅ 创建 `src/legacy/` 目录
-2. ✅ 移动所有 Legacy 代码
-3. ✅ 保留共享资源
-4. ✅ 更新所有导入路径
-5. ✅ 重新构建客户端代码
-6. ✅ 验证 Next.js 构建
-
-隔离后验证：
-
-- [ ] `npm run dev` 启动正常
-- [ ] 访问 http://localhost:3000 页面正常
-- [ ] 所有功能模块正常显示
-- [ ] 控制台无错误
+The first command validates the repository. The second verifies the boundary
+checker itself. See `.claude/rules/architecture-boundaries.md` for the normative
+rules `LEG-001` through `CI-001`.

@@ -1968,9 +1968,6 @@ body {
   window.addEventListener('scroll', function() {
     if (!ticking) {
       requestAnimationFrame(function() {
-        // navbar shadow
-        navbar.classList.toggle('scrolled', window.scrollY > 80);
-
         // parallax
         document.getElementById('heroGrid').style.transform = 'translateY(' + (window.scrollY * 0.05) + 'px)';
 
