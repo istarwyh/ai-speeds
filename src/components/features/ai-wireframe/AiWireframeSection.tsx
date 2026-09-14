@@ -2781,10 +2781,7 @@ export function AiWireframeSection() {
   };
 
   return (
-    <section
-      id='ai-wireframe'
-      className='relative h-[calc(100dvh-4rem)] overflow-hidden bg-[#f7f5ee] text-slate-950 md:h-screen'
-    >
+    <section id='ai-wireframe' className='relative h-full min-h-0 overflow-hidden bg-[#f7f5ee] text-slate-950'>
       <div className='grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)] lg:grid-cols-[224px_minmax(0,1fr)] lg:grid-rows-1'>
         <aside className='min-h-0 border-b border-slate-200 bg-white lg:border-b-0 lg:border-r'>
           <div className='flex h-full min-h-0 flex-col'>

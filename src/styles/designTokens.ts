@@ -162,6 +162,14 @@ export const colorTokenGroups = {
       border: true,
       usage: '悬浮菜单、弹层、hover 面',
     },
+    {
+      name: '站点头部表面',
+      cls: 'bg-header-surface',
+      hex: 'rgba(255,252,248,0.84)',
+      cssVar: '--color-surface-header',
+      border: true,
+      usage: '粘性站点头部的暖白半透明背景',
+    },
   ],
   text: [
     {
@@ -285,6 +293,12 @@ export const effectTokens = [
     cls: 'backdrop-blur-floating',
     cssVar: '--blur-floating',
     usage: '轻玻璃控件背景模糊',
+  },
+  {
+    name: '站点头部模糊',
+    cls: 'backdrop-blur-header',
+    cssVar: '--blur-header',
+    usage: '粘性站点头部的背景模糊',
   },
 ] as const;
 

@@ -4,14 +4,65 @@
 export const UI_TEXTS = {
   // 导航标签文字
   NAVIGATION: {
-    HOME: '献给产品主理人',
-    GET_STARTED: '如何用上CC',
-    AI_WIREFRAME: '快速设计 UI 结构',
+    HOME: '首页',
+    API_GATEWAY: 'AI API 网关',
+    CC4PM: 'cc4pm',
+    GET_STARTED: '如何用上 Claude Code',
+    AI_WIREFRAME: 'AI 线框图',
     WHITEBOARD: '白板',
     PLAYGROUND: '接口测试',
     RECORDING_SUMMARY: '录音总结',
     SHARES: '公开分享',
-    BRAND: 'Brand Kit',
+    BRAND: '品牌资料',
+  },
+
+  NAVIGATION_GROUPS: {
+    PRODUCTS: '产品',
+    TOOLS: '工具',
+    RESOURCES: '资源',
+  },
+
+  HEADER: {
+    NAVIGATION_ARIA: '全站导航',
+    HOME_ARIA: 'AI Speeds 首页',
+    OPEN_MENU: '打开导航菜单',
+    CLOSE_MENU: '关闭导航菜单',
+    SKIP_TO_CONTENT: '跳至主要内容',
+    OPEN_SEARCH: '搜索',
+    PRIMARY_CTA: '开始使用',
+    GITHUB: 'GitHub',
+  },
+
+  SEARCH: {
+    TITLE: '搜索 AI Speeds',
+    DESCRIPTION: '查找产品、工具、指南和公开分享。',
+    PLACEHOLDER: '搜索产品、工具或内容…',
+    EMPTY: '没有找到匹配内容。',
+    CLOSE: '关闭搜索',
+    SHORTCUT_HINT: '按 ⌘ K 快速打开',
+    GROUPS: {
+      products: '产品',
+      tools: '工具',
+      resources: '资源',
+      shares: '公开分享',
+      curated: '精选资源',
+      brand: '品牌',
+    },
+  },
+
+  ATTRIBUTION: {
+    original: 'AI Speeds 原创',
+    collaboration: 'AI Speeds 共创',
+    curated: 'AI Speeds 精选',
+  },
+
+  FOOTER: {
+    MISSION: '帮助人们拥抱 AI 时代带来的巨大生产力和范式跃进。',
+    PRODUCTS: '产品',
+    TOOLS: '工具',
+    RESOURCES: '资源',
+    BRAND: '品牌',
+    COPYRIGHT: 'AI Speeds',
   },
 
   // 模块标题和描述

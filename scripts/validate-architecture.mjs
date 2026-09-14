@@ -583,7 +583,7 @@ const homepageArtifactVerificationWorkflows = new Set([
 ]);
 /** @type {{ rootOwner: string, rootComponent: string, owner: string, parentComponent: string, frameComponent: string, activeSection: string }} */
 const frozenHomepageComposition = {
-  rootOwner: 'src/app/page.tsx',
+  rootOwner: 'src/app/(site)/page.tsx',
   rootComponent: 'RootPage',
   owner: 'src/components/HomePageWithNav.tsx',
   parentComponent: 'HomePageWithNav',
@@ -692,10 +692,10 @@ const maximumCompatibilityBudget = {
   facades: [
     {
       route: '/home',
-      owner: 'src/app/(main)/home/page.tsx',
+      owner: 'src/app/(legacy)/home/page.tsx',
       kind: 'client-redirect',
       target: '/',
-      targetOwner: 'src/app/page.tsx',
+      targetOwner: 'src/app/(site)/page.tsx',
     },
     {
       route: '/v1/messages',
@@ -815,25 +815,19 @@ const maximumCompatibilityBudget = {
 const maximumApiToMainExceptions = [
   {
     source: 'src/app/api/playground/route.ts',
-    specifier: '@/app/(main)/playground/_lib/playgroundRequest',
-    target: 'src/app/(main)/playground/_lib/playgroundRequest.ts',
+    specifier: '@/app/(tools)/playground/_lib/playgroundRequest',
+    target: 'src/app/(tools)/playground/_lib/playgroundRequest.ts',
   },
 ];
 /** @type {Map<string, string>} */
 const exactFacadeSourceContracts = new Map([
   [
-    'src/app/(main)/home/page.tsx',
+    'src/app/(legacy)/home/page.tsx',
     [
-      "'use client';",
+      "import { LegacyHomeHashBridge } from '@/components/home';",
       '',
-      "import { useEffect } from 'react';",
-      '',
-      'export default function HomePage() {',
-      '  useEffect(() => {',
-      "    window.location.replace(window.location.hash ? `/${window.location.hash}` : '/');",
-      '  }, []);',
-      '',
-      '  return null;',
+      'export default function LegacyHomePage() {',
+      '  return <LegacyHomeHashBridge redirectHome />;',
       '}',
       '',
     ].join('\n'),
@@ -892,6 +886,16 @@ function toRepositoryPath(root, absolutePath) {
 /** @param {string} candidate @param {string} parent @returns {boolean} */
 function isWithinPath(candidate, parent) {
   return candidate === parent || candidate.startsWith(`${parent}/`);
+}
+
+/** @param {string} target @returns {boolean} */
+function isApiToRouteBoundaryTarget(target) {
+  return /^src\/app\/\((?:site|tools|immersive|legacy)\)(?:\/|$)/.test(target);
+}
+
+/** @param {string} specifier @returns {boolean} */
+function isApiToRouteBoundarySpecifier(specifier) {
+  return /^@\/app\/\((?:site|tools|immersive|legacy)\)\//.test(specifier);
 }
 
 /** @param {string} path @returns {boolean} */
@@ -4723,11 +4727,11 @@ function validateManifest(manifest) {
     if (source && !isWithinPath(source, 'src/app/api')) {
       errors.push(`${path}.source must be within src/app/api`);
     }
-    if (specifier && !specifier.startsWith('@/app/(main)/')) {
-      errors.push(`${path}.specifier must target @/app/(main)/*`);
+    if (specifier && !isApiToRouteBoundarySpecifier(specifier)) {
+      errors.push(`${path}.specifier must target a route group under @/app/*`);
     }
-    if (target && !isWithinPath(target, 'src/app/(main)')) {
-      errors.push(`${path}.target must be within src/app/(main)`);
+    if (target && !isApiToRouteBoundaryTarget(target)) {
+      errors.push(`${path}.target must be within a route group under src/app`);
     }
   }
   validateDuplicates(
@@ -5465,7 +5469,6 @@ async function validateRepository(root, manifest) {
   const compositionReferences = sourceFacts.flatMap(facts => facts.homepageCompositionReferences);
   compareExactEntries({
     expected: [
-      { source: frozenHomepageComposition.rootOwner, kind: 'root-call', valid: true },
       { source: frozenHomepageComposition.owner, kind: 'frame-return', valid: true },
       { source: frozenHomepageComposition.owner, kind: 'parent-call', valid: true },
     ],
@@ -5604,6 +5607,10 @@ async function validateRepository(root, manifest) {
   function exactFacadeMatchCount(facade) {
     const ownerFacts = factsByPath.get(facade.owner);
     if (facade.kind === 'client-redirect') {
+      const exactSourceContract = exactFacadeSourceContracts.get(facade.owner);
+      if (exactSourceContract && ownerFacts?.tokenSignature === sourceTokenSignature(facade.owner, exactSourceContract)) {
+        return 1;
+      }
       return ownerFacts?.locationReplaceTargets.filter(target => target === facade.target).length ?? 0;
     }
     if (facade.kind === 'module-reexport') {
@@ -6048,7 +6055,7 @@ async function validateRepository(root, manifest) {
     }
 
     const target = edge.resolvedTarget ?? edge.logicalTarget;
-    if (!target || !isWithinPath(target, 'src/app/(main)')) {
+    if (!target || !isApiToRouteBoundaryTarget(target)) {
       continue;
     }
 
@@ -6060,7 +6067,7 @@ async function validateRepository(root, manifest) {
 
     findings.add(
       'ARCH005',
-      `${edge.source}:${edge.line}:${edge.column}: ${edge.kind} crosses API-to-main boundary via ${edge.specifier} -> ${target}`,
+      `${edge.source}:${edge.line}:${edge.column}: ${edge.kind} crosses API-to-route boundary via ${edge.specifier} -> ${target}`,
     );
   }
 
@@ -6070,12 +6077,12 @@ async function validateRepository(root, manifest) {
     if (uses === 0) {
       findings.add(
         'ARCH005',
-        `${exception.source}: stale API-to-main exception ${exception.specifier} -> ${exception.target}`,
+        `${exception.source}: stale API-to-route exception ${exception.specifier} -> ${exception.target}`,
       );
     } else if (uses > 1) {
       findings.add(
         'ARCH005',
-        `${exception.source}: API-to-main exception is used ${uses} times for ${exception.specifier} -> ${exception.target}`,
+        `${exception.source}: API-to-route exception is used ${uses} times for ${exception.specifier} -> ${exception.target}`,
       );
     }
   }
@@ -6382,18 +6389,6 @@ function baseFixtureFiles(manifest) {
       );
     }
   }
-
-  files.set(
-    frozenHomepageComposition.rootOwner,
-    [
-      `import { ${frozenHomepageComposition.parentComponent} } from '@/components/HomePageWithNav';`,
-      '',
-      `export default function ${frozenHomepageComposition.rootComponent}() {`,
-      `  return <${frozenHomepageComposition.parentComponent} />;`,
-      '}',
-      '',
-    ].join('\n'),
-  );
 
   for (const declaration of manifest.compatibility.ambientDeclarations) {
     appendFixture(files, declaration.owner, `declare module ${JSON.stringify(declaration.module)} {}\n`);
@@ -6985,10 +6980,14 @@ async function runSelfTest() {
     {
       name: 'compatibility façade domain logic is rejected',
       expectedCodes: ['ARCH003'],
+      expectedFindingCount: 2,
       expectedMessages: ['must remain the exact thin source contract'],
       mutate(files) {
-        const owner = 'src/app/(main)/home/page.tsx';
-        appendFixture(files, owner, 'export const compatibilityState = new Map();\n');
+        const facade = requiredFixtureValue(
+          manifest.compatibility.facades.find(entry => entry.route === '/home'),
+          '/home compatibility façade',
+        );
+        appendFixture(files, facade.owner, 'export const compatibilityState = new Map();\n');
       },
     },
     {
@@ -7018,11 +7017,11 @@ async function runSelfTest() {
       },
     },
     {
-      name: 'new API-to-main edge is rejected',
+      name: 'new API-to-route edge is rejected',
       expectedCodes: ['ARCH005'],
       mutate(files) {
-        const target = 'src/app/(main)/self-test/shared.ts';
-        const specifier = '@/app/(main)/self-test/shared';
+        const target = 'src/app/(tools)/self-test/shared.ts';
+        const specifier = '@/app/(tools)/self-test/shared';
         files.set(target, 'export const value = true;\n');
         files.set('src/app/api/self-test/route.ts', `export { value } from ${JSON.stringify(specifier)};\n`);
       },
@@ -7031,9 +7030,9 @@ async function runSelfTest() {
       name: 'baseUrl spelling cannot widen the Playground exception',
       expectedCodes: ['ARCH005'],
       expectedFindingCount: 2,
-      expectedMessages: ['stale API-to-main exception', 'crosses API-to-main boundary'],
+      expectedMessages: ['stale API-to-route exception', 'crosses API-to-route boundary'],
       mutate(files) {
-        const exception = requiredFixtureValue(manifest.apiToMainExceptions[0], 'first API-to-main exception');
+        const exception = requiredFixtureValue(manifest.apiToMainExceptions[0], 'first API-to-route exception');
         files.set(exception.source, `import ${JSON.stringify(exception.target.replace(/\.[^.]+$/, ''))};\n`);
       },
     },
@@ -7143,7 +7142,11 @@ async function runSelfTest() {
         candidate.compatibility.facades = candidate.compatibility.facades.filter(facade => facade.route !== '/home');
       },
       mutate(files) {
-        files.delete('src/app/(main)/home/page.tsx');
+        const facade = requiredFixtureValue(
+          manifest.compatibility.facades.find(entry => entry.route === '/home'),
+          '/home compatibility façade',
+        );
+        files.delete(facade.owner);
         files.set(
           'src/app/(replacement)/home/page.tsx',
           'export default function ReplacementHome() { return null; }\n',
@@ -7439,10 +7442,10 @@ async function runSelfTest() {
       },
     },
     {
-      name: 'stale API-to-main exception is rejected',
+      name: 'stale API-to-route exception is rejected',
       expectedCodes: ['ARCH005'],
       mutate(files) {
-        const exception = requiredFixtureValue(manifest.apiToMainExceptions[0], 'first API-to-main exception');
+        const exception = requiredFixtureValue(manifest.apiToMainExceptions[0], 'first API-to-route exception');
         files.set(exception.source, 'export {};\n');
       },
     },
@@ -7622,7 +7625,7 @@ async function runSelfTest() {
           owner: 'src/app/legacy-new/page.tsx',
           kind: 'redirect',
           target: '/',
-          targetOwner: 'src/app/page.tsx',
+          targetOwner: 'src/app/(site)/page.tsx',
         });
       },
     },
@@ -7686,8 +7689,8 @@ async function runSelfTest() {
       mutate(candidate) {
         candidate.apiToMainExceptions.push({
           source: 'src/app/api/new/route.ts',
-          specifier: '@/app/(main)/new/_lib/request',
-          target: 'src/app/(main)/new/_lib/request.ts',
+          specifier: '@/app/(tools)/new/_lib/request',
+          target: 'src/app/(tools)/new/_lib/request.ts',
         });
       },
     },
@@ -7698,8 +7701,8 @@ async function runSelfTest() {
         'manifest.apiToMainExceptions[0].specifier must be an exact normalized module specifier',
       ],
       mutate(candidate) {
-        const exception = requiredFixtureValue(candidate.apiToMainExceptions[0], 'first mutable API-to-main exception');
-        exception.specifier = '@/app/(main)/playground/../playground/_lib/playgroundRequest';
+        const exception = requiredFixtureValue(candidate.apiToMainExceptions[0], 'first mutable API-to-route exception');
+        exception.specifier = '@/app/(tools)/playground/../playground/_lib/playgroundRequest';
       },
     },
   ];

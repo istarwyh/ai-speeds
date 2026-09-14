@@ -6,7 +6,7 @@ import {
   buildDirectRequest,
   type ApiType,
   type PlaygroundMode,
-} from '@/app/(main)/playground/_lib/playgroundRequest';
+} from '@/app/(tools)/playground/_lib/playgroundRequest';
 import { validateProxyUrl } from '@/lib/url-validation';
 
 export const runtime = 'nodejs';
