@@ -1,5 +1,5 @@
 import type { FeatureTargetKind, SearchGroupId } from '@/config/features';
-import type { ContentOrigin } from '@/content/contributors';
+import type { ContentOrigin } from '@/types/content-provenance';
 
 export type SearchEntry = {
   id: string;

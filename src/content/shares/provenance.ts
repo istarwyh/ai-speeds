@@ -1,4 +1,4 @@
-import type { ContentProvenance } from '@/content/contributors';
+import type { ContentProvenance } from '@/types/content-provenance';
 
 export const shareProvenanceBySlug = {
   'agent-native-product-ai-maker-shanghai': {

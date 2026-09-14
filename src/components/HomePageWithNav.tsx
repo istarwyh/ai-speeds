@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { type CSSProperties, type PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from 'react';
 import { BrandLogo } from '@/components/brand';
-import { AiWireframeSection } from '@/components/features/ai-wireframe/AiWireframeSection';
+import { AiWireframeSection } from '@/components/features/ai-wireframe';
 import { GetStartedSection } from '@/components/features/get-started/GetStartedSection';
 import {
   DEFAULT_HOME_SECTION_ID,

@@ -12,7 +12,7 @@ import {
 import type { Share, ShareResource } from '@/content/shares';
 import { getCoverUrl, getDeckArtifact, getResourceUrl } from '@/content/shares';
 import { UI_TEXTS } from '@/config/ui-texts';
-import { getShareProvenance } from '@/lib/attribution';
+import { getShareProvenance } from '@/content/shares';
 import { ShareTranscript } from './ShareTranscript';
 
 const floatingControlClass =

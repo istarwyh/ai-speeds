@@ -1,6 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { ShareCard } from '@/components/features/shares/ShareCard';
+import { ShareCard } from '@/components/features/shares';
 import { getPublicShares } from '@/content/shares';
 
 export function PublicWorkSection() {

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { SiteFooter, SiteHeader } from '@/components/site';
-import { siteSearchEntries } from '@/lib/search';
+import { siteSearchEntries } from '@/app/_lib/site-search';
 
 export default function SiteLayout({ children }: { children: ReactNode }) {
   return (

@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { featurePages } from '@/config/features';
 import { CANONICAL_SITE_URL } from '@/config/site-url';
+import { assertSiteContentRegistries } from '@/app/_lib/site-content-validation';
 import { getPublicShares } from '@/content/shares';
-import { assertSiteContentRegistries } from '@/lib/site-content-validation';
 
 assertSiteContentRegistries();
 

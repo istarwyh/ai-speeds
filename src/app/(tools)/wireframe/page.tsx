@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { AiWireframeSection } from '@/components/features/ai-wireframe/AiWireframeSection';
+import { AiWireframeSection } from '@/components/features/ai-wireframe';
 
 export const metadata: Metadata = {
   title: 'AI 线框图 | AI Speeds',

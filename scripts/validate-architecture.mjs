@@ -5469,7 +5469,6 @@ async function validateRepository(root, manifest) {
   const compositionReferences = sourceFacts.flatMap(facts => facts.homepageCompositionReferences);
   compareExactEntries({
     expected: [
-      { source: frozenHomepageComposition.rootOwner, kind: 'root-call', valid: true },
       { source: frozenHomepageComposition.owner, kind: 'frame-return', valid: true },
       { source: frozenHomepageComposition.owner, kind: 'parent-call', valid: true },
     ],
@@ -6391,18 +6390,6 @@ function baseFixtureFiles(manifest) {
     }
   }
 
-  files.set(
-    frozenHomepageComposition.rootOwner,
-    [
-      `import { ${frozenHomepageComposition.parentComponent} } from '@/components/HomePageWithNav';`,
-      '',
-      `export default function ${frozenHomepageComposition.rootComponent}() {`,
-      `  return <${frozenHomepageComposition.parentComponent} />;`,
-      '}',
-      '',
-    ].join('\n'),
-  );
-
   for (const declaration of manifest.compatibility.ambientDeclarations) {
     appendFixture(files, declaration.owner, `declare module ${JSON.stringify(declaration.module)} {}\n`);
   }
@@ -6993,6 +6980,7 @@ async function runSelfTest() {
     {
       name: 'compatibility façade domain logic is rejected',
       expectedCodes: ['ARCH003'],
+      expectedFindingCount: 2,
       expectedMessages: ['must remain the exact thin source contract'],
       mutate(files) {
         const facade = requiredFixtureValue(

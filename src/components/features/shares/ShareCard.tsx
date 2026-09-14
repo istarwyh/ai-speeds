@@ -3,7 +3,7 @@ import { ArrowUpRight, Images } from 'lucide-react';
 import type { Share } from '@/content/shares';
 import { getCoverUrl, getDeckArtifact } from '@/content/shares';
 import { UI_TEXTS } from '@/config/ui-texts';
-import { getShareProvenance } from '@/lib/attribution';
+import { getShareProvenance } from '@/content/shares';
 
 const floatingControlClass =
   'rounded-pill border border-floating-border bg-floating-surface text-text-primary shadow-floating backdrop-blur-floating transition hover:translate-y-lift hover:border-primary hover:bg-floating-surface-strong active:scale-press focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
