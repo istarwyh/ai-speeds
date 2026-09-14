@@ -3,8 +3,6 @@ import { SITE_LINKS } from '@/config/site-links';
 
 export const CANONICAL_SITE_URL = SITE_LINKS.canonicalUrl;
 
-export const CANONICAL_SITE_URL = 'https://aispeeds.me';
-
 const DEFAULT_SITE_URL = 'http://localhost:3000';
 
 export async function getSiteUrl(): Promise<string> {
