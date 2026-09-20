@@ -87,6 +87,16 @@ export const featurePages: readonly FeaturePage[] = [
     sitemapChangeFrequency: 'monthly',
   },
   {
+    id: 'harbor-self-evolving',
+    title: UI_TEXTS.NAVIGATION.HARBOR_SELF_EVOLVING,
+    href: '/product/harbor-self-evolving',
+    kind: 'route',
+    isPublic: true,
+    showInHomeMenu: true,
+    sitemapPriority: 0.7,
+    sitemapChangeFrequency: 'weekly',
+  },
+  {
     id: 'brand',
     title: UI_TEXTS.NAVIGATION.BRAND,
     href: '/brand',
