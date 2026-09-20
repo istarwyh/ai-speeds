@@ -12,6 +12,7 @@ import {
 import type { Share, ShareResource } from '@/content/shares';
 import { getCoverUrl, getDeckArtifact, getResourceUrl } from '@/content/shares';
 import { UI_TEXTS } from '@/config/ui-texts';
+import { getShareProvenance } from '@/content/shares';
 import { ShareTranscript } from './ShareTranscript';
 
 const floatingControlClass =
@@ -46,13 +47,14 @@ type ShareDetailProps = {
 
 export function ShareDetail({ share }: ShareDetailProps) {
   const deck = getDeckArtifact(share);
+  const provenance = getShareProvenance(share);
 
   return (
     <main className='min-h-screen bg-bg-warm text-text-primary'>
       <section className='relative overflow-hidden border-b border-floating-border'>
         <div className='pointer-events-none absolute inset-0' aria-hidden='true'>
-          <div className='absolute -left-24 top-16 h-72 w-72 rounded-full bg-primary/10 blur-3xl' />
-          <div className='absolute -right-24 top-32 h-80 w-80 rounded-full bg-accent/10 blur-3xl' />
+          <div className='absolute -left-24 top-16 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(229,122,90,0.16)_0%,rgba(229,122,90,0)_70%)]' />
+          <div className='absolute -right-24 top-32 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.14)_0%,rgba(6,182,212,0)_70%)]' />
         </div>
 
         <div className='relative mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 sm:py-16 lg:grid-cols-[minmax(0,0.92fr)_minmax(30rem,1.08fr)] lg:items-center lg:px-8 lg:py-20'>
@@ -79,8 +81,8 @@ export function ShareDetail({ share }: ShareDetailProps) {
             <dl className='mt-7 flex flex-wrap gap-x-6 gap-y-3 text-sm text-text-secondary'>
               <div className='flex items-center gap-2'>
                 <UserRound size={17} className='text-primary' aria-hidden='true' />
-                <dt className='sr-only'>分享者</dt>
-                <dd>{share.author.name}</dd>
+                <dt className='sr-only'>来源与署名</dt>
+                <dd>{provenance.label}</dd>
               </div>
               {share.event ? (
                 <div className='flex items-center gap-2'>
@@ -175,7 +177,7 @@ export function ShareDetail({ share }: ShareDetailProps) {
                 key={resource.kind}
                 href={getResourceUrl(share, resource)}
                 target='_blank'
-                rel='noreferrer'
+                rel='noopener noreferrer'
                 className={`${floatingControlClass} flex min-h-14 items-center justify-between gap-3 px-4 py-3 text-sm font-semibold`}
               >
                 <span className='flex items-center gap-2'>
