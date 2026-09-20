@@ -1,193 +1,199 @@
 # AI Speeds
 
-AI content platform and universal Claude API proxy. Translates Anthropic
-Messages API to OpenAI-compatible format, enabling Claude Code to work with any
-provider.
+AI Speeds is an AI product platform and universal Claude API proxy. It combines
+a native Next.js product site, public tools and resources, and an Anthropic
+Messages API compatibility layer for OpenAI-compatible model providers.
 
-Deployed at **[aispeeds.me](https://aispeeds.me)**.
+Production: **[aispeeds.me](https://aispeeds.me)**
 
-## Features
+Mirror domain: **[cc.xiaohui.cool](https://cc.xiaohui.cool)**
 
-- **API Proxy** -- Anthropic Messages API to OpenAI Chat Completions / Responses
-  API with real-time SSE streaming
-- **Multi-Provider** -- DeepSeek, OpenAI, OpenRouter, Kimi, SiliconFlow, NVIDIA
-  NIM, or any OpenAI-compatible endpoint
-- **React Homepage** -- Native Next.js landing and get-started guide for product
-  makers and Claude Code users
-- **Edge Deploy** -- Cloudflare Workers (300+ locations, sub-ms cold start)
+## What is included
 
----
+- **Native product site** — React Server Components, grouped
+  product/tool/resource navigation, global search, and public content
+  attribution.
+- **API proxy** — Anthropic Messages API to OpenAI Chat Completions with
+  real-time SSE conversion.
+- **Multi-provider routing** — DeepSeek, OpenAI, OpenRouter, Kimi, SiliconFlow,
+  NVIDIA NIM, and generic OpenAI-compatible endpoints.
+- **Tools** — API Playground, whiteboard, recording summary, and AI wireframe.
+- **Public resources** — Claude Code onboarding, public Shares, and brand
+  assets.
+- **Harbor Self-Evolving** — an AI Speeds product route that displays the
+  independently published Harbor Chinese site in a full-screen cross-origin
+  iframe.
+- **Cloudflare deployment** — OpenNext output deployed to Cloudflare Workers.
 
-## Application Tabs
+## Site map
 
-The app has 4 main navigation tabs, each serving a distinct purpose:
+### Products
 
-### 1. Home -- Product Maker Homepage
+| Entry                | Route                           | Description                                               |
+| -------------------- | ------------------------------- | --------------------------------------------------------- |
+| AI API Gateway       | `/#api-gateway`                 | Anthropic-to-OpenAI-compatible API gateway                |
+| cc4pm                | `/#cc4pm`                       | AI-native product methods and reusable workflows          |
+| Harbor Self-Evolving | `/product/harbor-self-evolving` | Full-screen view of the Harbor Self-Evolving Chinese site |
 
-**Route**: `/`
+### Tools
 
-The default landing page is a native React/Tailwind experience for AI product
-makers. It introduces AI Speeds, Claude Code Router, and quick entry points for
-the get-started guide, whiteboard, and API playground.
+| Tool              | Route                |
+| ----------------- | -------------------- |
+| API Playground    | `/playground`        |
+| Whiteboard        | `/whiteboard`        |
+| Recording Summary | `/recording-summary` |
+| AI Wireframe      | `/wireframe`         |
 
-### 2. Get Started -- How to Use Claude Code
+### Resources
 
-**Route**: `/home#get-started`
+| Resource               | Route          |
+| ---------------------- | -------------- |
+| Claude Code onboarding | `/get-started` |
+| Public Shares          | `/shares`      |
+| Brand assets           | `/brand`       |
 
-Step-by-step guide for setting up Claude Code with various AI providers: install
-Claude Code, choose a provider, and configure environment variables.
+`/home` is retained only as a compatibility redirect to `/` while preserving the
+URL hash.
 
-### 3. Whiteboard
+## Quick start
 
-**Route**: `/whiteboard`
-
-Free-form drawing and writing tool powered by
-[Excalidraw](https://excalidraw.com/). Useful for quick sketches, wireframes,
-and visual brainstorming.
-
-### 4. Playground -- API Testing
-
-**Route**: `/playground`
-
-Built-in API test tool supporting three API formats:
-
-- **OpenAI Chat Completions** (`/v1/chat/completions`)
-- **OpenAI Responses** (`/v1/responses`)
-- **Anthropic Messages** (`/v1/messages`)
-
-Features streaming output (rendered + raw SSE view), model discovery, and
-latency measurement.
-
----
-
-## Quick Start
-
-### Use the hosted instance
+### Use the hosted API proxy
 
 ```bash
-# Install Claude Code
 pnpm add -g @anthropic-ai/claude-code
 
-# Point it at AI Speeds
 export ANTHROPIC_BASE_URL="https://aispeeds.me"
 export ANTHROPIC_API_KEY="your-provider-api-key"
 
-# Start using
 claude
 ```
 
-### Self-host
+API keys are supplied per request and are not stored by AI Speeds.
+
+### Run locally
+
+Use Node.js `^22.18.0 || >=24.0.0`. Node.js 23 is unsupported.
 
 ```bash
-git clone https://github.com/your-username/ai-speeds
+git clone https://github.com/istarwyh/ai-speeds.git
 cd ai-speeds
 pnpm install
-pnpm run cf:deploy
+pnpm run node:check
+pnpm run dev
 ```
 
-Set environment variables in Cloudflare dashboard or via Wrangler:
-
-| Variable                     | Purpose                                  |
-| ---------------------------- | ---------------------------------------- |
-| `DEEPSEEK_BASE_URL`          | DeepSeek API backend                     |
-| `OPENAI_BASE_URL`            | OpenAI API backend                       |
-| `KIMI_BASE_URL`              | Kimi API backend                         |
-| `SILICONFLOW_BASE_URL`       | SiliconFlow API backend                  |
-| `OPENROUTER_BASE_URL`        | OpenRouter API backend                   |
-| `NVIDIA_NIM_BASE_URL`        | NVIDIA NIM API backend                   |
-| `OPENAI_COMPATIBLE_BASE_URL` | Generic fallback (auto-detects provider) |
-
-Provider selection is automatic based on which `*_BASE_URL` env vars are set, in
-the order listed above.
-
----
+Open `http://localhost:3000`.
 
 ## Architecture
 
-```
-POST /api/v1/messages  (Anthropic format)
-        |
-        v
-  selectProvider()  -- picks backend from env vars
-        |
-        v
-  formatAnthropicToOpenAI()  -- converts request format
-        |
-        v
-  POST {provider}/chat/completions  (OpenAI format)
-        |
-        v
-  streamOpenAIToAnthropic()  -- converts response back
-        |
-        v
-  SSE stream  (Anthropic format)
+### Site shells
+
+The App Router is split by presentation context while public URLs remain stable:
+
+```text
+src/app/
+├── (site)/        native homepage, onboarding, Shares, brand pages
+├── (tools)/       playground, whiteboard, recording summary, wireframe
+├── (immersive)/   Harbor iframe and full-screen Share deck viewer
+├── (legacy)/      compatibility redirects only
+├── api/           canonical API controllers
+└── layout.tsx     root HTML shell and global styles
 ```
 
-### Project Structure
+The native homepage is owned by:
 
-```
-src/
-  app/
-    page.tsx                     # Home page shell with hash-based sections
-    api/
-      v1/messages/route.ts       # Claude API proxy endpoint
-      playground/route.ts        # API test proxy
-      playground/models/route.ts # Model list fetcher
-      img-proxy/route.ts         # CORS image proxy
-    (main)/
-      home/page.tsx              # /home route for get-started anchor links
-      playground/page.tsx        # API playground UI
-      whiteboard/page.tsx        # Whiteboard (Excalidraw)
-      brand/page.tsx             # Brand kit
-  components/
-    HomePageWithNav.tsx           # React homepage, navigation, and get-started guide
-    features/whiteboard/          # Whiteboard components
-  services/
-    llm-provider/
-      providers.ts                # Provider configs & model mappings
-      adapters/
-        format.ts                 # Anthropic <-> OpenAI message conversion
-        stream.ts                 # OpenAI SSE -> Anthropic SSE streaming
-  config/
-    navigation.ts                 # Navigation section IDs
-    providers.ts                  # Provider card data for get-started guide
-    ui-texts.ts                   # UI text constants (tab labels, etc.)
-  lib/                            # Utilities
+```text
+src/app/(site)/page.tsx
+  -> src/components/home/HomePage.tsx
+  -> src/components/home/*
+  -> src/components/site/*
 ```
 
-### Tech Stack
+Navigation, search, sitemap metadata, and route behavior use these registries:
 
-- **Framework**: Next.js 15 (App Router) + React 19
-- **Styling**: Tailwind CSS 3
-- **Language**: TypeScript (strict mode)
-- **Runtime**: Edge Runtime on Cloudflare Workers via `@opennextjs/cloudflare`
-- **Build**: Turbopack (dev) + Next.js production build
-
----
-
-## Development
-
-```bash
-pnpm install
-pnpm run dev             # Dev server at localhost:3000
+```text
+src/config/features.ts
+src/config/site-navigation.ts
+src/config/ui-texts.ts
+src/lib/navigation.ts
 ```
 
-### Commands
+The historical `@cc4pm/homepage` artifact pipeline remains only as a frozen
+compatibility boundary for `/static/cc4pm-homepage.html` and
+`/api/static/homepage`; it is not the active root homepage.
 
-| Command               | Description                  |
-| --------------------- | ---------------------------- |
-| `pnpm run dev`        | Dev server with Turbopack    |
-| `pnpm run build`      | Production Next.js build     |
-| `pnpm run typecheck`  | TypeScript type checking     |
-| `pnpm run lint`       | ESLint with auto-fix         |
-| `pnpm run format`     | Prettier formatting          |
-| `pnpm run cf:build`   | Build for Cloudflare Workers |
-| `pnpm run cf:preview` | Local preview of CF build    |
-| `pnpm run cf:deploy`  | Deploy to production         |
+### Harbor Self-Evolving
 
-## API Usage
+```text
+AI Speeds product navigation
+  -> /product/harbor-self-evolving
+  -> src/app/(immersive)/product/harbor-self-evolving/page.tsx
+  -> https://istarwyh.github.io/harbor-self-evolving/zh/
+```
 
-### Proxy a Claude request
+The parent URL stays on `aispeeds.me`. Harbor remains independently built and
+published from its own repository.
+
+### API proxy
+
+```text
+POST /api/v1/messages
+  -> src/app/api/v1/messages/route.ts
+  -> src/services/llm-provider/providers.ts
+  -> src/services/llm-provider/adapters/format.ts
+  -> selected OpenAI-compatible upstream
+  -> src/services/llm-provider/adapters/stream.ts
+  -> Anthropic-compatible SSE response
+```
+
+`POST /v1/messages` is a compatibility facade for the canonical controller.
+Provider selection follows the configured environment variables in this order:
+
+1. `DEEPSEEK_BASE_URL`
+2. `OPENAI_BASE_URL`
+3. `KIMI_BASE_URL`
+4. `SILICONFLOW_BASE_URL`
+5. `OPENROUTER_BASE_URL`
+6. `NVIDIA_NIM_BASE_URL`
+7. `OPENAI_COMPATIBLE_BASE_URL`
+8. NVIDIA NIM default configuration
+
+## Environment variables
+
+| Variable                     | Purpose                             |
+| ---------------------------- | ----------------------------------- |
+| `DEEPSEEK_BASE_URL`          | DeepSeek API backend                |
+| `OPENAI_BASE_URL`            | OpenAI API backend                  |
+| `KIMI_BASE_URL`              | Kimi API backend                    |
+| `SILICONFLOW_BASE_URL`       | SiliconFlow API backend             |
+| `OPENROUTER_BASE_URL`        | OpenRouter API backend              |
+| `NVIDIA_NIM_BASE_URL`        | NVIDIA NIM API backend              |
+| `OPENAI_COMPATIBLE_BASE_URL` | Generic OpenAI-compatible backend   |
+| `IMAGE_PROXY_WHITELIST`      | Allowed image proxy hosts or `*`    |
+| `IMAGE_PROXY_CACHE_TTL`      | Image proxy cache TTL in seconds    |
+| `IMAGE_PROXY_TIMEOUT_MS`     | Image proxy timeout in milliseconds |
+
+## Development commands
+
+| Command                                       | Description                                           |
+| --------------------------------------------- | ----------------------------------------------------- |
+| `pnpm run dev`                                | Prepare compatibility assets and start Turbopack      |
+| `pnpm run node:check`                         | Validate the supported Node.js runtime                |
+| `pnpm run architecture:check`                 | Validate route and dependency boundaries              |
+| `pnpm run lint:check`                         | Run ESLint without modifying files                    |
+| `pnpm run typecheck`                          | Run strict TypeScript checks                          |
+| `pnpm run shares:validate -- --registry-only` | Validate the Share registry                           |
+| `pnpm run build`                              | Build the Next.js application                         |
+| `pnpm run cf:build`                           | Build OpenNext output for Cloudflare Workers          |
+| `pnpm run cf:preview`                         | Preview the Cloudflare build locally                  |
+| `pnpm run cf:deploy`                          | Build and deploy with the configured Wrangler account |
+
+Pushes to `main` run the production workflow in `.github/workflows/deploy.yml`.
+The workflow verifies the frozen compatibility artifact, architecture rules,
+lint, Share registry/assets, Next.js build, TypeScript, and OpenNext build
+before deploying.
+
+## API example
 
 ```bash
 curl -X POST https://aispeeds.me/v1/messages \
@@ -201,14 +207,20 @@ curl -X POST https://aispeeds.me/v1/messages \
   }'
 ```
 
-The proxy accepts Anthropic Messages API format and forwards to the configured
-OpenAI-compatible backend. Model names are automatically mapped (e.g.
-`claude-sonnet-4-5-20250929` -> provider-specific model ID).
+## Documentation
+
+- `docs/SRC_ARCHITECTURE.md` — current source layout and dependency direction.
+- `docs/QUICK_START_NEW_DEV.md` — contributor workflow.
+- `docs/LEGACY_ISOLATION_GUIDE.md` — retired architecture tombstone and frozen
+  compatibility boundary.
+- `docs/tech/202609/SITE_SHELL_AND_HOMEPAGE_REFACTOR_TECHNICAL_PLAN.md` — native
+  homepage and shell migration record.
+- `docs/tech/202609/HARBOR_SELF_EVOLVING_INTEGRATION.md` — Harbor integration
+  decision and implementation record.
 
 ## License
 
 MIT
 
-This is an independent tool, not affiliated with Anthropic, OpenAI, or
-OpenRouter. Users are responsible for compliance with all relevant Terms of
-Service.
+This is an independent tool and is not affiliated with Anthropic, OpenAI, or
+OpenRouter. Users are responsible for compliance with applicable provider terms.

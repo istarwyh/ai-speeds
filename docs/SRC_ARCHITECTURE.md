@@ -4,7 +4,7 @@ This document is the current authority for the repository's source layout and
 import direction. Normative constraints and rule IDs live in
 `.claude/rules/architecture-boundaries.md`.
 
-Last reviewed: `2026-09-13T08:41:49Z`.
+Last reviewed: `2026-09-20T10:40:36Z`.
 
 ## System map
 
@@ -13,7 +13,7 @@ Next.js App Router
 ├── product routes and route-local UI
 ├── API route controllers
 ├── feature UI
-│   ├── homepage host
+│   ├── native homepage and site shell
 │   ├── Shares
 │   ├── playground
 │   └── whiteboard
@@ -38,23 +38,32 @@ historical, not current architecture.
 
 ## App Router contexts
 
-### Application shell
+### Application shells
 
-- `src/app/layout.tsx` owns the root HTML shell, global CSS, and site metadata.
-- `src/app/(main)/layout.tsx` is the route-group layout for primary product
-  pages.
-- `src/app/page.tsx` composes the root homepage through
-  `src/components/HomePageWithNav.tsx`.
+- `src/app/layout.tsx` owns the root HTML shell, global CSS, and default site
+  metadata.
+- `src/app/(site)/layout.tsx` owns the site header and footer used by the native
+  homepage, onboarding, Shares, and brand pages.
+- `src/app/(tools)/layout.tsx` provides the focused tool shell.
+- `src/app/(immersive)/**` is reserved for full-screen experiences without site
+  chrome, including the Harbor iframe and Share deck viewer.
+- `src/app/(legacy)/**` contains compatibility redirects only.
+- `src/app/(site)/page.tsx` composes the native homepage from
+  `src/components/home/**`; `src/components/site/**` owns navigation, global
+  search, and footer UI.
 - Route-local implementation details stay next to their route, using folders
   such as `_components` and `_lib` when they are not shared.
 
 ### Product routes
 
-Current product contexts include:
+Current public contexts include:
 
-- `/` — homepage host and native homepage sections.
+- `/` — native AI Speeds homepage.
+- `/get-started` — Claude Code onboarding.
+- `/product/harbor-self-evolving` — immersive cross-origin Harbor product page.
 - `/playground` — request-building UI plus its own API endpoints.
 - `/whiteboard` — the Excalidraw-based whiteboard feature.
+- `/wireframe` — AI wireframe editor.
 - `/recording-summary` — recording and transcription workflow.
 - `/shares`, `/shares/[slug]`, `/shares/[slug]/deck` — public Shares catalog,
   detail, and deck viewer.
@@ -102,7 +111,8 @@ logic to the alias.
 Shares is a complete vertical feature:
 
 ```text
-src/app/(main)/shares/**
+src/app/(site)/shares/**                 catalog and detail pages
+src/app/(immersive)/shares/[slug]/deck  full-screen deck viewer
   -> src/components/features/shares/**
   -> src/content/shares/**
   -> public assets at https://assets.aispeeds.me
@@ -123,36 +133,49 @@ Shares content types/helpers and shared brand, config, and utility modules.
 Neither layer imports the API proxy, another feature's private implementation,
 or the homepage artifact pipeline.
 
-## Homepage seam
+## Native homepage and frozen compatibility seam
 
-The root homepage deliberately contains one frozen external artifact boundary:
+The active root homepage is native Next.js/React:
+
+```text
+src/app/(site)/page.tsx
+  -> src/components/home/HomePage.tsx
+  -> src/components/home/**
+  -> src/components/site/**
+  -> src/config/features.ts + src/config/site-navigation.ts
+```
+
+The former external cc4pm homepage pipeline remains only as a frozen
+compatibility boundary:
 
 ```text
 external @cc4pm/homepage index.html
   -> scripts/prepare-cc4pm-homepage.mjs
   -> public/static/cc4pm-homepage.html
      + public/_headers response sandbox
-  -> src/components/HomePageWithNav.tsx iframe
+  -> src/components/HomePageWithNav.tsx (inactive compatibility component)
      and /api/static/homepage redirect
 ```
 
-`prepare:homepage` copies and applies the existing embed-specific adjustments
-before development and production builds. `HomePageWithNav` owns the native
-floating navigation and renders the prepared document only through a sandboxed
-iframe without `allow-same-origin` or `allow-popups-to-escape-sandbox`.
-`public/_headers` applies the same sandbox at the response layer so direct loads
-and popup documents cannot regain the application's origin. CI regenerates the
-artifact, validates this response policy, and fails on any diff, preventing
-committed artifact drift. The `/api/static/homepage` route is a redirect to the
-same prepared artifact.
+`prepare:homepage` still regenerates the artifact before development and
+production builds so old direct URLs remain deterministic. `public/_headers`
+applies a response sandbox to direct and popup loads. CI regenerates the file,
+compares it with the committed artifact, and fails on drift. The native `/`
+route never renders this iframe.
 
 This is an isolation seam, not a platform for new work. The adapter may read
 only `node_modules/@cc4pm/homepage/index.html`; no source file, including the
 adapter, may import, re-export, require, or dynamically import the package or a
 subpath. New features cannot depend on the external HTML, generated file,
-preparation script, DOM shape, or scripts inside the iframe. Add native
-routes/components instead. Do not add a second consumer or move application
-behavior into the preparation step.
+preparation script, DOM shape, or scripts inside the compatibility iframe. Add
+native routes/components instead. Do not add another consumer or move
+application behavior into the preparation step.
+
+Harbor Self-Evolving is a separate, intentional immersive product boundary. Its
+route is registered in `src/config/features.ts`, appears in the product
+navigation through `src/config/site-navigation.ts`, and loads only the trusted
+Harbor GitHub Pages origin from
+`src/app/(immersive)/product/harbor-self-evolving/page.tsx`.
 
 ## Dependency direction
 
@@ -173,7 +196,7 @@ extract a context-neutral module; do not make one feature depend on the other.
 Compatibility surfaces are temporary delegates, not alternate implementation
 locations. Current route-level compatibility includes:
 
-- `src/app/(main)/home/page.tsx`, which redirects the former `/home` entry to
+- `src/app/(legacy)/home/page.tsx`, which redirects the former `/home` entry to
   `/` while preserving the hash.
 - `src/app/v1/messages/route.ts`, which re-exports the canonical message
   handler.
@@ -196,10 +219,10 @@ than added to that budget.
 
 The manifest also records the sole import-direction exception:
 `src/app/api/playground/route.ts` imports
-`@/app/(main)/playground/_lib/playgroundRequest`. This exact API-to-main edge is
-grandfathered while both sides share the request contract. Do not copy it. When
-that boundary changes, move the contract to a context-neutral owner and remove
-the exception.
+`@/app/(tools)/playground/_lib/playgroundRequest`. This exact API-to-tools edge
+is grandfathered while both sides share the request contract. Do not copy it.
+When that boundary changes, move the contract to a context-neutral owner and
+remove the exception.
 
 ## Architecture validation
 

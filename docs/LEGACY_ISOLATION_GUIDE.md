@@ -15,24 +15,27 @@ belong in the current Next.js App Router contexts described by:
   compatibility rules.
 - `docs/QUICK_START_NEW_DEV.md` — current development workflow.
 
-The only remaining legacy boundary is frozen and external:
+The active root homepage is now native and owned by `src/app/(site)/page.tsx`,
+`src/components/home/**`, and `src/components/site/**`.
+
+The only remaining legacy boundary is a frozen external compatibility path:
 
 ```text
 external @cc4pm/homepage index.html
   -> scripts/prepare-cc4pm-homepage.mjs
   -> public/static/cc4pm-homepage.html
      + public/_headers response sandbox
-  -> src/components/HomePageWithNav.tsx iframe
-     and /api/static/homepage redirect
+  -> /api/static/homepage redirect
 ```
 
-This seam may be maintained but not expanded. The adapter may read only the
-exact package `index.html`; no source file may import, re-export, require, or
-dynamically import the package or a subpath. New features cannot depend on the
-external HTML, generated artifact, preparation script, iframe DOM, or embedded
-scripts. The iframe and `public/_headers` response policy must remain sandboxed
-without same-origin or popup-escape privileges. Compatibility façades remain
-thin and their closed manifest may only shrink.
+`src/components/HomePageWithNav.tsx` is retained as inactive rollback-era code;
+no active route renders it. This seam may be maintained but not expanded. The
+adapter may read only the exact package `index.html`; no source file may import,
+re-export, require, or dynamically import the package or a subpath. New features
+cannot depend on the external HTML, generated artifact, preparation script,
+iframe DOM, or embedded scripts. `public/_headers` must continue to sandbox
+direct and popup loads. Compatibility façades remain thin and their closed
+manifest may only shrink.
 
 For migration history, use Git history rather than these instructions. Relevant
 milestones include `c5605cc` (legacy directory isolation) and `3aacfe7` (legacy

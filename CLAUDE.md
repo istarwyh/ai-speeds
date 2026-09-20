@@ -66,10 +66,19 @@ API keys are passed per-request via `x-api-key` header, not stored server-side.
 
 ### Frontend
 
-- `src/app/` uses Next.js App Router routes.
-- `src/components/HomePageWithNav.tsx` owns native navigation and sections and
-  embeds the prepared external homepage through the frozen iframe seam;
-  `public/_headers` keeps direct and popup loads response-sandboxed.
+- `src/app/` uses Next.js App Router route groups: `(site)` for the native site,
+  `(tools)` for focused tools, `(immersive)` for full-screen experiences, and
+  `(legacy)` for compatibility redirects.
+- `src/app/(site)/page.tsx` and `src/components/home/**` own the native
+  homepage; `src/components/site/**` owns the site header, navigation, search,
+  and footer.
+- `src/config/features.ts` and `src/config/site-navigation.ts` are the route and
+  navigation registries. Product, tool, search, and sitemap changes should flow
+  through these registries.
+- `src/components/HomePageWithNav.tsx` is retained only for the frozen external
+  homepage compatibility seam. It is not used by the active root route.
+- `src/app/(immersive)/product/harbor-self-evolving/page.tsx` displays the
+  Harbor Self-Evolving Chinese site in a full-screen cross-origin iframe.
 - `src/config/providers.ts` stores provider card data used by the get-started
   guide.
 
@@ -94,10 +103,16 @@ and `src/styles/designTokens.ts`.
 
 ### Route Map
 
-| Route                   | Handler                                             |
-| ----------------------- | --------------------------------------------------- |
-| `POST /api/v1/messages` | Claude API proxy (also at `/v1/messages`)           |
-| `GET /api/img-proxy`    | CORS image proxy (also at `/img-proxy` via rewrite) |
+| Route                               | Handler                                             |
+| ----------------------------------- | --------------------------------------------------- |
+| `GET /`                             | Native AI Speeds homepage                           |
+| `GET /product/harbor-self-evolving` | Full-screen Harbor Self-Evolving iframe             |
+| `GET /playground`                   | API Playground                                      |
+| `GET /whiteboard`                   | Excalidraw whiteboard                               |
+| `GET /recording-summary`            | Recording and transcription workflow                |
+| `GET /shares`                       | Public Shares catalog                               |
+| `POST /api/v1/messages`             | Claude API proxy (also at `/v1/messages`)           |
+| `GET /api/img-proxy`                | CORS image proxy (also at `/img-proxy` via rewrite) |
 
 ## Tech Stack
 

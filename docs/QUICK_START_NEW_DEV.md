@@ -20,8 +20,9 @@ pnpm run node:check
 pnpm run dev
 ```
 
-The development server prepares the external homepage artifact before starting
-Next.js. Open `http://localhost:3000`.
+The development server regenerates the frozen external compatibility artifact
+before starting Next.js. The active root homepage is native React and does not
+render that artifact. Open `http://localhost:3000`.
 
 ## 2. Read the architecture contract
 
@@ -37,10 +38,13 @@ Read these before adding a route or moving code:
 Put code with the context that owns it:
 
 ```text
-src/app/(main)/<feature>/          route entries and route-local composition
+src/app/(site)/<feature>/           native site routes with site chrome
+src/app/(tools)/<feature>/          focused tool routes
+src/app/(immersive)/<feature>/      full-screen routes without site chrome
+src/app/(legacy)/<feature>/         compatibility redirects only
 src/components/features/<feature>/ feature-owned React UI
-src/content/<feature>/             feature-owned content and domain records
-src/services/<feature>/            feature-owned service logic
+src/content/<feature>/              feature-owned content and domain records
+src/services/<feature>/             feature-owned service logic
 ```
 
 Use shared foundations only for context-neutral primitives:
@@ -81,7 +85,7 @@ Practical rules:
 Example:
 
 ```tsx
-// src/app/(main)/my-feature/page.tsx
+// src/app/(site)/my-feature/page.tsx
 import { MyFeature } from '@/components/features/my-feature/MyFeature';
 
 export default function MyFeaturePage() {
@@ -92,9 +96,9 @@ export default function MyFeaturePage() {
 Default to a Server Component. Add `'use client'` only to the smallest component
 that needs browser state, effects, or event handlers.
 
-`architecture/compatibility-manifest.json` records one grandfathered API-to-main
-import for the playground request contract. It is an exact exception, not an
-example to copy. Do not create another cross-context import.
+`architecture/compatibility-manifest.json` records one grandfathered
+API-to-tools import for the playground request contract. It is an exact
+exception, not an example to copy. Do not create another cross-context import.
 
 ## 5. Respect protected contexts
 
@@ -109,37 +113,47 @@ must not import route handlers or provider internals.
 
 Shares lives in:
 
-- `src/app/(main)/shares/**`
+- `src/app/(site)/shares/**` for catalog and detail pages
+- `src/app/(immersive)/shares/[slug]/deck/**` for the full-screen deck viewer
 - `src/components/features/shares/**`
 - `src/content/shares/**`
 
 Keep new Shares metadata in the content registry model and Shares UI in its
 feature directory. Do not couple Shares to the API proxy or homepage artifact.
 
-### External homepage
+### Native homepage and external compatibility artifact
 
-The only remaining legacy boundary is frozen:
+The active homepage is native:
+
+```text
+src/app/(site)/page.tsx
+  -> src/components/home/**
+  -> src/components/site/**
+  -> src/config/features.ts + src/config/site-navigation.ts
+```
+
+The old cc4pm HTML path is a frozen compatibility boundary only:
 
 ```text
 external @cc4pm/homepage index.html
   -> scripts/prepare-cc4pm-homepage.mjs
   -> public/static/cc4pm-homepage.html
      + public/_headers response sandbox
-  -> src/components/HomePageWithNav.tsx iframe
-     and /api/static/homepage redirect
+  -> /api/static/homepage redirect
 ```
 
-Never hand-edit the generated HTML. It is rendered in a sandboxed iframe without
-`allow-same-origin` or `allow-popups-to-escape-sandbox`; `public/_headers`
-applies the frozen response sandbox to direct loads and popup documents. CI
-regenerates the artifact, validates this policy, and fails on any diff,
-verifying deterministic output and preventing committed artifact drift.
-Necessary embed maintenance belongs in the adapter, which may read only
-`node_modules/@cc4pm/homepage/index.html`; no source file may import, re-export,
-require, or dynamically import the package or a subpath. New feature code must
-not parse, patch, or build behavior on the artifact. Add native App Router
-routes or components instead. Compatibility façades, ambient declarations, and
-design-token surfaces are enumerated in
+Never hand-edit the generated HTML. CI regenerates it, validates the response
+policy, and fails on any diff. Maintenance belongs in the adapter, which may
+read only `node_modules/@cc4pm/homepage/index.html`; no source file may import,
+re-export, require, or dynamically import the package or a subpath. New feature
+code must not parse, patch, or build behavior on the artifact.
+
+Harbor Self-Evolving is an intentional immersive product integration, not an
+extension of the legacy homepage seam. Register product metadata in
+`src/config/features.ts`, navigation placement in
+`src/config/site-navigation.ts`, and keep the full-screen cross-origin iframe in
+`src/app/(immersive)/product/harbor-self-evolving/page.tsx`. Compatibility
+façades, ambient declarations, and design-token surfaces are enumerated in
 `architecture/compatibility-manifest.json`; this is a closed, shrinking budget,
 and its façades must remain thin delegates.
 

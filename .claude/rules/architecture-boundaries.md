@@ -2,7 +2,7 @@
 name: architecture-boundaries
 status: active
 created: 2026-09-13T04:14:13Z
-updated: 2026-09-13T08:41:49Z
+updated: 2026-09-20T10:40:36Z
 ---
 
 # Architecture Boundaries
@@ -39,25 +39,25 @@ external @cc4pm/homepage index.html
   -> scripts/prepare-cc4pm-homepage.mjs
   -> public/static/cc4pm-homepage.html
      + public/_headers response sandbox
-  -> src/components/HomePageWithNav.tsx iframe
-     and /api/static/homepage redirect
+  -> /api/static/homepage redirect
 ```
 
-The generated HTML is an opaque leaf artifact. Never hand-edit
-`public/static/cc4pm-homepage.html`; make necessary embed maintenance in the
-adapter or upgrade the external dependency intentionally, then regenerate it.
-`HomePageWithNav` must render it in a sandboxed iframe without
-`allow-same-origin` or `allow-popups-to-escape-sandbox`. Direct loads and popup
-windows must remain sandboxed by the exact `Content-Security-Policy` entry in
-`public/_headers`; do not weaken either isolation layer. CI must regenerate the
+The generated HTML is an opaque compatibility artifact and is not the active
+root homepage. Never hand-edit `public/static/cc4pm-homepage.html`; make
+necessary compatibility maintenance in the adapter or upgrade the external
+dependency intentionally, then regenerate it. Direct loads and popup windows
+must remain sandboxed by the exact `Content-Security-Policy` entry in
+`public/_headers`; do not weaken that response isolation. CI must regenerate the
 artifact and fail on any diff from the committed file, verify the response
 policy, and prevent drift. The adapter may read only the exact manifest source
 `node_modules/@cc4pm/homepage/index.html`; no source file, including the
 adapter, may import, re-export, require, or dynamically import the bare package
 or a package subpath. New routes, components, content, services, and utilities
 must not parse the artifact, execute its scripts, use it as a data source, or
-add dependencies on the preparation pipeline. Maintenance may preserve the
-existing seam, but must not expand its responsibilities or add another consumer.
+add dependencies on the preparation pipeline. `HomePageWithNav` is retained as
+inactive rollback-era code and must not become a second active consumer.
+Maintenance may preserve the existing seam, but must not expand its
+responsibilities or add another consumer.
 
 ## Compatibility budget
 
@@ -117,7 +117,8 @@ behavior.
 
 ### SHR-001 — Shares is a self-contained feature context
 
-The Shares context consists of `src/app/(main)/shares/**`,
+The Shares context consists of `src/app/(site)/shares/**`,
+`src/app/(immersive)/shares/[slug]/deck/**`,
 `src/components/features/shares/**`, and `src/content/shares/**`. Shares routes
 may compose Shares UI and content; Shares UI may use the public Shares content
 API and shared foundations. Shares code must not import API route handlers,
@@ -137,7 +138,7 @@ must remain narrower than the boundary it relaxes.
 
 The sole current import-direction exception is recorded exactly in
 `architecture/compatibility-manifest.json`: `src/app/api/playground/route.ts`
-may import `@/app/(main)/playground/_lib/playgroundRequest`. It is
+may import `@/app/(tools)/playground/_lib/playgroundRequest`. It is
 grandfathered, not precedent. Do not add another importer or specifier; move the
 shared request contract to a context-neutral owner and remove the manifest entry
 when that boundary is changed.

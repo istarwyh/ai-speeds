@@ -1,5 +1,25 @@
 # Harbor Self-Evolving 产品接入技术方案
 
+## 0. 实施状态
+
+状态：**已上线**
+
+最后核验：`2026-09-20T10:40:36Z`
+
+当前实现基于原生 Site Shell，而不是本文最初调研时的 `HomePageWithNav` 首页壳：
+
+- 原生首页入口：`src/app/(site)/page.tsx`；
+- 产品注册：`src/config/features.ts`；
+- 产品菜单分组：`src/config/site-navigation.ts`；
+- 展示页面： `src/app/(immersive)/product/harbor-self-evolving/page.tsx`；
+- 公开 URL：`https://aispeeds.me/product/harbor-self-evolving`；
+- iframe 来源：`https://istarwyh.github.io/harbor-self-evolving/zh/`；
+- Sitemap、全站搜索、桌面与移动产品菜单均由同一 Feature registry 派生。
+
+生产发布已经通过 Node runtime、架构边界、Lint、Share
+registry、Next.js 构建、TypeScript、OpenNext 构建和双域名路由验证。本文其余章节保留方案选择、风险与后续升级路径；涉及旧
+`(main)` 或 `HomePageWithNav` 的描述应按本节列出的当前路径理解。
+
 ## 1. 结论
 
 第一阶段推荐采用 **“AI Speeds 路由壳 + 跨域全屏 iframe”**：
@@ -49,15 +69,13 @@ Speeds、可分享的站内深链、同域登录或统一埋点，应升级到�
 
 - 项目使用 Next.js 15 App Router，并通过 OpenNext 部署到 Cloudflare Workers。
 - `wrangler.toml` 将 `aispeeds.me` 和 `cc.xiaohui.cool` 绑定到同一个 Worker。
-- 首页浮动菜单由 `src/config/features.ts` 统一配置：
-  - `section` 在首页内部切换；
-  - `route` 使用 Next.js `Link` 进入独立路由。
-- `src/components/HomePageWithNav.tsx`
-  已存在全屏 iframe 的使用先例，但当前 iframe 加载的是同源静态首页。
-- `src/app/sitemap.ts` 会自动收录 `featurePages` 中公开的 route。
-- 当前 `next.config.mjs` 没有全站 Content-Security-Policy，也没有限制
+- 原生站点导航由 `src/config/features.ts` 与 `src/config/site-navigation.ts`
+  统一配置；桌面菜单、移动菜单、搜索和 Sitemap 共享同一 Feature registry。
+- 根首页由 `src/app/(site)/page.tsx` 和 `src/components/home/**` 原生渲染。
+- `src/app/sitemap.ts` 自动收录公开且 `includeInSitemap` 的 route。
+- `next.config.mjs` 当前没有全站 Content-Security-Policy，也没有限制
   `frame-src`。
-- 目标路由当前返回 `404`，不存在旧页面兼容问题。
+- Harbor 使用 `(immersive)` route group，避免加载 Site 或 Tool chrome。
 
 ### 3.2 Harbor Self-Evolving 站点
 
@@ -133,27 +151,38 @@ NAVIGATION: {
 {
   id: 'harbor-self-evolving',
   title: UI_TEXTS.NAVIGATION.HARBOR_SELF_EVOLVING,
+  description: '面向 DeepSeek Harness Agent 的持续评测与受控自进化。',
   href: '/product/harbor-self-evolving',
-  kind: 'route',
+  targetKind: 'route',
+  shell: 'immersive',
   isPublic: true,
+  includeInSitemap: true,
+  searchable: true,
+  keywords: ['DeepSeek Harness', 'Agent', '评测', '自进化', 'Harbor'],
+  searchGroup: 'products',
+  activeMatch: 'exact',
+  kind: 'route',
   showInHomeMenu: true,
+  allowInNavigation: true,
   sitemapPriority: 0.7,
   sitemapChangeFrequency: 'weekly',
 },
 ```
 
-这样可直接复用 `homeUtilityFeatures` 和现有 `<Link>` 导航，不需要在
-`HomePageWithNav.tsx` 中增加产品专用判断。
+`src/config/site-navigation.ts` 将该 Feature ID 放入 `products`
+分组；桌面和移动导航通过 `resolvedNavigationGroups`
+解析，无需在 UI 组件中增加产品专用判断。`allowInNavigation`
+是沉浸式页面进入普通产品导航的显式门控。
 
-该 route 默认会被 `src/app/sitemap.ts`
-收录。若未来决定不给 iframe 壳页面做索引，应给 `FeaturePage` 增加独立的
-`includeInSitemap` 字段，不要把 `isPublic` 错误地改成 `false`。
+该 route 通过 `includeInSitemap: true` 进入 Sitemap，并通过 `searchable: true`
+进入全站搜索。若未来不再索引 iframe 壳页面，应只修改 `includeInSitemap`，不要把
+`isPublic` 错误地改成 `false`。
 
 ### 5.3 产品页面
 
 新增：
 
-`src/app/(main)/product/harbor-self-evolving/page.tsx`
+`src/app/(immersive)/product/harbor-self-evolving/page.tsx`
 
 建议实现：
 
@@ -190,7 +219,7 @@ export default function HarborSelfEvolvingPage() {
 
 说明：
 
-- route group `(main)` 不会出现在 URL 中，因此最终 URL 正确。
+- route group `(immersive)` 不会出现在 URL 中，并确保页面不带 Site/Tool chrome。
 - 使用 `100dvh`，避免移动浏览器地址栏导致 `100vh` 高度不准确。
 - 页面本身不需要 `'use client'`，可保持为 Server Component。
 - `title` 用于 iframe 无障碍识别。
@@ -348,15 +377,16 @@ path 后，才考虑简单 rewrite。Next.js rewrite 行为参考：
 
 ## 9. 实施步骤
 
-### Phase 1：iframe 接入
+### Phase 1：iframe 接入（已完成）
 
-1. 在 `src/config/ui-texts.ts` 增加菜单文案。
-2. 在 `src/config/features.ts` 增加产品 route。
-3. 新建 `src/app/(main)/product/harbor-self-evolving/page.tsx`。
-4. 补充 metadata、iframe title、referrer policy 和无脚本链接。
-5. 执行类型检查和构建验证。
-6. 使用 Cloudflare preview 验证，不启动与现有生产域无关的替代服务。
-7. 部署后检查真实 `aispeeds.me` URL。
+1. 已在 `src/config/ui-texts.ts` 增加菜单文案。
+2. 已在 `src/config/features.ts` 增加完整产品 route，并通过
+   `src/config/site-navigation.ts` 放入产品分组。
+3. 已新增 `src/app/(immersive)/product/harbor-self-evolving/page.tsx`。
+4. 已补充 metadata、iframe title、referrer policy 和无脚本链接。
+5. 已通过类型、Lint、架构、Next.js 与 OpenNext 构建验证。
+6. 已在本地生产构建和 Cloudflare 生产环境完成真实浏览器验证。
+7. 已检查 `aispeeds.me` 与 `cc.xiaohui.cool`。
 
 ### Phase 2：可靠性增强
 
@@ -377,10 +407,10 @@ path 后，才考虑简单 rewrite。Next.js rewrite 行为参考：
 
 ### 功能
 
-- [ ] 首页菜单显示 `Harbor Self-Evolving`。
-- [ ] 点击后地址栏为 `/product/harbor-self-evolving`。
-- [ ] 刷新或直接访问该 URL 返回 `200`。
-- [ ] Harbor 中文首页完整渲染。
+- [x] 首页菜单显示 `Harbor Self-Evolving`。
+- [x] 点击后地址栏为 `/product/harbor-self-evolving`。
+- [x] 刷新或直接访问该 URL 返回 `200`。
+- [x] Harbor 中文首页完整渲染。
 - [ ] CSS、JavaScript、图片和搜索索引加载成功。
 - [ ] 文档、博客、语言和主题切换可用。
 - [ ] iframe 内导航不会将顶层页面跳转到 GitHub Pages。
@@ -389,19 +419,19 @@ path 后，才考虑简单 rewrite。Next.js rewrite 行为参考：
 
 - [ ] 桌面端无双滚动条或页面白边。
 - [ ] iOS Safari、Android Chrome 的可视高度正常。
-- [ ] iframe 有明确的无障碍 title。
+- [x] iframe 有明确的无障碍 title。
 - [ ] 键盘焦点可进入 Harbor 页面并正常操作。
 - [ ] GitHub 新窗口链接行为正常。
 
 ### 工程
 
-- [ ] `pnpm run typecheck` 通过。
-- [ ] `pnpm run build` 通过。
-- [ ] `pnpm run cf:build` 通过。
-- [ ] Cloudflare preview 中路由和 iframe 正常。
-- [ ] `sitemap.xml` 包含预期 URL。
-- [ ] `aispeeds.me` 与 `cc.xiaohui.cool` 行为符合预期。
-- [ ] 上游响应仍未设置阻止嵌入的响应头。
+- [x] `pnpm run typecheck` 通过。
+- [x] `pnpm run build` 通过。
+- [x] `pnpm run cf:build` 通过。
+- [x] Cloudflare 生产路由和 iframe 正常。
+- [x] `sitemap.xml` 包含预期 URL。
+- [x] `aispeeds.me` 与 `cc.xiaohui.cool` 行为符合预期。
+- [x] 上游响应仍未设置阻止嵌入的响应头。
 
 ## 11. 预计改动范围
 
@@ -410,7 +440,9 @@ path 后，才考虑简单 rewrite。Next.js rewrite 行为参考：
 ```text
 src/config/ui-texts.ts
 src/config/features.ts
-src/app/(main)/product/harbor-self-evolving/page.tsx
+src/config/site-navigation.ts
+src/lib/navigation.ts
+src/app/(immersive)/product/harbor-self-evolving/page.tsx
 ```
 
 当前不需要修改：
