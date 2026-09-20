@@ -144,7 +144,7 @@ writeFileSync(
     {
       extends: join(repositoryRoot, 'tsconfig.json'),
       compilerOptions: { rootDir: repositoryRoot },
-      include: [],
+      include: [join(repositoryRoot, 'types/**/*.d.ts')],
       files,
     },
     null,
