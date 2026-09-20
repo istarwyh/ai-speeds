@@ -142,7 +142,7 @@ function parseArguments(arguments_: string[]): CliOptions {
     slug: defaultSlug,
     version: defaultVersion,
     stagingDirectory: resolve(repoRoot, 'dist', 'shares', defaultSlug, defaultVersion),
-    registryPath: resolve(repoRoot, 'src', 'content', 'shares', 'index.ts'),
+    registryPath: resolve(repoRoot, 'src', 'content', 'shares', 'registry.ts'),
     concurrency: 8,
     requestTimeoutMs: 15_000,
   };
