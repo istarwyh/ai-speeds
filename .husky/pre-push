@@ -143,7 +143,11 @@ writeFileSync(
   `${JSON.stringify(
     {
       extends: join(repositoryRoot, 'tsconfig.json'),
-      compilerOptions: { rootDir: repositoryRoot },
+      compilerOptions: {
+        rootDir: repositoryRoot,
+        typeRoots: [join(repositoryRoot, 'node_modules/@types')],
+        types: ['node'],
+      },
       include: [join(repositoryRoot, 'types/**/*.d.ts')],
       files,
     },
