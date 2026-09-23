@@ -4,7 +4,7 @@ This document is the current authority for the repository's source layout and
 import direction. Normative constraints and rule IDs live in
 `.claude/rules/architecture-boundaries.md`.
 
-Last reviewed: `2026-09-20T10:40:36Z`.
+Last reviewed: `2026-09-23T02:00:01Z`.
 
 ## System map
 
@@ -46,7 +46,7 @@ historical, not current architecture.
   homepage, onboarding, Shares, and brand pages.
 - `src/app/(tools)/layout.tsx` provides the focused tool shell.
 - `src/app/(immersive)/**` is reserved for full-screen experiences without site
-  chrome, including the Harbor iframe and Share deck viewer.
+  chrome, including the YourBuddy and Harbor iframes and Share deck viewer.
 - `src/app/(legacy)/**` contains compatibility redirects only.
 - `src/app/(site)/page.tsx` composes the native homepage from
   `src/components/home/**`; `src/components/site/**` owns navigation, global
@@ -60,6 +60,8 @@ Current public contexts include:
 
 - `/` — native AI Speeds homepage.
 - `/get-started` — Claude Code onboarding.
+- `/product/yourbuddy` — sandboxed immersive cross-origin YourBuddy product
+  page.
 - `/product/harbor-self-evolving` — immersive cross-origin Harbor product page.
 - `/playground` — request-building UI plus its own API endpoints.
 - `/whiteboard` — the Excalidraw-based whiteboard feature.
@@ -171,11 +173,20 @@ preparation script, DOM shape, or scripts inside the compatibility iframe. Add
 native routes/components instead. Do not add another consumer or move
 application behavior into the preparation step.
 
-Harbor Self-Evolving is a separate, intentional immersive product boundary. Its
-route is registered in `src/config/features.ts`, appears in the product
-navigation through `src/config/site-navigation.ts`, and loads only the trusted
-Harbor GitHub Pages origin from
-`src/app/(immersive)/product/harbor-self-evolving/page.tsx`.
+YourBuddy and Harbor Self-Evolving are separate, intentional immersive product
+boundaries. Their routes are registered in `src/config/features.ts`, appear in
+the product navigation through `src/config/site-navigation.ts`, and load only
+their declared GitHub Pages origins from route-local iframe pages:
+
+```text
+src/app/(immersive)/product/yourbuddy/page.tsx
+src/app/(immersive)/product/harbor-self-evolving/page.tsx
+```
+
+The YourBuddy iframe uses an explicit sandbox and narrowly delegated browser
+capabilities for its verified search, storage, popup, download, clipboard, and
+fullscreen behavior. Neither product iframe is part of the frozen cc4pm homepage
+compatibility seam.
 
 ## Dependency direction
 

@@ -20,6 +20,8 @@ Mirror domain: **[cc.xiaohui.cool](https://cc.xiaohui.cool)**
 - **Tools** — API Playground, whiteboard, recording summary, and AI wireframe.
 - **Public resources** — Claude Code onboarding, public Shares, and brand
   assets.
+- **YourBuddy** — an extensible AI desktop workbench presented through an
+  isolated full-screen product route.
 - **Harbor Self-Evolving** — an AI Speeds product route that displays the
   independently published Harbor Chinese site in a full-screen cross-origin
   iframe.
@@ -31,6 +33,7 @@ Mirror domain: **[cc.xiaohui.cool](https://cc.xiaohui.cool)**
 
 | Entry                | Route                           | Description                                               |
 | -------------------- | ------------------------------- | --------------------------------------------------------- |
+| YourBuddy            | `/product/yourbuddy`            | Full-screen view of the YourBuddy Chinese product site    |
 | AI API Gateway       | `/#api-gateway`                 | Anthropic-to-OpenAI-compatible API gateway                |
 | cc4pm                | `/#cc4pm`                       | AI-native product methods and reusable workflows          |
 | Harbor Self-Evolving | `/product/harbor-self-evolving` | Full-screen view of the Harbor Self-Evolving Chinese site |
@@ -94,7 +97,7 @@ The App Router is split by presentation context while public URLs remain stable:
 src/app/
 ├── (site)/        native homepage, onboarding, Shares, brand pages
 ├── (tools)/       playground, whiteboard, recording summary, wireframe
-├── (immersive)/   Harbor iframe and full-screen Share deck viewer
+├── (immersive)/   YourBuddy and Harbor iframes, full-screen Share deck viewer
 ├── (legacy)/      compatibility redirects only
 ├── api/           canonical API controllers
 └── layout.tsx     root HTML shell and global styles
@@ -122,17 +125,20 @@ The historical `@cc4pm/homepage` artifact pipeline remains only as a frozen
 compatibility boundary for `/static/cc4pm-homepage.html` and
 `/api/static/homepage`; it is not the active root homepage.
 
-### Harbor Self-Evolving
+### Immersive product sites
 
 ```text
 AI Speeds product navigation
-  -> /product/harbor-self-evolving
-  -> src/app/(immersive)/product/harbor-self-evolving/page.tsx
-  -> https://istarwyh.github.io/harbor-self-evolving/zh/
+  ├── /product/yourbuddy
+  │   -> src/app/(immersive)/product/yourbuddy/page.tsx
+  │   -> https://istarwyh.github.io/yourbuddy/
+  └── /product/harbor-self-evolving
+      -> src/app/(immersive)/product/harbor-self-evolving/page.tsx
+      -> https://istarwyh.github.io/harbor-self-evolving/zh/
 ```
 
-The parent URL stays on `aispeeds.me`. Harbor remains independently built and
-published from its own repository.
+The parent URLs stay on `aispeeds.me`. YourBuddy and Harbor remain independently
+built and published from their own repositories.
 
 ### API proxy
 
@@ -217,6 +223,8 @@ curl -X POST https://aispeeds.me/v1/messages \
   homepage and shell migration record.
 - `docs/tech/202609/HARBOR_SELF_EVOLVING_INTEGRATION.md` — Harbor integration
   decision and implementation record.
+- `docs/tech/202609/YOURBUDDY_INTEGRATION.md` — YourBuddy integration design,
+  security boundary, validation, and rollback plan.
 
 ## License
 

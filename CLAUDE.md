@@ -77,6 +77,8 @@ API keys are passed per-request via `x-api-key` header, not stored server-side.
   through these registries.
 - `src/components/HomePageWithNav.tsx` is retained only for the frozen external
   homepage compatibility seam. It is not used by the active root route.
+- `src/app/(immersive)/product/yourbuddy/page.tsx` displays the YourBuddy
+  Chinese product site in a sandboxed full-screen cross-origin iframe.
 - `src/app/(immersive)/product/harbor-self-evolving/page.tsx` displays the
   Harbor Self-Evolving Chinese site in a full-screen cross-origin iframe.
 - `src/config/providers.ts` stores provider card data used by the get-started
@@ -106,6 +108,7 @@ and `src/styles/designTokens.ts`.
 | Route                               | Handler                                             |
 | ----------------------------------- | --------------------------------------------------- |
 | `GET /`                             | Native AI Speeds homepage                           |
+| `GET /product/yourbuddy`            | Sandboxed full-screen YourBuddy iframe              |
 | `GET /product/harbor-self-evolving` | Full-screen Harbor Self-Evolving iframe             |
 | `GET /playground`                   | API Playground                                      |
 | `GET /whiteboard`                   | Excalidraw whiteboard                               |

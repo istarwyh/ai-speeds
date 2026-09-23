@@ -13,6 +13,7 @@ export const UI_TEXTS = {
     PLAYGROUND: '接口测试',
     RECORDING_SUMMARY: '录音总结',
     SHARES: '公开分享',
+    YOURBUDDY: 'YourBuddy',
     HARBOR_SELF_EVOLVING: 'Harbor Self-Evolving',
     BRAND: '品牌资料',
   },
