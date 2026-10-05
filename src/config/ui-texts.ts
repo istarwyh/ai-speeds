@@ -17,6 +17,7 @@ export const UI_TEXTS = {
     MCP_ADVISOR: 'MCP Advisor',
     WRITING_HELPER: 'writingHelper',
     HARBOR_SELF_EVOLVING: 'Harbor Self-Evolving',
+    BLOG: '博客',
     BRAND: '品牌资料',
   },
 

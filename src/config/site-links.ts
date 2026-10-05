@@ -1,5 +1,6 @@
 export const SITE_LINKS = {
   canonicalUrl: 'https://aispeeds.me',
+  blog: 'https://xiaohui.cool/',
   github: 'https://github.com/istarwyh/ai-speeds',
   cc4pmGithub: 'https://github.com/istarwyh/cc4pm',
   mcpAdvisorGithub: 'https://github.com/istarwyh/mcpadvisor',

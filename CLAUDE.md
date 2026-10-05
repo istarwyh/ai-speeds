@@ -74,7 +74,8 @@ API keys are passed per-request via `x-api-key` header, not stored server-side.
   and footer.
 - `src/config/features.ts` and `src/config/site-navigation.ts` are the route and
   navigation registries. Product, tool, search, and sitemap changes should flow
-  through these registries.
+  through these registries. The top-level external blog link also comes from
+  `src/config/site-navigation.ts` and `src/config/site-links.ts`.
 - `src/components/HomePageWithNav.tsx` is retained only for the frozen external
   homepage compatibility seam. It is not used by the active root route.
 - `src/app/(immersive)/product/yourbuddy/page.tsx` displays the YourBuddy

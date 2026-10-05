@@ -20,6 +20,8 @@ Mirror domain: **[cc.xiaohui.cool](https://cc.xiaohui.cool)**
 - **Tools** — API Playground, whiteboard, recording summary, and AI wireframe.
 - **Public resources** — Claude Code onboarding, public Shares, and brand
   assets.
+- **External blog** — a top-level navigation entry to
+  [xiaohui.cool](https://xiaohui.cool/), opened in a separate browser tab.
 - **YourBuddy** — an extensible AI desktop workbench presented through an
   isolated full-screen product route.
 - **MCP Advisor** — a native product page for the local MCP Server and CLI that
@@ -127,6 +129,10 @@ src/config/site-navigation.ts
 src/config/ui-texts.ts
 src/lib/navigation.ts
 ```
+
+The top-level `博客` link is an external navigation item backed by
+`src/config/site-links.ts`. It opens `https://xiaohui.cool/` in a separate tab
+and is intentionally excluded from AI Speeds search and Sitemap output.
 
 The historical `@cc4pm/homepage` artifact pipeline remains only as a frozen
 compatibility boundary for `/static/cc4pm-homepage.html` and

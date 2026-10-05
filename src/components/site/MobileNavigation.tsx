@@ -1,7 +1,7 @@
 'use client';
 
 import * as Popover from '@radix-ui/react-popover';
-import { ExternalLink, Code2, Menu, X } from 'lucide-react';
+import { BookOpen, ExternalLink, Code2, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { type ComponentRef, type RefObject, useEffect } from 'react';
@@ -143,7 +143,11 @@ export function MobileNavigation({ open, onOpenChange, fallbackFocusRef }: Mobil
                   onClick={() => onOpenChange(false)}
                   className='flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-semibold text-text-primary transition hover:bg-bg-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary'
                 >
-                  <Code2 size={16} aria-hidden='true' />
+                  {item.id === 'blog' ? (
+                    <BookOpen size={16} aria-hidden='true' />
+                  ) : (
+                    <Code2 size={16} aria-hidden='true' />
+                  )}
                   {item.label}
                   <ExternalLink className='ml-auto text-text-muted' size={14} aria-hidden='true' />
                 </a>

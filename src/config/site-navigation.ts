@@ -11,9 +11,10 @@ export type NavigationGroup = {
 };
 
 export type ExternalNavigationItem = {
-  id: 'github';
+  id: 'blog' | 'github';
   label: string;
   href: string;
+  showInPrimaryNavigation: boolean;
 };
 
 export const navigationGroups = [
@@ -40,8 +41,17 @@ export const primaryActionFeatureId = 'playground' satisfies FeatureId;
 
 export const externalNavigationItems = [
   {
+    id: 'blog',
+    label: UI_TEXTS.NAVIGATION.BLOG,
+    href: SITE_LINKS.blog,
+    showInPrimaryNavigation: true,
+  },
+  {
     id: 'github',
     label: UI_TEXTS.HEADER.GITHUB,
     href: SITE_LINKS.github,
+    showInPrimaryNavigation: false,
   },
 ] as const satisfies readonly ExternalNavigationItem[];
+
+export const primaryExternalNavigationItems = externalNavigationItems.filter(item => item.showInPrimaryNavigation);

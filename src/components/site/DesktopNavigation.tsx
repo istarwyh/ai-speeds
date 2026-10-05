@@ -1,10 +1,11 @@
 'use client';
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { type ComponentRef, type RefObject, useEffect, useState } from 'react';
+import { primaryExternalNavigationItems } from '@/config/site-navigation';
 import { resolvedNavigationGroups, standaloneNavigationFeatures, isFeatureActive } from '@/lib/navigation';
 import { cn } from '@/lib/utils/cn';
 import { useCurrentHash } from './useCurrentHash';
@@ -107,6 +108,13 @@ export function DesktopNavigation({ fallbackFocusRef }: { fallbackFocusRef: RefO
           </DropdownMenu.Root>
         );
       })}
+
+      {primaryExternalNavigationItems.map(item => (
+        <a key={item.id} href={item.href} target='_blank' rel='noopener noreferrer' className={triggerClass}>
+          {item.label}
+          <ExternalLink size={14} aria-hidden='true' />
+        </a>
+      ))}
 
       {standaloneNavigationFeatures.map(feature => {
         const active = isFeatureActive(feature, pathname, hash);

@@ -4,7 +4,7 @@ This document is the current authority for the repository's source layout and
 import direction. Normative constraints and rule IDs live in
 `.claude/rules/architecture-boundaries.md`.
 
-Last reviewed: `2026-10-05T07:45:51Z`.
+Last reviewed: `2026-10-05T13:55:01Z`.
 
 ## System map
 
@@ -53,6 +53,9 @@ historical, not current architecture.
   search, and footer UI.
 - Route-local implementation details stay next to their route, using folders
   such as `_components` and `_lib` when they are not shared.
+- `src/config/site-navigation.ts` also owns the top-level external blog entry.
+  It opens `https://xiaohui.cool/` in a separate tab; because it is not an AI
+  Speeds route, it does not enter the feature search index or Sitemap.
 
 ### Product routes
 
