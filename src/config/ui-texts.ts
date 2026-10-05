@@ -14,6 +14,7 @@ export const UI_TEXTS = {
     RECORDING_SUMMARY: '录音总结',
     SHARES: '公开分享',
     YOURBUDDY: 'YourBuddy',
+    WRITING_HELPER: 'writingHelper',
     HARBOR_SELF_EVOLVING: 'Harbor Self-Evolving',
     BRAND: '品牌资料',
   },

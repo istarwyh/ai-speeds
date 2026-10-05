@@ -4,7 +4,7 @@ This document is the current authority for the repository's source layout and
 import direction. Normative constraints and rule IDs live in
 `.claude/rules/architecture-boundaries.md`.
 
-Last reviewed: `2026-09-23T02:00:01Z`.
+Last reviewed: `2026-10-05T04:57:27Z`.
 
 ## System map
 
@@ -43,7 +43,7 @@ historical, not current architecture.
 - `src/app/layout.tsx` owns the root HTML shell, global CSS, and default site
   metadata.
 - `src/app/(site)/layout.tsx` owns the site header and footer used by the native
-  homepage, onboarding, Shares, and brand pages.
+  homepage, product landing pages, onboarding, Shares, and brand pages.
 - `src/app/(tools)/layout.tsx` provides the focused tool shell.
 - `src/app/(immersive)/**` is reserved for full-screen experiences without site
   chrome, including the YourBuddy and Harbor iframes and Share deck viewer.
@@ -62,6 +62,8 @@ Current public contexts include:
 - `/get-started` — Claude Code onboarding.
 - `/product/yourbuddy` — sandboxed immersive cross-origin YourBuddy product
   page.
+- `/product/writing-helper` — native writingHelper product landing page with
+  external Marketplace and source actions.
 - `/product/harbor-self-evolving` — immersive cross-origin Harbor product page.
 - `/playground` — request-building UI plus its own API endpoints.
 - `/whiteboard` — the Excalidraw-based whiteboard feature.
@@ -172,6 +174,13 @@ subpath. New features cannot depend on the external HTML, generated file,
 preparation script, DOM shape, or scripts inside the compatibility iframe. Add
 native routes/components instead. Do not add another consumer or move
 application behavior into the preparation step.
+
+writingHelper is a native product landing owned by
+`src/app/(site)/product/writing-helper/page.tsx`. Its Marketplace and GitHub
+destinations block cross-origin framing, so the route explains the extension
+inside the AI Speeds site shell and exposes those destinations only as safe
+external actions. Product metadata, navigation, search, and sitemap inclusion
+still derive from the shared registries.
 
 YourBuddy and Harbor Self-Evolving are separate, intentional immersive product
 boundaries. Their routes are registered in `src/config/features.ts`, appear in

@@ -22,6 +22,8 @@ Mirror domain: **[cc.xiaohui.cool](https://cc.xiaohui.cool)**
   assets.
 - **YourBuddy** — an extensible AI desktop workbench presented through an
   isolated full-screen product route.
+- **writingHelper** — a native product page for the VS Code English-writing
+  extension, with verified Marketplace installation and source links.
 - **Harbor Self-Evolving** — an AI Speeds product route that displays the
   independently published Harbor Chinese site in a full-screen cross-origin
   iframe.
@@ -34,6 +36,7 @@ Mirror domain: **[cc.xiaohui.cool](https://cc.xiaohui.cool)**
 | Entry                | Route                           | Description                                               |
 | -------------------- | ------------------------------- | --------------------------------------------------------- |
 | YourBuddy            | `/product/yourbuddy`            | Full-screen view of the YourBuddy Chinese product site    |
+| writingHelper        | `/product/writing-helper`       | Native landing page for the VS Code writing extension     |
 | AI API Gateway       | `/#api-gateway`                 | Anthropic-to-OpenAI-compatible API gateway                |
 | cc4pm                | `/#cc4pm`                       | AI-native product methods and reusable workflows          |
 | Harbor Self-Evolving | `/product/harbor-self-evolving` | Full-screen view of the Harbor Self-Evolving Chinese site |
@@ -95,7 +98,7 @@ The App Router is split by presentation context while public URLs remain stable:
 
 ```text
 src/app/
-├── (site)/        native homepage, onboarding, Shares, brand pages
+├── (site)/        native homepage, product landings, onboarding, Shares, brand pages
 ├── (tools)/       playground, whiteboard, recording summary, wireframe
 ├── (immersive)/   YourBuddy and Harbor iframes, full-screen Share deck viewer
 ├── (legacy)/      compatibility redirects only
@@ -124,6 +127,18 @@ src/lib/navigation.ts
 The historical `@cc4pm/homepage` artifact pipeline remains only as a frozen
 compatibility boundary for `/static/cc4pm-homepage.html` and
 `/api/static/homepage`; it is not the active root homepage.
+
+### Native product landing pages
+
+Products without an independently hosted, embeddable web experience use the site
+shell. writingHelper is presented this way because the VS Code Marketplace and
+GitHub pages both block cross-origin framing:
+
+```text
+/product/writing-helper
+  -> src/app/(site)/product/writing-helper/page.tsx
+  -> Visual Studio Marketplace and GitHub external actions
+```
 
 ### Immersive product sites
 
@@ -225,6 +240,8 @@ curl -X POST https://aispeeds.me/v1/messages \
   decision and implementation record.
 - `docs/tech/202609/YOURBUDDY_INTEGRATION.md` — YourBuddy integration design,
   security boundary, validation, and rollback plan.
+- `docs/tech/202610/WRITING_HELPER_VSCODE_EXTENSION_INTEGRATION.md` — verified
+  writingHelper sources, native landing-page decision, validation, and rollback.
 
 ## License
 

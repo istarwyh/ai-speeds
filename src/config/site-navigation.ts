@@ -20,7 +20,7 @@ export const navigationGroups = [
   {
     id: 'products',
     label: UI_TEXTS.NAVIGATION_GROUPS.PRODUCTS,
-    featureIds: ['yourbuddy', 'api-gateway', 'cc4pm', 'harbor-self-evolving'],
+    featureIds: ['yourbuddy', 'writing-helper', 'api-gateway', 'cc4pm', 'harbor-self-evolving'],
   },
   {
     id: 'tools',

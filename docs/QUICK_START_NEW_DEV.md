@@ -148,14 +148,19 @@ read only `node_modules/@cc4pm/homepage/index.html`; no source file may import,
 re-export, require, or dynamically import the package or a subpath. New feature
 code must not parse, patch, or build behavior on the artifact.
 
-YourBuddy and Harbor Self-Evolving are intentional immersive product
-integrations, not extensions of the legacy homepage seam. Register product
-metadata in `src/config/features.ts`, navigation placement in
-`src/config/site-navigation.ts`, and keep each full-screen cross-origin iframe
-in its route-local `src/app/(immersive)/product/<product>/page.tsx`.
-Compatibility façades, ambient declarations, and design-token surfaces are
-enumerated in `architecture/compatibility-manifest.json`; this is a closed,
-shrinking budget, and its façades must remain thin delegates.
+Choose a product shell from the product's actual browser surface. Extensions and
+desktop tools without a verified embeddable website use a native
+`src/app/(site)/product/<product>/page.tsx` landing page with external install
+and source actions; writingHelper is the current example. Independently
+published websites may use an immersive route only after their framing policy,
+navigation, storage, popups, downloads, and mobile behavior are verified;
+YourBuddy and Harbor Self-Evolving are the current intentional examples.
+Register either form in `src/config/features.ts` and place it through
+`src/config/site-navigation.ts`; keep any cross-origin iframe route-local under
+`src/app/(immersive)/product/<product>/page.tsx`. Compatibility façades, ambient
+declarations, and design-token surfaces are enumerated in
+`architecture/compatibility-manifest.json`; this is a closed, shrinking budget,
+and its façades must remain thin delegates.
 
 ## 6. Validate before handoff
 
