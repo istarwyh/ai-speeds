@@ -56,21 +56,21 @@ export const metadata: Metadata = {
 export default function McpAdvisorPage() {
   return (
     <main className='overflow-hidden bg-bg-primary'>
-      <section className='relative overflow-hidden bg-slate-950 py-16 text-white sm:py-20 lg:py-28'>
+      <section className='relative overflow-hidden bg-header-surface py-16 text-text-primary sm:py-20 lg:py-28'>
         <div className='pointer-events-none absolute inset-0' aria-hidden='true'>
-          <div className='absolute -right-24 top-10 size-80 rounded-full bg-cyan-300/10 blur-3xl' />
+          <div className='absolute -right-24 top-10 size-80 rounded-full bg-teal-400/10 blur-3xl' />
           <div className='absolute -bottom-32 left-1/4 size-96 rounded-full bg-primary/10 blur-3xl' />
         </div>
         <div className='relative mx-auto grid max-w-site items-center gap-12 px-4 sm:px-6 lg:grid-cols-[minmax(0,1.02fr)_minmax(24rem,0.98fr)] lg:px-8'>
           <div>
-            <div className='inline-flex min-h-9 items-center gap-2 rounded-pill border border-white/10 bg-white/5 px-4 text-sm font-semibold text-cyan-200'>
+            <div className='inline-flex min-h-9 items-center gap-2 rounded-pill border border-floating-border bg-floating-surface px-4 text-sm font-semibold text-teal-600 shadow-sm backdrop-blur-floating'>
               <Network size={16} aria-hidden='true' />
               Model Context Protocol
             </div>
             <h1 className='mt-7 max-w-3xl text-balance font-editorial text-5xl font-semibold leading-[1.04] tracking-tight sm:text-6xl lg:text-7xl'>
               别在一长串 MCP 名字里碰运气。
             </h1>
-            <p className='mt-6 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl'>
+            <p className='mt-6 max-w-2xl text-lg leading-8 text-text-secondary sm:text-xl'>
               MCP Advisor 先听懂你要完成的任务，再帮 AI 助手发现合适的 MCP Server。
               选定以后，它还会整理安装和客户端配置指引。
             </p>
@@ -79,7 +79,7 @@ export default function McpAdvisorPage() {
                 href={SITE_LINKS.mcpAdvisorGettingStarted}
                 target='_blank'
                 rel='noopener noreferrer'
-                className='inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 active:scale-press'
+                className='inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-header-surface active:scale-press'
               >
                 查看快速开始
                 <ArrowUpRight size={17} aria-hidden='true' />
@@ -88,71 +88,71 @@ export default function McpAdvisorPage() {
                 href={SITE_LINKS.mcpAdvisorGithub}
                 target='_blank'
                 rel='noopener noreferrer'
-                className='inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-6 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:border-cyan-200/50 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 active:scale-press'
+                className='inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-floating-border bg-floating-surface px-6 text-sm font-semibold text-text-primary shadow-sm backdrop-blur-floating transition hover:-translate-y-0.5 hover:border-primary hover:bg-floating-surface-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-header-surface active:scale-press'
               >
                 <GitFork size={17} aria-hidden='true' />
                 查看源代码
               </a>
             </div>
-            <dl className='mt-10 grid max-w-2xl grid-cols-3 gap-3 border-t border-white/10 pt-6'>
+            <dl className='mt-10 grid max-w-2xl grid-cols-3 gap-3 border-t border-border-light pt-6'>
               <div>
-                <dt className='text-xs font-semibold uppercase tracking-[0.16em] text-slate-400'>MCP Tools</dt>
+                <dt className='text-xs font-semibold uppercase tracking-[0.16em] text-text-muted'>MCP Tools</dt>
                 <dd className='mt-2 text-2xl font-semibold tracking-tight'>2</dd>
-                <dd className='mt-1 text-sm text-slate-400'>推荐与配置指引</dd>
+                <dd className='mt-1 text-sm text-text-muted'>推荐与配置指引</dd>
               </div>
               <div>
-                <dt className='text-xs font-semibold uppercase tracking-[0.16em] text-slate-400'>Transports</dt>
+                <dt className='text-xs font-semibold uppercase tracking-[0.16em] text-text-muted'>Transports</dt>
                 <dd className='mt-2 text-2xl font-semibold tracking-tight'>3</dd>
-                <dd className='mt-1 text-sm text-slate-400'>stdio / SSE / REST</dd>
+                <dd className='mt-1 text-sm text-text-muted'>stdio / SSE / REST</dd>
               </div>
               <div>
-                <dt className='text-xs font-semibold uppercase tracking-[0.16em] text-slate-400'>npm</dt>
+                <dt className='text-xs font-semibold uppercase tracking-[0.16em] text-text-muted'>npm</dt>
                 <dd className='mt-2 text-2xl font-semibold tracking-tight'>1.0.7</dd>
-                <dd className='mt-1 text-sm text-slate-400'>公开版本</dd>
+                <dd className='mt-1 text-sm text-text-muted'>公开版本</dd>
               </div>
             </dl>
           </div>
 
           <div className='relative'>
-            <div className='rounded-[2rem] border border-white/10 bg-slate-900/80 p-5 shadow-2xl shadow-black/30 backdrop-blur sm:p-7'>
-              <div className='flex items-center justify-between gap-4 border-b border-white/10 pb-5'>
+            <div className='rounded-[2rem] border border-floating-border bg-floating-surface-strong p-5 shadow-floating-strong backdrop-blur-floating sm:p-7'>
+              <div className='flex items-center justify-between gap-4 border-b border-border-light pb-5'>
                 <div className='flex items-center gap-3'>
-                  <span className='flex size-10 items-center justify-center rounded-xl bg-cyan-300/10 text-cyan-300'>
+                  <span className='flex size-10 items-center justify-center rounded-xl bg-teal-400/15 text-teal-600'>
                     <Boxes size={20} aria-hidden='true' />
                   </span>
                   <div>
                     <p className='font-semibold'>MCP Advisor</p>
-                    <p className='text-xs text-slate-400'>Task → Discovery → Guidance</p>
+                    <p className='text-xs text-text-muted'>Task → Discovery → Guidance</p>
                   </div>
                 </div>
-                <span className='rounded-pill bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-300'>
+                <span className='rounded-pill bg-teal-400/15 px-3 py-1 text-xs font-semibold text-teal-600'>
                   MCP Server
                 </span>
               </div>
 
-              <div className='mt-6 rounded-2xl border border-white/10 bg-slate-950 p-5'>
-                <p className='text-xs font-semibold uppercase tracking-[0.16em] text-slate-500'>Your task</p>
-                <p className='mt-3 text-base leading-7 text-slate-200'>为保险风险分析寻找合适的 MCP Server</p>
+              <div className='mt-6 rounded-2xl border border-border-light bg-bg-primary p-5'>
+                <p className='text-xs font-semibold uppercase tracking-[0.16em] text-text-muted'>Your task</p>
+                <p className='mt-3 text-base leading-7 text-text-secondary'>为保险风险分析寻找合适的 MCP Server</p>
               </div>
 
-              <div className='my-4 flex items-center justify-center text-cyan-300' aria-hidden='true'>
+              <div className='my-4 flex items-center justify-center text-teal-600' aria-hidden='true'>
                 <ArrowRight size={20} className='rotate-90' />
               </div>
 
               <div className='grid gap-3 sm:grid-cols-2'>
-                <div className='rounded-2xl border border-cyan-300/20 bg-cyan-300/5 p-4'>
-                  <Search size={18} className='text-cyan-300' aria-hidden='true' />
-                  <p className='mt-3 font-mono text-sm text-cyan-100'>recommend-mcp-servers</p>
-                  <p className='mt-2 text-xs leading-5 text-slate-400'>搜索并整理候选</p>
+                <div className='rounded-2xl border border-teal-400/30 bg-teal-400/10 p-4'>
+                  <Search size={18} className='text-teal-600' aria-hidden='true' />
+                  <p className='mt-3 font-mono text-sm font-semibold text-teal-600'>recommend-mcp-servers</p>
+                  <p className='mt-2 text-xs leading-5 text-text-muted'>搜索并整理候选</p>
                 </div>
                 <div className='rounded-2xl border border-primary/30 bg-primary/5 p-4'>
-                  <BookOpenCheck size={18} className='text-primary-light' aria-hidden='true' />
-                  <p className='mt-3 font-mono text-sm text-orange-100'>install-mcp-server</p>
-                  <p className='mt-2 text-xs leading-5 text-slate-400'>生成安装与配置指南</p>
+                  <BookOpenCheck size={18} className='text-primary-ink' aria-hidden='true' />
+                  <p className='mt-3 font-mono text-sm font-semibold text-primary-ink'>install-mcp-server</p>
+                  <p className='mt-2 text-xs leading-5 text-text-muted'>生成安装与配置指南</p>
                 </div>
               </div>
 
-              <div className='mt-4 flex items-start gap-3 rounded-xl bg-amber-300/10 px-4 py-3 text-sm leading-6 text-amber-100'>
+              <div className='mt-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900'>
                 <Code2 size={17} className='mt-1 shrink-0' aria-hidden='true' />
                 名字叫 install，但它提供的是操作指引，不会直接替你修改系统。
               </div>
