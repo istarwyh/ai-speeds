@@ -4,7 +4,7 @@ This document is the current authority for the repository's source layout and
 import direction. Normative constraints and rule IDs live in
 `.claude/rules/architecture-boundaries.md`.
 
-Last reviewed: `2026-10-05T04:57:27Z`.
+Last reviewed: `2026-10-05T07:45:51Z`.
 
 ## System map
 
@@ -62,6 +62,8 @@ Current public contexts include:
 - `/get-started` — Claude Code onboarding.
 - `/product/yourbuddy` — sandboxed immersive cross-origin YourBuddy product
   page.
+- `/product/mcp-advisor` — native MCP Advisor product landing page with external
+  quick-start, source, and npm actions.
 - `/product/writing-helper` — native writingHelper product landing page with
   external Marketplace and source actions.
 - `/product/harbor-self-evolving` — immersive cross-origin Harbor product page.
@@ -174,6 +176,12 @@ subpath. New features cannot depend on the external HTML, generated file,
 preparation script, DOM shape, or scripts inside the compatibility iframe. Add
 native routes/components instead. Do not add another consumer or move
 application behavior into the preparation step.
+
+MCP Advisor is a native product landing owned by
+`src/app/(site)/product/mcp-advisor/page.tsx`. The product itself runs locally
+as a Node.js CLI and MCP Server; it has no independently hosted product site.
+GitHub and npm remain safe external actions rather than iframe content. The page
+does not host MCP transports or proxy MCP registry traffic.
 
 writingHelper is a native product landing owned by
 `src/app/(site)/product/writing-helper/page.tsx`. Its Marketplace and GitHub

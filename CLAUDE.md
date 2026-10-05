@@ -79,6 +79,8 @@ API keys are passed per-request via `x-api-key` header, not stored server-side.
   homepage compatibility seam. It is not used by the active root route.
 - `src/app/(immersive)/product/yourbuddy/page.tsx` displays the YourBuddy
   Chinese product site in a sandboxed full-screen cross-origin iframe.
+- `src/app/(site)/product/mcp-advisor/page.tsx` is the native product page for
+  the local MCP Advisor server/CLI; quick-start, source, and npm stay external.
 - `src/app/(site)/product/writing-helper/page.tsx` is the native product page
   for the writingHelper VS Code extension; Marketplace and GitHub stay external.
 - `src/app/(immersive)/product/harbor-self-evolving/page.tsx` displays the
@@ -111,6 +113,7 @@ and `src/styles/designTokens.ts`.
 | ----------------------------------- | --------------------------------------------------- |
 | `GET /`                             | Native AI Speeds homepage                           |
 | `GET /product/yourbuddy`            | Sandboxed full-screen YourBuddy iframe              |
+| `GET /product/mcp-advisor`          | Native MCP Advisor product landing page             |
 | `GET /product/writing-helper`       | Native writingHelper VS Code extension landing page |
 | `GET /product/harbor-self-evolving` | Full-screen Harbor Self-Evolving iframe             |
 | `GET /playground`                   | API Playground                                      |

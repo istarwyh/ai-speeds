@@ -22,6 +22,9 @@ Mirror domain: **[cc.xiaohui.cool](https://cc.xiaohui.cool)**
   assets.
 - **YourBuddy** — an extensible AI desktop workbench presented through an
   isolated full-screen product route.
+- **MCP Advisor** — a native product page for the local MCP Server and CLI that
+  discovers MCP tools and generates installation and client configuration
+  guidance.
 - **writingHelper** — a native product page for the VS Code English-writing
   extension, with verified Marketplace installation and source links.
 - **Harbor Self-Evolving** — an AI Speeds product route that displays the
@@ -36,6 +39,7 @@ Mirror domain: **[cc.xiaohui.cool](https://cc.xiaohui.cool)**
 | Entry                | Route                           | Description                                               |
 | -------------------- | ------------------------------- | --------------------------------------------------------- |
 | YourBuddy            | `/product/yourbuddy`            | Full-screen view of the YourBuddy Chinese product site    |
+| MCP Advisor          | `/product/mcp-advisor`          | Native landing page for MCP discovery and setup guidance  |
 | writingHelper        | `/product/writing-helper`       | Native landing page for the VS Code writing extension     |
 | AI API Gateway       | `/#api-gateway`                 | Anthropic-to-OpenAI-compatible API gateway                |
 | cc4pm                | `/#cc4pm`                       | AI-native product methods and reusable workflows          |
@@ -131,10 +135,14 @@ compatibility boundary for `/static/cc4pm-homepage.html` and
 ### Native product landing pages
 
 Products without an independently hosted, embeddable web experience use the site
-shell. writingHelper is presented this way because the VS Code Marketplace and
-GitHub pages both block cross-origin framing:
+shell. MCP Advisor is a local MCP Server/CLI and writingHelper is a VS Code
+extension; their GitHub, npm, and Marketplace destinations block cross-origin
+framing:
 
 ```text
+/product/mcp-advisor
+  -> src/app/(site)/product/mcp-advisor/page.tsx
+  -> GitHub quick start, source, and npm external actions
 /product/writing-helper
   -> src/app/(site)/product/writing-helper/page.tsx
   -> Visual Studio Marketplace and GitHub external actions
@@ -242,6 +250,8 @@ curl -X POST https://aispeeds.me/v1/messages \
   security boundary, validation, and rollback plan.
 - `docs/tech/202610/WRITING_HELPER_VSCODE_EXTENSION_INTEGRATION.md` — verified
   writingHelper sources, native landing-page decision, validation, and rollback.
+- `docs/tech/202610/MCP_ADVISOR_INTEGRATION.md` — verified MCP Advisor sources,
+  native product-page boundary, validation, and rollback.
 
 ## License
 
