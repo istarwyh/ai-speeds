@@ -2,7 +2,7 @@
 name: oceanbase-mcp-advisor-share-technical-plan
 status: in-progress
 created: 2026-11-15T09:23:26Z
-updated: 2026-11-15T09:51:38Z
+updated: 2026-11-15T09:55:29Z
 ---
 
 # OceanBase AI 黑客松：MCP Advisor 分享接入方案
@@ -139,3 +139,6 @@ node --experimental-strip-types scripts/prepare-share-assets.mjs \
 S3 环境变量，而本机 OAuth 已能访问同一资产桶；通用发布脚本保持原状。
 
 工作区同时包含 CCF 内容及通用流程调整，整站部署会包含这些改动，部署前需明确合并发布范围。
+
+当前结果：29 个文件已上传，封面、PDF、PPTX、逐页 Markdown、manifest 的公开 URL 返回 200；生产 Next.js 构建通过。浏览器已检查 320px 布局无横向溢出、日期为 2025 年 5 月 16 日、首图加载、右方向键到第 2 页、End 到第 12 页、deck
+noindex 与详情 canonical；首页、目录、sitemap 均包含新条目，上海及 CCF 详情仍可访问。应用尚未部署到生产，当前本地预览端口为 3012。
