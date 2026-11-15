@@ -9,18 +9,21 @@ export const agentNativeProductCcfTf179 = {
   title: '保险快查 Agent Native 实践',
   subtitle: 'CCF TF 第 179 期 · 智能体加速金融创新',
   summary:
-    '以保险快查为线索，讲解离线认知资本生产、协议化协作，以及内容型（DIPG）与交互型（AgenticOne）两种在线消费方式。',
+    '2026 年 6 月 25 日 CCF TF 第 179 期线上研讨会（19:40–20:10）分享：以保险快查为线索，讲解离线认知资本生产、协议化协作，以及内容型（DIPG）与交互型（AgenticOne）两种在线消费方式。',
   description:
-    '2026 年 6 月 CCF TF 第 179 期「智能体加速金融创新」分享材料的公开整理版：从 Agent Native 的系统方法论出发，依次拆解上下文供给链路、Verify 质量网关、DIPG 内容生成与 AgenticOne 实时咨询架构。',
+    '2026 年 6 月 25 日 CCF TF 第 179 期「智能体加速金融创新」线上研讨会（腾讯会议直播，演讲时段 19:40–20:10）分享材料公开整理版：从 Agent Native 的系统方法论出发，依次拆解上下文供给链路、Verify 质量网关、DIPG 内容生成与 AgenticOne 实时咨询架构。',
   author: {
     name: '王艺辉 / 晓灰',
   },
   event: {
     name: 'CCF TF 第 179 期：智能体加速金融创新',
+    location: '线上',
+    url: 'https://ccf.org.cn/179',
   },
-  eventDate: '2026-06-25T00:00:00Z',
+  location: '线上',
+  eventDate: '2026-06-25T11:40:00Z',
   publishedAt: '2026-11-15T09:25:20Z',
-  updatedAt: '2026-11-15T09:25:20Z',
+  updatedAt: '2026-11-15T09:48:00Z',
   tags: ['Agent Native', 'Harness Engineering', 'AI 产品', '保险科技', 'CCF'],
   coverPath: `${ASSET_BASE_URL}/cover.webp`,
   coverAlt: '《构建 Agent Native Product》封面：保险快查离线认知资本与在线 Agent 实践。',
@@ -29,6 +32,13 @@ export const agentNativeProductCcfTf179 = {
       title: '构建 Agent Native Product：保险快查离线与在线实践演讲稿',
       url: 'https://xiaohui.cool/show/构建-Agent-Native-Product：保险快查离线与在线实践演讲稿',
       description: '配套完整演讲稿，含章节叙述与延伸阅读。',
+      label: '阅读配套演讲稿',
+    },
+    {
+      title: 'CCF TF179 活动回顾：智能体加速金融创新',
+      url: 'https://mp.weixin.qq.com/s/hrxFK6xPFgREx4mUOX7msg',
+      description: '中国计算机学会（CCF）官方公众号发布的 TF179 活动回顾，概括保险快查实践要点。',
+      label: 'CCF 官方回顾',
     },
   ],
   resources: [

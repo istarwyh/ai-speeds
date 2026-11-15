@@ -114,7 +114,21 @@ export function ShareDetail({ share }: ShareDetailProps) {
                 <div className='flex items-center gap-2'>
                   <CalendarDays size={17} className='text-primary' aria-hidden='true' />
                   <dt className='sr-only'>活动</dt>
-                  <dd>{share.event.name}</dd>
+                  <dd>
+                    {share.event.url ? (
+                      <a
+                        href={share.event.url}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='inline-flex items-center gap-1 hover:text-primary hover:underline'
+                      >
+                        {share.event.name}
+                        <ExternalLink size={14} aria-hidden='true' />
+                      </a>
+                    ) : (
+                      share.event.name
+                    )}
+                  </dd>
                 </div>
               ) : null}
               {share.event?.location ? (
@@ -154,7 +168,7 @@ export function ShareDetail({ share }: ShareDetailProps) {
                   className={`${floatingControlClass} inline-flex min-h-12 items-center gap-2 px-5 text-sm font-semibold sm:text-base`}
                 >
                   <FileText size={18} aria-hidden='true' />
-                  {UI_TEXTS.SHARES.READ_ARTICLE}
+                  {article.label ?? UI_TEXTS.SHARES.READ_ARTICLE}
                   <ExternalLink size={16} aria-hidden='true' />
                 </a>
               ))}
@@ -229,7 +243,7 @@ export function ShareDetail({ share }: ShareDetailProps) {
               >
                 <span className='flex items-center gap-2'>
                   <FileText size={18} aria-hidden='true' />
-                  阅读原文：{article.title}
+                  {article.title}
                 </span>
                 <ExternalLink size={16} aria-hidden='true' />
               </a>

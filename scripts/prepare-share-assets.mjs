@@ -45,6 +45,7 @@ function usage() {
     `  --slug <slug>             Share slug (default: ${defaultSlug})`,
     `  --media-version <vN>      media version directory (default: ${defaultVersion})`,
     '  --source <pptx>           source deck (required unless the default Share is used)',
+    '  --render-source <pptx>    optional layout-compatible copy for images/PDF only; downloads use --source',
     '  --output <directory>      output directory (default: dist/shares/<slug>/<version>)',
     '  --registry <file>         TypeScript Share registry module',
     '  --article <markdown>      local article note to freeze as article.md',
@@ -62,6 +63,7 @@ function parseArguments(arguments_) {
     slug: defaultSlug,
     version: defaultVersion,
     source: undefined,
+    renderSource: undefined,
     output: undefined,
     registry: resolve(repoRoot, 'src', 'content', 'shares', 'registry.ts'),
     article: undefined,
@@ -75,6 +77,7 @@ function parseArguments(arguments_) {
     ['--slug', 'slug'],
     ['--media-version', 'version'],
     ['--source', 'source'],
+    ['--render-source', 'renderSource'],
     ['--output', 'output'],
     ['--registry', 'registry'],
     ['--article', 'article'],
@@ -83,7 +86,7 @@ function parseArguments(arguments_) {
     ['--renderer', 'renderer'],
     ['--concurrency', 'concurrency'],
   ]);
-  const pathKeys = new Set(['source', 'output', 'registry', 'article', 'contentRoot']);
+  const pathKeys = new Set(['source', 'renderSource', 'output', 'registry', 'article', 'contentRoot']);
 
   for (let index = 0; index < arguments_.length; index += 1) {
     const argument = arguments_[index];
@@ -320,7 +323,7 @@ async function renderPages({ renderer, python, sanitizedPptx, deckPdf, rasterDir
       ],
       'LibreOffice PDF export',
     );
-    await rename(join(outputDirectory, 'source.pdf'), deckPdf);
+    await rename(join(outputDirectory, basename(sanitizedPptx).replace(/\.pptx$/i, '.pdf')), deckPdf);
     const pdftoppm = await requireExecutable('pdftoppm');
     await runCommand(
       pdftoppm,
@@ -425,10 +428,29 @@ async function prepare(options) {
       'PPTX sanitization',
     );
 
+    let renderSource = sanitizedPptx;
+    if (options.renderSource) {
+      renderSource = join(workDirectory, 'render.pptx');
+      await runCommand(
+        python,
+        [
+          resolve(repoRoot, 'scripts', 'sanitize-share-pptx.py'),
+          '--input',
+          options.renderSource,
+          '--output',
+          renderSource,
+          '--report',
+          join(workDirectory, 'render-review.json'),
+          '--expected-slides',
+          String(slideCount),
+        ],
+        'Render copy sanitization',
+      );
+    }
     await renderPages({
       renderer: options.renderer,
       python,
-      sanitizedPptx,
+      sanitizedPptx: renderSource,
       deckPdf: join(stage, 'deck.pdf'),
       rasterDirectory: raster,
       workDirectory,

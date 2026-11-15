@@ -4,7 +4,7 @@ const ASSET_BASE_URL = 'https://assets.aispeeds.me/shares/mcp-advisor-oceanbase-
 
 export const mcpAdvisorOceanbaseHackathon = {
   slug: 'mcp-advisor-oceanbase-hackathon',
-  status: 'draft',
+  status: 'public',
   locale: 'zh-CN',
   title: 'MCP Advisor：做 AI 时代最懂 MCP 的顾问',
   subtitle: '首届 OceanBase AI 黑客松 · 二等奖',
@@ -16,8 +16,8 @@ export const mcpAdvisorOceanbaseHackathon = {
   event: { name: '首届 OceanBase AI 黑客松', location: '广州 · 阿里广州中心' },
   location: '广州 · 阿里广州中心',
   eventDate: '2025-05-15T16:00:00Z',
-  publishedAt: '2026-11-15T09:26:54Z',
-  updatedAt: '2026-11-15T09:26:54Z',
+  publishedAt: '2026-11-15T09:52:47Z',
+  updatedAt: '2026-11-15T09:52:47Z',
   tags: ['MCP', 'OceanBase', '向量检索', '黑客松', '二等奖'],
   coverPath: `${ASSET_BASE_URL}/cover.webp`,
   coverAlt: 'MCP advisor 分享封面：做 AI 时代最懂 MCP 的顾问，演讲人王艺辉、陆冠融。',
@@ -107,7 +107,7 @@ export const mcpAdvisorOceanbaseHackathon = {
         number: 7,
         title: '系统组件架构',
         description:
-          '架构分为 MCP 连接层、统一搜索服务层、向量引擎与 DB 层：连接层接收请求，搜索层融合多 Provider 结果，向量与数据库层提供检索和数据更新能力。',
+          '左侧为 MCP 连接层、统一搜索服务层、向量引擎与 DB 层。右图从 Client Application 经 MCP Protocol、Transport Layer 进入 Search Service；查询分发给 Offline、GetMCP、Compass、Meilisearch Provider。Offline 下接文本匹配和向量搜索，API Provider 连接外部 MCP Registry；Result Processor 分为优先级、去重、相似度过滤分支，搜索服务另连日志系统。',
         transcript:
           'MCP 连接层处理查询请求，支持 STDIO、SSE、REST API，连接本地、API 与企业内部数据源。统一搜索服务层融合 OceanBase、Meilisearch、API 和内存引擎的搜索结果。向量引擎与 DB 层基于 TensorFlow 与 OceanBase HNSW 高维向量索引，支持分布式定时数据更新和内存兜底。以上为 2025 年 PPT 的架构描述，不等同于当前仓库的功能清单。',
       },
@@ -115,7 +115,7 @@ export const mcpAdvisorOceanbaseHackathon = {
         number: 8,
         title: '数据流程：意图处理与混合搜索',
         description:
-          '流程由意图处理进入多个 Provider 并发召回，再通过标量过滤与 HNSW 向量查询检索，最终按不同来源权重融合推荐结果。',
+          '左侧四步为意图处理、并发召回与融合、标量与向量混合搜索、融合结果。右侧时序图从 User 经 AI Agent、MCP Advisor 到 Query Processor，先并行提取关键词和生成向量，再并发文本检索与向量检索。Search Providers 将结果交给 Result Processor，依次合并、按 URL 去重、按 Provider 优先级排序、相似度过滤、限制数量，再返回 MCP Advisor。',
         transcript:
           '先提取意图关键词，用 TensorFlow.js 将意图向量化；多个 Provider 并发搜索，包括内存向量数据库、公网 API、OceanBase 与 Meilisearch；检索结合标量过滤和 HNSW 向量相似度查询；最后调整不同来源权重，加权融合推荐结果。Provider 可继续扩展。',
       },

@@ -236,6 +236,20 @@ function validateShare(share: Share): void {
     assertNonBlank(share.location, `${share.slug}.location`);
   }
 
+  if (share.event.url !== undefined) {
+    let eventUrl: URL;
+
+    try {
+      eventUrl = new URL(share.event.url);
+    } catch {
+      throw new Error(`Share ${share.slug} 的 event.url 无效：${share.event.url}`);
+    }
+
+    if (eventUrl.protocol !== 'https:' || eventUrl.username || eventUrl.password) {
+      throw new Error(`Share ${share.slug} 的 event.url 必须使用无凭据的 HTTPS URL`);
+    }
+  }
+
   assertStrictUtcDate(share.publishedAt, `${share.slug}.publishedAt`);
   assertStrictUtcDate(share.updatedAt, `${share.slug}.updatedAt`);
 
@@ -302,6 +316,10 @@ function validateRelatedArticles(share: Share): void {
   for (const article of share.relatedArticles ?? []) {
     assertNonBlank(article.title, `${share.slug}.relatedArticles.title`);
     assertNonBlank(article.description, `${share.slug}.relatedArticles.description`);
+
+    if (article.label !== undefined) {
+      assertNonBlank(article.label, `${share.slug}.relatedArticles.label`);
+    }
 
     let url: URL;
 

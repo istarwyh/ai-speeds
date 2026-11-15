@@ -18,12 +18,14 @@ export type ShareAuthor = {
 export type ShareEvent = {
   name: string;
   location?: string;
+  url?: string;
 };
 
 export type ShareRelatedArticle = {
   title: string;
   url: string;
   description: string;
+  label?: string;
 };
 
 export type ShareResource = {

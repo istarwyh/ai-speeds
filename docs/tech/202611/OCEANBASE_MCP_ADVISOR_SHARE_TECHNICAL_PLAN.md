@@ -1,8 +1,8 @@
 ---
 name: oceanbase-mcp-advisor-share-technical-plan
-status: backlog
+status: in-progress
 created: 2026-11-15T09:23:26Z
-updated: 2026-11-15T09:26:54Z
+updated: 2026-11-15T09:51:38Z
 ---
 
 # OceanBase AI 黑客松：MCP Advisor 分享接入方案
@@ -16,7 +16,7 @@ Shares 中新增独立分享，提供 12 页在线演示、PDF、公开 PPTX 和
 Advisor：做 AI 时代最懂 MCP 的顾问」，活动名称「OceanBase AI 黑客松」。入口为
 `/shares/mcp-advisor-oceanbase-hackathon`，在线演示为该路径下的 `/deck`。
 
-本文仅交付方案，不执行素材上传或生产部署。
+本文记录接入方案与实施结果；应用生产部署状态单独记录，不将素材上传视为整站已上线。
 
 ## 2. 已核实的源材料
 
@@ -105,3 +105,37 @@ PPT，也不将微信目录或原始大文件提交到仓库。
 完成标准：独立分享可发现，12 页图文对应，三类下载可用，联名署名完整，视频播放限制明确，旧分享保持正常。应用问题回滚应用；素材问题发布新媒体版本并更新引用。
 
 参考：[CCF 分享接入方案](./CCF_TF179_SHARE_AND_ARTICLE_TECHNICAL_PLAN.md)、[源码架构](../../SRC_ARCHITECTURE.md)。
+
+## 7. 实施记录
+
+已新增 12 页内容注册、联合署名、活动日期（固定 Asia/Shanghai 展示）及逐页文字。第 7—8 页文字覆盖架构分支、Provider 与时序图中的结果处理步骤；活动与获奖来源保留在第 12 页整理文字中。
+
+原稿直接经 LibreOffice 导出时，封面的自动尺寸文本框发生换行与重叠，部分字体别名也不能正确解析。已增加
+`scripts/prepare-oceanbase-render-copy.py`：仅为渲染副本使用本机 PingFang
+SC，扩宽封面的四个文字框，并为其余无换行自动尺寸框增加宽度；不改原文件，也不替换公开下载 PPTX 的幻灯片和视频。PDF/图片因此属于经过字体与排版兼容处理的公开整理版。
+
+`prepare-share-assets.mjs` 增加可选 `--render-source`。下载文件仍由 `--source`
+清理生成；渲染副本也先清理备注和元数据，再用于图片与 PDF。未传该选项的既有分享维持原流程。清理器仅补充标准 MP4、handout
+master、缩略图支持，并去掉固定为上海分享的元数据标题。
+
+本地重建方式（`SOURCE_PPTX`
+由执行者指向用户指定原稿；渲染副本必须使用新的输出路径）：
+
+```bash
+python3 scripts/prepare-oceanbase-render-copy.py \
+  --input "$SOURCE_PPTX" --output /tmp/oceanbase-render-copy.pptx
+node --experimental-strip-types scripts/prepare-share-assets.mjs \
+  --slug mcp-advisor-oceanbase-hackathon --media-version v1 \
+  --source "$SOURCE_PPTX" --render-source /tmp/oceanbase-render-copy.pptx \
+  --renderer libreoffice
+```
+
+产物位于
+`dist/shares/mcp-advisor-oceanbase-hackathon/v1/`，共 29 个文件。下载 PPTX 保留原稿全部幻灯片 XML 和同一份 MP4，移除备注及私人属性；PDF 与图像均为 12 页。不要将此目录或 PPTX 大文件加入 Git。
+
+已执行类型、架构、相关文件 ESLint 和产物检查；图片经过逐页联系表及重点页面目视核对。发布素材使用本机已登录 Wrangler 的
+`r2 object put --remote`，目标桶
+`assets-aispeeds-me`，沿用各文件 MIME 类型及不可变缓存。原因是当前未配置发布脚本需要的 R2
+S3 环境变量，而本机 OAuth 已能访问同一资产桶；通用发布脚本保持原状。
+
+工作区同时包含 CCF 内容及通用流程调整，整站部署会包含这些改动，部署前需明确合并发布范围。
