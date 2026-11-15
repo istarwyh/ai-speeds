@@ -36,7 +36,7 @@
     "@commitlint/cli": "^20.5.3",
     "@commitlint/config-conventional": "^20.5.3",
     "@eslint/js": "^10.0.1",
-    "@opennextjs/cloudflare": "^1.19.5",
+    "@opennextjs/cloudflare": "^1.20.17",
     "@types/eslint-plugin-security": "^3.0.1",
     "@types/markdown-it": "^14.1.2",
     "@types/react": "^19.2.14",
@@ -60,7 +60,7 @@
     "punycode": "^2.3.1",
     "tailwindcss": "^3.4.19",
     "typescript": "^6.0.3",
-    "wrangler": "4.131.1"
+    "wrangler": "4.148.0"
   },
   "dependencies": {
     "@cc4pm/homepage": "^1.0.13",
@@ -85,10 +85,10 @@
     "html2canvas": "^1.4.1",
     "isomorphic-dompurify": "^3.11.0",
     "lucide-react": "^1.14.0",
-    "next": "^15.5.15",
+    "next": "^15.5.29",
     "qrcode.react": "^4.2.0",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
     "recharts": "^3.8.1",
     "tailwind-merge": "^3.5.0",
     "tailwindcss-animate": "^1.0.7"
