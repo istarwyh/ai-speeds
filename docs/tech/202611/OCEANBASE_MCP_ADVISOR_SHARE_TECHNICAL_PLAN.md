@@ -1,8 +1,8 @@
 ---
 name: oceanbase-mcp-advisor-share-technical-plan
-status: in-progress
+status: complete
 created: 2026-11-15T09:23:26Z
-updated: 2026-11-15T09:55:29Z
+updated: 2026-11-15T10:20:33Z
 ---
 
 # OceanBase AI 黑客松：MCP Advisor 分享接入方案
@@ -141,4 +141,32 @@ S3 环境变量，而本机 OAuth 已能访问同一资产桶；通用发布脚�
 工作区同时包含 CCF 内容及通用流程调整，整站部署会包含这些改动，部署前需明确合并发布范围。
 
 当前结果：29 个文件已上传，封面、PDF、PPTX、逐页 Markdown、manifest 的公开 URL 返回 200；生产 Next.js 构建通过。浏览器已检查 320px 布局无横向溢出、日期为 2025 年 5 月 16 日、首图加载、右方向键到第 2 页、End 到第 12 页、deck
-noindex 与详情 canonical；首页、目录、sitemap 均包含新条目，上海及 CCF 详情仍可访问。应用尚未部署到生产，当前本地预览端口为 3012。
+noindex 与详情 canonical；首页、目录、sitemap 均包含新条目，上海及 CCF 详情仍可访问。此时应用尚未部署到生产；后续联合发布结果见下一节。
+
+## 8. OceanBase 与 CCF 联合上线
+
+用户明确选择两场分享一起部署。生产上线于 `2026-11-15T10:19:15.327Z`
+完成，验收记录时间为 `2026-11-15T10:20:33Z`。
+
+- 源码基于 `024d10f`；部署前只有本文及未跟踪的本地指导文件，未改动其他应用源码。
+- OceanBase 29 个文件已发布；另补齐 CCF
+  v1 的 78 个文件，包含 36 页演示及完整文章 Markdown。
+- 标准 `cf:deploy` 构建被 OpenNext 的 Next.js
+  15 生命周期检查拦截，未写生产。此次沿用项目现有 Next.js 15.5.15，以
+  `opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion`
+  显式兼容构建，再执行
+  `opennextjs-cloudflare deploy`；未持久关闭版本检查，后续标准构建仍需升级受支持版本或明确选择兼容选项。
+- 已核对 Cloudflare 账号 `9e62157e1ca3cd2d84c5bd7b39c17c28` 属于
+  `aispeeds.me`。发布前该账号下不存在 `aispeeds`
+  Worker 及对应域名关联，因此本次按仓库配置创建 Worker，并绑定
+  `aispeeds.me`、`cc.xiaohui.cool`；未修改其他 Worker。
+- 当前生产版本为 `143e7779-58eb-467c-abaa-a91bfaf97324`，Cloudflare
+  deployment 读回确认承载 100% 流量。
+- 正式站首页、分享目录和 sitemap 均返回 200，包含两场分享。两场详情及 deck 可访问，手机 320px 无横向溢出，封面与第二页图片加载成功，键盘翻页正常，canonical 与 deck
+  noindex 正确。
+- OceanBase 的 PDF/PPTX/逐页 Markdown，以及 CCF 的 PDF/PPTX/逐页 Markdown/文章 Markdown 均返回 200 且 MIME 类型正确；既有上海分享返回 200。
+
+正式入口：
+
+- [OceanBase MCPAdvisor 分享](https://aispeeds.me/shares/mcp-advisor-oceanbase-hackathon)
+- [CCF TF 179 分享](https://aispeeds.me/shares/agent-native-product-ccf-tf179)
