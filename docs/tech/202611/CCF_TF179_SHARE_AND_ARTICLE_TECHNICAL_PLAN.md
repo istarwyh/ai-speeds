@@ -2,7 +2,7 @@
 name: ccf-tf179-share-and-article-technical-plan
 status: implemented-draft
 created: 2026-11-15
-updated: 2026-11-15T09:35:00Z
+updated: 2026-11-15T10:22:09Z
 ---
 
 # CCF TF 179 分享：v1 演示材料与配套文章接入方案
@@ -41,7 +41,7 @@ Maker 上海 45 分钟版」。活动地点尚未核实，不从上海分享复�
 用户已明确指定使用：
 
 ```text
-/Users/mac/Desktop/code-open/quartz/content/slide-deck/agent-native-insurance-balanced/保险快查 Agent Native 实践-王艺辉-v1.pptx
+../quartz/content/slide-deck/agent-native-insurance-balanced/保险快查 Agent Native 实践-王艺辉-v1.pptx
 ```
 
 本地只读检查结果：
