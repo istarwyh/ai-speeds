@@ -210,18 +210,17 @@ Provider selection follows the configured environment variables in this order:
 
 ## Development commands
 
-| Command                                       | Description                                           |
-| --------------------------------------------- | ----------------------------------------------------- |
-| `pnpm run dev`                                | Prepare compatibility assets and start Turbopack      |
-| `pnpm run node:check`                         | Validate the supported Node.js runtime                |
-| `pnpm run architecture:check`                 | Validate route and dependency boundaries              |
-| `pnpm run lint:check`                         | Run ESLint without modifying files                    |
-| `pnpm run typecheck`                          | Run strict TypeScript checks                          |
-| `pnpm run shares:validate -- --registry-only` | Validate the Share registry                           |
-| `pnpm run build`                              | Build the Next.js application                         |
-| `pnpm run cf:build`                           | Build OpenNext output for Cloudflare Workers          |
-| `pnpm run cf:preview`                         | Preview the Cloudflare build locally                  |
-| `pnpm run cf:deploy`                          | Build and deploy with the configured Wrangler account |
+| Command                       | Description                                           |
+| ----------------------------- | ----------------------------------------------------- |
+| `pnpm run dev`                | Prepare compatibility assets and start Turbopack      |
+| `pnpm run node:check`         | Validate the supported Node.js runtime                |
+| `pnpm run architecture:check` | Validate route and dependency boundaries              |
+| `pnpm run lint:check`         | Run ESLint without modifying files                    |
+| `pnpm run typecheck`          | Run strict TypeScript checks                          |
+| `pnpm run build`              | Build the Next.js application                         |
+| `pnpm run cf:build`           | Build OpenNext output for Cloudflare Workers          |
+| `pnpm run cf:preview`         | Preview the Cloudflare build locally                  |
+| `pnpm run cf:deploy`          | Build and deploy with the configured Wrangler account |
 
 Pushes to `main` run the production workflow in `.github/workflows/deploy.yml`.
 The workflow verifies the frozen compatibility artifact, architecture rules,

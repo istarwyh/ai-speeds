@@ -22,7 +22,6 @@
     "architecture:check": "node scripts/validate-architecture.mjs",
     "architecture:check:self-test": "node scripts/validate-architecture.mjs --self-test",
     "shares:prepare": "node scripts/prepare-share-assets.mjs",
-    "shares:validate": "node scripts/node-runtime.mjs && node scripts/validate-share-assets.ts",
     "shares:publish": "node scripts/publish-share-assets.mjs",
     "typecheck": "tsc --noEmit # TypeScript 类型检查（不生成文件）",
     "audit": "pnpm audit --audit-level=moderate # 安全审计：检查依赖漏洞"

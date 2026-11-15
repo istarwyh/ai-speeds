@@ -31,7 +31,7 @@ function buildShareSearchEntries(): SearchEntry[] {
       group: 'shares',
       origin: provenance.origin,
       attributionLabel: provenance.label,
-      keywords: [...share.tags, share.author.name, share.event.name, share.location],
+      keywords: [...share.tags, share.author.name, share.event.name, ...(share.location ? [share.location] : [])],
       targetKind: 'route',
     };
   });

@@ -1,4 +1,5 @@
 export { agentNativeProductAiMakerShanghai } from './agent-native-product-ai-maker-shanghai.ts';
+export { mcpAdvisorOceanbaseHackathon } from './mcp-advisor-oceanbase-hackathon.ts';
 export { getShareProvenance, validateShareProvenance } from './attribution.ts';
 export { shareProvenanceBySlug } from './provenance.ts';
 export {
@@ -31,6 +32,7 @@ export type {
   ShareDeckPaths,
   ShareEvent,
   ShareLocale,
+  ShareRelatedArticle,
   ShareResource,
   ShareResourceKind,
   ShareResourceMediaType,

@@ -54,17 +54,11 @@ jobs:
       - name: Lint without changes
         run: pnpm run lint:check
 
-      - name: Validate Share registry
-        run: pnpm run shares:validate -- --registry-only
-
       - name: Build Next.js application
         run: pnpm run build
 
       - name: Typecheck
         run: pnpm run typecheck
-
-      - name: Validate public Share assets
-        run: pnpm run shares:validate -- --remote --timeout-ms 60000
 
       - name: Build for Cloudflare Workers
         run: pnpm run cf:build

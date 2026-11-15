@@ -1,4 +1,6 @@
 import { agentNativeProductAiMakerShanghai } from './agent-native-product-ai-maker-shanghai.ts';
+import { agentNativeProductCcfTf179 } from './agent-native-product-ccf-tf179.ts';
+import { mcpAdvisorOceanbaseHackathon } from './mcp-advisor-oceanbase-hackathon.ts';
 import type { Share, ShareDeck, ShareResource, ShareResourceKind, ShareSlide } from './types.ts';
 
 export const SHARE_ASSET_ORIGIN = 'https://assets.aispeeds.me';
@@ -19,7 +21,11 @@ const SENSITIVE_CONTENT_PATTERNS: readonly { label: string; pattern: RegExp }[] 
   { label: 'Bearer 凭据', pattern: /\bBearer\s+[a-z0-9._~-]{12,}\b/i },
 ];
 
-const registeredShares: readonly Share[] = [agentNativeProductAiMakerShanghai];
+const registeredShares: readonly Share[] = [
+  agentNativeProductAiMakerShanghai,
+  agentNativeProductCcfTf179,
+  mcpAdvisorOceanbaseHackathon,
+];
 
 export const shares: readonly Share[] = registeredShares;
 
@@ -220,12 +226,14 @@ function validateShare(share: Share): void {
   assertNonBlank(share.description, `${share.slug}.description`);
   assertNonBlank(share.author.name, `${share.slug}.author.name`);
   assertNonBlank(share.event.name, `${share.slug}.event.name`);
-  assertNonBlank(share.event.location, `${share.slug}.event.location`);
-  assertNonBlank(share.location, `${share.slug}.location`);
   assertNonBlank(share.coverAlt, `${share.slug}.coverAlt`);
 
   if (share.location !== share.event.location) {
     throw new Error(`Share ${share.slug} 的 location 必须与 event.location 一致`);
+  }
+
+  if (share.location !== undefined) {
+    assertNonBlank(share.location, `${share.slug}.location`);
   }
 
   assertStrictUtcDate(share.publishedAt, `${share.slug}.publishedAt`);
@@ -242,6 +250,7 @@ function validateShare(share: Share): void {
   assertAssetUrl(share.coverPath, `${share.slug}.coverPath`);
   validateTags(share);
   validateResources(share);
+  validateRelatedArticles(share);
 
   if (share.deck !== undefined) {
     validateDeck(share, share.deck);
@@ -287,6 +296,33 @@ function validateResources(share: Share): void {
   }
 }
 
+function validateRelatedArticles(share: Share): void {
+  const urls = new Set<string>();
+
+  for (const article of share.relatedArticles ?? []) {
+    assertNonBlank(article.title, `${share.slug}.relatedArticles.title`);
+    assertNonBlank(article.description, `${share.slug}.relatedArticles.description`);
+
+    let url: URL;
+
+    try {
+      url = new URL(article.url);
+    } catch {
+      throw new Error(`Share ${share.slug} 的关联文章 URL 无效：${article.url}`);
+    }
+
+    if (url.protocol !== 'https:' || url.username || url.password) {
+      throw new Error(`Share ${share.slug} 的关联文章必须使用无凭据的 HTTPS URL`);
+    }
+
+    if (urls.has(url.href)) {
+      throw new Error(`Share ${share.slug} 的关联文章重复：${article.url}`);
+    }
+
+    urls.add(url.href);
+  }
+}
+
 function validateResourceMediaType(resource: ShareResource): void {
   if (resource.kind === 'pdf' && resource.mediaType !== 'application/pdf') {
     throw new Error('PDF 资源必须使用 application/pdf');
@@ -301,6 +337,10 @@ function validateResourceMediaType(resource: ShareResource): void {
 
   if (resource.kind === 'transcript' && resource.mediaType !== 'text/markdown; charset=utf-8') {
     throw new Error('讲稿资源必须使用 text/markdown; charset=utf-8');
+  }
+
+  if (resource.kind === 'article' && resource.mediaType !== 'text/markdown; charset=utf-8') {
+    throw new Error('文章资源必须使用 text/markdown; charset=utf-8');
   }
 }
 
@@ -399,6 +439,12 @@ function validateDeckResourceConsistency(share: Share, deck: ShareDeck): void {
 
   if (transcript === undefined || transcript.url !== buildAssetUrl(deck.baseUrl, deck.paths.transcript)) {
     throw new Error(`Share ${share.slug} 的讲稿资源必须匹配 deck.paths.transcript`);
+  }
+
+  const article = getResourceByKind(share, 'article');
+
+  if (article !== undefined && article.url !== buildAssetUrl(deck.baseUrl, 'article.md')) {
+    throw new Error(`Share ${share.slug} 的文章资源必须位于当前 deck 版本目录下的 article.md`);
   }
 }
 
