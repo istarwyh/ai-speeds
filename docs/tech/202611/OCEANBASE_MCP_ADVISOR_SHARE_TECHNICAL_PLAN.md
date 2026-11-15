@@ -2,7 +2,7 @@
 name: oceanbase-mcp-advisor-share-technical-plan
 status: complete
 created: 2026-11-15T09:23:26Z
-updated: 2026-11-15T10:20:33Z
+updated: 2026-11-15T10:28:13Z
 ---
 
 # OceanBase AI 黑客松：MCP Advisor 分享接入方案
@@ -170,3 +170,13 @@ noindex 与详情 canonical；首页、目录、sitemap 均包含新条目，上
 
 - [OceanBase MCPAdvisor 分享](https://aispeeds.me/shares/mcp-advisor-oceanbase-hackathon)
 - [CCF TF 179 分享](https://aispeeds.me/shares/agent-native-product-ccf-tf179)
+
+## 9. PR 评审修正
+
+发布器只接收分享 slug 和媒体版本，输入目录固定由目标派生为
+`dist/shares/<slug>/<version>`，取消可独立指向其他分享的
+`--staging`。遇到已有对象直接失败并要求新媒体版本，不再将 412 当作可续传成功；不恢复摘要比对或 manifest 发布门禁。图片型渲染器在正确的
+`p:blipFill/a:srcRect` 节点检查裁切并拒绝不支持的裁切图片。
+
+CI 的 Cloudflare 构建失败已从日志核实为既有 Next.js
+15 生命周期检查；主分支的版本、锁文件和构建命令相同，本 PR 不升级框架或持久跳过检查。

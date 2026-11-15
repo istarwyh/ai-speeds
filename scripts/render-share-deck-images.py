@@ -88,7 +88,7 @@ def main() -> int:
                 off, ext = xfrm.find("a:off", NS), xfrm.find("a:ext", NS)
                 if off is None or ext is None or xfrm.get("rot") or xfrm.get("flipH") or xfrm.get("flipV"):
                     raise SystemExit(f"render-share-deck-images: slide {index} uses unsupported picture transforms")
-                if child.find("p:spPr/a:srcRect", NS) is not None or blip.find("a:*", NS) is not None:
+                if child.find("p:blipFill/a:srcRect", NS) is not None or blip.find("a:*", NS) is not None:
                     raise SystemExit(f"render-share-deck-images: slide {index} crops or recolors a picture")
                 target = rels[blip.get(f"{{{NS['r']}}}embed", "")]
                 with archive.open(target) as handle:

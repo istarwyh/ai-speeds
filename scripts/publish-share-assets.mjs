@@ -31,9 +31,9 @@ function usage() {
     'Options:',
     `  --slug <slug>             Share slug (default: ${defaultSlug})`,
     `  --media-version <vN>      media version (default: ${defaultVersion})`,
-    '  --staging <directory>     prepared directory (default: dist/shares/<slug>/<version>)',
+    '  Input directory: dist/shares/<slug>/<version> (derived from the destination)',
     '  --concurrency <1-8>       upload concurrency (default: 4)',
-    '  --apply                   upload; existing objects are never overwritten',
+    '  --apply                   upload; abort on existing objects; use a new version to retry',
     '  --help',
     '',
     'Required with --apply: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY.',
@@ -56,7 +56,7 @@ function parseArguments(arguments_) {
       continue;
     }
     const value = arguments_[index + 1];
-    if (!['--slug', '--media-version', '--staging', '--concurrency'].includes(argument ?? '')) {
+    if (!['--slug', '--media-version', '--concurrency'].includes(argument ?? '')) {
       throw new Error(`Unknown argument: ${argument}`);
     }
     if (!value) {
@@ -67,8 +67,6 @@ function parseArguments(arguments_) {
       options.slug = value;
     } else if (argument === '--media-version') {
       options.version = value;
-    } else if (argument === '--staging') {
-      options.staging = resolve(process.cwd(), value);
     } else {
       options.concurrency = Number(value);
     }
@@ -155,7 +153,6 @@ async function publish(options) {
   });
 
   try {
-    const skipped = [];
     // Upload manifest.json last so it only appears after every other file.
     const ordered = [
       ...files.filter(file => file !== 'manifest.json'),
@@ -177,17 +174,13 @@ async function publish(options) {
           );
         } catch (cause) {
           if (cause?.$metadata?.httpStatusCode === 412) {
-            skipped.push(file);
-            return;
+            throw new Error(`Object already exists: ${prefix}/${file}; publish a new media version instead`, { cause });
           }
           throw new Error(`Upload failed for ${prefix}/${file}`, { cause });
         }
       });
     }
-    log(`Uploaded ${files.length - skipped.length} files to ${prefix}/`);
-    if (skipped.length > 0) {
-      log(`Skipped ${skipped.length} files that already exist (immutable): ${skipped.join(', ')}`);
-    }
+    log(`Uploaded ${files.length} files to ${prefix}/`);
   } finally {
     client.destroy();
   }
