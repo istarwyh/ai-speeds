@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { getShareAssetContentDisposition } from './share-asset-metadata.mjs';
 
+/** @type {Array<[string, string]>} */
 const cases = [
   ['deck.pdf', 'attachment; filename="example-share-v2-fix.pdf"'],
   ['source.pptx', 'attachment; filename="example-share-v2-fix.pptx"'],
