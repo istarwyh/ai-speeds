@@ -2,6 +2,12 @@ import type { Contributor } from '@/types/content-provenance';
 
 const contributorDefinitions = [
   {
+    id: 'lu-guanrong',
+    kind: 'person',
+    displayName: '陆冠融',
+    description: 'MCPAdvisor 联合演讲人，2025 年分享封面署名单位为比亚迪。',
+  },
+  {
     id: 'xiaohui',
     kind: 'person',
     displayName: '王艺辉 / 晓灰',

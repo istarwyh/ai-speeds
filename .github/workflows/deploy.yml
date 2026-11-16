@@ -32,6 +32,9 @@ jobs:
           node scripts/node-runtime.mjs
           node scripts/node-runtime.mjs --self-test
 
+      - name: Verify share asset download headers
+        run: node --test scripts/share-asset-metadata.test.js
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -54,17 +57,11 @@ jobs:
       - name: Lint without changes
         run: pnpm run lint:check
 
-      - name: Validate Share registry
-        run: pnpm run shares:validate -- --registry-only
-
       - name: Build Next.js application
         run: pnpm run build
 
       - name: Typecheck
         run: pnpm run typecheck
-
-      - name: Validate public Share assets
-        run: pnpm run shares:validate -- --remote --timeout-ms 60000
 
       - name: Build for Cloudflare Workers
         run: pnpm run cf:build

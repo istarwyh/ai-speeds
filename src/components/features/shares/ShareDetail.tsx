@@ -22,7 +22,7 @@ const primaryControlClass =
   'rounded-pill bg-primary text-primary-foreground shadow-primary-glow transition hover:translate-y-lift hover:bg-primary-dark active:scale-press focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
 
 function getResourceIcon(resource: ShareResource) {
-  if (resource.kind === 'transcript') {
+  if (resource.kind === 'transcript' || resource.kind === 'article') {
     return <FileText size={18} aria-hidden='true' />;
   }
 
@@ -38,7 +38,22 @@ function formatDate(value: string): string {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+    timeZone: 'Asia/Shanghai',
   }).format(new Date(value));
+}
+
+function getResourceNotes(share: Share): string[] {
+  const notes: string[] = [];
+
+  if (share.resources.some(resource => resource.kind === 'article')) {
+    notes.push(UI_TEXTS.SHARES.RESOURCE_KIND_NOTE_ARTICLE);
+  }
+
+  if (share.resources.some(resource => resource.kind === 'transcript') && share.relatedArticles?.length) {
+    notes.push(UI_TEXTS.SHARES.RESOURCE_KIND_NOTE_TRANSCRIPT);
+  }
+
+  return notes;
 }
 
 type ShareDetailProps = {
@@ -48,6 +63,8 @@ type ShareDetailProps = {
 export function ShareDetail({ share }: ShareDetailProps) {
   const deck = getDeckArtifact(share);
   const provenance = getShareProvenance(share);
+  const relatedArticles = share.relatedArticles ?? [];
+  const resourceNotes = getResourceNotes(share);
 
   return (
     <main className='min-h-screen bg-bg-warm text-text-primary'>
@@ -79,6 +96,15 @@ export function ShareDetail({ share }: ShareDetailProps) {
             <p className='mt-6 max-w-2xl text-base leading-8 text-text-secondary sm:text-lg'>{share.description}</p>
 
             <dl className='mt-7 flex flex-wrap gap-x-6 gap-y-3 text-sm text-text-secondary'>
+              {share.eventDate ? (
+                <div className='flex items-center gap-2'>
+                  <CalendarDays size={17} className='text-primary' aria-hidden='true' />
+                  <dt className='sr-only'>活动日期</dt>
+                  <dd>
+                    <time dateTime={share.eventDate}>{formatDate(share.eventDate)}</time>
+                  </dd>
+                </div>
+              ) : null}
               <div className='flex items-center gap-2'>
                 <UserRound size={17} className='text-primary' aria-hidden='true' />
                 <dt className='sr-only'>来源与署名</dt>
@@ -88,7 +114,21 @@ export function ShareDetail({ share }: ShareDetailProps) {
                 <div className='flex items-center gap-2'>
                   <CalendarDays size={17} className='text-primary' aria-hidden='true' />
                   <dt className='sr-only'>活动</dt>
-                  <dd>{share.event.name}</dd>
+                  <dd>
+                    {share.event.url ? (
+                      <a
+                        href={share.event.url}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='inline-flex items-center gap-1 hover:text-primary hover:underline'
+                      >
+                        {share.event.name}
+                        <ExternalLink size={14} aria-hidden='true' />
+                      </a>
+                    ) : (
+                      share.event.name
+                    )}
+                  </dd>
                 </div>
               ) : null}
               {share.event?.location ? (
@@ -119,6 +159,19 @@ export function ShareDetail({ share }: ShareDetailProps) {
                   {UI_TEXTS.SHARES.TRANSCRIPT_TITLE}
                 </a>
               ) : null}
+              {relatedArticles.map(article => (
+                <a
+                  key={article.url}
+                  href={article.url}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className={`${floatingControlClass} inline-flex min-h-12 items-center gap-2 px-5 text-sm font-semibold sm:text-base`}
+                >
+                  <FileText size={18} aria-hidden='true' />
+                  {article.label ?? UI_TEXTS.SHARES.READ_ARTICLE}
+                  <ExternalLink size={16} aria-hidden='true' />
+                </a>
+              ))}
             </div>
           </div>
 
@@ -167,11 +220,34 @@ export function ShareDetail({ share }: ShareDetailProps) {
               <p className='mt-2 text-sm leading-6 text-text-secondary'>公开版本更新于 {formatDate(share.updatedAt)}</p>
             </div>
             <p className='max-w-xl text-sm leading-6 text-text-muted'>
-              PPTX 为移除私人备注与元数据后的公开衍生版本；逐页讲稿与在线页面使用同一份审核内容。
+              PPTX 为移除私人备注与元数据后的公开衍生版本；逐页文字与在线页面使用同一份审核内容。
             </p>
           </div>
 
+          {resourceNotes.length > 0 ? (
+            <ul className='mt-4 list-disc space-y-1 pl-5 text-sm leading-6 text-text-muted'>
+              {resourceNotes.map(note => (
+                <li key={note}>{note}</li>
+              ))}
+            </ul>
+          ) : null}
+
           <div className='mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
+            {relatedArticles.map(article => (
+              <a
+                key={article.url}
+                href={article.url}
+                target='_blank'
+                rel='noopener noreferrer'
+                className={`${floatingControlClass} flex min-h-14 items-center justify-between gap-3 px-4 py-3 text-sm font-semibold`}
+              >
+                <span className='flex items-center gap-2'>
+                  <FileText size={18} aria-hidden='true' />
+                  {article.title}
+                </span>
+                <ExternalLink size={16} aria-hidden='true' />
+              </a>
+            ))}
             {share.resources.map(resource => (
               <a
                 key={resource.kind}
