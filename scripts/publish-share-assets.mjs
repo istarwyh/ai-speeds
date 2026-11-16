@@ -7,6 +7,7 @@ import { join, relative, resolve, sep, dirname, extname } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { assertSupportedNodeVersion } from './node-runtime.mjs';
+import { getShareAssetContentDisposition } from './share-asset-metadata.mjs';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -168,6 +169,7 @@ async function publish(options) {
               Key: `${prefix}/${file}`,
               Body: await readFile(join(options.staging, ...file.split('/'))),
               ContentType: contentTypes.get(extname(file)),
+              ContentDisposition: getShareAssetContentDisposition(file, options.slug, options.version),
               CacheControl: immutableCacheControl,
               IfNoneMatch: '*',
             }),
