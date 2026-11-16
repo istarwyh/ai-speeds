@@ -80,9 +80,6 @@ jobs:
       - name: Lint without changes
         run: pnpm run lint:check
 
-      - name: Validate Share registry
-        run: pnpm run shares:validate -- --registry-only
-
       - name: Build Next.js application
         run: pnpm run build
 

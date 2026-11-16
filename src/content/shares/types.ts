@@ -4,7 +4,7 @@ export type ShareLocale = 'zh-CN' | 'en-US';
 
 export type DeckImageFormat = 'webp';
 
-export type ShareResourceKind = 'pdf' | 'pptx' | 'transcript';
+export type ShareResourceKind = 'pdf' | 'pptx' | 'transcript' | 'article';
 
 export type ShareResourceMediaType =
   | 'application/pdf'
@@ -17,7 +17,15 @@ export type ShareAuthor = {
 
 export type ShareEvent = {
   name: string;
-  location: string;
+  location?: string;
+  url?: string;
+};
+
+export type ShareRelatedArticle = {
+  title: string;
+  url: string;
+  description: string;
+  label?: string;
 };
 
 export type ShareResource = {
@@ -67,7 +75,7 @@ export type Share = {
   description: string;
   author: ShareAuthor;
   event: ShareEvent;
-  location: string;
+  location?: string;
   eventDate?: string;
   publishedAt: string;
   updatedAt: string;
@@ -75,6 +83,7 @@ export type Share = {
   coverPath: string;
   coverAlt: string;
   resources: readonly ShareResource[];
+  relatedArticles?: readonly ShareRelatedArticle[];
   deck?: ShareDeck;
 };
 

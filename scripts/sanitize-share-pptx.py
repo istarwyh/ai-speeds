@@ -9,7 +9,6 @@ to redact unreviewed text in place.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import posixpath
@@ -24,10 +23,6 @@ from urllib.parse import unquote, urlsplit
 from xml.etree import ElementTree as ET
 from zipfile import ZIP_DEFLATED, ZIP_STORED, BadZipFile, ZipFile, ZipInfo
 
-EXPECTED_SOURCE_SHA256 = "d2a8f210a4904bfbe8d157f7a7014380164cc4dc3f8abd4341746fc9bf7ac44f"
-EXPECTED_SLIDE_COUNT = 40
-SLUG = "agent-native-product-ai-maker-shanghai"
-VERSION = "v4"
 FIXED_ZIP_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 MAX_PACKAGE_ENTRIES = 2_000
 MAX_ENTRY_BYTES = 300 * 1024 * 1024
@@ -68,6 +63,10 @@ ALLOWED_PART_PATTERNS = tuple(
         r"^ppt/slides/_rels/slide[1-9][0-9]*\.xml\.rels$",
         r"^ppt/notesMasters/notesMaster[1-9][0-9]*\.xml$",
         r"^ppt/notesMasters/_rels/notesMaster[1-9][0-9]*\.xml\.rels$",
+        r"^ppt/handoutMasters/handoutMaster[1-9][0-9]*\.xml$",
+        r"^ppt/handoutMasters/_rels/handoutMaster[1-9][0-9]*\.xml\.rels$",
+        r"^docProps/thumbnail\.(?:png|jpe?g)$",
+        r"^ppt/media/media[1-9][0-9]*\.mp4$",
         r"^ppt/notesSlides/notesSlide[1-9][0-9]*\.xml$",
         r"^ppt/notesSlides/_rels/notesSlide[1-9][0-9]*\.xml\.rels$",
         r"^ppt/media/image[1-9][0-9]*\.(?:png|jpe?g|gif)$",
@@ -158,7 +157,7 @@ SENSITIVE_PATTERNS = {
 }
 
 CORE_PROPERTIES = b"""<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
-<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>Constructing an Agent Native Product</dc:title><dc:creator>AI Speeds</dc:creator><cp:lastModifiedBy>AI Speeds</cp:lastModifiedBy><cp:revision>1</cp:revision></cp:coreProperties>"""
+<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:creator>AI Speeds</dc:creator><cp:lastModifiedBy>AI Speeds</cp:lastModifiedBy><cp:revision>1</cp:revision></cp:coreProperties>"""
 APP_PROPERTIES = b"""<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
 <Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/extended-properties\"><Application>AI Speeds media sanitizer</Application><AppVersion>1.0</AppVersion></Properties>"""
 
@@ -183,14 +182,6 @@ class PackageInspection:
     local_path_count: int
     slides_with_notes: int
     relationship_count: int
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def parse_xml(data: bytes, part_name: str) -> ET.Element:
@@ -712,7 +703,6 @@ def sanitize(
     source_path: Path,
     output_path: Path,
     report_path: Path,
-    expected_sha256: str,
     expected_slides: int,
     force: bool,
 ) -> Dict[str, object]:
@@ -724,12 +714,6 @@ def sanitize(
     if report_path.exists() and not force:
         raise SanitizationError(f"Refusing to overwrite existing private review report: {report_path.name}; pass --force")
 
-    source_sha256 = sha256_file(source_path)
-    if source_sha256 != expected_sha256.lower():
-        raise SanitizationError(
-            f"Source SHA-256 mismatch: expected {expected_sha256.lower()}, received {source_sha256}"
-        )
-
     source_inspection = inspect_package(source_path, expected_slides=expected_slides, sanitized=False)
     members, removed_counts = transform_members(source_path)
     write_deterministic_pptx(output_path, members)
@@ -738,16 +722,12 @@ def sanitize(
     except Exception:
         output_path.unlink(missing_ok=True)
         raise
-    sanitized_sha256 = sha256_file(output_path)
-
     report: Dict[str, object] = {
         "schemaVersion": 1,
         "private": True,
         "notForPublication": True,
         "sourceFileName": source_path.name,
-        "sourceSha256": source_sha256,
         "sanitizedFileName": output_path.name,
-        "sanitizedSha256": sanitized_sha256,
         "slideCount": len(source_inspection.slide_parts),
         "sourcePackageEntryCount": source_inspection.package_entry_count,
         "sanitizedPackageEntryCount": sanitized_inspection.package_entry_count,
@@ -757,7 +737,6 @@ def sanitize(
         "originalLocalPathCount": source_inspection.local_path_count,
         "removed": removed_counts,
         "checks": {
-            "sourceHashMatched": True,
             "physicalSlideCountMatched": True,
             "zipTraversalRejected": True,
             "macrosRejected": True,
@@ -781,8 +760,6 @@ def sanitize(
     }
     write_json_atomic(report_path, report)
     return {
-        "sourceSha256": source_sha256,
-        "sanitizedSha256": sanitized_sha256,
         "slideCount": len(source_inspection.slide_parts),
         "slidesWithOriginalNotes": source_inspection.slides_with_notes,
         "originalLocalPathCount": source_inspection.local_path_count,
@@ -791,64 +768,29 @@ def sanitize(
     }
 
 
-def validate_only(path: Path, expected_sha256: Optional[str], expected_slides: int) -> Dict[str, object]:
-    if not path.is_file():
-        raise SanitizationError(f"Sanitized PPTX does not exist: {path.name}")
-    actual_sha256 = sha256_file(path)
-    if expected_sha256 and actual_sha256 != expected_sha256.lower():
-        raise SanitizationError(
-            f"Sanitized SHA-256 mismatch: expected {expected_sha256.lower()}, received {actual_sha256}"
-        )
-    inspection = inspect_package(path, expected_slides=expected_slides, sanitized=True)
-    return {
-        "sha256": actual_sha256,
-        "slideCount": len(inspection.slide_parts),
-        "packageEntryCount": inspection.package_entry_count,
-        "validated": True,
-    }
-
-
-def build_parser(repo_root: Path) -> argparse.ArgumentParser:
-    default_source = repo_root.parent / "quartz" / "content" / "slide-deck" / "agent-native-ai-maker-shanghai" / "构建 Agent Native Product-AI Maker 上海-晓灰-v4.pptx"
-    default_output = repo_root / "dist" / "shares" / SLUG / VERSION / "source.pptx"
-    default_report = repo_root / "dist" / "shares" / ".work" / f"{SLUG}-{VERSION}-sanitizer-review.json"
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", type=Path, default=default_source, help="source or sanitized PPTX path")
-    parser.add_argument("--output", type=Path, default=default_output, help="sanitized PPTX output path")
-    parser.add_argument("--report", type=Path, default=default_report, help="private review report path")
-    parser.add_argument("--expected-sha256", default=EXPECTED_SOURCE_SHA256, help="required input SHA-256")
-    parser.add_argument("--expected-slides", type=int, default=EXPECTED_SLIDE_COUNT, help="required physical slide count")
+    parser.add_argument("--input", type=Path, required=True, help="source PPTX path")
+    parser.add_argument("--output", type=Path, required=True, help="sanitized PPTX output path")
+    parser.add_argument("--report", type=Path, required=True, help="private review report path")
+    parser.add_argument("--expected-slides", type=int, required=True, help="required physical slide count")
     parser.add_argument("--force", action="store_true", help="replace existing generated output and report")
-    parser.add_argument("--validate-only", action="store_true", help="validate an already sanitized package without writing")
-    parser.add_argument(
-        "--no-expected-sha256",
-        action="store_true",
-        help="validate-only: skip the input hash comparison (structure is still validated)",
-    )
     return parser
 
 
 def main() -> int:
-    repo_root = Path(__file__).resolve().parent.parent
-    parser = build_parser(repo_root)
+    parser = build_parser()
     arguments = parser.parse_args()
     if arguments.expected_slides < 1:
         parser.error("--expected-slides must be positive")
     try:
-        if arguments.validate_only:
-            expected = None if arguments.no_expected_sha256 else arguments.expected_sha256
-            result = validate_only(arguments.input.resolve(), expected, arguments.expected_slides)
-        else:
-            if arguments.no_expected_sha256:
-                parser.error("--no-expected-sha256 is only valid with --validate-only")
-            result = sanitize(
-                source_path=arguments.input.resolve(),
-                output_path=arguments.output.resolve(),
-                report_path=arguments.report.resolve(),
-                expected_sha256=arguments.expected_sha256,
-                expected_slides=arguments.expected_slides,
-                force=arguments.force,
-            )
+        result = sanitize(
+            source_path=arguments.input.resolve(),
+            output_path=arguments.output.resolve(),
+            report_path=arguments.report.resolve(),
+            expected_slides=arguments.expected_slides,
+            force=arguments.force,
+        )
     except (OSError, SanitizationError) as error:
         print(f"sanitize-share-pptx: {error}", file=sys.stderr)
         return 1

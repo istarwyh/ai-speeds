@@ -1,7 +1,25 @@
 import type { ContentProvenance } from '@/types/content-provenance';
 
 export const shareProvenanceBySlug = {
+  'mcp-advisor-oceanbase-hackathon': {
+    origin: 'collaboration',
+    rightsMode: 'owned',
+    attributions: [
+      { contributorId: 'xiaohui', roles: ['author', 'speaker'] },
+      { contributorId: 'lu-guanrong', roles: ['collaborator', 'speaker'] },
+    ],
+  },
   'agent-native-product-ai-maker-shanghai': {
+    origin: 'original',
+    rightsMode: 'owned',
+    attributions: [
+      {
+        contributorId: 'xiaohui',
+        roles: ['author', 'speaker'],
+      },
+    ],
+  },
+  'agent-native-product-ccf-tf179': {
     origin: 'original',
     rightsMode: 'owned',
     attributions: [
