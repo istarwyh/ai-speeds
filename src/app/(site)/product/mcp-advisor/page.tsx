@@ -32,7 +32,7 @@ const mcpTools = [
 ] as const;
 
 const providers = ['Meilisearch', 'Compass', 'GetMCP', 'Nacos（按配置）'] as const;
-const transports = ['stdio', 'SSE', 'REST'] as const;
+const transports = ['stdio', 'Streamable HTTP'] as const;
 
 export const metadata: Metadata = {
   title: 'MCP Advisor：发现适合任务的 MCP Server | AI Speeds',
@@ -81,7 +81,7 @@ export default function McpAdvisorPage() {
                 rel='noopener noreferrer'
                 className='inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-header-surface active:scale-press'
               >
-                查看快速开始
+                查看源码与兼容版指南
                 <ArrowUpRight size={17} aria-hidden='true' />
               </a>
               <a
@@ -101,14 +101,14 @@ export default function McpAdvisorPage() {
                 <dd className='mt-1 text-sm text-text-muted'>推荐与配置指引</dd>
               </div>
               <div>
-                <dt className='text-xs font-semibold uppercase tracking-[0.16em] text-text-muted'>Transports</dt>
-                <dd className='mt-2 text-2xl font-semibold tracking-tight'>3</dd>
-                <dd className='mt-1 text-sm text-text-muted'>stdio / SSE / REST</dd>
+                <dt className='text-xs font-semibold uppercase tracking-[0.16em] text-text-muted'>现代源码</dt>
+                <dd className='mt-2 text-2xl font-semibold tracking-tight'>2</dd>
+                <dd className='mt-1 text-sm text-text-muted'>stdio / Streamable HTTP</dd>
               </div>
               <div>
                 <dt className='text-xs font-semibold uppercase tracking-[0.16em] text-text-muted'>npm</dt>
-                <dd className='mt-2 text-2xl font-semibold tracking-tight'>1.0.7</dd>
-                <dd className='mt-1 text-sm text-text-muted'>公开版本</dd>
+                <dd className='mt-2 text-2xl font-semibold tracking-tight'>兼容版</dd>
+                <dd className='mt-1 text-sm text-text-muted'>旧客户端与回滚</dd>
               </div>
             </dl>
           </div>
@@ -246,8 +246,11 @@ export default function McpAdvisorPage() {
               把它接到支持 MCP 的 AI 助手。
             </h2>
             <p className='mt-5 text-lg leading-8 text-text-secondary'>
-              MCP Advisor 是 Node.js CLI 和 MCP Server，不是托管在网页里的 SaaS。默认通过 stdio 运行，也提供 SSE 与 REST
-              方式供自托管集成。
+              MCP Advisor 是 Node.js CLI 和 MCP Server。使用支持 MCP 2026-07-28 的客户端时，请按快速开始从源码构建，
+              选择本地 stdio 或自托管的 Streamable HTTP。
+            </p>
+            <p className='mt-3 text-base leading-7 text-text-secondary'>
+              旧客户端或回滚请用兼容示例中的固定版本。这个 npm 示例不会安装现代源码，也不代表本页提供托管入口。
             </p>
             <a
               href={SITE_LINKS.mcpAdvisorNpm}
@@ -264,7 +267,7 @@ export default function McpAdvisorPage() {
           <div className='overflow-hidden rounded-[2rem] border border-slate-800 bg-slate-950 shadow-2xl shadow-slate-950/15'>
             <div className='flex items-center gap-3 border-b border-slate-800 px-5 py-4 text-sm text-slate-300'>
               <Terminal size={17} className='text-cyan-300' aria-hidden='true' />
-              Claude Desktop MCP configuration
+              Claude Desktop 兼容示例 · npm 1.0.5
             </div>
             <pre className='overflow-x-auto p-5 text-sm leading-7 text-slate-200 sm:p-7'>
               <code>{`{
@@ -273,14 +276,14 @@ export default function McpAdvisorPage() {
       "command": "npx",
       "args": [
         "-y",
-        "@xiaohui-wang/mcpadvisor"
+        "@xiaohui-wang/mcpadvisor@1.0.5"
       ]
     }
   }
 }`}</code>
             </pre>
             <div className='border-t border-slate-800 px-5 py-4 text-xs leading-5 text-slate-400 sm:px-7'>
-              npm 包名是 @xiaohui-wang/mcpadvisor；安装前请以仓库快速开始文档为准。
+              这是仓库文档指定的兼容与回滚版本，不是对 npm 最新版本的说明。
             </div>
           </div>
         </div>
@@ -319,7 +322,7 @@ export default function McpAdvisorPage() {
               </div>
               <div className='rounded-[2rem] border border-border-light bg-bg-warm p-6'>
                 <Network size={22} className='text-primary-ink' aria-hidden='true' />
-                <h3 className='mt-5 text-lg font-semibold text-text-primary'>三种运行连接方式</h3>
+                <h3 className='mt-5 text-lg font-semibold text-text-primary'>现代源码的两种连接方式</h3>
                 <ul className='mt-4 flex flex-wrap gap-2'>
                   {transports.map(transport => (
                     <li
