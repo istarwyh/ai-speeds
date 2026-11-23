@@ -372,7 +372,11 @@ export function GetStartedSection() {
                 如果你想保留私有路由、统一模型入口，可自行部署到 Cloudflare Workers。构建 AI Speeds 需使用稳定版 Node.js
                 22.x（至少 22.18.0）或 24.0.0 及以上，以及 pnpm 10.18.1。
               </p>
-              <CodeBlock code={'git clone https://github.com/istarwyh/ai-speeds\ncd ai-speeds\npnpm run node:check\npnpm install'} />
+              <CodeBlock
+                code={
+                  'git clone https://github.com/istarwyh/ai-speeds\ncd ai-speeds\npnpm run node:check\npnpm install'
+                }
+              />
               <div className='mt-5 overflow-hidden rounded-3xl border border-slate-200 bg-white'>
                 {deployConfigs.map(config => (
                   <div key={config.id} className='border-b border-slate-200 last:border-b-0'>
