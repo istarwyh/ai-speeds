@@ -26,24 +26,12 @@ const deployConfigs = [
 ];
 
 const quickFacts = [
-  { label: 'Node.js', value: '版本 ≥ 18.0' },
+  { label: 'Claude Code', value: '推荐原生安装' },
   { label: '默认推荐', value: 'NVIDIA NIM + AI Speeds' },
   { label: '需要私有', value: '部署到 Cloudflare Workers' },
 ];
 
-const workflow = ['安装 Node.js', '安装 Claude Code', '选择服务商并拿到 API Key', '复制环境变量后运行 claude'];
-
-const nodeInstallCommands = {
-  linux: `# Ubuntu / Debian 用户
-curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo bash -
-sudo apt-get install -y nodejs
-node --version`,
-  macos: `# macOS 用户
-sudo xcode-select --install
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-brew install node
-node --version`,
-};
+const workflow = ['安装 Claude Code', '验证 CLI 已安装', '选择服务商并拿到 API Key', '复制环境变量后运行 claude'];
 
 const colors = new Map([
   ['amber', '#f59e0b'],
@@ -302,33 +290,30 @@ export function GetStartedSection() {
 
         <div className='mt-8 grid items-start gap-6 lg:grid-cols-[0.92fr_1.08fr]'>
           <div className='space-y-6'>
-            <Card number='01' title='安装 Node.js（已安装可跳过）'>
-              <p className='mt-3 leading-7 text-slate-600'>确保 Node.js 版本 ≥ 18.0，然后再安装 Claude Code。</p>
-              <div className='mt-5 grid gap-4 xl:grid-cols-2'>
-                <div>
-                  <p className='text-sm font-black text-slate-950'>Ubuntu / Debian 用户</p>
-                  <CodeBlock code={nodeInstallCommands.linux} />
-                </div>
-                <div>
-                  <p className='text-sm font-black text-slate-950'>macOS 用户</p>
-                  <CodeBlock code={nodeInstallCommands.macos} />
-                </div>
-              </div>
-            </Card>
-
-            <Card number='02' title='安装 Claude Code'>
+            <Card number='01' title='安装 Claude Code（推荐原生安装）'>
               <p className='mt-3 leading-7 text-slate-600'>
-                安装官方 CLI。也可以使用桌面端或 IDE 插件，按你的开发习惯选择即可。
+                按 Anthropic 指南选择你的系统。原生安装不需要先装 Node.js。
               </p>
-              <CodeBlock code='npm install -g @anthropic-ai/claude-code' />
               <a
-                href='https://claude.ai/code'
+                href='https://code.claude.com/docs/en/quickstart#step-1-install-claude-code'
                 target='_blank'
                 rel='noreferrer'
                 className='mt-5 inline-flex rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white transition hover:bg-[#d4614a]'
               >
-                打开 Claude Code 下载页
+                查看官方安装指南
               </a>
+              <p className='mt-4 text-sm leading-6 text-slate-600'>
+                如果选择 npm 安装，请使用 Node.js 22 或更高版本，并参考{' '}
+                <a href='https://code.claude.com/docs/en/setup#install-with-npm' className='underline'>
+                  官方 npm 安装说明
+                </a>
+                。
+              </p>
+            </Card>
+
+            <Card number='02' title='验证 CLI 已安装'>
+              <p className='mt-3 leading-7 text-slate-600'>打开终端，确认 Claude Code 能输出版本号。</p>
+              <CodeBlock code='claude --version' />
             </Card>
 
             <div className='relative overflow-hidden rounded-[1.5rem] border border-slate-200/80 bg-white/85 p-4 shadow-xl shadow-slate-900/5 backdrop-blur sm:rounded-[2rem] sm:p-6'>
@@ -384,9 +369,10 @@ export function GetStartedSection() {
 
             <Card number='05' title='自部署 AI Speeds'>
               <p className='mt-3 leading-7 text-slate-600'>
-                如果你想保留私有路由、统一模型入口，部署到 Cloudflare Workers 即可。
+                如果你想保留私有路由、统一模型入口，可自行部署到 Cloudflare Workers。构建 AI Speeds 需使用稳定版 Node.js
+                22.x（至少 22.18.0）或 24.0.0 及以上，以及 pnpm 10.18.1。
               </p>
-              <CodeBlock code={'git clone https://github.com/istarwyh/ai-speeds\ncd ai-speeds\npnpm install'} />
+              <CodeBlock code={'git clone https://github.com/istarwyh/ai-speeds\ncd ai-speeds\npnpm run node:check\npnpm install'} />
               <div className='mt-5 overflow-hidden rounded-3xl border border-slate-200 bg-white'>
                 {deployConfigs.map(config => (
                   <div key={config.id} className='border-b border-slate-200 last:border-b-0'>
