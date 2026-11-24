@@ -16,6 +16,9 @@ import {
 } from 'lucide-react';
 import { SITE_LINKS } from '@/config/site-links';
 
+const compatibilityGuideUrl =
+  'https://github.com/istarwyh/mcpadvisor/blob/main/docs/GETTING_STARTED.zh-CN.md#%E5%B7%B2%E5%8F%91%E5%B8%83%E5%85%BC%E5%AE%B9%E7%89%88%E6%9C%AC';
+
 const mcpTools = [
   {
     icon: Search,
@@ -253,13 +256,13 @@ export default function McpAdvisorPage() {
               旧客户端或回滚请用兼容示例中的固定版本。这个 npm 示例不会安装现代源码，也不代表本页提供托管入口。
             </p>
             <a
-              href={SITE_LINKS.mcpAdvisorNpm}
+              href={compatibilityGuideUrl}
               target='_blank'
               rel='noopener noreferrer'
               className='mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-floating-border bg-floating-surface px-5 text-sm font-semibold text-text-primary shadow-floating transition hover:-translate-y-0.5 hover:border-primary hover:bg-floating-surface-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-press'
             >
               <Boxes size={17} aria-hidden='true' />
-              查看 npm 包
+              查看 npm 1.0.5 兼容指南
               <ArrowUpRight size={16} aria-hidden='true' />
             </a>
           </div>
