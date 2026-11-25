@@ -81,9 +81,9 @@ const slideNotes = [
 
 export const insuranceQuickCheckShanghai2026: Share = {
   slug,
-  status: 'draft',
+  status: 'public',
   locale: 'zh-CN',
-  title: '保险快查：让 AI 读懂条款，也让人查得到依据',
+  title: '保险快查：基于大模型智能体的保险产品可信理解与决策辅助平台',
   subtitle: '上海（长三角）中青年工程师创新创业大赛 · 金融科技赛道',
   summary: '以给 3 岁孩子比较两款长期医疗险为例，介绍保险快查如何查条款、做对比，再用可复核的证据支持判断。',
   description:
@@ -96,8 +96,8 @@ export const insuranceQuickCheckShanghai2026: Share = {
   },
   location: '上海杨浦 · 复兴岛国际创客岛',
   eventDate: '2026-11-19T00:00:00Z',
-  publishedAt: '2026-11-25T07:35:00Z',
-  updatedAt: '2026-11-25T07:35:00Z',
+  publishedAt: '2026-11-25T13:58:20Z',
+  updatedAt: '2026-11-25T13:58:20Z',
   tags: ['保险科技', '金融科技', 'Agent Native'],
   coverPath: `${baseUrl}/cover.webp`,
   coverAlt: '王艺辉在上海（长三角）中青年工程师创新创业大赛决赛现场，身后是写有比赛名称的舞台屏幕。',
