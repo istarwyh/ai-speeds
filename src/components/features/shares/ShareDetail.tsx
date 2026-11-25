@@ -65,6 +65,7 @@ export function ShareDetail({ share }: ShareDetailProps) {
   const provenance = getShareProvenance(share);
   const relatedArticles = share.relatedArticles ?? [];
   const resourceNotes = getResourceNotes(share);
+  const hasPptx = share.resources.some(resource => resource.kind === 'pptx');
 
   return (
     <main className='min-h-screen bg-bg-warm text-text-primary'>
@@ -220,7 +221,9 @@ export function ShareDetail({ share }: ShareDetailProps) {
               <p className='mt-2 text-sm leading-6 text-text-secondary'>公开版本更新于 {formatDate(share.updatedAt)}</p>
             </div>
             <p className='max-w-xl text-sm leading-6 text-text-muted'>
-              PPTX 为移除私人备注与元数据后的公开衍生版本；逐页文字与在线页面使用同一份审核内容。
+              {hasPptx
+                ? 'PPTX 为移除私人备注与元数据后的公开衍生版本；逐页文字与在线页面使用同一份审核内容。'
+                : 'PDF 为公开版本，逐页文字与在线页面使用同一份审核内容。'}
             </p>
           </div>
 

@@ -42,7 +42,7 @@ export type ShareDeckPaths = {
   thumbnails: string;
   manifest: string;
   pdf: string;
-  pptx: string;
+  pptx?: string;
   transcript: string;
 };
 
