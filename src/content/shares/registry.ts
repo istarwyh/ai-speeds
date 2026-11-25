@@ -1,5 +1,6 @@
 import { agentNativeProductAiMakerShanghai } from './agent-native-product-ai-maker-shanghai.ts';
 import { agentNativeProductCcfTf179 } from './agent-native-product-ccf-tf179.ts';
+import { insuranceQuickCheckShanghai2026 } from './insurance-quick-check-shanghai-2026.ts';
 import { mcpAdvisorOceanbaseHackathon } from './mcp-advisor-oceanbase-hackathon.ts';
 import type { Share, ShareDeck, ShareResource, ShareResourceKind, ShareSlide } from './types.ts';
 
@@ -24,6 +25,7 @@ const SENSITIVE_CONTENT_PATTERNS: readonly { label: string; pattern: RegExp }[] 
 const registeredShares: readonly Share[] = [
   agentNativeProductAiMakerShanghai,
   agentNativeProductCcfTf179,
+  insuranceQuickCheckShanghai2026,
   mcpAdvisorOceanbaseHackathon,
 ];
 
@@ -415,7 +417,9 @@ function validateDeckPaths(share: Share, deck: ShareDeck): void {
   assertRelativeAssetPath(deck.paths.thumbnails, `${share.slug}.deck.paths.thumbnails`);
   assertRelativeAssetPath(deck.paths.manifest, `${share.slug}.deck.paths.manifest`);
   assertRelativeAssetPath(deck.paths.pdf, `${share.slug}.deck.paths.pdf`);
-  assertRelativeAssetPath(deck.paths.pptx, `${share.slug}.deck.paths.pptx`);
+  if (deck.paths.pptx !== undefined) {
+    assertRelativeAssetPath(deck.paths.pptx, `${share.slug}.deck.paths.pptx`);
+  }
   assertRelativeAssetPath(deck.paths.transcript, `${share.slug}.deck.paths.transcript`);
 
   const expectedCoverUrl = buildAssetUrl(deck.baseUrl, deck.paths.cover);
@@ -451,7 +455,8 @@ function validateDeckResourceConsistency(share: Share, deck: ShareDeck): void {
     throw new Error(`Share ${share.slug} 的 PDF 资源必须匹配 deck.paths.pdf`);
   }
 
-  if (pptx === undefined || pptx.url !== buildAssetUrl(deck.baseUrl, deck.paths.pptx)) {
+  const expectedPptx = getPptxUrl(share);
+  if (pptx?.url !== expectedPptx) {
     throw new Error(`Share ${share.slug} 的 PPTX 资源必须匹配 deck.paths.pptx`);
   }
 
@@ -502,7 +507,7 @@ function getDeckPathUrl(share: Share, path: 'manifest' | 'pdf' | 'pptx' | 'trans
   }
 
   if (path === 'pptx') {
-    return buildAssetUrl(deck.baseUrl, deck.paths.pptx);
+    return deck.paths.pptx === undefined ? undefined : buildAssetUrl(deck.baseUrl, deck.paths.pptx);
   }
 
   return buildAssetUrl(deck.baseUrl, deck.paths.transcript);
