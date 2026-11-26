@@ -249,7 +249,7 @@ export function GetStartedSection() {
               把 Claude Code 接到你想用的模型。
             </h1>
             <p className='mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:mt-5 sm:text-lg sm:leading-8'>
-              先安装 CLI，再选择服务商，复制环境变量即可开跑。需要私有路由时，再部署 AI Speeds。
+              先安装 CLI，再选择服务商。后面的环境变量示例适用于 Bash 或 Zsh。需要私有路由时，再部署 AI Speeds。
             </p>
             <div className='mt-6 grid gap-3 sm:mt-8 sm:grid-cols-3'>
               {quickFacts.map(item => (
@@ -418,7 +418,8 @@ export function GetStartedSection() {
 
             <Card number='04' title='配置环境变量'>
               <p className='mt-3 leading-7 text-slate-600'>
-                把下面内容加入你的 shell 配置，重新加载后运行 Claude Code。
+                以下命令适用于 Bash 或 Zsh（包括 Windows 上的 WSL），不要直接粘贴到 PowerShell 或 CMD。
+                把环境变量加入对应的 shell 配置，重新加载后运行 Claude Code。
               </p>
               <CodeBlock code={envBlock} />
               <CodeBlock code={'source ~/.zshrc  # bash 用户改为 source ~/.bashrc\nclaude'} />
