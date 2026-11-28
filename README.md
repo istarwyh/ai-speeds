@@ -71,9 +71,11 @@ URL hash.
 
 ### Use the hosted API proxy
 
-```bash
-pnpm add -g @anthropic-ai/claude-code
+Install Claude Code using [Anthropic’s native installer guide](https://code.claude.com/docs/en/quickstart#step-1-install-claude-code), then run `claude --version`. Native installation does not require Node.js or pnpm. The [optional npm method](https://code.claude.com/docs/en/setup#install-with-npm) requires Node.js 22 or later.
 
+Set the proxy variables in Bash or Zsh (including WSL):
+
+```bash
 export ANTHROPIC_BASE_URL="https://aispeeds.me"
 export ANTHROPIC_API_KEY="your-provider-api-key"
 
@@ -84,14 +86,24 @@ API keys are supplied per request and are not stored by AI Speeds.
 
 ### Run locally
 
-Use Node.js `^22.18.0 || >=24.0.0`. Node.js 23 is unsupported.
+Use stable Node.js `^22.18.0 || >=24.0.0` and pnpm 10.18.1. The Node.js check runs without pnpm. If you need the pinned pnpm version, install it with `npm install --global pnpm@10.18.1`.
 
 ```bash
-git clone https://github.com/istarwyh/ai-speeds.git
-cd ai-speeds
-pnpm install
-pnpm run node:check
-pnpm run dev
+git clone https://github.com/istarwyh/ai-speeds.git && cd ai-speeds
+```
+
+Run the checks from the project directory. Continue only if the Node.js check passes and `pnpm --version` prints `10.18.1`.
+
+```bash
+node scripts/node-runtime.mjs && pnpm --version
+```
+
+```bash
+node scripts/node-runtime.mjs &&
+  pnpm_version=$(pnpm --version) &&
+  test "$pnpm_version" = "10.18.1" &&
+  pnpm install &&
+  pnpm run dev
 ```
 
 Open `http://localhost:3000`.
