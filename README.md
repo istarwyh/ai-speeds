@@ -86,15 +86,24 @@ API keys are supplied per request and are not stored by AI Speeds.
 
 ### Run locally
 
-Use stable Node.js `^22.18.0 || >=24.0.0` and pnpm 10.18.1. The first check below runs without pnpm. If you need the pinned pnpm version, install it with `npm install --global pnpm@10.18.1`.
+Use stable Node.js `^22.18.0 || >=24.0.0` and pnpm 10.18.1. The Node.js check runs without pnpm. If you need the pinned pnpm version, install it with `npm install --global pnpm@10.18.1`.
 
 ```bash
-git clone https://github.com/istarwyh/ai-speeds.git
-cd ai-speeds
-node scripts/node-runtime.mjs
-pnpm --version # Expect 10.18.1
-pnpm install
-pnpm run dev
+git clone https://github.com/istarwyh/ai-speeds.git && cd ai-speeds
+```
+
+Run the checks from the project directory. Continue only if the Node.js check passes and `pnpm --version` prints `10.18.1`.
+
+```bash
+node scripts/node-runtime.mjs && pnpm --version
+```
+
+```bash
+node scripts/node-runtime.mjs &&
+  pnpm_version=$(pnpm --version) &&
+  test "$pnpm_version" = "10.18.1" &&
+  pnpm install &&
+  pnpm run dev
 ```
 
 Open `http://localhost:3000`.

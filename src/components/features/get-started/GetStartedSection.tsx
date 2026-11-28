@@ -373,9 +373,14 @@ export function GetStartedSection() {
                 22.x（至少 22.18.0）或 24.0.0 及以上，以及 pnpm 10.18.1。缺少指定版本时，可运行{' '}
                 <code>npm install --global pnpm@10.18.1</code>。
               </p>
+              <CodeBlock code='git clone https://github.com/istarwyh/ai-speeds && cd ai-speeds' />
+              <p className='mt-3 text-sm leading-6 text-slate-600'>
+                在项目目录检查环境。Node.js 检查通过且 <code>pnpm --version</code> 显示 <code>10.18.1</code> 后，再安装依赖。
+              </p>
+              <CodeBlock code='node scripts/node-runtime.mjs && pnpm --version' />
               <CodeBlock
                 code={
-                  'git clone https://github.com/istarwyh/ai-speeds\ncd ai-speeds\nnode scripts/node-runtime.mjs\npnpm --version # 应显示 10.18.1\npnpm install'
+                  'node scripts/node-runtime.mjs &&\n  pnpm_version=$(pnpm --version) &&\n  test "$pnpm_version" = "10.18.1" &&\n  pnpm install'
                 }
               />
               <div className='mt-5 overflow-hidden rounded-3xl border border-slate-200 bg-white'>
