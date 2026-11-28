@@ -375,7 +375,8 @@ export function GetStartedSection() {
               </p>
               <CodeBlock code='git clone https://github.com/istarwyh/ai-speeds && cd ai-speeds' />
               <p className='mt-3 text-sm leading-6 text-slate-600'>
-                在项目目录检查环境。Node.js 检查通过且 <code>pnpm --version</code> 显示 <code>10.18.1</code> 后，再安装依赖。
+                在项目目录检查环境。Node.js 检查通过且 <code>pnpm --version</code> 显示 <code>10.18.1</code>{' '}
+                后，再安装依赖。
               </p>
               <CodeBlock code='node scripts/node-runtime.mjs && pnpm --version' />
               <CodeBlock
